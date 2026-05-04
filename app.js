@@ -9,6 +9,15 @@ const verticalProgress = document.getElementById("vertical-progress");
 const bgScene = document.getElementById("bg-scene");
 const stagePillEl = document.getElementById("stage-pill");
 
+// Active stage filter ("all" = show every artist)
+let activeStageFilter = "all";
+
+function getFilteredArtists() {
+  return activeStageFilter === "all"
+    ? ARTISTS
+    : ARTISTS.filter(a => a.stage === activeStageFilter);
+}
+
 const stageColor = {
   retro: "linear-gradient(180deg, #0a0524 0%, #1a0a3e 30%, #4a1e6e 60%, #c0367a 80%, #ff7e1f 100%)",
   zambu: "linear-gradient(180deg, #050217 0%, #1c0635 30%, #3b0f5b 60%, #6e1d8a 80%, #ff5c8a 100%)",
@@ -198,8 +207,9 @@ function artistSection(a, idx) {
 // ===== Render reel =====
 
 function buildReel() {
-  const artistSections = ARTISTS.map((a, i) => artistSection(a, i)).join("");
-  reel.innerHTML = heroSection() + artistSections;
+  const list = getFilteredArtists();
+  const artistSections = list.map((a, i) => artistSection(a, i)).join("");
+  reel.innerHTML = (activeStageFilter === "all" ? heroSection() : "") + artistSections;
 
   // CTA scroll to first artist
   const cta = document.getElementById("cta-start");
@@ -252,23 +262,26 @@ function buildReel() {
 // ===== Vertical progress bar =====
 
 function buildVerticalProgress() {
-  // 1 dot for hero + 1 per artist
-  const total = ARTISTS.length + 1;
+  const list = getFilteredArtists();
   const items = [];
-  items.push(`<button class="v-dot active" data-vidx="0" aria-label="ראשי"></button>`);
-  ARTISTS.forEach((a, i) => {
-    items.push(`<button class="v-dot" data-vidx="${i + 1}" aria-label="${escapeHtml(a.name)}"></button>`);
+  if (activeStageFilter === "all") {
+    items.push(`<button class="v-dot active" data-vidx="0" aria-label="ראשי"></button>`);
+  }
+  const offset = activeStageFilter === "all" ? 1 : 0;
+  list.forEach((a, i) => {
+    items.push(`<button class="v-dot ${activeStageFilter !== "all" && i === 0 ? "active" : ""}" data-vidx="${i + offset}" aria-label="${escapeHtml(a.name)}"></button>`);
   });
   verticalProgress.innerHTML = items.join("");
-
-  verticalProgress.addEventListener("click", e => {
-    const dot = e.target.closest(".v-dot");
-    if (!dot) return;
-    const idx = +dot.dataset.vidx;
-    const sections = reel.querySelectorAll(".section");
-    sections[idx]?.scrollIntoView({ behavior: "smooth" });
-  });
 }
+
+// Single delegated click for vertical dots (registered once)
+verticalProgress.addEventListener("click", e => {
+  const dot = e.target.closest(".v-dot");
+  if (!dot) return;
+  const idx = +dot.dataset.vidx;
+  const sections = reel.querySelectorAll(".section");
+  sections[idx]?.scrollIntoView({ behavior: "smooth" });
+});
 
 // ===== Active section tracking =====
 
@@ -292,36 +305,31 @@ function setActiveSection(section) {
     bgScene.style.background = stageColor[stage];
   }
 
+  const list = getFilteredArtists();
   if (section.dataset.section === "hero") {
     hudPos.textContent = "ראשי";
   } else {
-    const a = ARTISTS[+section.dataset.index];
+    const artistIdx = +section.dataset.index;
+    const a = list[artistIdx];
     if (a) {
-      hudPos.textContent = `${a.name} · ${(+section.dataset.index) + 1}/${ARTISTS.length}`;
+      hudPos.textContent = `${a.name} · ${artistIdx + 1}/${list.length}`;
     }
-  }
-
-  // Sync stage pill
-  if (stagePillEl) {
-    const activeStage = section.dataset.section === "artist"
-      ? ARTISTS[+section.dataset.index]?.stage
-      : "all";
-    stagePillEl.querySelectorAll("button").forEach(b => {
-      b.classList.toggle("active", b.dataset.stage === activeStage);
-    });
   }
 }
 
+let currentObserver = null;
+
 function observeSections() {
+  if (currentObserver) currentObserver.disconnect();
   const sections = Array.from(reel.querySelectorAll(".section"));
-  const io = new IntersectionObserver(entries => {
+  currentObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
         setActiveSection(entry.target);
       }
     });
   }, { root: reel, threshold: [0.6] });
-  sections.forEach(s => io.observe(s));
+  sections.forEach(s => currentObserver.observe(s));
 }
 
 // ===== Keyboard navigation =====
@@ -376,33 +384,35 @@ reel.addEventListener("wheel", e => {
   }
 }, { passive: false });
 
-// ===== Stage pill: jump to first artist of a stage =====
+// ===== Stage pill: filter the reel to a single stage =====
 
 function buildStagePill() {
   if (!stagePillEl) return;
   const items = [
-    `<button data-stage="all">הכל</button>`,
+    `<button data-stage="all" class="${activeStageFilter === "all" ? "active" : ""}">הכל <span style="opacity:0.6">${ARTISTS.length}</span></button>`,
     ...FESTIVAL.stages.map(s => {
       const count = ARTISTS.filter(a => a.stage === s.id).length;
-      return `<button data-stage="${s.id}">${s.name} <span style="opacity:0.6">${count}</span></button>`;
+      return `<button data-stage="${s.id}" class="${activeStageFilter === s.id ? "active" : ""}">${s.name} <span style="opacity:0.6">${count}</span></button>`;
     })
   ];
   stagePillEl.innerHTML = items.join("");
-
-  stagePillEl.addEventListener("click", e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-    const stage = btn.dataset.stage;
-    const sections = Array.from(reel.querySelectorAll(".section"));
-    let target;
-    if (stage === "all") {
-      target = sections[0];
-    } else {
-      target = sections.find(s => s.dataset.section === "artist" && s.dataset.stage === stage);
-    }
-    target?.scrollIntoView({ behavior: "smooth" });
-  });
 }
+
+stagePillEl.addEventListener("click", e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  const stage = btn.dataset.stage;
+  if (stage === activeStageFilter) return;
+  activeStageFilter = stage;
+
+  // Rebuild reel + progress + pill, jump back to top
+  buildReel();
+  buildVerticalProgress();
+  buildStagePill();
+  observeSections();
+  reel.scrollTo({ top: 0, behavior: "instant" in HTMLElement.prototype ? "auto" : "auto" });
+  setTimeout(() => setActiveSection(reel.querySelector(".section")), 30);
+});
 
 // iOS Safari address-bar fix: keep --vh in sync
 function setVH() {
