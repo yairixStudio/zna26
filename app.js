@@ -211,12 +211,14 @@ function buildReel() {
   const artistSections = list.map((a, i) => artistSection(a, i)).join("");
   reel.innerHTML = (activeStageFilter === "all" ? heroSection() : "") + artistSections;
 
-  // CTA scroll to first artist
+  // CTA scroll to first artist (hero only renders in "all" mode)
   const cta = document.getElementById("cta-start");
-  cta.addEventListener("click", () => {
-    const first = reel.querySelector('[data-section="artist"]');
-    first?.scrollIntoView({ behavior: "smooth" });
-  });
+  if (cta) {
+    cta.addEventListener("click", () => {
+      const first = reel.querySelector('[data-section="artist"]');
+      first?.scrollIntoView({ behavior: "smooth" });
+    });
+  }
 
   // Wire pager dots and YouTube thumbs for each artist section
   reel.querySelectorAll('[data-section="artist"]').forEach(section => {
