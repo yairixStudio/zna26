@@ -39,6 +39,11 @@ const ARTISTS = [
       { type: "Spotify", url: "https://open.spotify.com/artist/1QqxPdbBp2hsHuKCDDCOL5" },
       { type: "Bandcamp", url: "https://hommega.bandcamp.com/" },
       { type: "Discogs", url: "https://www.discogs.com/artist/13834-Yahel" }
+    ],
+    tracks: [
+      { id: "KCbcjoHmSJc", title: "Voyage (with Eyal Barkan)", year: 2000 },
+      { id: "dOfoHoVmPBQ", title: "For The People", year: 2001 },
+      { id: "cqj25UxWKlQ", title: "For The People (Full Album)", year: 2001 }
     ]
   },
   {
@@ -63,6 +68,11 @@ const ARTISTS = [
       { type: "Spotify", url: "https://open.spotify.com/artist/6FPDZzGbAgGNYUZgj0QozQ" },
       { type: "Website", url: "https://matsuri-digital.com/en/artist/tsuyoshi-suzuki/" },
       { type: "Resident Advisor", url: "https://ra.co/dj/tsuyoshi" }
+    ],
+    tracks: [
+      { id: "MFd7_zTci_g", title: "Prana - Geomantik", year: 1997 },
+      { id: "Oo9lag7Bz5o", title: "Prana - Geomantik (Full Album)", year: 1997 },
+      { id: "BkvxkraxaNU", title: "Tsuyoshi Suzuki @ ZNA Gathering 2022", year: 2022 }
     ]
   },
   {
@@ -85,6 +95,9 @@ const ARTISTS = [
     links: [
       { type: "Bandcamp", url: "https://kriskylven.bandcamp.com/" },
       { type: "LinkedIn", url: "https://www.linkedin.com/in/kylven/" }
+    ],
+    tracks: [
+      { id: "z6OI0HnDprs", title: "Syb Unity Nettwerk - Goa Years", year: 2021 }
     ]
   },
   {
@@ -106,6 +119,9 @@ const ARTISTS = [
     links: [
       { type: "Wikipedia", url: "https://en.wikipedia.org/wiki/Simon_Ghahary" },
       { type: "Discogs", url: "https://www.discogs.com/label/2828-Blue-Room-Released" }
+    ],
+    tracks: [
+      { id: "deha9cXsAUo", title: "Essential Guide To Blue Room Released (1995-1998)", year: 1998 }
     ]
   },
   {
@@ -151,6 +167,9 @@ const ARTISTS = [
     links: [
       { type: "Bandcamp", url: "https://robertleiner.bandcamp.com/" },
       { type: "Resident Advisor", url: "https://ra.co/dj/robertleiner" }
+    ],
+    tracks: [
+      { id: "LznhsMP1AnA", title: "Robert Leiner aka The Source Experience - Modular Live", year: 2016 }
     ]
   },
   {
@@ -173,6 +192,9 @@ const ARTISTS = [
     links: [
       { type: "Discogs", url: "https://www.discogs.com/artist/66276-Sean-Williams" },
       { type: "Last.fm", url: "https://www.last.fm/music/Process" }
+    ],
+    tracks: [
+      { id: "jSqrnWIRvl4", title: "Satori - Entropy", year: 1997 }
     ]
   },
   {
@@ -195,6 +217,10 @@ const ARTISTS = [
     links: [
       { type: "Bandcamp", url: "https://nanorecords.bandcamp.com/album/the-james-monro-collection" },
       { type: "Beatport", url: "https://www.beatport.com/artist/james-monro/35028" }
+    ],
+    tracks: [
+      { id: "hB9lYBllghc", title: "James Monro (Flying Rhino) Mix 1995", year: 1995 },
+      { id: "-fD7XL6AswY", title: "The James Monro Collection Mix", year: 2017 }
     ]
   },
   {
@@ -217,7 +243,8 @@ const ARTISTS = [
     links: [
       { type: "Website", url: "http://www.jotisidhu.com/" },
       { type: "Spotify", url: "https://open.spotify.com/artist/1DNW3o2lZhRQNcDYHXa9xx" }
-    ]
+    ],
+    tracks: []
   },
   {
     id: "extrawelt",
@@ -241,6 +268,10 @@ const ARTISTS = [
     links: [
       { type: "Website", url: "https://www.extrawelt.com/" },
       { type: "Resident Advisor", url: "https://ra.co/dj/extrawelt" }
+    ],
+    tracks: [
+      { id: "sdl7PZmlGQI", title: "Soopertrack (Original)", year: 2005 },
+      { id: "X2MS0HU29JY", title: "Extrawelt - Live", year: 2018 }
     ]
   },
   {
@@ -264,6 +295,10 @@ const ARTISTS = [
     links: [
       { type: "Resident Advisor", url: "https://ra.co/dj/mathewjonson" },
       { type: "Bandcamp", url: "https://mathewjonson.bandcamp.com/" }
+    ],
+    tracks: [
+      { id: "daSid6Lh9Vs", title: "Marionette", year: 2005 },
+      { id: "cw-8cWKSjkg", title: "Marionette (The Beginning)", year: 2010 }
     ]
   },
   {
@@ -287,6 +322,10 @@ const ARTISTS = [
     links: [
       { type: "Bandcamp", url: "https://saafibrothers.bandcamp.com/" },
       { type: "Website", url: "https://www.le-mar.de/" }
+    ],
+    tracks: [
+      { id: "JVVpVgdCT84", title: "Saafi Brothers - Mystic Cigarettes (Full Album)", year: 1997 },
+      { id: "HhoazuZjaCI", title: "Saafi Brothers - 2046", year: 2008 }
     ]
   },
   {
