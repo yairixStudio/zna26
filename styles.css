@@ -615,11 +615,55 @@ a { color: var(--sun-yellow); }
   box-shadow: 0 0 10px var(--sun-yellow);
 }
 
+/* ===== Stage pill (top) ===== */
+.stage-pill {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  background: rgba(10, 5, 36, 0.7);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  max-width: calc(100vw - 28px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.stage-pill::-webkit-scrollbar { display: none; }
+
+.stage-pill button {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s;
+  letter-spacing: 0.3px;
+}
+
+.stage-pill button.active {
+  background: linear-gradient(135deg, var(--sun-pink), var(--sun-orange));
+  color: var(--bg-deep);
+  box-shadow: 0 0 14px rgba(255, 92, 138, 0.5);
+}
+
+.stage-pill button:not(.active):hover { color: var(--text); }
+
 /* ===== HUD ===== */
 .hud {
   position: fixed;
-  top: 12px;
-  inset-inline-end: 12px;
+  top: 14px;
+  inset-inline-end: 14px;
   z-index: 20;
   text-align: end;
   pointer-events: none;

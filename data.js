@@ -144,6 +144,11 @@ const ARTISTS = [
     links: [
       { type: "Skypeople", url: "https://skypeoplemusic.com/ray-castle/" },
       { type: "Discogs", url: "https://www.discogs.com/artist/30879-Ray-Castle" }
+    ],
+    tracks: [
+      { id: "s_HIUmQjb7E", title: "Time Traveller [Masaray]", year: 1995 },
+      { id: "dltPf5Ni7sg", title: "Insectoid - Tribedelic Nomads (Feral Mix)", year: 2018 },
+      { id: "0J5TBoGo1mg", title: "Rhythmystec - Plasmatik", year: null }
     ]
   },
   {
@@ -244,7 +249,11 @@ const ARTISTS = [
       { type: "Website", url: "http://www.jotisidhu.com/" },
       { type: "Spotify", url: "https://open.spotify.com/artist/1DNW3o2lZhRQNcDYHXa9xx" }
     ],
-    tracks: []
+    tracks: [
+      { id: "_5Cg9bPCZ8Y", title: "Psychaos - New Sensations", year: 2007 },
+      { id: "pIbqA1EWOBA", title: "Boom Festival 2010 RETRO Live Set", year: 2010 },
+      { id: "f27ftXgd6GM", title: "Live @ Ozora Festival Main Stage", year: 2013 }
+    ]
   },
   {
     id: "extrawelt",
@@ -344,7 +353,10 @@ const ARTISTS = [
     albums: [
       { name: "DJ sets קלאסיים", year: "מתמשך" }
     ],
-    links: []
+    links: [],
+    tracks: [
+      { id: "_awxLPKmT_M", title: "VA Goa Trance Legacy Vol.3 (compiled)", year: 2017 }
+    ]
   },
   {
     id: "ukiro",
@@ -396,51 +408,72 @@ const ARTISTS = [
   },
   {
     id: "dogma",
-    name: "Dogma",
-    realName: "דוגמה",
+    name: "Dogma 3000",
+    realName: "Dogma (Damir Ludvig & Goran Stetic)",
     country: "🇭🇷 קרואטיה",
     age: null,
-    born: "פעילים בסצנה",
+    born: "1996",
     stage: "zambu",
-    role: "DJ Set",
-    tags: ["Croatian Deck Masters", "Melodic Goa"],
+    role: "Live B2B",
+    tags: ["Croatian Goa", "Land of Utopia", "Reunion"],
     color: "#f72585",
-    bio: "אמני המיקסר הקרואטים. ב-ZNA יוצרים מסע אפי של שעתיים דרך הטראקים המלודיים הטובים ביותר של גואה טראנס במהלך השעות המאוחרות של הבוקר.",
-    notable: "ידועים בסטים של 'late morning' מלודיים-משוגעים",
-    albums: [],
-    links: []
+    bio: "פרויקט הגואה הקרואטי המוכר ביותר בעולם. שחררו ב-1997 את אלבום הביכורים האייקוני 'Land of Utopia' תחת חותמת Blue Moon הבריטית. ניגנו ב-Brixton Academy בלונדון, ב-Roxy בניו יורק, ב-Lust בטוקיו, ב-Dynamo Dvash בתל אביב, ולפני 700,000 איש ב-Love Parade בגרמניה. אחרי שנים נפרדים - מתאחדים מחדש במיוחד ל-ZNA 2026.",
+    notable: "'Land of Utopia' (1997, Blue Moon) - אבן יסוד של גואה אירופי",
+    albums: [
+      { name: "Land of Utopia", year: 1997, project: "Dogma 3000" },
+      { name: "Land of Utopia (Expanded Remaster)", year: 2020, project: "Dogma 3000" }
+    ],
+    links: [
+      { type: "Website", url: "http://www.dogma3000.com/" }
+    ],
+    tracks: [
+      { id: "tV_HLfvs4_4", title: "Land Of Utopia", year: 1997 },
+      { id: "G_hdbVqSYA4", title: "Land Of Utopia (Expanded Remaster)", year: 2020 },
+      { id: "5amZX-9MZk0", title: "Sutra Sarma", year: null }
+    ]
   },
   {
     id: "alex-tolstey",
     name: "Alex Tolstey",
-    realName: "אלכס טולסטיי",
-    country: "🌍 בינלאומי",
+    realName: "אלכס טולסטיי (Boshke Beats)",
+    country: "🇪🇪 אסטוניה",
     age: null,
-    born: "פעיל בסצנה",
+    born: "פעיל מ-2001",
     stage: "retro",
     role: "DJ Set",
-    tags: ["Retro Goa"],
+    tags: ["Boshke Beats", "Retro Goa", "Eclectic"],
     color: "#7209b7",
-    bio: "אומן ZNA 2026, חלק מהקולקטיב המאוחד של חוגגי הגואה הרטרו.",
-    notable: "אומן Retro Universe",
+    bio: "מייסד ומנהל Boshke Beats Records (פעיל מאז 2001). אגדה במחשבה החופשית של הסצנה - דרך כפלטיניית רוק, דיסקו, טכנו, אלקטרו וטראנס בזרימה אחת. בשנים האחרונות מופיע גם תחת הפרויקט Triple Distilled Disco Squad - 'Slow disco-techno from beyond'.",
+    notable: "מייסד Boshke Beats Records - חותמת קאלט של פסיטראנס",
     albums: [],
-    links: []
+    links: [],
+    tracks: [
+      { id: "n2WhZmg2Oog", title: "The Outlaws Vol II Mix", year: null },
+      { id: "d4cAunDBl7Q", title: "Live @ Boom Festival 2012", year: 2012 }
+    ]
   },
   {
     id: "alien-rain",
     name: "Alien Rain",
-    realName: "אליין ריין",
-    country: "🇸🇪 שוודיה",
+    realName: "מילטון ברדלי (Alien Rain)",
+    country: "🇩🇪 ברלין",
     age: null,
     born: "פעיל בסצנה",
     stage: "retro",
     role: "Live",
-    tags: ["Acid Techno", "Alien Communications"],
+    tags: ["Acid Techno", "Alien Communications", "Berlin"],
     color: "#1bc47d",
-    bio: "אלקטרוניקה אסידית מסתורית מסקנדינביה - שחרור על Mord ועל ה-label שלו Alien Communications.",
-    notable: "אסיד גלקטי לעולם החדש של ZNA",
-    albums: [],
-    links: []
+    bio: "פרויקט האסיד-טכנו של מילטון ברדלי מברלין. מקדיש את הקריירה להחייאת האנרגיה הגולמית של אסיד ה-303 משנות ה-90 עם קצה ניסיוני מודרני. שחרורים על החותמת שלו Alien Communications וגם על Mord ו-Out of Place. שם מוערך בסצנה התת-קרקעית הברלינאית.",
+    notable: "סדרת ה-EP בויניל בלבד 'Alien Rain I-VI' - קלאסיקה עכשווית של אסיד טכנו",
+    albums: [
+      { name: "Alien Rain I-VI series", year: "2012-2017", project: "vinyl-only" }
+    ],
+    links: [],
+    tracks: [
+      { id: "hhee6W8NEpc", title: "Illusion [Alien Rain VI]", year: 2017 },
+      { id: "HHUvgyivHvo", title: "Alienopolis", year: null },
+      { id: "HUlZAzpxyFI", title: "Empire Of Illusion [UFO5]", year: null }
+    ]
   },
   {
     id: "anais-lin",
@@ -480,31 +513,45 @@ const ARTISTS = [
     realName: "מארק ון דר פלוכט",
     country: "🇳🇱 הולנד",
     age: null,
-    born: "פעיל בסצנה",
+    born: "פעיל מתחילת שנות ה-90",
     stage: "zambu",
     role: "DJ Set",
-    tags: ["Industrial Goa", "Heavy Atmospheres"],
+    tags: ["Industrial Goa", "Blue Room", "Atomic Records"],
     color: "#5a189a",
-    bio: "אמן מסע פסיכדלי כבד שמערב נוף-קול תעשייתי עם אטמוספרות פסיטראנס וטכנו של אותה תקופה. מבית-גידול של מקדש זמבו.",
-    notable: "סטים פסיכדליים-תעשייתיים בלתי נשכחים",
-    albums: [],
-    links: []
+    bio: "DJ ותיק מהסצנה הפסיכדלית של תחילת שנות ה-90 - שילב נוף-קול תעשייתי עם אטמוספרות פסיכדליות כבדות. עבד כמקדם של החותמות הבריטיות Blue Room Released ו-Atomic Records. נסוג ב-2000 וחזר לסצנה אחרי הזמנה ל-ZNA Gathering 2020.",
+    notable: "אלבום 1998 'Behind The Scenes' (Psilowave) - אבן דרך של תק-פסי",
+    albums: [
+      { name: "Behind The Scenes", year: 1998, project: "Psilowave" }
+    ],
+    links: [],
+    tracks: [
+      { id: "zkzTd8ba-Mo", title: "Live @ ZNA Gathering 2022", year: 2022 },
+      { id: "TdZ_SuOwrUQ", title: "Live @ Cycles of Life", year: 2023 },
+      { id: "jOriE5DfSLk", title: "Spontaneous Human Combustion (Burning Man)", year: null }
+    ]
   },
   {
     id: "solitare",
-    name: "Solitare",
-    realName: "סוליטר",
-    country: "🌍 בינלאומי",
+    name: "DJ Solitare",
+    realName: "מארק איינלי (DJ Solitare)",
+    country: "🇨🇦 קנדה (ונקובר)",
     age: null,
-    born: "פעיל בסצנה",
+    born: "1994",
     stage: "zambu",
-    role: "DJ Set",
-    tags: ["Zambu Family"],
+    role: "Vinyl Set",
+    tags: ["DAT Records", "Matsuri Digital", "Goa Selector"],
     color: "#3c096c",
-    bio: "מכשף תקליטים אמיתי ושורשי במציאות של זמבו. חלק בלתי נפרד מההוויה של מקדש זמבו ב-ZNA.",
-    notable: "Resident Zambu Temple",
+    bio: "פסנתרן קלאסי מבית, שנפל לפסיטראנס בטוקיו ב-1994 והפך לאחד הסלקטורים החשובים של גואה טראנס מהשורש של שנות ה-90. שותף-מפיק ו-DJ ב-DAT Records האיטלקית, ונציג בינלאומי של Matsuri Digital. הופעות בויניל בלבד שהופכות אותו לקבוע במקדש זמבו ובמסיבות רטרו ברחבי העולם.",
+    notable: "סטים מרתון בויניל - נכס של הסצנה הרטרו",
     albums: [],
-    links: []
+    links: [
+      { type: "Website", url: "https://djsolitare.com/" }
+    ],
+    tracks: [
+      { id: "1k-XbkfMl2k", title: "Retro Goa Explorations Ep.123", year: null },
+      { id: "nGIkRxh3xiw", title: "Retro Goa Explorations Ep.64", year: null },
+      { id: "-a_-fnGYhi4", title: "Retro Goa Explorations Ep.117", year: null }
+    ]
   },
   {
     id: "earl-peal",
@@ -541,16 +588,16 @@ const ARTISTS = [
   {
     id: "gabi-von-dub",
     name: "Gabi Vøn Dub",
-    realName: "גאבי ון דאב",
-    country: "🌍 בינלאומי",
+    realName: "גאבי ון דאב (Arctic Dub Studios)",
+    country: "🇵🇹 פורטוגל",
     age: null,
     born: "פעיל בסצנה",
     stage: "zambu",
     role: "DJ Set",
-    tags: ["Dub", "Psybient"],
+    tags: ["Arctic Dub", "Post-Dub Techno", "Portugal"],
     color: "#7b2cbf",
-    bio: "סלקטור דאב פסיכדלי - חוויית צ'יל ו-low-end עמוקה.",
-    notable: "Zambu Temple",
+    bio: "DJ ומפיק פורטוגזי שעובד מסטודיו Arctic Dub - מתמחה באמביינט, פוסט-דאב טכנו ואלקטרוניקה ניסיונית בהשראת דאב. אוצר ומקפיל מרכזי של חותמת Arctic Dub (Sursumcorda), פעיל בקהילת הדאב והבאס הפורטוגזית התת-קרקעית.",
+    notable: "סדרת ה-compilations 'Arctic Dub Sursumcorda' - אבן יסוד של דאב פורטוגזי",
     albums: [],
     links: []
   },
@@ -560,15 +607,21 @@ const ARTISTS = [
     realName: "רי קיי",
     country: "🇯🇵 יפן",
     age: null,
-    born: "פעיל בסצנה",
+    born: "פעילה מ-1992",
     stage: "retro",
     role: "DJ Set",
-    tags: ["Japanese Goa", "Matsuri Family"],
+    tags: ["Hypnodisk", "Matsuri Family", "Japanese Goa"],
     color: "#fb6f92",
-    bio: "אמן יפני בעל זיקה למשפחת Matsuri - גואה טראנס בסגנון יפני נקי ומקפיד.",
-    notable: "Retro Universe",
-    albums: [],
-    links: []
+    bio: "DJ ויוצרת חלוצה יפנית - מנגנת מ-1992 וחלק מהמשפחה המורחבת של Matsuri Productions/Digital שעזרה לזרוע את סצנת הפסיטראנס היפנית. ב-2002 ייסדה את החותמת Hypnodisk. הפילוסופיה האמנותית שלה מכוונת לטרנספורמציה תודעתית דרך צליל. מופיעה לעיתים עם השותף Masa בלהקת Kinocosmo.",
+    notable: "'Early Tracks 1' (Hypnodisk) - אוסף גואה יפני בלתי-משוחרר משנת 1995-1998",
+    albums: [
+      { name: "Early Tracks 1", year: 2010, project: "Hypnodisk" }
+    ],
+    links: [],
+    tracks: [
+      { id: "vZdeEa-D160", title: "Kage", year: 1996 },
+      { id: "TPIUjK_4aXA", title: "Live @ Unite - Psytrance Sessions", year: null }
+    ]
   },
   {
     id: "klil-co",
@@ -605,16 +658,16 @@ const ARTISTS = [
   {
     id: "triple-distilled",
     name: "Triple Distilled Disco Squad",
-    realName: "Triple Distilled Disco Squad",
-    country: "🌍 בינלאומי",
+    realName: "אלכס בושקה טולסטיי + קולקטיב",
+    country: "🇪🇪 אסטוניה",
     age: null,
     born: "קולקטיב",
     stage: "market",
     role: "DJ Collective",
-    tags: ["Disco", "Market Vibes"],
+    tags: ["Boshke Beats", "Slow Disco", "Eclectic"],
     color: "#ffd60a",
-    bio: "קולקטיב דיסקו שיחמם את אזור השוק עם נשמת חגיגה רטרו ומקצב שמכניס לוויב.",
-    notable: "אומני שוק - קצב חגיגי לפני המסיבות",
+    bio: "פרויקט DJ בסגנון פריסטייל של אלכס 'Boshke' טולסטיי, מייסד Boshke Beats Records (פעיל מ-2001). הסט אינו מתוכנן ואקלקטי - רוק, דיסקו, טכנו, אלקטרו וטראנס מתמזגים לזרימה אחת מאולתרת. 'Slow disco-techno from beyond' - היפר-קלף בפסטיבלים כמו Daad Gathering.",
+    notable: "Daad Gathering 2022 - הופעה אגדית של מיני-מקס דיסקו וטכנו",
     albums: [],
     links: []
   },
@@ -663,6 +716,156 @@ const ARTISTS = [
     color: "#fee440",
     bio: "וייב צ'יל ועומק רוחני - חלק מאזור השוק והחימום של ZNA.",
     notable: "Market vibes",
+    albums: [],
+    links: []
+  },
+  // ===== 2026 announcement additions =====
+  {
+    id: "jaia",
+    name: "Jaïa",
+    realName: "ז'רום הרוואה",
+    country: "🇫🇷 צרפת",
+    age: null,
+    born: "פעיל מסוף שנות ה-90",
+    stage: "retro",
+    role: "Live",
+    tags: ["French Goa", "Mosaïc", "Live"],
+    color: "#fb8500",
+    bio: "פרויקט גואה טראנס חי של ז'רום הרוואה מצרפת. ב-ZNA 2026 פותח את רחבת הריקודים עם סט בילד-אפ שמתחיל את המסע של Retro Universe.",
+    notable: "אלבום 'Mai Mai' (1999) על Mosaïc Records - קלאסיקה צרפתית",
+    albums: [
+      { name: "Mai Mai", year: 1999, project: "Jaïa" }
+    ],
+    links: [],
+    tracks: []
+  },
+  {
+    id: "graham-wood",
+    name: "Graham Wood",
+    realName: "גרהאם וודס (Total Eclipse)",
+    country: "🇬🇧 בריטניה",
+    age: null,
+    born: "פעיל מתחילת שנות ה-90",
+    stage: "retro",
+    role: "Live",
+    tags: ["Total Eclipse", "Transient Records", "Goa Pioneer"],
+    color: "#3a86ff",
+    bio: "אגדה של גואה טראנס - חלק מ-Total Eclipse וממייסדי Transient Records הבריטית. ב-ZNA 2026 משחרר את מלוא המאסטריות שלו במה לחגיגה הרטרו-פוטוריסטית.",
+    notable: "Total Eclipse - אחד הפרויקטים המכוננים של גואה הצרפתי-בריטי",
+    albums: [],
+    links: []
+  },
+  {
+    id: "sid-shanti",
+    name: "Sid Shanti",
+    realName: "Sid Shanti",
+    country: "🌍 בינלאומי",
+    age: null,
+    born: "פעיל משנות ה-90",
+    stage: "retro",
+    role: "DJ Set",
+    tags: ["Pioneer", "Veteran"],
+    color: "#9d4edd",
+    bio: "DJ ויוצר ותיק שאינטואיציה מוזיקלית עזרה להגדיר תקופה. חוזר ל-ZNA 2026 לסט מיוחד.",
+    notable: "סט VS אקסקלוסיבי בויניל עם Orion ב-ZNA 2026",
+    albums: [],
+    links: []
+  },
+  {
+    id: "orion-borelli",
+    name: "Orion (Jean Borelli)",
+    realName: "ז'אן בורלי (Orion)",
+    country: "🇫🇷 צרפת",
+    age: null,
+    born: "פעיל משנות ה-90",
+    stage: "retro",
+    role: "Vinyl VS Set",
+    tags: ["Pioneer", "Vinyl", "Retro Goa"],
+    color: "#7b2cbf",
+    bio: "דמות מפתח מהשנים המעצבות של פסיטראנס. ב-ZNA 2026 חולק תקליטים בסט VS אקסקלוסיבי עם Sid Shanti - לכל מבריקי הסצנה.",
+    notable: "VS Sid Shanti - מפגש ויניל מיוחד",
+    albums: [],
+    links: []
+  },
+  {
+    id: "takeshi-isogai",
+    name: "Takeshi Isogai",
+    realName: "טאקשי איסוגאי",
+    country: "🇯🇵 יפן",
+    age: null,
+    born: "פעיל מאמצע שנות ה-90",
+    stage: "retro",
+    role: "Live",
+    tags: ["Japanese Pioneer", "Experimental Psy"],
+    color: "#e63946",
+    bio: "מפיק ניסיוני יפני שפעיל מאמצע שנות ה-90. הופעות חיות שלו הופכות ל'מבוכי מוזיקה' פסיכדליים. חלק מסט VS חלוצים מיוחד ב-ZNA 2026.",
+    notable: "סט VS חלוצים - חוויה הסטורית",
+    albums: [],
+    links: []
+  },
+  {
+    id: "battle-future-buddhas",
+    name: "Battle of the Future Buddhas",
+    realName: "דייוויד (Battle of the Future Buddhas)",
+    country: "🇸🇪 שוודיה",
+    age: null,
+    born: "פעיל מסוף שנות ה-90",
+    stage: "retro",
+    role: "Live",
+    tags: ["Night Goa", "Boom Records", "Twin Sharkfins"],
+    color: "#240046",
+    bio: "אומן של פסקולי לילה - אגדה ב-Boom Records עם האלבום 'Twin Sharkfins'. סטים לילה אפלים ועצימים שלוקחים את הקהל למחילות זמן עמוקות.",
+    notable: "אלבום 'Twin Sharkfins' (Boom Records) - קלאסיקה של לילה",
+    albums: [
+      { name: "Twin Sharkfins", year: 2003, project: "Boom Records" }
+    ],
+    links: []
+  },
+  {
+    id: "goaacen",
+    name: "Goaacen",
+    realName: "Goaacen",
+    country: "🇵🇹 פורטוגל",
+    age: null,
+    born: "פעיל בסצנה",
+    stage: "guardians",
+    role: "DJ Set",
+    tags: ["Suntrip", "Dark Goa", "Portuguese"],
+    color: "#0077b6",
+    bio: "DJ פורטוגזי מוביל וחותמת Suntrip - חוקר את הטריטוריות האפלות והעמוקות יותר של גואה טראנס. חלק מהליין-אפ של Goa Guardians.",
+    notable: "DJ של חותמת Suntrip - הוצאה מובילה של גואה מודרני",
+    albums: [],
+    links: []
+  },
+  {
+    id: "dark-el-kante",
+    name: "Dark El Kante",
+    realName: "חורחה בזאן (Dark El Kante)",
+    country: "🌍 בינלאומי",
+    age: null,
+    born: "פעיל בסצנה",
+    stage: "guardians",
+    role: "DJ Set",
+    tags: ["Suomisaundi", "Random Records"],
+    color: "#90e0ef",
+    bio: "DJ מוביל של ז'אנר ה-Suomisaundi - גואה טראנס פיני אקסצנטרי וחופשי. מנהל את החותמת ללא רווח Random Records שתומכת בארגוני זכויות-ילידים.",
+    notable: "Random Records - חותמת אקטיביסטית",
+    albums: [],
+    links: []
+  },
+  {
+    id: "merrow",
+    name: "Merr0w",
+    realName: "בריס (Merr0w)",
+    country: "🇫🇷 צרפת",
+    age: null,
+    born: "פעיל מתחילת שנות ה-2000",
+    stage: "guardians",
+    role: "DJ Set",
+    tags: ["Modern Goa", "Suntrip", "Global Sect"],
+    color: "#ff5c8a",
+    bio: "חלוץ של גואה מודרני מצרפת - מפיק מאז תחילת שנות ה-2000 עם שחרורים על Suntrip ו-Global Sect.",
+    notable: "Suntrip & Global Sect - חתום על שתי חותמות מובילות",
     albums: [],
     links: []
   }

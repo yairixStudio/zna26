@@ -4,11 +4,10 @@
 
 const reel = document.getElementById("reel");
 const hud = document.getElementById("hud");
-const hudStage = document.getElementById("hud-stage");
 const hudPos = document.getElementById("hud-pos");
-const hudHint = document.getElementById("hud-hint");
 const verticalProgress = document.getElementById("vertical-progress");
 const bgScene = document.getElementById("bg-scene");
+const stagePillEl = document.getElementById("stage-pill");
 
 const stageColor = {
   retro: "linear-gradient(180deg, #0a0524 0%, #1a0a3e 30%, #4a1e6e 60%, #c0367a 80%, #ff7e1f 100%)",
@@ -43,9 +42,8 @@ function heroSection() {
         <span><strong>🎧</strong> ${ARTISTS.length} אומנים</span>
       </div>
       <button class="hero-cta" id="cta-start">
-        בואו נתחיל <span class="hero-cta-icon">↓</span>
+        בואו נתחיל
       </button>
-      <div class="swipe-hint-v">↓</div>
     </section>
   `;
 }
@@ -69,7 +67,6 @@ function panelHero(a) {
         </div>
         <div class="artist-quick" style="margin-top:6px;">${tags}</div>
       </div>
-      <div class="swipe-hint-h">←</div>
     </div>
   `;
 }
@@ -292,14 +289,22 @@ function setActiveSection(section) {
   }
 
   if (section.dataset.section === "hero") {
-    hudStage.textContent = "ZNA 2026";
     hudPos.textContent = "ראשי";
   } else {
     const a = ARTISTS[+section.dataset.index];
     if (a) {
-      hudStage.textContent = stageInfo(a.stage).name;
-      hudPos.textContent = `${(+section.dataset.index) + 1} / ${ARTISTS.length}`;
+      hudPos.textContent = `${a.name} · ${(+section.dataset.index) + 1}/${ARTISTS.length}`;
     }
+  }
+
+  // Sync stage pill
+  if (stagePillEl) {
+    const activeStage = section.dataset.section === "artist"
+      ? ARTISTS[+section.dataset.index]?.stage
+      : "all";
+    stagePillEl.querySelectorAll("button").forEach(b => {
+      b.classList.toggle("active", b.dataset.stage === activeStage);
+    });
   }
 }
 
@@ -367,24 +372,33 @@ reel.addEventListener("wheel", e => {
   }
 }, { passive: false });
 
-// Hide hint after first interaction
-let hintHidden = false;
-function hideHint() {
-  if (hintHidden) return;
-  hintHidden = true;
-  document.querySelectorAll(".swipe-hint-h, .swipe-hint-v").forEach(el => {
-    el.style.transition = "opacity 0.6s";
-    el.style.opacity = "0";
-    setTimeout(() => el.remove(), 700);
+// ===== Stage pill: jump to first artist of a stage =====
+
+function buildStagePill() {
+  if (!stagePillEl) return;
+  const items = [
+    `<button data-stage="all">הכל</button>`,
+    ...FESTIVAL.stages.map(s => {
+      const count = ARTISTS.filter(a => a.stage === s.id).length;
+      return `<button data-stage="${s.id}">${s.name} <span style="opacity:0.6">${count}</span></button>`;
+    })
+  ];
+  stagePillEl.innerHTML = items.join("");
+
+  stagePillEl.addEventListener("click", e => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    const stage = btn.dataset.stage;
+    const sections = Array.from(reel.querySelectorAll(".section"));
+    let target;
+    if (stage === "all") {
+      target = sections[0];
+    } else {
+      target = sections.find(s => s.dataset.section === "artist" && s.dataset.stage === stage);
+    }
+    target?.scrollIntoView({ behavior: "smooth" });
   });
-  if (hudHint) {
-    hudHint.style.transition = "opacity 0.6s";
-    hudHint.style.opacity = "0";
-  }
 }
-reel.addEventListener("scroll", hideHint, { passive: true, once: true });
-document.addEventListener("keydown", hideHint, { once: true });
-document.addEventListener("touchstart", hideHint, { passive: true, once: true });
 
 // iOS Safari address-bar fix: keep --vh in sync
 function setVH() {
@@ -397,6 +411,7 @@ window.addEventListener("orientationchange", setVH);
 // Boot
 buildReel();
 buildVerticalProgress();
+buildStagePill();
 observeSections();
 // Initial active state
 setTimeout(() => setActiveSection(reel.querySelector(".section")), 50);
