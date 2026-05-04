@@ -274,14 +274,18 @@ function buildVerticalProgress() {
 function setActiveSection(section) {
   if (!section) return;
 
-  // Vertical dots
   const sections = Array.from(reel.querySelectorAll(".section"));
   const idx = sections.indexOf(section);
+
+  // Mark active section (drives entry animation)
+  sections.forEach(s => s.classList.toggle("is-active", s === section));
+
+  // Vertical dots
   verticalProgress.querySelectorAll(".v-dot").forEach((d, i) => {
     d.classList.toggle("active", i === idx);
   });
 
-  // HUD
+  // HUD + retint background by stage
   const stage = section.dataset.stage;
   if (stage && stageColor[stage]) {
     bgScene.style.background = stageColor[stage];
@@ -347,6 +351,48 @@ document.addEventListener("keydown", e => {
   else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(1); }
   else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(-1); }
 });
+
+// Mouse-wheel: route horizontal-leaning wheel events to the inner pager so a
+// trackpad nudge swipes panels naturally
+reel.addEventListener("wheel", e => {
+  const current = getCurrentSection();
+  if (!current || current.dataset.section !== "artist") return;
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 8) {
+    const pager = current.querySelector(".pager");
+    if (pager) {
+      e.preventDefault();
+      // RTL: positive deltaX from a right-swipe should move forward
+      pager.scrollBy({ left: e.deltaX, behavior: "auto" });
+    }
+  }
+}, { passive: false });
+
+// Hide hint after first interaction
+let hintHidden = false;
+function hideHint() {
+  if (hintHidden) return;
+  hintHidden = true;
+  document.querySelectorAll(".swipe-hint-h, .swipe-hint-v").forEach(el => {
+    el.style.transition = "opacity 0.6s";
+    el.style.opacity = "0";
+    setTimeout(() => el.remove(), 700);
+  });
+  if (hudHint) {
+    hudHint.style.transition = "opacity 0.6s";
+    hudHint.style.opacity = "0";
+  }
+}
+reel.addEventListener("scroll", hideHint, { passive: true, once: true });
+document.addEventListener("keydown", hideHint, { once: true });
+document.addEventListener("touchstart", hideHint, { passive: true, once: true });
+
+// iOS Safari address-bar fix: keep --vh in sync
+function setVH() {
+  document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+}
+setVH();
+window.addEventListener("resize", setVH);
+window.addEventListener("orientationchange", setVH);
 
 // Boot
 buildReel();
