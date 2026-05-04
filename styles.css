@@ -321,6 +321,29 @@ a { color: var(--sun-yellow); }
   pointer-events: none;
 }
 
+/* Real photo */
+.artist-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.artist-hero-art.has-photo .artist-initials {
+  display: none;
+}
+
+.artist-hero-art.has-photo::after {
+  background:
+    radial-gradient(circle at 50% 100%, rgba(0,0,0,0.5), transparent 50%);
+}
+
+.artist-hero-art.photo-failed .artist-initials {
+  display: block;
+}
+
 .artist-initials {
   font-family: "Orbitron", sans-serif;
   font-size: clamp(60px, 16vw, 110px);

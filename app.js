@@ -51,11 +51,15 @@ function heroSection() {
 function panelHero(a) {
   const initials = getInitials(a.name);
   const tags = (a.tags || []).slice(0, 4).map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("");
+  const photo = a.photo
+    ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
+    : "";
   return `
     <div class="panel panel-hero">
       <div class="panel-inner center">
         <div class="panel-eyebrow">${escapeHtml(stageInfo(a.stage).name)}</div>
-        <div class="artist-hero-art" style="--accent: ${a.color || "#FEB447"};">
+        <div class="artist-hero-art ${a.photo ? "has-photo" : ""}" style="--accent: ${a.color || "#FEB447"};">
+          ${photo}
           <span class="artist-initials">${initials}</span>
         </div>
         <div class="artist-name">${escapeHtml(a.name)}</div>
