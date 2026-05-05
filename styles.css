@@ -1233,7 +1233,7 @@ body.has-mini-player .panel {
 .vertical-progress {
   position: fixed;
   top: 50%;
-  inset-inline-start: 8px;
+  inset-inline-start: 18px;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
@@ -1246,7 +1246,10 @@ body.has-mini-player .panel {
   transition: opacity 0.4s;
 }
 
-.vertical-progress.is-hidden {
+/* Auto-hide when there's no scroll activity for ~2s. Wakes up the moment
+   the user scrolls again. Both classes can apply; either one hides it. */
+.vertical-progress.is-hidden,
+.vertical-progress.is-idle {
   opacity: 0;
   pointer-events: none;
 }
@@ -2325,6 +2328,84 @@ body.is-on-hero #random-btn { display: inline-flex; }
   0%   { transform: rotate(0deg)   scale(1); }
   60%  { transform: rotate(360deg) scale(1.1); }
   100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ===== About / Info panel — minimal, no pills ===== */
+.bio-card--minimal {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  gap: 18px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.bio-card--minimal .bio-text {
+  font-size: clamp(14px, 3.6vw, 16.5px);
+  line-height: 1.7;
+  color: var(--text);
+  text-align: start;
+}
+
+.bio-card--minimal .bio-notable {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: -6px 0 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  text-align: start;
+}
+
+.bio-card--minimal .info-stream {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.bio-card--minimal .info-links {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  letter-spacing: 0.2px;
+  margin: -2px 0 0;
+}
+
+.bio-card--minimal .info-links a {
+  color: var(--sun-yellow);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(254, 180, 71, 0.35);
+  padding-bottom: 1px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.bio-card--minimal .info-links a:hover {
+  border-bottom-color: var(--sun-yellow);
+  color: #fff;
+}
+
+.bio-card--minimal .info-sep {
+  display: inline-block;
+  margin: 0 8px;
+  color: var(--text-muted);
+  opacity: 0.55;
+  user-select: none;
+}
+
+.bio-card--minimal .info-footnote {
+  margin-top: 4px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Hint with arrow stacked BELOW the text (one column, centered). */

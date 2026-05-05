@@ -23,7 +23,7 @@ const ARTIST_SCHEDULE = {
   // "yahel": { start: "2026-07-20T04:00:00+01:00", end: "2026-07-20T06:00:00+01:00" }
 };
 
-const ARTISTS = [
+let ARTISTS = [
   {
     id: "yahel",
     announcedAt: "2026-01-26",

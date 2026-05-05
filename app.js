@@ -532,7 +532,11 @@ function escapeHtml(s) {
 }
 
 function artistSchedule(a) {
-  return a.schedule || ARTIST_SCHEDULE?.[a.id] || null;
+  // typeof guard — `const ARTIST_SCHEDULE` lives in data.js's script scope
+  // and can throw a ReferenceError on certain load orderings before the
+  // binding is fully reachable from app.js.
+  const sched = (typeof ARTIST_SCHEDULE !== "undefined") ? ARTIST_SCHEDULE : null;
+  return a.schedule || sched?.[a.id] || null;
 }
 
 function parseScheduleTime(value) {
@@ -744,6 +748,8 @@ function updateHeroDots() {
   // Update hero section's data-stage so the active hero panel drives bg
   const sec = reel.querySelector('[data-section="hero"]');
   if (sec) sec.dataset.stage = tintStage;
+  // Hero pager landed on a different stage — reflect it in the URL.
+  if (typeof syncUrlFromActive === "function") syncUrlFromActive();
 }
 
 function rerenderArtistsBelowHero() {
@@ -858,51 +864,43 @@ function streamingLinks(a) {
 
 function panelInfo(a) {
   const links = a.links || [];
-  // Streaming icons row — always renders all 4 platforms.
+  // Streaming icons — inline, no section heading, tighter row.
   const streamingHtml = `
-    <div class="info-section">
-      <h3 class="info-section-title">סטרימינג</h3>
-      <div class="streaming-row">
-        ${streamingLinks(a).map(s => `
-          <a class="stream-icon stream-icon--${s.platform} ${s.verified ? "is-verified" : ""}"
-             href="${escapeHtml(s.url)}" target="_blank" rel="noopener"
-             title="${escapeHtml(s.label)}${s.verified ? " · ערוץ רשמי" : ""}"
-             aria-label="${escapeHtml(s.label)}${s.verified ? " (ערוץ רשמי)" : ""}">
-            ${s.icon}
-            ${s.verified ? `<span class="stream-verified" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></svg>
-            </span>` : ""}
-          </a>
-        `).join("")}
-      </div>
+    <div class="info-stream">
+      ${streamingLinks(a).map(s => `
+        <a class="stream-icon stream-icon--${s.platform} ${s.verified ? "is-verified" : ""}"
+           href="${escapeHtml(s.url)}" target="_blank" rel="noopener"
+           title="${escapeHtml(s.label)}${s.verified ? " · ערוץ רשמי" : ""}"
+           aria-label="${escapeHtml(s.label)}${s.verified ? " (ערוץ רשמי)" : ""}">
+          ${s.icon}
+          ${s.verified ? `<span class="stream-verified" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></svg>
+          </span>` : ""}
+        </a>
+      `).join("")}
     </div>
   `;
-  // Other links (Discogs / Bandcamp / Resident Advisor / Website / Wikipedia / etc).
+  // Other links — plain inline text links separated by middots.
   const linksHtml = links.length
     ? `
-      <div class="info-section">
-        <h3 class="info-section-title">קישורים נוספים</h3>
-        <div class="links-grid">
-          ${links.map(l => `<a class="link-btn" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} ↗</a>`).join("")}
-        </div>
-      </div>
+      <p class="info-links">
+        ${links.map(l => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)}</a>`).join(`<span class="info-sep">·</span>`)}
+      </p>
     `
     : "";
-  // Representatives — label / management / agency.
-  const repHtml = a.representedBy
-    ? `<div class="info-rep">🎧 ${escapeHtml(a.representedBy)}</div>`
+  // Bottom-line meta: announced date and management/label as quiet text,
+  // no pills. Joined with a middot when both are present.
+  const metaParts = [];
+  if (a.announcedAt) metaParts.push(`הוכרז ${escapeHtml(formatAnnouncedDate(a.announcedAt))}`);
+  if (a.representedBy) metaParts.push(escapeHtml(a.representedBy));
+  const metaHtml = metaParts.length
+    ? `<div class="info-footnote">${metaParts.join(`<span class="info-sep">·</span>`)}</div>`
     : "";
-  const announcedHtml = a.announcedAt
-    ? `<div class="info-meta">📣 הוכרז ב-${escapeHtml(formatAnnouncedDate(a.announcedAt))}</div>`
+  const notableHtml = a.notable
+    ? `<p class="bio-notable">— ${escapeHtml(a.notable)}</p>`
     : "";
   const bioHtml = a.bio
-    ? `
-      <div class="info-section">
-        <h3 class="info-section-title">ביוגרפיה</h3>
-        <p class="bio-text">${escapeHtml(a.bio)}</p>
-        ${a.notable ? `<div class="notable">★ ${escapeHtml(a.notable)}</div>` : ""}
-      </div>
-    `
+    ? `<p class="bio-text">${escapeHtml(a.bio)}</p>`
     : "";
   return `
     <div class="panel panel--info">
@@ -911,12 +909,12 @@ function panelInfo(a) {
           <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
           <span class="eyebrow-section">אודות</span>
         </div>
-        <div class="bio-card">
-          ${announcedHtml}
-          ${repHtml}
+        <div class="bio-card bio-card--minimal">
           ${bioHtml}
+          ${notableHtml}
           ${streamingHtml}
           ${linksHtml}
+          ${metaHtml}
         </div>
       </div>
     </div>
@@ -1149,6 +1147,8 @@ function applyDotsForPager(pager) {
   section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === realIdx));
   if (section.classList.contains("is-active")) {
     verticalProgress?.classList.toggle("is-hidden", realIdx > 0);
+    // Update URL panel param when the user lands on a different panel.
+    if (typeof syncUrlFromActive === "function") syncUrlFromActive();
   }
 }
 
@@ -1357,6 +1357,9 @@ function setActiveSection(section) {
   } else {
     cancelPeek();
   }
+
+  // Keep the URL in sync so the current view is always shareable.
+  if (typeof syncUrlFromActive === "function") syncUrlFromActive();
 }
 
 // ===== Hero peek hint =====
@@ -1933,6 +1936,124 @@ document.addEventListener("keydown", e => {
   }
 });
 
+// ===== URL routing =====
+// Short, link-shareable params: ?s=<stage> · ?a=<artistId> · ?p=<panel>
+// Examples:
+//   /                       → Main hero
+//   /?s=retro               → Retro Universe hero
+//   /?a=yahel               → Yahel hero panel
+//   /?a=yahel&p=tracks      → Yahel's tracks panel
+const PANEL_KEYS = ["hero", "info", "tracks", "discography"];
+
+function readUrlState() {
+  const sp = new URLSearchParams(location.search);
+  return { s: sp.get("s"), a: sp.get("a"), p: sp.get("p") };
+}
+
+// Snapshot the deep-link the moment the script loads — before any
+// setActiveSection/syncUrlFromActive can blank out location.search.
+const _initialRoute = readUrlState();
+
+// Suppress URL writes during the brief window where we're applying an
+// initial deep-link, so a half-settled scroll doesn't overwrite the route
+// the user came in on.
+let _suppressUrlWrite = false;
+
+function writeUrl({ s, a, p } = {}) {
+  if (_suppressUrlWrite) return;
+  const params = new URLSearchParams();
+  if (a) {
+    params.set("a", a);
+    if (p && p !== "hero") params.set("p", p);
+  } else if (s && s !== "all") {
+    params.set("s", s);
+  }
+  const qs = params.toString();
+  const next = qs ? `${location.pathname}?${qs}` : location.pathname;
+  if (next !== location.pathname + location.search) {
+    history.replaceState(null, "", next);
+  }
+}
+
+function syncUrlFromActive() {
+  const active = reel.querySelector(".section.is-active");
+  if (!active) return;
+  if (active.dataset.section === "hero") {
+    writeUrl({ s: activeStageFilter });
+  } else if (active.dataset.section === "artist") {
+    const a = active.dataset.artistId;
+    const pager = active.querySelector(".pager");
+    let p = "hero";
+    if (pager) {
+      const w = pager.clientWidth || 1;
+      const scrollIdx = Math.round(Math.abs(pager.scrollLeft) / w);
+      // Carousel: scrollIdx 0 = cloneStart, 1 = real hero, 2 = info, 3 = tracks, 4 = disco, 5 = cloneEnd.
+      const realIdx = Math.max(0, Math.min(PANEL_KEYS.length - 1, scrollIdx - 1));
+      p = PANEL_KEYS[realIdx];
+    }
+    writeUrl({ a, p });
+  }
+}
+
+function applyInitialRoute() {
+  const { s, a, p } = _initialRoute;
+  // Nothing to do — let the page settle naturally and start writing the URL.
+  if (!a && !s) return;
+  // Hold URL writes for a beat so the natural scroll-into-view flow doesn't
+  // overwrite the deep-link before it lands.
+  _suppressUrlWrite = true;
+  setTimeout(() => { _suppressUrlWrite = false; syncUrlFromActive(); }, 1500);
+
+  if (a) {
+    const artist = ARTISTS.find(x => x.id === a);
+    if (!artist) { _suppressUrlWrite = false; return; }
+    // Make sure the artist is in the current rendered list.
+    if (activeStageFilter !== "all" && artist.stage !== activeStageFilter) {
+      activeStageFilter = "all";
+      rerenderArtistsBelowHero();
+      buildStageDropdown();
+      updateHeroDots();
+    }
+    // Two requestAnimationFrame passes so layout has settled.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const sec = reel.querySelector(`[data-artist-id="${CSS.escape(a)}"]`);
+      if (!sec) return;
+      sec.scrollIntoView({ behavior: "auto", block: "start" });
+      const pIdx = PANEL_KEYS.indexOf(p);
+      if (pIdx > 0) {
+        const pager = sec.querySelector(".pager");
+        if (pager) {
+          const w = pager.clientWidth || 1;
+          // scrollIdx for real panel idx i is i+1 (cloneStart at 0).
+          pager.scrollTo({ left: (pIdx + 1) * w, behavior: "auto" });
+        }
+      }
+    }));
+    return;
+  }
+
+  if (s && s !== "all" && FESTIVAL.stages.some(st => st.id === s)) {
+    activeStageFilter = s;
+    rerenderArtistsBelowHero();
+    buildStageDropdown();
+    updateHeroDots();
+    requestAnimationFrame(() => scrollHeroToStage(s, true));
+  }
+}
+
+// ===== Vertical dots auto-hide on idle =====
+let dotsIdleTimer = null;
+function bumpDotsActivity() {
+  if (!verticalProgress) return;
+  verticalProgress.classList.remove("is-idle");
+  clearTimeout(dotsIdleTimer);
+  dotsIdleTimer = setTimeout(() => {
+    verticalProgress.classList.add("is-idle");
+  }, 2000);
+}
+// Any scroll inside the reel (vertical) or its pagers wakes the dots.
+reel.addEventListener("scroll", bumpDotsActivity, { capture: true, passive: true });
+
 // Boot
 buildReel();
 buildVerticalProgress();
@@ -1940,6 +2061,10 @@ buildStageDropdown();
 observeSections();
 // Initial active state
 setTimeout(() => setActiveSection(reel.querySelector(".section")), 50);
+// Apply deep-link from URL after first render
+setTimeout(applyInitialRoute, 80);
+// Start the idle countdown so dots fade if the user just sits there.
+bumpDotsActivity();
 
 // Try to merge build-time-fetched artist photos
 loadPhotos();

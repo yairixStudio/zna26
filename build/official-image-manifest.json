@@ -1,0 +1,590 @@
+[
+  {
+    "id": "dark-el-kante",
+    "name": "Dark El Kante",
+    "imageId": "13377",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Dark-El-Kante_500x500.jpg",
+    "photo": "images/artists/dark-el-kante.jpg"
+  },
+  {
+    "id": "doctor-vagator",
+    "name": "Doctor Vagator",
+    "imageId": "13379",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Doctor-Vagator_500x500.jpg",
+    "photo": "images/artists/doctor-vagator.jpg"
+  },
+  {
+    "id": "dj-eden",
+    "name": "DJ Eden",
+    "imageId": "13381",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Eden-Barami_500x500.jpg",
+    "photo": "images/artists/dj-eden.jpg"
+  },
+  {
+    "id": "dj-emico-amore",
+    "name": "DJ Emico Amore",
+    "imageId": "13384",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Emico-Amore_500x500.jpg",
+    "photo": "images/artists/dj-emico-amore.jpg"
+  },
+  {
+    "id": "jordan",
+    "name": "Jordan",
+    "imageId": "13386",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Jordan_500x500.jpg",
+    "photo": "images/artists/jordan.jpg"
+  },
+  {
+    "id": "larsik",
+    "name": "Larsik",
+    "imageId": "13388",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Larsik_500x500.jpg",
+    "photo": "images/artists/larsik.jpg"
+  },
+  {
+    "id": "psara",
+    "name": "Psara",
+    "imageId": "13390",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Psara_500x500.jpg",
+    "photo": "images/artists/psara.jpg"
+  },
+  {
+    "id": "simon-ghahary",
+    "name": "Simon Ghahary",
+    "imageId": "13392",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Simon-Ghahary_500x500.jpg",
+    "photo": "images/artists/simon-ghahary.jpg"
+  },
+  {
+    "id": "sjamadan",
+    "name": "Sjama’dan",
+    "imageId": "13394",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Sjama_dan_500x500.jpg",
+    "photo": "images/artists/sjamadan.jpg"
+  },
+  {
+    "id": "ukiro",
+    "name": "Ukiro",
+    "imageId": "13396",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/Ukiro_500x500.jpg",
+    "photo": "images/artists/ukiro.jpg"
+  },
+  {
+    "id": "alphanaut",
+    "name": "Alphanaut",
+    "imageId": "12891",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/09/ZNA_Alphanaut_500x500.jpg",
+    "photo": "images/artists/alphanaut.jpg"
+  },
+  {
+    "id": "andrew-till",
+    "name": "Andrew Till",
+    "imageId": "13663",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/04/ZNA_Andrew-Till_500x500.jpg",
+    "photo": "images/artists/andrew-till.jpg"
+  },
+  {
+    "id": "atmos",
+    "name": "Atmos",
+    "imageId": "13096",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/ZNA_Atmos_500x500.jpg",
+    "photo": "images/artists/atmos.jpg"
+  },
+  {
+    "id": "battle-future-buddhas",
+    "name": "Battle of the Future Buddhas",
+    "imageId": "13309",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/01/ZNA_Battle-of-The-Future-Buddhas_500x500.jpg",
+    "photo": "images/artists/battle-future-buddhas.jpg"
+  },
+  {
+    "id": "blue-planet-corporation",
+    "name": "Blue Planet Corporation",
+    "imageId": "13004",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/10/ZNA_BluePlanetCoportation_500x500.jpg",
+    "photo": "images/artists/blue-planet-corporation.jpg"
+  },
+  {
+    "id": "cosmosis-vs-laughing-buddha",
+    "name": "Cosmosis vs Laughing Buddha",
+    "imageId": "13056",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/11/ZNA_Cosmosis-vs-Laughing-Buddha_500x500.jpg",
+    "photo": "images/artists/cosmosis-vs-laughing-buddha.jpg"
+  },
+  {
+    "id": "cyan",
+    "name": "Cyan",
+    "imageId": "13044",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/11/ZNA_Cyan_500x500.jpg",
+    "photo": "images/artists/cyan.jpg"
+  },
+  {
+    "id": "dado-vs-dino-psaras",
+    "name": "Dado vs Dino Psaras",
+    "imageId": "13407",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/ZNA_DadoVSDino_500x500.jpg",
+    "photo": "images/artists/dado-vs-dino-psaras.jpg"
+  },
+  {
+    "id": "dara-lee",
+    "name": "Dara Lee",
+    "imageId": "12976",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/10/ZNA_WEBSITE_NEWS_ARTISTCONFIRMATION-1.jpg",
+    "photo": "images/artists/dara-lee.jpg"
+  },
+  {
+    "id": "dogma",
+    "name": "DOGMA",
+    "imageId": "12907",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/09/ZNA_Dogma500.jpg",
+    "photo": "images/artists/dogma.jpg"
+  },
+  {
+    "id": "domino-vs-ree-k",
+    "name": "DOMINO vs Ree-K",
+    "imageId": "13595",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/ZNA_DominoVSRee-500x500-1.jpg",
+    "photo": "images/artists/domino-vs-ree-k.jpg"
+  },
+  {
+    "id": "doof",
+    "name": "DOOF",
+    "imageId": "12873",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/09/ZNA_DOOF-scaled.jpg",
+    "photo": "images/artists/doof.jpg"
+  },
+  {
+    "id": "drop-dash-vs-germinator",
+    "name": "Drop & Dash vs Germinator",
+    "imageId": "13155",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/ZNA_dropdash_500x500-1.jpg",
+    "photo": "images/artists/drop-dash-vs-germinator.jpg"
+  },
+  {
+    "id": "merv-eat-static",
+    "name": "Eat Static",
+    "imageId": "13361",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/ZNA_EatStatic_500x500.jpg",
+    "photo": "images/artists/merv-eat-static.jpg"
+  },
+  {
+    "id": "encens-vs-ominus",
+    "name": "Encens vs Ominus",
+    "imageId": "12965",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/10/ZNA_Encens-vs-Ominus_500x500.jpg",
+    "photo": "images/artists/encens-vs-ominus.jpg"
+  },
+  {
+    "id": "gangguru-vs-cop",
+    "name": "Gangguru vs COP",
+    "imageId": "13705",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/04/ZNA_GangguruVSCOP_500x500.jpg",
+    "photo": "images/artists/gangguru-vs-cop.jpg"
+  },
+  {
+    "id": "growling-mad-scientists",
+    "name": "Growling Mad Scientists",
+    "imageId": "13438",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/ZNA_GMS_500x500.jpg",
+    "photo": "images/artists/growling-mad-scientists.jpg"
+  },
+  {
+    "id": "infinity-project-vs-excess-head",
+    "name": "The Infinity Project VS Excess Head",
+    "imageId": "13250",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/01/ZNA_TheInfinityProjectVSExcessHead_500x500.jpg",
+    "photo": "images/artists/infinity-project-vs-excess-head.jpg"
+  },
+  {
+    "id": "jaia",
+    "name": "Jaïa",
+    "imageId": "13072",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/11/ZNA_Jaia_500x500.jpg",
+    "photo": "images/artists/jaia.jpg"
+  },
+  {
+    "id": "jean-borelli-vs-sid-shanti",
+    "name": "Jean Borelli vs Sid Shanti",
+    "imageId": "13230",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/01/ZNA_JeanBorelli_vs_SidShanti_500x500.jpg",
+    "photo": "images/artists/jean-borelli-vs-sid-shanti.jpg"
+  },
+  {
+    "id": "marc-van-der-vlugt",
+    "name": "Mark Van Der Vlugt",
+    "imageId": "13288",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/01/ZNA_Mark-Van-Der-Vlugt_500x500.jpg",
+    "photo": "images/artists/marc-van-der-vlugt.jpg"
+  },
+  {
+    "id": "mark-allen",
+    "name": "Mark Allen",
+    "imageId": "13128",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/ZNA_MarkAllen_500x500-scaled.jpg",
+    "photo": "images/artists/mark-allen.jpg"
+  },
+  {
+    "id": "mittelstandskinder-ohne-strom",
+    "name": "Mittelstandskinder Ohne Strom",
+    "imageId": "12848",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/09/ZNA_Mittelsandskinder-Ohne-Strom.jpg",
+    "photo": "images/artists/mittelstandskinder-ohne-strom.jpg"
+  },
+  {
+    "id": "sean-williams",
+    "name": "Process",
+    "imageId": "13026",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/11/ZNA_Process_500x500.jpg",
+    "photo": "images/artists/sean-williams.jpg"
+  },
+  {
+    "id": "prometheus",
+    "name": "Prometheus",
+    "imageId": "13343",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/ZNA_Prometheus_500x500.jpg",
+    "photo": "images/artists/prometheus.jpg"
+  },
+  {
+    "id": "joti-sidhu",
+    "name": "Psychaos",
+    "imageId": "13611",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/ZNA_-Psychaos_500x500.jpg",
+    "photo": "images/artists/joti-sidhu.jpg"
+  },
+  {
+    "id": "psyko-disko-vs-spies",
+    "name": "Psyko Disko vs Spies",
+    "imageId": "12856",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/09/ZNA_Psyko-Disko-vs-Spies_.jpg",
+    "photo": "images/artists/psyko-disko-vs-spies.jpg"
+  },
+  {
+    "id": "reefer-decree",
+    "name": "Reefer Decree",
+    "imageId": "13699",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/04/ZNA_Reefer-Decree_500x500.jpg",
+    "photo": "images/artists/reefer-decree.jpg"
+  },
+  {
+    "id": "silicon-sound",
+    "name": "Silicon Sound",
+    "imageId": "13206",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/ZNA_SiliconSound_500x500.jpg",
+    "photo": "images/artists/silicon-sound.jpg"
+  },
+  {
+    "id": "solitare",
+    "name": "Solitare",
+    "imageId": "13634",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/ZNA_-Solitare_500x500-scaled.jpg",
+    "photo": "images/artists/solitare.jpg"
+  },
+  {
+    "id": "space-cat-vs-talamasca",
+    "name": "Space Cat vs Talamasca",
+    "imageId": "12993",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/10/ZNA_SpaceCatvsTalamasca_500x500.jpg",
+    "photo": "images/artists/space-cat-vs-talamasca.jpg"
+  },
+  {
+    "id": "spiralkinder",
+    "name": "Spiralkinder",
+    "imageId": "13646",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/04/ZNA_Spiralkinder_500x500.jpg",
+    "photo": "images/artists/spiralkinder.jpg"
+  },
+  {
+    "id": "sun-project",
+    "name": "SUN Project",
+    "imageId": "13016",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/10/ZNA_SUNProject_500x500.jpg",
+    "photo": "images/artists/sun-project.jpg"
+  },
+  {
+    "id": "tsuyoshi-suzuki",
+    "name": "Tsuyoshi Suzuki",
+    "imageId": "13707",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/04/ZNA_TsuyoshiSuzuki_500x500.jpg",
+    "photo": "images/artists/tsuyoshi-suzuki.jpg"
+  },
+  {
+    "id": "takeshi-isogai",
+    "name": "Ubar Tmar",
+    "imageId": "13495",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/ZNA_UbarTmar_500x500.jpg",
+    "photo": "images/artists/takeshi-isogai.jpg"
+  },
+  {
+    "id": "kris-kylven",
+    "name": "U.X. vs Syb Unity Nettwerk",
+    "imageId": "13425",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/02/ZNA_UX_vs_Syb_500x500.jpg",
+    "photo": "images/artists/kris-kylven.jpg"
+  },
+  {
+    "id": "yahel",
+    "name": "Yahel",
+    "imageId": "13112",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/ZNA_Yahel_500x500.jpg",
+    "photo": "images/artists/yahel.jpg"
+  },
+  {
+    "id": "anoebis",
+    "name": "Anoebis",
+    "imageId": "13163",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Anoebis_500x500.jpg",
+    "photo": "images/artists/anoebis.jpg"
+  },
+  {
+    "id": "antidot-and-dica",
+    "name": "Antidot & DICA",
+    "imageId": "13165",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Antidot-DICA_500x500.jpg",
+    "photo": "images/artists/antidot-and-dica.jpg"
+  },
+  {
+    "id": "artifact303",
+    "name": "Artifact303",
+    "imageId": "13167",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Artifact303_500x500.jpg",
+    "photo": "images/artists/artifact303.jpg"
+  },
+  {
+    "id": "ephedra",
+    "name": "Ephedra",
+    "imageId": "13169",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Ephedra_500x500.jpg",
+    "photo": "images/artists/ephedra.jpg"
+  },
+  {
+    "id": "goaacen",
+    "name": "Goaacen",
+    "imageId": "13171",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Goaacen_500x500.jpg",
+    "photo": "images/artists/goaacen.jpg"
+  },
+  {
+    "id": "hypnoxock",
+    "name": "Hypnoxock",
+    "imageId": "13173",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Hypnoxock_500x500.jpg",
+    "photo": "images/artists/hypnoxock.jpg"
+  },
+  {
+    "id": "merrow",
+    "name": "Merr0w",
+    "imageId": "13175",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Merr0w_500x500.jpg",
+    "photo": "images/artists/merrow.jpg"
+  },
+  {
+    "id": "mini-spacer",
+    "name": "Mini Spacer",
+    "imageId": "13177",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Mini-Spacer_500x500.jpg",
+    "photo": "images/artists/mini-spacer.jpg"
+  },
+  {
+    "id": "moon-beasts",
+    "name": "Moon Beasts",
+    "imageId": "13179",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Moon-Beasts_500x500.jpg",
+    "photo": "images/artists/moon-beasts.jpg"
+  },
+  {
+    "id": "nouveau-shamanique",
+    "name": "Nouveau Shamanique",
+    "imageId": "13181",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Nouveau-Shamanique_500x500.jpg",
+    "photo": "images/artists/nouveau-shamanique.jpg"
+  },
+  {
+    "id": "proxeeus",
+    "name": "Proxeeus",
+    "imageId": "13183",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Proxeeus_500x500.jpg",
+    "photo": "images/artists/proxeeus.jpg"
+  },
+  {
+    "id": "skizologic-vs-filteria",
+    "name": "Skizologic vs Filteria",
+    "imageId": "13185",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Skizologic-vs-Filteria_500x500.jpg",
+    "photo": "images/artists/skizologic-vs-filteria.jpg"
+  },
+  {
+    "id": "ultravibe",
+    "name": "Ultravibe",
+    "imageId": "13187",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2025/12/Ultravibe_500x500.jpg",
+    "photo": "images/artists/ultravibe.jpg"
+  },
+  {
+    "id": "alex-tolstey",
+    "name": "Alex Tolstey",
+    "imageId": "13503",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Alex-Tolstey_500x500.jpg",
+    "photo": "images/artists/alex-tolstey.jpg"
+  },
+  {
+    "id": "alien-rain",
+    "name": "Alien Rain",
+    "imageId": "13505",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Alien-Rain_500x500.jpg",
+    "photo": "images/artists/alien-rain.jpg"
+  },
+  {
+    "id": "anais-lin",
+    "name": "Anais-Lin",
+    "imageId": "13507",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Anais-Lin_500x500.jpg",
+    "photo": "images/artists/anais-lin.jpg"
+  },
+  {
+    "id": "andrew-till-market",
+    "name": "Andrew Till",
+    "imageId": "13509",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Andrew-Till_500x500.jpg",
+    "photo": "images/artists/andrew-till-market.jpg"
+  },
+  {
+    "id": "bill-robin-maya",
+    "name": "Bill Robin & Maya Wada",
+    "imageId": "13511",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Bill-Robin-Maya-Wada-Maya_500x500.jpg",
+    "photo": "images/artists/bill-robin-maya.jpg"
+  },
+  {
+    "id": "extra-cheers",
+    "name": "Cheers",
+    "imageId": "13513",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Cheers_500x500.jpg",
+    "photo": "images/artists/extra-cheers.jpg"
+  },
+  {
+    "id": "earl-peal",
+    "name": "Earl Peal",
+    "imageId": "13517",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Earl-Peal_500x500.jpg",
+    "photo": "images/artists/earl-peal.jpg"
+  },
+  {
+    "id": "e-sko",
+    "name": "E-Skø",
+    "imageId": "13515",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/E-sko_500x500.jpg",
+    "photo": "images/artists/e-sko.jpg"
+  },
+  {
+    "id": "extrawelt",
+    "name": "Extrawelt",
+    "imageId": "13519",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Extrawelt_500x500.jpg",
+    "photo": "images/artists/extrawelt.jpg"
+  },
+  {
+    "id": "gabi-von-dub",
+    "name": "Gabi von Dub",
+    "imageId": "13521",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Gabi-Von-Dub_500x500.jpg",
+    "photo": "images/artists/gabi-von-dub.jpg"
+  },
+  {
+    "id": "gabriel-le-mar",
+    "name": "Gabriel Le Mar",
+    "imageId": "13523",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Gabriel-Le-Mar_500x500.jpg",
+    "photo": "images/artists/gabriel-le-mar.jpg"
+  },
+  {
+    "id": "isoquant",
+    "name": "IsoQuant",
+    "imageId": "13525",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Isoquant_500x500.jpg",
+    "photo": "images/artists/isoquant.jpg"
+  },
+  {
+    "id": "james-monro",
+    "name": "James Monro",
+    "imageId": "13527",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/James-Monro_500x500.jpg",
+    "photo": "images/artists/james-monro.jpg"
+  },
+  {
+    "id": "joti-sidhu-market",
+    "name": "Joti Sidhu",
+    "imageId": "13529",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Joti-Sidhu_500x500.jpg",
+    "photo": "images/artists/joti-sidhu-market.jpg"
+  },
+  {
+    "id": "klil-co",
+    "name": "KLIL.co",
+    "imageId": "13531",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/KlilCo_500x500.jpg",
+    "photo": "images/artists/klil-co.jpg"
+  },
+  {
+    "id": "mark-van-der-vlugt-market",
+    "name": "Mark Van Der Vlugt",
+    "imageId": "13533",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Mark-Van-Der-Vlugt_500x500.jpg",
+    "photo": "images/artists/mark-van-der-vlugt-market.jpg"
+  },
+  {
+    "id": "mathew-jonson",
+    "name": "Mathew Jonson presents Freedom Engine Live",
+    "imageId": "13537",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/MathewJonson_500x500.jpg",
+    "photo": "images/artists/mathew-jonson.jpg"
+  },
+  {
+    "id": "psara-market",
+    "name": "Psara",
+    "imageId": "13539",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Psara_500x500.jpg",
+    "photo": "images/artists/psara-market.jpg"
+  },
+  {
+    "id": "ray-castle",
+    "name": "Ray Castle",
+    "imageId": "13541",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Ray-Castle_500x500.jpg",
+    "photo": "images/artists/ray-castle.jpg"
+  },
+  {
+    "id": "ree-k",
+    "name": "Ree K",
+    "imageId": "13543",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Ree-K_500x500.jpg",
+    "photo": "images/artists/ree-k.jpg"
+  },
+  {
+    "id": "robert-leiner",
+    "name": "Robert Leiner aka The Source Experience",
+    "imageId": "13545",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Robert-Leiner_500x500.jpg",
+    "photo": "images/artists/robert-leiner.jpg"
+  },
+  {
+    "id": "sancho-meiso",
+    "name": "Sancho Meisø Chaya",
+    "imageId": "13547",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Sancho-M-Chaya_500x500.jpg",
+    "photo": "images/artists/sancho-meiso.jpg"
+  },
+  {
+    "id": "tecnica",
+    "name": "Tecnica",
+    "imageId": "13551",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Tecnica_500x500.jpg",
+    "photo": "images/artists/tecnica.jpg"
+  },
+  {
+    "id": "triple-distilled",
+    "name": "Triple Distilled Disco Squad",
+    "imageId": "13553",
+    "remoteImage": "https://znagathering.com/wp-content/uploads/2026/03/Triple-Distilled-Disco-Squad_500x500.jpg",
+    "photo": "images/artists/triple-distilled.jpg"
+  }
+]
