@@ -768,11 +768,10 @@ function rerenderArtistsBelowHero() {
   buildVerticalProgress();
   observeSections();
   observeArtistInitialScroll();
-  // NOTE: not clamping per-artist .pager elements. Their carousel logic
-  // performs instant-jump wraps that the clamp would misread as
-  // "user-jumped > 1 step", causing spurious correction scrolls that can
-  // hijack the user's next vertical pan. Native scroll-snap-stop:always
-  // is sufficient for those.
+  // Re-attach the desktop wheel clamp to the freshly-rendered pagers so
+  // trackpad gestures still resolve to one panel per gesture after a
+  // filter change.
+  reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installWheelClamp(p, "x"));
 }
 
 function multiHeroSection() {
@@ -1107,6 +1106,40 @@ function installSnapClamp(container, axis) {
   }, { passive: true });
 }
 
+// Desktop wheel/trackpad clamp: one wheel gesture = one panel. Native
+// scroll-snap-stop:always works on touch but a Mac trackpad fires a
+// stream of wheel events with momentum that can blow past two snap points
+// before settling. We hijack the wheel and animate to the next panel
+// ourselves, with a cooldown so a single gesture can't move twice.
+//
+// `getEnabled()` lets the caller scope the clamp (e.g. "only when on an
+// artist section"); when it returns false the wheel falls through to
+// native handling.
+function installWheelClamp(container, axis, getEnabled) {
+  if (!container || container.dataset.wheelClamp === "1") return;
+  container.dataset.wheelClamp = "1";
+  let cooldownUntil = 0;
+  container.addEventListener("wheel", e => {
+    if (getEnabled && !getEnabled()) return;
+    const primary = axis === "y" ? e.deltaY : e.deltaX;
+    const secondary = axis === "y" ? e.deltaX : e.deltaY;
+    if (Math.abs(primary) <= Math.abs(secondary)) return; // not the dominant axis
+    if (Math.abs(primary) < 4) return;                    // ignore stray microscrolls
+    e.preventDefault();
+    const now = performance.now();
+    if (now < cooldownUntil) return;
+    cooldownUntil = now + 480;
+    const w = axis === "y" ? container.clientHeight : container.clientWidth;
+    if (!w) return;
+    const pos = axis === "y" ? container.scrollTop : container.scrollLeft;
+    const sign = primary > 0 ? 1 : -1;
+    const maxIdx = Math.max(0, Math.round((axis === "y" ? container.scrollHeight : container.scrollWidth) / w) - 1);
+    const targetIdx = Math.max(0, Math.min(maxIdx, Math.round(pos / w) + sign));
+    const target = targetIdx * w;
+    container.scrollTo({ [axis === "y" ? "top" : "left"]: target, behavior: "smooth" });
+  }, { passive: false });
+}
+
 function buildReel() {
   // Single multi-panel hero at the top, then artist sections of the
   // currently-active stage filter below it.
@@ -1117,11 +1150,19 @@ function buildReel() {
   wireHeroPager();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
-  // NOTE: not clamping per-artist .pager elements. Their carousel logic
-  // performs instant-jump wraps that the clamp would misread as
-  // "user-jumped > 1 step", causing spurious correction scrolls that can
-  // hijack the user's next vertical pan. Native scroll-snap-stop:always
-  // is sufficient for those.
+  // Desktop wheel clamp on the reel — only intervene when the active
+  // section is an artist; the hero stays on native scroll for that nice
+  // peek-and-snap feel the user already likes.
+  installWheelClamp(reel, "y", () => {
+    const active = reel.querySelector(".section.is-active");
+    return !!(active && active.dataset.section === "artist");
+  });
+  // Each artist pager: clamp horizontal wheel so trackpad swipe = 1 panel.
+  reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installWheelClamp(p, "x"));
+  // NOTE: not snap-clamping per-artist .pager via touch — their carousel
+  // logic performs instant-jump wraps that the touch clamp would misread
+  // as "user-jumped > 1 step". Native scroll-snap-stop:always handles touch
+  // there, and the wheel clamp above handles desktop.
   observeArtistInitialScroll();
 
 
