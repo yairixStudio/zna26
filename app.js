@@ -872,10 +872,9 @@ function streamingLinks(a) {
 
 function panelInfo(a) {
   const links = a.links || [];
-  // Streaming icons — inline, no section heading, tighter row.
-  const streamingHtml = `
-    <div class="info-stream">
-      ${streamingLinks(a).map(s => `
+  const streams = streamingLinks(a);
+  const streamingHtml = streams.length
+    ? `<div class="info-stream">${streams.map(s => `
         <a class="stream-icon stream-icon--${s.platform} ${s.verified ? "is-verified" : ""}"
            href="${escapeHtml(s.url)}" target="_blank" rel="noopener"
            title="${escapeHtml(s.label)}${s.verified ? " · ערוץ רשמי" : ""}"
@@ -884,32 +883,50 @@ function panelInfo(a) {
           ${s.verified ? `<span class="stream-verified" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></svg>
           </span>` : ""}
-        </a>
-      `).join("")}
-    </div>
-  `;
-  // Other links — plain inline text links separated by middots.
+        </a>`).join("")}</div>`
+    : "";
+
+  // Build details rows once, render only if non-empty.
+  const detailRows = [];
+  if (a.announcedAt) detailRows.push(["הוכרז", escapeHtml(formatAnnouncedDate(a.announcedAt))]);
+  if (a.representedBy) detailRows.push(["ניהול / Label", escapeHtml(a.representedBy)]);
+  if (a.country) detailRows.push(["מקור", escapeHtml(a.country)]);
+  if (a.role) detailRows.push(["תפקיד ב-ZNA", escapeHtml(a.role)]);
+  if (a.age) detailRows.push(["גיל", `${a.age}`]);
+  if (a.tags?.length) detailRows.push(["סגנון", a.tags.map(t => escapeHtml(t)).join(" · ")]);
+
+  const detailsHtml = detailRows.length
+    ? `<details class="info-acc" data-key="meta">
+        <summary>
+          <span>פרטים</span>
+          <svg class="info-acc-chev" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </summary>
+        <dl class="info-acc-dl">
+          ${detailRows.map(([k, v]) => `<div class="info-acc-row"><dt>${escapeHtml(k)}</dt><dd>${v}</dd></div>`).join("")}
+        </dl>
+      </details>`
+    : "";
+
   const linksHtml = links.length
-    ? `
-      <p class="info-links">
-        ${links.map(l => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)}</a>`).join(`<span class="info-sep">·</span>`)}
-      </p>
-    `
+    ? `<details class="info-acc" data-key="links">
+        <summary>
+          <span>קישורים נוספים</span>
+          <span class="info-acc-count">${links.length}</span>
+          <svg class="info-acc-chev" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+        </summary>
+        <div class="info-acc-links">
+          ${links.map(l => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} <span aria-hidden="true">↗</span></a>`).join("")}
+        </div>
+      </details>`
     : "";
-  // Bottom-line meta: announced date and management/label as quiet text,
-  // no pills. Joined with a middot when both are present.
-  const metaParts = [];
-  if (a.announcedAt) metaParts.push(`הוכרז ${escapeHtml(formatAnnouncedDate(a.announcedAt))}`);
-  if (a.representedBy) metaParts.push(escapeHtml(a.representedBy));
-  const metaHtml = metaParts.length
-    ? `<div class="info-footnote">${metaParts.join(`<span class="info-sep">·</span>`)}</div>`
-    : "";
+
   const notableHtml = a.notable
     ? `<p class="bio-notable">— ${escapeHtml(a.notable)}</p>`
     : "";
   const bioHtml = a.bio
     ? `<p class="bio-text">${escapeHtml(a.bio)}</p>`
     : "";
+
   return `
     <div class="panel panel--info">
       <div class="panel-inner">
@@ -922,7 +939,7 @@ function panelInfo(a) {
           ${notableHtml}
           ${streamingHtml}
           ${linksHtml}
-          ${metaHtml}
+          ${detailsHtml}
         </div>
       </div>
     </div>

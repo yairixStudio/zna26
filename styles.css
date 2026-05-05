@@ -2431,12 +2431,12 @@ body.is-on-hero #random-btn { display: inline-flex; }
    v2 polish: info panel + main hero desktop + dock-style v-dots
    ===================================================================== */
 
-/* ---------- About panel: brand-aligned, 2-col on desktop ---------- */
+/* ---------- About panel: clean, compact, accordion-driven ---------- */
 .bio-card--minimal {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
   max-width: 640px;
   margin: 0 auto;
   padding: 0;
@@ -2446,135 +2446,180 @@ body.is-on-hero #random-btn { display: inline-flex; }
 .bio-card--minimal::before {
   content: "";
   display: block;
-  width: 56px;
+  width: 48px;
   height: 2px;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--accent, var(--sun-yellow)), transparent);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .bio-card--minimal .bio-text {
-  font-size: clamp(14.5px, 2.4vw, 16.5px);
-  line-height: 1.75;
+  font-size: clamp(14.5px, 2.4vw, 16px);
+  line-height: 1.7;
   color: var(--text);
   letter-spacing: 0.1px;
+  margin: 0;
 }
 
 .bio-card--minimal .bio-notable {
-  font-size: 13.5px;
+  font-size: 13px;
   line-height: 1.55;
   color: var(--text-muted);
   font-style: italic;
   padding-inline-start: 14px;
-  border-inline-start: 2px solid rgba(254, 180, 71, 0.5);
+  border-inline-start: 2px solid var(--accent, rgba(254, 180, 71, 0.55));
   margin: 0;
   background: none;
   border-radius: 0;
+  opacity: 0.85;
 }
 
 .bio-card--minimal .info-stream {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
-.bio-card--minimal .info-links {
+/* === Accordion (native <details>/<summary>) === */
+.info-acc {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0;
+}
+
+.info-acc:last-of-type {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.info-acc summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 4px;
+  cursor: pointer;
+  list-style: none;
   font-size: 13.5px;
-  line-height: 1.7;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.3px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.info-acc summary::-webkit-details-marker { display: none; }
+.info-acc summary::marker { content: ""; }
+
+.info-acc summary > span:first-child {
+  flex: 1;
+  text-align: start;
+}
+
+.info-acc-count {
+  font-size: 11px;
+  font-weight: 600;
   color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  padding: 2px 8px;
+  letter-spacing: 0.2px;
+}
+
+.info-acc-chev {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 0.22s ease, color 0.18s ease;
+}
+
+.info-acc[open] .info-acc-chev {
+  transform: rotate(180deg);
+  color: var(--accent, var(--sun-yellow));
+}
+
+.info-acc summary:hover .info-acc-chev,
+.info-acc summary:focus-visible .info-acc-chev {
+  color: var(--accent, var(--sun-yellow));
+}
+
+/* Body padding & content fade-in when opened */
+.info-acc-dl,
+.info-acc-links {
+  padding: 2px 4px 14px;
   margin: 0;
 }
 
-.bio-card--minimal .info-links a {
+.info-acc[open] .info-acc-dl,
+.info-acc[open] .info-acc-links {
+  animation: info-acc-in 0.24s ease-out;
+}
+
+@keyframes info-acc-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Details list (key/value rows) */
+.info-acc-dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px 16px;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.info-acc-row {
+  display: contents;
+}
+
+.info-acc-dl dt {
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  opacity: 0.85;
+}
+
+.info-acc-dl dd {
+  color: var(--text);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Other links list */
+.info-acc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 13.5px;
+}
+
+.info-acc-links a {
   color: var(--sun-yellow);
   text-decoration: none;
-  border-bottom: 1px solid rgba(254, 180, 71, 0.35);
-  padding-bottom: 1px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(254, 180, 71, 0.3);
   transition: color 0.18s, border-color 0.18s;
 }
 
-.bio-card--minimal .info-links a:hover {
+.info-acc-links a:hover {
   color: var(--text);
   border-bottom-color: var(--sun-yellow);
 }
 
-.bio-card--minimal .info-sep {
-  display: inline-block;
-  margin: 0 8px;
-  color: var(--text-muted);
-  opacity: 0.5;
-  user-select: none;
-}
-
-.bio-card--minimal .info-footnote {
-  margin-top: 6px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 11.5px;
-  color: var(--text-muted);
-  opacity: 0.65;
-  letter-spacing: 0.2px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* === Info panel: editorial 2-col layout from 1024px === */
+/* === Desktop: a touch more breathing room, but still accordion-based === */
 @media (min-width: 1024px) {
   .panel--info .panel-inner {
-    max-width: 1080px;
+    max-width: 720px;
   }
   .bio-card--minimal {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
-    gap: 56px;
-    align-items: start;
-    max-width: 1080px;
-    column-gap: 64px;
-  }
-  .bio-card--minimal::before {
-    grid-column: 1 / -1;
+    gap: 16px;
+    max-width: 720px;
   }
   .bio-card--minimal .bio-text {
-    grid-column: 1;
-    grid-row: 2;
     font-size: 17px;
     line-height: 1.85;
   }
-  .bio-card--minimal .bio-notable {
-    grid-column: 1;
-    grid-row: 3;
-  }
-  .bio-card--minimal .info-stream {
-    grid-column: 2;
-    grid-row: 2 / span 1;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding: 18px;
-    background: rgba(15, 8, 40, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .bio-card--minimal .info-stream .stream-icon {
-    width: 100%;
-    border-radius: 12px;
-    aspect-ratio: auto;
-    height: 38px;
-    justify-content: center;
-  }
-  .bio-card--minimal .info-links {
-    grid-column: 2;
-    grid-row: 3 / span 1;
-    text-align: start;
-    font-size: 14px;
-  }
-  .bio-card--minimal .info-footnote {
-    grid-column: 1 / -1;
-    grid-row: 4;
-    margin-top: 24px;
-  }
+  .info-acc summary { padding: 16px 6px; font-size: 14.5px; }
+  .info-acc-dl { font-size: 14px; gap: 12px 20px; }
+  .info-acc-links { font-size: 14px; gap: 10px 16px; }
 }
 
 /* ---------- Main hero: better composition on tablet/desktop ---------- */
