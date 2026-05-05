@@ -616,6 +616,17 @@ a { color: var(--sun-yellow); }
   border-radius: 999px;
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--card-border);
+  transition: bottom 0.25s ease;
+}
+
+/* When the mini-player is open, lift the dots so they're not covered. */
+body.has-mini-player .dots {
+  bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+/* Lift the panel content too so its bottom isn't hidden behind the player. */
+body.has-mini-player .panel {
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 16px);
 }
 
 .dot {

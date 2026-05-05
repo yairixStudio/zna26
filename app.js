@@ -74,9 +74,13 @@ window.onYouTubeIframeAPIReady = function () {
   } catch (e) { console.error("YT api ready error:", e); }
 };
 
-// Where the player iframe currently lives ("inline" inside a track-card, or "mini" in the mini-player).
-let playerLocation = "mini"; // "inline" | "mini"
-let inlineHostEl = null;     // the .track-frame host when inline
+// ===== Playback state machine =====
+// Single iframe is moved between an inline track-frame and the mini-player.
+// State is captured by these three vars.
+let playerLocation = "none"; // "none" | "inline" | "mini"
+let inlineHostEl = null;     // when "inline", the .track-frame host
+let currentVideoId = null;
+let inlineFrameObserver = null;
 
 function createPlayer(videoId, host) {
   if (!host || !window.YT || !window.YT.Player) return;
@@ -100,24 +104,80 @@ function createPlayer(videoId, host) {
   }
 }
 
-let inlineFrameObserver = null;
+function getPlayerIframe() {
+  if (ytPlayer && typeof ytPlayer.getIframe === "function") return ytPlayer.getIframe();
+  return miniPlayerFrame?.querySelector("iframe") || (inlineHostEl ? inlineHostEl.querySelector("iframe") : null);
+}
 
-function playTrackInline(thumb) {
+// Restore the original thumb markup of an inline frame so the user can
+// re-click the track later. Uses the cardHtml we stashed at click time.
+function restoreInlineThumb(host) {
+  if (!host) return;
+  const card = host.closest(".track-card");
+  if (!card || !host.dataset.cardHtml) return;
+  card.outerHTML = host.dataset.cardHtml;
+}
+
+// Move the iframe DOM node to the requested host (inline frame or mini frame)
+// without unmounting it. Audio/playback continues seamlessly.
+function moveIframeTo(targetHost) {
+  const iframe = getPlayerIframe();
+  if (!iframe || !targetHost) return;
+  if (iframe.parentElement === targetHost) return;
+  // If we're leaving an inline host that isn't the new target, restore its thumb
+  if (playerLocation === "inline" && inlineHostEl && inlineHostEl !== targetHost) {
+    restoreInlineThumb(inlineHostEl);
+  }
+  targetHost.innerHTML = "";
+  targetHost.appendChild(iframe);
+}
+
+// Top-level click router: a single delegated handler covers all thumbs,
+// including ones rebuilt from outerHTML during thumb-restoration.
+reel.addEventListener("click", e => {
+  const thumb = e.target.closest(".track-thumb");
+  if (!thumb) return;
+  e.preventDefault();
+  prepareInlineFrameAndPlay(thumb);
+});
+
+function prepareInlineFrameAndPlay(thumb) {
   const card = thumb.closest(".track-card");
   if (!card) return;
   const vid = thumb.dataset.vid;
 
-  // Build a frame to replace the thumb. Stash the original card markup so
-  // migration can restore the user's thumbnail.
+  // Edge case: user clicked the thumb of the same video that's already playing
+  // somewhere. Either restore inline (if it was migrated to mini) or no-op.
+  if (currentVideoId === vid && ytPlayer) {
+    if (playerLocation === "mini") {
+      // Bring the player back inline at this thumb's location
+      const frame = installFrame(card, thumb, vid);
+      moveIframeTo(frame);
+      inlineHostEl = frame;
+      playerLocation = "inline";
+      miniPlayer.classList.remove("is-open");
+      miniPlayer.setAttribute("aria-hidden", "true");
+      watchInlineFrame(frame);
+      updateMiniPlayerUI();
+      return;
+    }
+    // Already inline at the same place - do nothing (let user keep watching)
+    return;
+  }
+
+  // New video (or different one). Build a frame in this card and play.
+  const frame = installFrame(card, thumb, vid);
+  startPlayback(vid, frame);
+}
+
+function installFrame(card, thumb, vid) {
   const frame = document.createElement("div");
   frame.className = "track-frame";
   frame.dataset.vid = vid;
   frame.dataset.cardHtml = card.outerHTML;
   card.classList.add("is-playing");
   thumb.replaceWith(frame);
-
-  startPlayback(vid, frame);
-  watchInlineFrame(frame);
+  return frame;
 }
 
 // Watch the inline frame: if it leaves the visible area (user swipes to
@@ -136,25 +196,10 @@ function watchInlineFrame(frame) {
   inlineFrameObserver.observe(frame);
 }
 
-// Move the YouTube iframe between an inline track-card and the bottom mini-player
-// without unmounting it (so the audio keeps playing seamlessly).
 function migratePlayerToMini() {
   if (playerLocation === "mini" || !inlineHostEl) return;
-  const iframe = inlineHostEl.querySelector("iframe");
-  if (!iframe || !miniPlayerFrame) return;
-  // Move the iframe DOM node into the mini-player without re-loading.
-  miniPlayerFrame.innerHTML = "";
-  miniPlayerFrame.appendChild(iframe);
-  // Restore the inline track-card to its thumbnail state so the user can
-  // click it again later if they return.
-  const card = inlineHostEl.closest(".track-card");
-  if (card && inlineHostEl.dataset.cardHtml) {
-    card.outerHTML = inlineHostEl.dataset.cardHtml;
-    // Re-attach click for the restored thumb (delegated by re-running wiring
-    // for the section)
-    const restoredThumb = reel.querySelector(`.track-thumb[data-vid="${CSS.escape(inlineHostEl.dataset.vid)}"]`);
-    restoredThumb?.addEventListener("click", () => playTrackInline(restoredThumb));
-  }
+  moveIframeTo(miniPlayerFrame);
+  // restoreInlineThumb already called inside moveIframeTo via the playerLocation check
   if (inlineFrameObserver) {
     try { inlineFrameObserver.disconnect(); } catch (_) {}
     inlineFrameObserver = null;
@@ -163,6 +208,7 @@ function migratePlayerToMini() {
   playerLocation = "mini";
   miniPlayer.classList.add("is-open");
   miniPlayer.setAttribute("aria-hidden", "false");
+  document.body.classList.add("has-mini-player");
   updateMiniPlayerUI();
 }
 
@@ -190,20 +236,14 @@ function playFromQueue(idx, options = {}) {
   // Default target: wherever the player currently lives. On a fresh inline
   // click, options.inlineHost overrides.
   const targetInline = options.inlineHost || (playerLocation === "inline" ? inlineHostEl : null);
-
-  if (targetInline) {
-    inlineHostEl = targetInline;
-    playerLocation = "inline";
-    watchInlineFrame(targetInline);
-  } else {
-    playerLocation = "mini";
-  }
-
   const host = targetInline || miniPlayerFrame;
 
-  if (ytPlayer && ytApiReady && playerLocation === "mini") {
-    // Already in mini: just swap the video, no DOM moves needed.
-    ytPlayer.loadVideoById(item.videoId);
+  currentVideoId = item.videoId;
+
+  if (ytPlayer && ytApiReady) {
+    // Player exists: move iframe to target host (no-op if already there) and load new video
+    moveIframeTo(host);
+    try { ytPlayer.loadVideoById(item.videoId); } catch (e) { console.warn(e); }
   } else if (ytApiReady) {
     createPlayer(item.videoId, host);
   } else {
@@ -211,14 +251,22 @@ function playFromQueue(idx, options = {}) {
     ensureYTApi();
   }
 
-  updateMiniPlayerUI();
-  if (playerLocation === "mini") {
-    miniPlayer.classList.add("is-open");
-    miniPlayer.setAttribute("aria-hidden", "false");
-  } else {
+  if (targetInline) {
+    inlineHostEl = targetInline;
+    playerLocation = "inline";
     miniPlayer.classList.remove("is-open");
     miniPlayer.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("has-mini-player");
+    watchInlineFrame(targetInline);
+  } else {
+    inlineHostEl = null;
+    playerLocation = "mini";
+    miniPlayer.classList.add("is-open");
+    miniPlayer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("has-mini-player");
   }
+
+  updateMiniPlayerUI();
 }
 
 function onVideoEnded() {
@@ -262,11 +310,24 @@ function startPlayback(videoId, inlineHost) {
 function closeMiniPlayer() {
   miniPlayer.classList.remove("is-open", "is-expanded");
   miniPlayer.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("has-mini-player");
+  // Also restore any inline thumb that might be lingering
+  if (playerLocation === "inline" && inlineHostEl) {
+    restoreInlineThumb(inlineHostEl);
+    inlineHostEl = null;
+  }
+  if (inlineFrameObserver) {
+    try { inlineFrameObserver.disconnect(); } catch (_) {}
+    inlineFrameObserver = null;
+  }
   if (ytPlayer && typeof ytPlayer.stopVideo === "function") {
     try { ytPlayer.stopVideo(); } catch (e) {}
+    try { ytPlayer.destroy(); } catch (e) {}
   }
-  miniPlayerFrame.innerHTML = "";
+  if (miniPlayerFrame) miniPlayerFrame.innerHTML = "";
   ytPlayer = null;
+  playerLocation = "none";
+  currentVideoId = null;
   queueIndex = -1;
 }
 
@@ -581,11 +642,7 @@ function buildReel() {
       });
     }, { passive: true });
 
-    // Click thumb -> play inline; if the user navigates away while it's
-    // playing, the player migrates to the bottom mini-player automatically.
-    section.querySelectorAll(".track-thumb").forEach(thumb => {
-      thumb.addEventListener("click", () => playTrackInline(thumb));
-    });
+    // Thumb clicks are handled by the global delegated listener on .reel.
   });
 }
 
@@ -723,19 +780,49 @@ document.addEventListener("keydown", e => {
   else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(-1); }
 });
 
-// Mouse-wheel: route horizontal-leaning wheel events to the inner pager so a
-// trackpad nudge swipes panels naturally
+// Mouse-wheel: discrete navigation. One gesture = one section/panel change.
+// Trackpads emit dozens of wheel events per gesture; raw scrollBy was way too
+// sensitive. Throttle + accumulate so we move exactly one step per intent.
+let wheelLockUntil = 0;
+let wheelAccumX = 0;
+let wheelAccumY = 0;
+let wheelResetTimer = null;
+
 reel.addEventListener("wheel", e => {
-  const current = getCurrentSection();
-  if (!current || current.dataset.section !== "artist") return;
-  if (Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > 8) {
-    const pager = current.querySelector(".pager");
-    if (pager) {
-      e.preventDefault();
-      // RTL: positive deltaX from a right-swipe should move forward
-      pager.scrollBy({ left: e.deltaX, behavior: "auto" });
+  const now = Date.now();
+  if (now < wheelLockUntil) {
+    e.preventDefault();
+    return;
+  }
+
+  const horiz = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+  if (horiz) {
+    const current = getCurrentSection();
+    if (!current || current.dataset.section !== "artist") return;
+    e.preventDefault();
+    wheelAccumX += e.deltaX;
+    if (Math.abs(wheelAccumX) > 60) {
+      // RTL: positive deltaX = swipe right-to-left = move forward
+      navHorizontal(wheelAccumX > 0 ? 1 : -1);
+      wheelAccumX = 0;
+      wheelLockUntil = now + 450;
+    }
+  } else {
+    // Vertical: also throttle, one section per gesture
+    e.preventDefault();
+    wheelAccumY += e.deltaY;
+    if (Math.abs(wheelAccumY) > 60) {
+      navVertical(wheelAccumY > 0 ? 1 : -1);
+      wheelAccumY = 0;
+      wheelLockUntil = now + 500;
     }
   }
+
+  clearTimeout(wheelResetTimer);
+  wheelResetTimer = setTimeout(() => {
+    wheelAccumX = 0;
+    wheelAccumY = 0;
+  }, 200);
 }, { passive: false });
 
 // ===== Stage dropdown: filter the reel to a single stage =====
