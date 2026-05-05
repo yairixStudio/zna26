@@ -19,6 +19,53 @@ const searchOverlay = document.getElementById("search-overlay");
 const searchInput = document.getElementById("search-input");
 const searchResults = document.getElementById("search-results");
 
+// Language picker
+const langSelectEl = document.getElementById("lang-select");
+const langBtn = document.getElementById("lang-btn");
+const langFlag = document.getElementById("lang-flag");
+const langMenu = document.getElementById("lang-menu");
+
+const LANG_FLAGS = { he: "🇮🇱", en: "🇬🇧", pt: "🇵🇹" };
+const LANG_LABELS = { he: "עברית", en: "English", pt: "Português" };
+let currentLang = (function() {
+  try { return localStorage.getItem("zna-lang") || "he"; }
+  catch (_) { return "he"; }
+})();
+
+function applyLang(lang) {
+  if (!LANG_FLAGS[lang]) return;
+  currentLang = lang;
+  if (langFlag) langFlag.textContent = LANG_FLAGS[lang];
+  if (langBtn) langBtn.title = LANG_LABELS[lang];
+  langMenu?.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
+  try { localStorage.setItem("zna-lang", lang); } catch (_) {}
+  // i18n hook for future translations: data-i18n elements would re-render here.
+}
+
+applyLang(currentLang);
+
+langBtn?.addEventListener("click", e => {
+  e.stopPropagation();
+  if (!langMenu) return;
+  langMenu.hidden = !langMenu.hidden;
+  langBtn.setAttribute("aria-expanded", String(!langMenu.hidden));
+});
+
+langMenu?.addEventListener("click", e => {
+  const btn = e.target.closest("button[data-lang]");
+  if (!btn) return;
+  applyLang(btn.dataset.lang);
+  langMenu.hidden = true;
+  langBtn?.setAttribute("aria-expanded", "false");
+});
+
+document.addEventListener("click", e => {
+  if (langMenu && !langSelectEl?.contains(e.target)) {
+    langMenu.hidden = true;
+    langBtn?.setAttribute("aria-expanded", "false");
+  }
+});
+
 // Mini-player
 const miniPlayer = document.getElementById("mini-player");
 const miniPlayerFrame = document.getElementById("mini-player-frame");
@@ -933,9 +980,9 @@ document.addEventListener("keydown", e => {
   // ArrowDown / ArrowUp -> next/prev artist
   if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); navVertical(1); }
   else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); navVertical(-1); }
-  // Horizontal: in RTL "ArrowLeft" feels like "next" because the layout flows right-to-left
-  else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(1); }
-  else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(-1); }
+  // LTR layout: ArrowRight = next, ArrowLeft = prev
+  else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(1); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(-1); }
 });
 
 // Mouse-wheel: discrete navigation. One gesture = one section/panel change.
@@ -962,9 +1009,8 @@ reel.addEventListener("wheel", e => {
     e.preventDefault();
     wheelAccumX += e.deltaX;
     if (Math.abs(wheelAccumX) > 60) {
-      // RTL flip: a leftward swipe (deltaX < 0) means "go forward" because
-      // visually the next panel reveals from the left.
-      navHorizontal(wheelAccumX < 0 ? 1 : -1);
+      // LTR: positive deltaX (rightward swipe) = move forward.
+      navHorizontal(wheelAccumX > 0 ? 1 : -1);
       wheelAccumX = 0;
       wheelLockUntil = now + 450;
     }

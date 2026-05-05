@@ -32,9 +32,36 @@ html, body {
 body {
   font-family: "Heebo", "Segoe UI", "Assistant", system-ui, sans-serif;
   color: var(--text);
-  direction: rtl;
+  direction: ltr;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+}
+
+/* Hebrew (and any other strong-direction) text inside an LTR layout reads
+   correctly when each text block decides its own direction. dir="auto" on
+   text-bearing elements does this — punctuation and word order stay native
+   while the surrounding boxes/buttons stay LTR. */
+.bio-text,
+.notable,
+.artist-real,
+.artist-name,
+.hero-tagline,
+.hero-stage-tag,
+.hero-stage-name,
+.hero-hint,
+.muted,
+.album-name,
+.album-meta,
+.track-title,
+.search-result-name,
+.search-result-meta,
+.info-meta,
+.info-section-title,
+.panel-eyebrow,
+.chip,
+.meta-item {
+  unicode-bidi: plaintext;
+  text-align: start;
 }
 
 img, iframe { display: block; max-width: 100%; }
@@ -1206,7 +1233,7 @@ body.has-mini-player .panel {
   .mini-player-controls { gap: 4px; }
 }
 
-/* ===== Top bar: dropdown left, action buttons right ===== */
+/* ===== Top bar: search+lang on left, logo+stage on right ===== */
 .top-bar {
   position: fixed;
   top: 14px;
@@ -1215,15 +1242,16 @@ body.has-mini-player .panel {
   z-index: 25;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   pointer-events: none;
 }
 
 .top-bar > * { pointer-events: auto; }
 
-.top-bar-actions {
+.top-bar-side {
   display: flex;
   gap: 8px;
+  align-items: center;
   flex-shrink: 0;
 }
 
@@ -1333,7 +1361,9 @@ body.has-mini-player .panel {
   list-style: none;
   position: absolute;
   top: calc(100% + 10px);
-  inset-inline-start: 0;
+  /* Pin to the trigger's right edge in LTR — the dropdown sits on the right
+     side of the bar so opening rightward would push it off-screen. */
+  right: 0;
   border-radius: 18px;
   padding: 8px;
   min-width: 220px;
@@ -1343,6 +1373,54 @@ body.has-mini-player .panel {
   animation: glass-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
   display: block;
   z-index: 30;
+}
+
+/* ===== Language picker ===== */
+.lang-select { position: relative; }
+
+.lang-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.lang-menu {
+  list-style: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  border-radius: 16px;
+  padding: 6px;
+  min-width: 180px;
+  animation: glass-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  z-index: 30;
+}
+.lang-menu[hidden] { display: none; }
+
+.lang-menu li { padding: 0; margin: 0; }
+
+.lang-menu button {
+  width: 100%;
+  text-align: start;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.15s;
+}
+
+.lang-menu button:hover { background: rgba(255, 255, 255, 0.08); }
+
+.lang-menu button.active {
+  background: linear-gradient(135deg, rgba(255, 92, 138, 0.85), rgba(255, 126, 31, 0.85));
+  color: white;
 }
 
 @keyframes glass-pop {
