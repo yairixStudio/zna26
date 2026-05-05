@@ -576,7 +576,14 @@ body.has-mini-player .hero-dots {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  /* Allow vertical scroll to chain UP to the reel when the panel can't
+     scroll further. Without this, panels with long content (Info, Tracks
+     with many videos) trap the vertical pan on iOS — the user could swipe
+     horizontally to a tall panel, then suddenly find that swiping up/down
+     stayed inside that panel and never moved between artists. Horizontal
+     chaining is contained because the .pager handles that axis. */
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
 }
 
 /* Hero panel content stays vertically centered */
