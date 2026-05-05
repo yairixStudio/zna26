@@ -808,41 +808,48 @@ function buildReel() {
 
 
 
-  // Wire pager dots and YouTube thumbs for each artist section
+  // Wire pager dots and YouTube thumbs for each artist section.
+  // (Pager scroll + dot clicks are handled by GLOBAL delegated listeners
+  // on the reel — see below — so they keep working after rerender.)
   reel.querySelectorAll('[data-section="artist"]').forEach(section => {
-    const pager = section.querySelector(".pager");
-    const dots = Array.from(section.querySelectorAll(".dot"));
-
-    dots.forEach(dot => {
-      dot.addEventListener("click", () => {
-        const idx = +dot.dataset.panel;
-        const panel = pager.children[idx];
-        panel?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-      });
-    });
-
-    // Update active dot on horizontal scroll + hide vertical dots if we
-    // leave the first panel of the active artist.
-    let ticking = false;
-    pager.addEventListener("scroll", () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const w = pager.clientWidth || 1;
-        const sl = Math.abs(pager.scrollLeft);
-        const idx = Math.round(sl / w);
-        dots.forEach((d, i) => d.classList.toggle("active", i === idx));
-        // Only hide vertical dots when this section is the active one
-        if (section.classList.contains("is-active")) {
-          verticalProgress?.classList.toggle("is-hidden", idx > 0);
-        }
-        ticking = false;
-      });
-    }, { passive: true });
-
     // Thumb clicks are handled by the global delegated listener on .reel.
   });
 }
+
+// Global capture-phase scroll listener: any time a .pager inside the reel
+// scrolls, update its section's dot highlights and toggle vertical-progress
+// visibility (dots only matter on panel 0). Capture phase is needed because
+// 'scroll' events do not bubble.
+let pagerScrollTicking = false;
+reel.addEventListener("scroll", e => {
+  const pager = e.target?.closest?.(".pager");
+  if (!pager) return;
+  if (pagerScrollTicking) return;
+  pagerScrollTicking = true;
+  requestAnimationFrame(() => {
+    pagerScrollTicking = false;
+    const section = pager.closest('[data-section="artist"]');
+    if (!section) return;
+    const w = pager.clientWidth || 1;
+    const idx = Math.round(Math.abs(pager.scrollLeft) / w);
+    section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === idx));
+    if (section.classList.contains("is-active")) {
+      verticalProgress?.classList.toggle("is-hidden", idx > 0);
+    }
+  });
+}, true);
+
+// Global delegated click for the per-artist horizontal panel dots
+reel.addEventListener("click", e => {
+  const dot = e.target.closest(".dot");
+  if (!dot) return;
+  const section = dot.closest('[data-section="artist"]');
+  const pager = section?.querySelector(".pager");
+  const idx = +dot.dataset.panel;
+  if (pager && pager.children[idx]) {
+    pager.children[idx].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  }
+});
 
 // ===== Vertical progress bar =====
 
