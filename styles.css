@@ -178,22 +178,22 @@ a { color: var(--sun-yellow); }
 }
 .hero-pager::-webkit-scrollbar { display: none; }
 
-/* Idle peek hint: visually nudge the pager toward the next/previous panel
-   without actually scrolling, so we don't fight scroll-snap. */
-@keyframes hero-peek-forward {
-  0%   { transform: translateX(0); }
-  40%  { transform: translateX(-22%); }
-  60%  { transform: translateX(-22%); }
-  100% { transform: translateX(0); }
+/* Idle peek hint: visually nudge the pager content sideways so the user
+   sees the next stage panel slide in from one edge while the current one
+   slides out the other. We animate the PANELS (children) — not the pager
+   itself — so the pager's clipping window stays put and the next panel
+   actually peeks into view. Animating the pager would have moved everything
+   together with no reveal. */
+@keyframes hero-peek-children-forward {
+  0%, 100% { transform: translateX(0); }
+  45%, 55% { transform: translateX(-18%); }
 }
-@keyframes hero-peek-backward {
-  0%   { transform: translateX(0); }
-  40%  { transform: translateX(22%); }
-  60%  { transform: translateX(22%); }
-  100% { transform: translateX(0); }
+@keyframes hero-peek-children-backward {
+  0%, 100% { transform: translateX(0); }
+  45%, 55% { transform: translateX(18%); }
 }
-.hero-pager.peek-forward  { animation: hero-peek-forward  1.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
-.hero-pager.peek-backward { animation: hero-peek-backward 1.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.hero-pager.peek-forward  > .hero-panel { animation: hero-peek-children-forward  1.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.hero-pager.peek-backward > .hero-panel { animation: hero-peek-children-backward 1.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
 
 .hero-panel {
   flex: 0 0 100%;

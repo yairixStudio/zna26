@@ -1119,15 +1119,14 @@ function setActiveSection(section) {
   });
 
   // Hide vertical dots while we are on a hero section OR on any non-first
-  // panel of an artist (user is exploring deeper info, dots would clutter).
+  // panel of an artist. With the carousel pattern, scroll-position index 1
+  // is the real Hero (index 0 is cloneStart), so we have to read data-real-idx
+  // off the visible panel — otherwise just-arrived sections look like
+  // panelIdx=1 which would always be flagged "non-hero".
   const isHero = section.dataset.section === "hero";
   const pager = section.querySelector(".pager");
-  let panelIdx = 0;
-  if (pager) {
-    const w = pager.clientWidth || 1;
-    panelIdx = Math.round(Math.abs(pager.scrollLeft) / w);
-  }
-  verticalProgress.classList.toggle("is-hidden", isHero || panelIdx > 0);
+  // Compute realIdx after any anchoring scrollTo below — defer to a single
+  // pass at the end of setActiveSection.
 
   // Reset every other artist section's pager back to its real first panel
   // (scrollIdx=1 with the carousel layout, since scrollIdx=0 is cloneStart =
@@ -1165,6 +1164,19 @@ function setActiveSection(section) {
     const realIdx = newChild ? (+newChild.dataset.realIdx || 0) : 0;
     section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === realIdx));
   }
+
+  // Vertical-progress visibility: read the realIdx of the panel currently
+  // under the pager (after any anchoring scrollTo above). This must use
+  // realIdx — not the raw scrollIdx — because the carousel layout puts the
+  // real Hero at scrollIdx=1, and the user expects dots while ON the Hero.
+  let activeRealIdx = 0;
+  if (pager) {
+    const w = pager.clientWidth || 1;
+    const scrollIdx = Math.round(Math.abs(pager.scrollLeft) / w);
+    const child = pager.children[scrollIdx];
+    activeRealIdx = child ? (+child.dataset.realIdx || 0) : 0;
+  }
+  verticalProgress.classList.toggle("is-hidden", isHero || activeRealIdx > 0);
 
   // HUD + retint background by stage
   const stage = section.dataset.stage;
