@@ -1073,10 +1073,20 @@ body.has-mini-player .hero-dots {
   background: rgba(10, 5, 36, 0.92);
   padding: 8px 14px;
   border-radius: 999px;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--card-border);
   transition: bottom 0.25s ease;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  transition: all 0.25s;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 /* Soft fade over the bottom of the panel so scrolled content doesn't visually
@@ -1107,22 +1117,11 @@ body.has-mini-player .panel {
   padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 16px);
 }
 
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  transition: all 0.25s;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
 .dot.active {
   background: var(--sun-yellow);
   width: 18px;
   border-radius: 999px;
-  box-shadow: 0 0 8px var(--sun-yellow);
+  box-shadow: 0 0 10px var(--sun-yellow);
 }
 
 /* ===== Vertical progress bar ===== */

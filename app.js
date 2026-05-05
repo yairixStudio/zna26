@@ -1156,6 +1156,14 @@ function setActiveSection(section) {
     if (realFirst && onClone) {
       pager.scrollTo({ left: realFirst.offsetLeft, behavior: "auto" });
     }
+    // Force-refresh the panel dots highlight here. Without this, an artist
+    // that's just become active can briefly show no active dot (or the wrong
+    // one) until the user does a tiny horizontal swipe — which is exactly
+    // the bug the user reported.
+    const newScrollIdx = Math.round(Math.abs(pager.scrollLeft) / (pager.clientWidth || 1));
+    const newChild = pager.children[newScrollIdx];
+    const realIdx = newChild ? (+newChild.dataset.realIdx || 0) : 0;
+    section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === realIdx));
   }
 
   // HUD + retint background by stage
