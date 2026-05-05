@@ -14,6 +14,13 @@ const stageSelectTrigger = document.getElementById("stage-select-trigger");
 const stageSelectLabel = document.getElementById("stage-select-label");
 const stageSelectMenu = document.getElementById("stage-select-menu");
 
+// Top-bar action buttons
+const logoBtn = document.getElementById("logo-btn");
+const searchBtn = document.getElementById("search-btn");
+const searchOverlay = document.getElementById("search-overlay");
+const searchInput = document.getElementById("search-input");
+const searchResults = document.getElementById("search-results");
+
 // Mini-player
 const miniPlayer = document.getElementById("mini-player");
 const miniPlayerFrame = document.getElementById("mini-player-frame");
@@ -60,17 +67,21 @@ window.onYouTubeIframeAPIReady = function () {
   try {
     ytApiReady = true;
     if (pendingFirstPlay) {
-      const { videoId } = pendingFirstPlay;
+      const { videoId, host } = pendingFirstPlay;
       pendingFirstPlay = null;
-      createPlayer(videoId);
+      createPlayer(videoId, host || miniPlayerFrame);
     }
   } catch (e) { console.error("YT api ready error:", e); }
 };
 
-function createPlayer(videoId) {
-  if (!miniPlayerFrame || !window.YT || !window.YT.Player) return;
+// Where the player iframe currently lives ("inline" inside a track-card, or "mini" in the mini-player).
+let playerLocation = "mini"; // "inline" | "mini"
+let inlineHostEl = null;     // the .track-frame host when inline
+
+function createPlayer(videoId, host) {
+  if (!host || !window.YT || !window.YT.Player) return;
   try {
-    miniPlayerFrame.innerHTML = '<div id="yt-player-target"></div>';
+    host.innerHTML = '<div id="yt-player-target"></div>';
     ytPlayer = new YT.Player("yt-player-target", {
       height: "100%",
       width: "100%",
@@ -85,9 +96,74 @@ function createPlayer(videoId) {
     });
   } catch (e) {
     console.error("createPlayer failed:", e);
-    // Fallback: plain iframe so the user still sees the video
-    miniPlayerFrame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   }
+}
+
+let inlineFrameObserver = null;
+
+function playTrackInline(thumb) {
+  const card = thumb.closest(".track-card");
+  if (!card) return;
+  const vid = thumb.dataset.vid;
+
+  // Build a frame to replace the thumb. Stash the original card markup so
+  // migration can restore the user's thumbnail.
+  const frame = document.createElement("div");
+  frame.className = "track-frame";
+  frame.dataset.vid = vid;
+  frame.dataset.cardHtml = card.outerHTML;
+  card.classList.add("is-playing");
+  thumb.replaceWith(frame);
+
+  startPlayback(vid, frame);
+  watchInlineFrame(frame);
+}
+
+// Watch the inline frame: if it leaves the visible area (user swipes to
+// another panel or scrolls to another artist), migrate the player to mini.
+function watchInlineFrame(frame) {
+  if (inlineFrameObserver) {
+    try { inlineFrameObserver.disconnect(); } catch (_) {}
+  }
+  inlineFrameObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting && playerLocation === "inline" && entry.target === inlineHostEl) {
+        migratePlayerToMini();
+      }
+    });
+  }, { root: reel, threshold: 0.05 });
+  inlineFrameObserver.observe(frame);
+}
+
+// Move the YouTube iframe between an inline track-card and the bottom mini-player
+// without unmounting it (so the audio keeps playing seamlessly).
+function migratePlayerToMini() {
+  if (playerLocation === "mini" || !inlineHostEl) return;
+  const iframe = inlineHostEl.querySelector("iframe");
+  if (!iframe || !miniPlayerFrame) return;
+  // Move the iframe DOM node into the mini-player without re-loading.
+  miniPlayerFrame.innerHTML = "";
+  miniPlayerFrame.appendChild(iframe);
+  // Restore the inline track-card to its thumbnail state so the user can
+  // click it again later if they return.
+  const card = inlineHostEl.closest(".track-card");
+  if (card && inlineHostEl.dataset.cardHtml) {
+    card.outerHTML = inlineHostEl.dataset.cardHtml;
+    // Re-attach click for the restored thumb (delegated by re-running wiring
+    // for the section)
+    const restoredThumb = reel.querySelector(`.track-thumb[data-vid="${CSS.escape(inlineHostEl.dataset.vid)}"]`);
+    restoredThumb?.addEventListener("click", () => playTrackInline(restoredThumb));
+  }
+  if (inlineFrameObserver) {
+    try { inlineFrameObserver.disconnect(); } catch (_) {}
+    inlineFrameObserver = null;
+  }
+  inlineHostEl = null;
+  playerLocation = "mini";
+  miniPlayer.classList.add("is-open");
+  miniPlayer.setAttribute("aria-hidden", "false");
+  updateMiniPlayerUI();
 }
 
 function updateMiniPlayerUI() {
@@ -106,23 +182,43 @@ function updateMiniPlayerUI() {
   }
 }
 
-function playFromQueue(idx) {
+function playFromQueue(idx, options = {}) {
   if (idx < 0 || idx >= playQueue.length) return;
   queueIndex = idx;
   const item = playQueue[idx];
 
-  if (ytPlayer && ytApiReady) {
+  // Default target: wherever the player currently lives. On a fresh inline
+  // click, options.inlineHost overrides.
+  const targetInline = options.inlineHost || (playerLocation === "inline" ? inlineHostEl : null);
+
+  if (targetInline) {
+    inlineHostEl = targetInline;
+    playerLocation = "inline";
+    watchInlineFrame(targetInline);
+  } else {
+    playerLocation = "mini";
+  }
+
+  const host = targetInline || miniPlayerFrame;
+
+  if (ytPlayer && ytApiReady && playerLocation === "mini") {
+    // Already in mini: just swap the video, no DOM moves needed.
     ytPlayer.loadVideoById(item.videoId);
   } else if (ytApiReady) {
-    createPlayer(item.videoId);
+    createPlayer(item.videoId, host);
   } else {
-    pendingFirstPlay = { videoId: item.videoId };
+    pendingFirstPlay = { videoId: item.videoId, host };
     ensureYTApi();
   }
 
   updateMiniPlayerUI();
-  miniPlayer.classList.add("is-open");
-  miniPlayer.setAttribute("aria-hidden", "false");
+  if (playerLocation === "mini") {
+    miniPlayer.classList.add("is-open");
+    miniPlayer.setAttribute("aria-hidden", "false");
+  } else {
+    miniPlayer.classList.remove("is-open");
+    miniPlayer.setAttribute("aria-hidden", "true");
+  }
 }
 
 function onVideoEnded() {
@@ -152,16 +248,14 @@ function onVideoEnded() {
   playFromQueue(nextIdx);
 }
 
-function openMiniPlayerByVideoId(videoId) {
-  // Locate this video in the current queue (rebuild fresh in case filter changed)
+function startPlayback(videoId, inlineHost) {
   playQueue = buildPlayQueue();
   const idx = playQueue.findIndex(item => item.videoId === videoId);
   if (idx === -1) {
-    // Fallback: single-track queue
     playQueue = [{ videoId, title: "", year: null, artistId: null, artistName: "" }];
-    playFromQueue(0);
+    playFromQueue(0, { inlineHost });
   } else {
-    playFromQueue(idx);
+    playFromQueue(idx, { inlineHost });
   }
 }
 
@@ -462,26 +556,29 @@ function buildReel() {
       });
     });
 
-    // Update active dot on horizontal scroll
+    // Update active dot on horizontal scroll + hide vertical dots if we
+    // leave the first panel of the active artist.
     let ticking = false;
     pager.addEventListener("scroll", () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        const w = pager.clientWidth;
-        // RTL: scrollLeft is negative or starts at max in some browsers; use absolute
+        const w = pager.clientWidth || 1;
         const sl = Math.abs(pager.scrollLeft);
         const idx = Math.round(sl / w);
         dots.forEach((d, i) => d.classList.toggle("active", i === idx));
+        // Only hide vertical dots when this section is the active one
+        if (section.classList.contains("is-active")) {
+          verticalProgress?.classList.toggle("is-hidden", idx > 0);
+        }
         ticking = false;
       });
     }, { passive: true });
 
-    // Click thumb -> open in floating mini-player (persists across navigation)
+    // Click thumb -> play inline; if the user navigates away while it's
+    // playing, the player migrates to the bottom mini-player automatically.
     section.querySelectorAll(".track-thumb").forEach(thumb => {
-      thumb.addEventListener("click", () => {
-        openMiniPlayerByVideoId(thumb.dataset.vid);
-      });
+      thumb.addEventListener("click", () => playTrackInline(thumb));
     });
   });
 }
@@ -523,9 +620,24 @@ function setActiveSection(section) {
     d.classList.toggle("active", i === idx);
   });
 
-  // Hide vertical dots while we are on a hero section (any stage)
+  // Hide vertical dots while we are on a hero section OR on any non-first
+  // panel of an artist (user is exploring deeper info, dots would clutter).
   const isHero = section.dataset.section === "hero";
-  verticalProgress.classList.toggle("is-hidden", isHero);
+  const pager = section.querySelector(".pager");
+  let panelIdx = 0;
+  if (pager) {
+    const w = pager.clientWidth || 1;
+    panelIdx = Math.round(Math.abs(pager.scrollLeft) / w);
+  }
+  verticalProgress.classList.toggle("is-hidden", isHero || panelIdx > 0);
+
+  // Reset other artist sections back to their first panel so vertical
+  // navigation always lands the user on the artist's main card.
+  reel.querySelectorAll('[data-section="artist"]').forEach(s => {
+    if (s === section) return;
+    const p = s.querySelector(".pager");
+    if (p && p.scrollLeft !== 0) p.scrollTo({ left: 0, behavior: "auto" });
+  });
 
   // HUD + retint background by stage
   const stage = section.dataset.stage;
@@ -684,6 +796,88 @@ function setVH() {
 setVH();
 window.addEventListener("resize", setVH);
 window.addEventListener("orientationchange", setVH);
+
+// ===== Logo button: jump back to main hero, clearing filter ======
+logoBtn?.addEventListener("click", () => {
+  if (activeStageFilter !== "all") {
+    activeStageFilter = "all";
+    buildReel();
+    buildVerticalProgress();
+    buildStageDropdown();
+    observeSections();
+  }
+  reel.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+// ===== Search modal =====
+function openSearch() {
+  if (!searchOverlay) return;
+  searchOverlay.hidden = false;
+  searchInput.value = "";
+  renderSearchResults("");
+  setTimeout(() => searchInput?.focus(), 50);
+}
+
+function closeSearch() {
+  if (!searchOverlay) return;
+  searchOverlay.hidden = true;
+}
+
+function renderSearchResults(query) {
+  if (!searchResults) return;
+  const q = query.trim().toLowerCase();
+  const list = q
+    ? SORTED_ARTISTS.filter(a => {
+        return [a.name, a.realName, a.country, ...(a.tags || [])]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase()
+          .includes(q);
+      })
+    : SORTED_ARTISTS;
+  if (!list.length) {
+    searchResults.innerHTML = `<div class="search-empty">לא נמצא אומן בשם הזה</div>`;
+    return;
+  }
+  searchResults.innerHTML = list.slice(0, 30).map(a => `
+    <button class="search-result" data-artist-id="${escapeHtml(a.id)}">
+      <span>
+        <span class="search-result-name">${escapeHtml(a.name)}</span>
+        ${a.realName ? `<span class="search-result-meta"> · ${escapeHtml(a.realName)}</span>` : ""}
+      </span>
+      <span class="search-result-meta">${escapeHtml(stageLabel(a.stage))}</span>
+    </button>
+  `).join("");
+}
+
+searchBtn?.addEventListener("click", openSearch);
+searchOverlay?.addEventListener("click", e => {
+  if (e.target === searchOverlay) closeSearch();
+});
+searchInput?.addEventListener("input", e => renderSearchResults(e.target.value));
+searchResults?.addEventListener("click", e => {
+  const btn = e.target.closest(".search-result");
+  if (!btn) return;
+  const id = btn.dataset.artistId;
+  closeSearch();
+  // Make sure the target artist is visible under the current filter
+  if (activeStageFilter !== "all") {
+    activeStageFilter = "all";
+    buildReel();
+    buildVerticalProgress();
+    buildStageDropdown();
+    observeSections();
+  }
+  setTimeout(() => {
+    const sec = reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`);
+    sec?.scrollIntoView({ behavior: "smooth" });
+  }, 30);
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && searchOverlay && !searchOverlay.hidden) {
+    closeSearch();
+  }
+});
 
 // Boot
 buildReel();
