@@ -2003,3 +2003,105 @@ body.has-mini-player .panel {
   background: #39ff14;
   box-shadow: 0 0 8px #39ff14, 0 0 14px rgba(57, 255, 20, 0.55);
 }
+
+/* ===== Landscape phones (short viewport, wide-ish screen) =====
+   When users rotate their phone to landscape, height becomes the constraint.
+   The portrait hero/artist layouts feel cramped — switch to compact spacing
+   and a side-by-side artist hero layout that uses the extra horizontal room. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .hero-panel {
+    padding: 16px 22px 70px;
+    gap: 6px;
+  }
+  .hero-panel .logo-mark {
+    font-size: clamp(34px, 11vh, 64px);
+    line-height: 0.95;
+    margin-bottom: 6px;
+  }
+  .hero-subtitle { font-size: 11px; letter-spacing: 3px; margin-bottom: 8px; }
+  .hero-tagline {
+    font-size: 12px;
+    line-height: 1.45;
+    max-width: 560px;
+    margin-bottom: 10px;
+  }
+  .hero-meta {
+    font-size: 11px;
+    padding: 6px 14px;
+    gap: 4px 12px;
+    margin-bottom: 8px;
+  }
+  .hero-hint { font-size: 10px; margin-top: 6px; }
+  .hero-stage-tag { font-size: 10px; letter-spacing: 4px; margin-bottom: 6px; }
+  .hero-dots { bottom: 10px; padding: 5px 10px; }
+  .hero-stage-element { display: none; } /* save the GPU + room */
+
+  /* Artist sections: tighter padding so dots and content don't fight. */
+  .panel { padding: 60px 22px 70px; }
+
+  /* Artist hero: editorial 2-column even at narrow widths because we now
+     have horizontal room. Photo left, text right, English layout. */
+  .panel-hero { padding: 50px 28px 70px; text-align: left; direction: ltr; }
+  .panel-hero .panel-inner {
+    display: grid;
+    grid-template-columns: minmax(140px, 200px) 1fr;
+    gap: 24px;
+    align-items: center;
+    text-align: left;
+    direction: ltr;
+    max-width: 720px;
+  }
+  .panel-hero .artist-hero-art {
+    width: 100%;
+    max-width: 200px;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    border-radius: 18px;
+    grid-column: 1;
+  }
+  .panel-hero .artist-hero-text {
+    grid-column: 2;
+    text-align: left;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .panel-hero .artist-hero-text > * { text-align: left; }
+  .panel-hero .artist-hero-text::before {
+    width: 36px;
+    height: 2px;
+    margin-bottom: 2px;
+  }
+  .panel-hero .artist-name {
+    font-size: clamp(26px, 7vh, 44px);
+    line-height: 0.95;
+    letter-spacing: -1px;
+    margin: 0;
+  }
+  .panel-hero .artist-real { font-size: 13px; margin: 0; }
+  .panel-hero .artist-meta-line { font-size: 12px; gap: 4px 12px; }
+  .panel-hero .artist-meta-line .meta-item + .meta-item::before { margin: 0 8px; }
+
+  /* Tracks/discography lists: tighter and 2-up where possible. */
+  .tracks-stack { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .albums-list { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+
+  /* Mini-player thumb stays visible but doesn't dominate */
+  .mini-player { padding: 6px 12px; }
+  .mini-player-frame { width: 64px; height: 38px; }
+  .mini-player-next { display: none; }
+
+  /* Top bar tighter */
+  .top-bar { top: 8px; left: 8px; right: 8px; }
+  .stage-select-trigger { padding: 8px 12px; font-size: 12px; max-width: 28vw; }
+  .round-btn { width: 38px; height: 38px; }
+}
+
+/* Very short landscape (e.g. iPhone Pro Max landscape ~414px high stays
+   above 520, but small Androids can go lower). One more tier. */
+@media (orientation: landscape) and (max-height: 380px) {
+  .hero-panel .logo-mark { font-size: clamp(28px, 10vh, 48px); }
+  .panel-hero .artist-name { font-size: clamp(22px, 6vh, 34px); }
+  .panel-hero .artist-hero-art { max-width: 150px; }
+  .panel { padding: 48px 16px 60px; }
+  .panel-hero { padding: 40px 20px 60px; }
+}

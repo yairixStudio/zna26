@@ -1341,6 +1341,51 @@ setVH();
 window.addEventListener("resize", setVH);
 window.addEventListener("orientationchange", setVH);
 
+// On orientation change / viewport resize, re-anchor every scroller to its
+// current logical position. Without this, after a rotation a horizontal pager
+// can land halfway between snap points (or on a clone), and the vertical
+// reel can show the seam between two sections.
+function snapshotScrollPositions() {
+  const snap = {
+    sectionEl: getCurrentSection(),
+    pagers: []
+  };
+  reel.querySelectorAll(".pager, #hero-pager").forEach(pager => {
+    const w = pager.clientWidth || 1;
+    const idx = Math.round(Math.abs(pager.scrollLeft) / w);
+    snap.pagers.push({ pager, idx });
+  });
+  return snap;
+}
+
+function restoreScrollPositions(snap) {
+  if (!snap) return;
+  // Restore each pager to the panel that was visible before rotation.
+  snap.pagers.forEach(({ pager, idx }) => {
+    if (!pager.isConnected) return;
+    const child = pager.children[idx];
+    if (child) pager.scrollTo({ left: child.offsetLeft, behavior: "auto" });
+  });
+  // Realign the vertical reel to the section that was active.
+  if (snap.sectionEl && snap.sectionEl.isConnected) {
+    snap.sectionEl.scrollIntoView({ behavior: "auto", block: "start" });
+  }
+}
+
+let resyncTimer = null;
+function scheduleScrollResync() {
+  const snap = snapshotScrollPositions();
+  // Two RAFs after the resize gives the browser time to apply the new
+  // viewport dimensions to every scroller before we restore.
+  clearTimeout(resyncTimer);
+  resyncTimer = setTimeout(() => {
+    requestAnimationFrame(() => requestAnimationFrame(() => restoreScrollPositions(snap)));
+  }, 60);
+}
+
+window.addEventListener("orientationchange", scheduleScrollResync);
+window.addEventListener("resize", scheduleScrollResync);
+
 // Defensive global error handlers — keep the page alive on iOS Safari hiccups
 window.addEventListener("error", e => {
   console.error("[ZNA] global error:", e?.message, e?.error);
