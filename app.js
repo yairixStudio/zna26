@@ -12,10 +12,17 @@ const stagePillEl = document.getElementById("stage-pill");
 // Active stage filter ("all" = show every artist)
 let activeStageFilter = "all";
 
+// Sort artists by announcement date - newest first
+const SORTED_ARTISTS = ARTISTS.slice().sort((a, b) => {
+  const ax = a.announcedAt || "0000-00-00";
+  const bx = b.announcedAt || "0000-00-00";
+  return bx.localeCompare(ax);
+});
+
 function getFilteredArtists() {
   return activeStageFilter === "all"
-    ? ARTISTS
-    : ARTISTS.filter(a => a.stage === activeStageFilter);
+    ? SORTED_ARTISTS
+    : SORTED_ARTISTS.filter(a => a.stage === activeStageFilter);
 }
 
 const stageColor = {
