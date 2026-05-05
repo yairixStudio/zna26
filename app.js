@@ -461,9 +461,14 @@ function panelTracks(a) {
     if (!!x.zna !== !!y.zna) return x.zna ? -1 : 1;
     return (y.year || 0) - (x.year || 0);
   });
-  const cards = sortedTracks.map((t, i) => `
+  const cards = sortedTracks.map((t, i) => {
+    const vid = escapeHtml(t.id);
+    return `
     <div class="track-card ${t.zna ? "is-zna" : ""}">
-      <button class="track-thumb" data-vid="${escapeHtml(t.id)}" data-title="${escapeHtml(t.title)}" data-artist="${escapeHtml(a.name)}" style="background-image: url('https://i.ytimg.com/vi/${escapeHtml(t.id)}/hqdefault.jpg');" aria-label="נגן ${escapeHtml(t.title)}">
+      <button class="track-thumb" data-vid="${vid}" data-title="${escapeHtml(t.title)}" data-artist="${escapeHtml(a.name)}" aria-label="נגן ${escapeHtml(t.title)}">
+        <img class="track-thumb-img" loading="lazy" decoding="async" alt=""
+             src="https://i.ytimg.com/vi/${vid}/mqdefault.jpg"
+             onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='https://i.ytimg.com/vi/${vid}/default.jpg';}else{this.style.display='none';}" />
         <span class="play-btn">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         </span>
@@ -473,7 +478,8 @@ function panelTracks(a) {
         <span class="track-year">${escapeHtml(String(t.year || ""))}</span>
       </div>
     </div>
-  `).join("");
+  `;
+  }).join("");
   return `
     <div class="panel">
       <div class="panel-inner">

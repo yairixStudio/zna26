@@ -555,7 +555,6 @@ const ARTISTS = [
     ],
     links: [],
     tracks: [
-      { id: "zkzTd8ba-Mo", title: "Live @ ZNA Gathering 2022", year: 2022, zna: true },
       { id: "TdZ_SuOwrUQ", title: "Live @ Cycles of Life", year: 2023 },
       { id: "jOriE5DfSLk", title: "Spontaneous Human Combustion (Burning Man)", year: null }
     ]
