@@ -585,31 +585,23 @@ function panelHero(a) {
   const photo = a.photo
     ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
     : "";
-  const firstTrack = (a.tracks || [])[0];
-  const playCta = firstTrack
-    ? `<button class="hero-play-cta" data-vid="${escapeHtml(firstTrack.id)}" data-title="${escapeHtml(firstTrack.title)}" data-artist="${escapeHtml(a.name)}" type="button">
-         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-         השמע טראק
-       </button>`
-    : "";
   return `
     <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
-      <div class="panel-inner center">
-        <div class="hero-stage-pill" data-go-stage="${escapeHtml(a.stage)}">${escapeHtml(stageInfo(a.stage).name)}</div>
-        <div class="artist-hero-art ${a.photo ? "has-photo" : ""}">
+      <div class="panel-inner">
+        <figure class="artist-hero-art ${a.photo ? "has-photo" : ""}">
           ${photo}
-          <span class="artist-initials">${initials}</span>
+          <span class="artist-initials" aria-hidden="true">${initials}</span>
+        </figure>
+        <div class="artist-hero-text">
+          <h1 class="artist-name">${escapeHtml(a.name)}</h1>
+          ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
+          <div class="artist-meta-line">
+            <span class="meta-item">📍 ${escapeHtml(a.country)}</span>
+            ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
+            <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
+          </div>
+          ${tags ? `<div class="artist-tags-row">${tags}</div>` : ""}
         </div>
-        <div class="artist-name">${escapeHtml(a.name)}</div>
-        ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
-        <div class="artist-quick">
-          <span class="chip cyan">📍 ${escapeHtml(a.country)}</span>
-          ${a.age ? `<span class="chip cyan">🎂 ${a.age}</span>` : ""}
-          <span class="chip pink">🎧 ${escapeHtml(a.role)}</span>
-        </div>
-        ${tags ? `<div class="artist-quick artist-tags-row">${tags}</div>` : ""}
-        ${playCta}
-        <div class="hero-swipe-hint">החליקו ימינה לאודות ולטראקים →</div>
       </div>
     </div>
   `;
@@ -767,46 +759,6 @@ function buildReel() {
   reel.innerHTML = heroHtml + artistsHtml;
   wireHeroPager();
 
-  // Stage pill on each artist card jumps the hero pager to that stage
-  reel.querySelectorAll("[data-go-stage]").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.stopPropagation();
-      const stage = btn.dataset.goStage;
-      reel.scrollTo({ top: 0, behavior: "smooth" });
-      if (stage !== activeStageFilter) {
-        activeStageFilter = stage;
-        buildStageDropdown();
-        scrollHeroToStage(stage, false);
-        rerenderArtistsBelowHero();
-        updateHeroDots();
-      } else {
-        scrollHeroToStage(stage, false);
-      }
-    });
-  });
-
-  // "Play first track" CTA on each artist hero
-  reel.querySelectorAll(".hero-play-cta").forEach(btn => {
-    btn.addEventListener("click", e => {
-      e.stopPropagation();
-      const vid = btn.dataset.vid;
-      // Find the matching track-thumb in this artist's tracks panel and trigger
-      // the existing inline-play flow so animation/observer behave consistently.
-      const section = btn.closest('[data-section="artist"]');
-      const thumb = section?.querySelector(`.track-thumb[data-vid="${CSS.escape(vid)}"]`);
-      if (thumb) {
-        prepareInlineFrameAndPlay(thumb);
-        // Also slide the inner pager to the tracks panel so the player is visible
-        const pager = section.querySelector(".pager");
-        if (pager && pager.children[2]) {
-          pager.children[2].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-        }
-      } else {
-        // Fallback: just open in mini-player using the queue
-        startPlayback(vid, null);
-      }
-    });
-  });
 
 
   // Wire pager dots and YouTube thumbs for each artist section
@@ -948,7 +900,22 @@ function navVertical(dir) {
 
 function navHorizontal(dir) {
   const current = getCurrentSection();
-  if (!current || current.dataset.section !== "artist") return;
+  if (!current) return;
+  // Hero section: route to the hero-pager (Main + 4 stages)
+  if (current.dataset.section === "hero") {
+    const idx = HERO_STAGES.findIndex(s => s.id === activeStageFilter);
+    const next = Math.max(0, Math.min(HERO_STAGES.length - 1, idx + dir));
+    if (next !== idx) {
+      const stage = HERO_STAGES[next].id;
+      activeStageFilter = stage;
+      buildStageDropdown();
+      scrollHeroToStage(stage, false);
+      rerenderArtistsBelowHero();
+      updateHeroDots();
+    }
+    return;
+  }
+  // Artist section: route to the inner pager (panels)
   const pager = current.querySelector(".pager");
   if (!pager || !pager.children.length) return;
   const w = pager.clientWidth || 1;
@@ -989,7 +956,9 @@ reel.addEventListener("wheel", e => {
   const horiz = Math.abs(e.deltaX) > Math.abs(e.deltaY);
   if (horiz) {
     const current = getCurrentSection();
-    if (!current || current.dataset.section !== "artist") return;
+    // Hero AND artist sections both accept horizontal wheel — hero pager
+    // moves between Main/stages, artist pager between hero/info/tracks/disco.
+    if (!current) return;
     e.preventDefault();
     wheelAccumX += e.deltaX;
     if (Math.abs(wheelAccumX) > 60) {

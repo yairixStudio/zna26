@@ -564,72 +564,56 @@ body.has-mini-player .hero-dots {
 .panel--discography .album-name { color: var(--text); }
 .panel--discography .album-meta { color: color-mix(in oklab, var(--panel-accent) 70%, white 30%); }
 
-/* === Panel 1: Hero === */
+/* === Panel 1: Artist Hero — editorial layout ===
+   Mobile: centered column (photo on top, text below).
+   Desktop ≥1024px: magazine-style 2-column grid (photo + text). */
 .panel-hero { text-align: center; }
 
-/* Stage pill at top of artist hero - tappable jump to that stage */
-.hero-stage-pill {
-  display: inline-flex;
+.panel-hero .panel-inner {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--accent, var(--sun-yellow));
-  background: color-mix(in oklab, var(--accent, var(--sun-yellow)) 12%, transparent);
-  border: 1px solid color-mix(in oklab, var(--accent, var(--sun-yellow)) 35%, transparent);
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 16px;
+  gap: 18px;
 }
 
-.hero-stage-pill:hover {
-  background: var(--accent, var(--sun-yellow));
-  color: var(--bg-deep);
-  transform: scale(1.04);
-}
-
-/* Play first track CTA */
-.hero-play-cta {
-  display: inline-flex;
+.artist-hero-text {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-top: 18px;
-  padding: 12px 22px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--accent, var(--sun-yellow)), color-mix(in oklab, var(--accent, var(--sun-yellow)) 60%, var(--sun-pink)));
-  color: var(--bg-deep);
-  border: none;
-  font-family: inherit;
-  font-weight: 800;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 8px 24px color-mix(in oklab, var(--accent, var(--sun-yellow)) 40%, transparent);
-  transition: transform 0.15s, box-shadow 0.2s;
+  gap: 14px;
+  max-width: 100%;
 }
 
-.hero-play-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px color-mix(in oklab, var(--accent, var(--sun-yellow)) 55%, transparent);
-}
-
-.hero-play-cta:active { transform: translateY(0); }
-
-.hero-play-cta svg { margin-inline-end: 2px; }
-
-/* Bottom hint encouraging horizontal swipe */
-.hero-swipe-hint {
-  margin-top: 22px;
-  font-size: 11px;
+.artist-meta-line {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 18px;
+  font-size: 13px;
   color: var(--text-muted);
-  letter-spacing: 1px;
-  opacity: 0.7;
+  letter-spacing: 0.2px;
 }
 
-.artist-tags-row { margin-top: 6px; }
+.artist-meta-line .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.artist-meta-line .meta-item + .meta-item::before {
+  content: "·";
+  color: var(--accent, var(--sun-yellow));
+  margin-inline-end: 14px;
+  margin-inline-start: -8px;
+  font-weight: 900;
+}
+
+.artist-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
 
 .artist-hero-art {
   width: min(70vw, 240px);
@@ -1665,22 +1649,58 @@ body.has-mini-player .panel {
   .panel { padding: 110px 48px 140px; }
   .panel-inner { max-width: 1080px; }
 
-  /* Hero panel: two-column on desktop. Avatar + headline on the start side,
-     tags + chips on the end side. Reads more like a magazine cover. */
-  .panel-hero { padding-bottom: 100px; }
+  /* === Artist Hero — editorial desktop layout ===
+     Photo left at a fixed editorial size, text content stacked right with
+     left-aligned typography, generous gap, and a thin accent rule above
+     the name. */
+  .panel-hero { padding: 120px 56px; text-align: start; }
   .panel-hero .panel-inner {
-    max-width: 1040px;
+    max-width: 1080px;
     display: grid;
-    grid-template-columns: minmax(280px, 380px) 1fr;
-    gap: 48px;
+    grid-template-columns: minmax(280px, 420px) 1fr;
+    gap: 64px;
     align-items: center;
     text-align: start;
   }
-  .panel-hero .artist-hero-art { width: 100%; max-width: 380px; margin: 0; }
-  .panel-hero .artist-name { font-size: clamp(48px, 4.5vw, 76px); text-align: start; }
-  .panel-hero .artist-real { font-size: 18px; text-align: start; }
-  .panel-hero .panel-eyebrow { text-align: start; grid-column: 1 / -1; }
-  .panel-hero .artist-quick { justify-content: flex-start; }
+  .panel-hero .artist-hero-art {
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    border-radius: 24px;
+  }
+  .panel-hero .artist-hero-text {
+    align-items: flex-start;
+    gap: 18px;
+    text-align: start;
+  }
+  .panel-hero .artist-hero-text::before {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent, var(--sun-yellow)), transparent);
+    border-radius: 2px;
+    margin-bottom: 6px;
+  }
+  .panel-hero .artist-name {
+    font-size: clamp(56px, 5.6vw, 96px);
+    line-height: 0.95;
+    letter-spacing: -2px;
+    text-align: start;
+    margin: 0;
+  }
+  .panel-hero .artist-real {
+    font-size: 20px;
+    text-align: start;
+    color: var(--text-muted);
+    margin: 0;
+  }
+  .panel-hero .artist-meta-line {
+    justify-content: flex-start;
+    font-size: 15px;
+  }
+  .panel-hero .artist-tags-row { justify-content: flex-start; }
 
   /* Bio panel: wider, more readable */
   .bio-card { padding: 32px 36px; }
@@ -1698,9 +1718,16 @@ body.has-mini-player .panel {
 }
 
 @media (min-width: 1400px) {
-  .panel { padding: 120px 64px 160px; }
-  .panel-inner { max-width: 1200px; }
-  .panel-hero .panel-inner { max-width: 1160px; grid-template-columns: minmax(320px, 440px) 1fr; gap: 64px; }
+  .panel { padding: 130px 80px 170px; }
+  .panel-inner { max-width: 1280px; }
+  .panel-hero { padding: 130px 80px; }
+  .panel-hero .panel-inner {
+    max-width: 1240px;
+    grid-template-columns: minmax(360px, 480px) 1fr;
+    gap: 80px;
+  }
+  .panel-hero .artist-hero-art { max-width: 480px; }
+  .panel-hero .artist-name { font-size: clamp(72px, 6vw, 120px); }
   .tracks-stack { grid-template-columns: repeat(3, 1fr); }
   .tracks-stack:has(> .track-card:only-child),
   .tracks-stack:has(> .track-card:nth-child(2):last-child) {
