@@ -174,8 +174,26 @@ a { color: var(--sun-yellow); }
      vertical fall through to the reel so the user can swipe down to artists. */
   touch-action: pan-x pan-y;
   scrollbar-width: none;
+  will-change: transform;
 }
 .hero-pager::-webkit-scrollbar { display: none; }
+
+/* Idle peek hint: visually nudge the pager toward the next/previous panel
+   without actually scrolling, so we don't fight scroll-snap. */
+@keyframes hero-peek-forward {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(-22%); }
+  60%  { transform: translateX(-22%); }
+  100% { transform: translateX(0); }
+}
+@keyframes hero-peek-backward {
+  0%   { transform: translateX(0); }
+  40%  { transform: translateX(22%); }
+  60%  { transform: translateX(22%); }
+  100% { transform: translateX(0); }
+}
+.hero-pager.peek-forward  { animation: hero-peek-forward  1.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.hero-pager.peek-backward { animation: hero-peek-backward 1.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
 
 .hero-panel {
   flex: 0 0 100%;

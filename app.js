@@ -1174,15 +1174,15 @@ function setActiveSection(section) {
 }
 
 // ===== Hero peek hint =====
-// After a few seconds of inactivity on the multi-hero, gently nudge the
-// hero pager toward the next stage so the user notices they can swipe
-// horizontally between stages.
+// After a few seconds idle on the multi-hero, animate a 22% sideways nudge
+// on the hero pager so the user discovers the horizontal swipe gesture.
+// Driven by a CSS @keyframes (visual transform) — does not actually scroll
+// the pager, so scroll-snap can't fight us back.
 let heroPeekTimer = null;
 let isPeeking = false;
-let peekCancelled = false;
-const PEEK_IDLE_MS = 4500;
-const PEEK_NEXT_MS = 9000;
-const PEEK_DISTANCE = 0.13;
+const PEEK_IDLE_MS = 3500;   // first nudge fairly soon
+const PEEK_NEXT_MS = 8000;   // subsequent nudges further apart
+const PEEK_ANIM_MS = 1400;   // matches the CSS @keyframes duration
 
 function schedulePeek(delay = PEEK_IDLE_MS) {
   if (isPeeking) return;
@@ -1193,64 +1193,45 @@ function schedulePeek(delay = PEEK_IDLE_MS) {
 function cancelPeek() {
   clearTimeout(heroPeekTimer);
   heroPeekTimer = null;
-  if (isPeeking) peekCancelled = true;
+  if (isPeeking) {
+    const heroPager = document.getElementById("hero-pager");
+    heroPager?.classList.remove("peek-forward", "peek-backward");
+    isPeeking = false;
+  }
 }
 
-async function performPeek() {
+function performPeek() {
   const current = getCurrentSection();
   if (!current || current.dataset.section !== "hero") return;
   const heroPager = document.getElementById("hero-pager");
   if (!heroPager) return;
   const w = heroPager.clientWidth;
   if (!w) return;
-  const startLeft = heroPager.scrollLeft;
-  const cur = Math.round(startLeft / w);
+  const cur = Math.round(heroPager.scrollLeft / w);
   const total = heroPager.children.length;
   if (total < 2) return;
 
-  // Direction: forward unless we're at the last stage, then backward.
+  // Forward unless we're at the last stage, then peek backward.
   const dir = cur < total - 1 ? 1 : -1;
-  const peekDelta = dir * w * PEEK_DISTANCE;
+  const cls = dir > 0 ? "peek-forward" : "peek-backward";
 
   isPeeking = true;
-  peekCancelled = false;
-  suppressHeroScroll = true;
-  // Disable snap so we can rest on a non-snap scroll position briefly.
-  const prevSnap = heroPager.style.scrollSnapType;
-  heroPager.style.scrollSnapType = "none";
-  heroPager.classList.add("is-peeking");
-
-  try {
-    heroPager.scrollTo({ left: startLeft + peekDelta, behavior: "smooth" });
-    await waitScrollEnd(heroPager, 700);
-    if (peekCancelled) return;
-    // Hold a tiny beat at the peek extent so the eye registers the motion.
-    await new Promise(r => setTimeout(r, 220));
-    if (peekCancelled) return;
-    heroPager.scrollTo({ left: startLeft, behavior: "smooth" });
-    await waitScrollEnd(heroPager, 600);
-  } finally {
-    heroPager.style.scrollSnapType = prevSnap;
-    heroPager.classList.remove("is-peeking");
-    // If we got cancelled, snap back instantly to be safe.
-    if (peekCancelled) heroPager.scrollLeft = startLeft;
+  heroPager.classList.add(cls);
+  setTimeout(() => {
+    heroPager.classList.remove(cls);
     isPeeking = false;
-    suppressHeroScroll = false;
-    // Reschedule the next peek if we're still on a hero.
-    const stillHero = getCurrentSection()?.dataset.section === "hero";
-    if (stillHero && !peekCancelled) schedulePeek(PEEK_NEXT_MS);
-  }
+    // Reschedule next peek if the user is still here.
+    if (getCurrentSection()?.dataset.section === "hero") {
+      schedulePeek(PEEK_NEXT_MS);
+    }
+  }, PEEK_ANIM_MS);
 }
 
-// Any user activity reschedules the peek (or cancels an in-flight one).
+// Any user activity reschedules the peek (or cancels one mid-flight).
 const peekActivityHandler = () => {
-  if (isPeeking) {
-    peekCancelled = true;
-    return;
-  }
+  cancelPeek();
   const current = getCurrentSection();
   if (current?.dataset.section === "hero") schedulePeek();
-  else cancelPeek();
 };
 ["pointerdown", "touchstart", "wheel", "keydown"].forEach(ev => {
   document.addEventListener(ev, peekActivityHandler, { passive: true });
