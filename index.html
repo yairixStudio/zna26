@@ -19,6 +19,21 @@
 
   <main class="reel" id="reel" aria-label="Festival lineup reel"></main>
 
+  <!-- Floating mini-player -->
+  <div class="mini-player" id="mini-player" aria-hidden="true">
+    <div class="mini-player-frame" id="mini-player-frame"></div>
+    <div class="mini-player-info">
+      <div class="mini-player-title" id="mini-player-title"></div>
+      <div class="mini-player-artist" id="mini-player-artist"></div>
+    </div>
+    <button class="mini-player-btn" id="mini-player-expand" title="הרחב/כווץ" aria-label="הרחב או כווץ">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M5 5h6v2H7v4H5V5zm14 0v6h-2V7h-4V5h6zM5 19v-6h2v4h4v2H5zm14 0h-6v-2h4v-4h2v6z"/></svg>
+    </button>
+    <button class="mini-player-btn" id="mini-player-close" title="סגור" aria-label="סגור">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6.4 5L5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z"/></svg>
+    </button>
+  </div>
+
   <!-- Top stage pill -->
   <nav class="stage-pill" id="stage-pill" aria-label="בחירת במה"></nav>
 

@@ -9,6 +9,37 @@ const verticalProgress = document.getElementById("vertical-progress");
 const bgScene = document.getElementById("bg-scene");
 const stagePillEl = document.getElementById("stage-pill");
 
+// Mini-player
+const miniPlayer = document.getElementById("mini-player");
+const miniPlayerFrame = document.getElementById("mini-player-frame");
+const miniPlayerTitle = document.getElementById("mini-player-title");
+const miniPlayerArtist = document.getElementById("mini-player-artist");
+const miniPlayerExpand = document.getElementById("mini-player-expand");
+const miniPlayerClose = document.getElementById("mini-player-close");
+
+let currentMiniVideoId = null;
+
+function openMiniPlayer(videoId, title, artist) {
+  currentMiniVideoId = videoId;
+  miniPlayerFrame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="YouTube video"></iframe>`;
+  miniPlayerTitle.textContent = title || "";
+  miniPlayerArtist.textContent = artist || "";
+  miniPlayer.classList.add("is-open");
+  miniPlayer.setAttribute("aria-hidden", "false");
+}
+
+function closeMiniPlayer() {
+  miniPlayer.classList.remove("is-open", "is-expanded");
+  miniPlayer.setAttribute("aria-hidden", "true");
+  miniPlayerFrame.innerHTML = "";
+  currentMiniVideoId = null;
+}
+
+miniPlayerClose.addEventListener("click", closeMiniPlayer);
+miniPlayerExpand.addEventListener("click", () => {
+  miniPlayer.classList.toggle("is-expanded");
+});
+
 // Active stage filter ("all" = show every artist)
 let activeStageFilter = "all";
 
@@ -148,7 +179,7 @@ function panelTracks(a) {
   }
   const cards = tracks.map((t, i) => `
     <div class="track-card">
-      <button class="track-thumb" data-vid="${escapeHtml(t.id)}" style="background-image: url('https://i.ytimg.com/vi/${escapeHtml(t.id)}/hqdefault.jpg');" aria-label="נגן ${escapeHtml(t.title)}">
+      <button class="track-thumb" data-vid="${escapeHtml(t.id)}" data-title="${escapeHtml(t.title)}" data-artist="${escapeHtml(a.name)}" style="background-image: url('https://i.ytimg.com/vi/${escapeHtml(t.id)}/hqdefault.jpg');" aria-label="נגן ${escapeHtml(t.title)}">
         <span class="play-btn">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
         </span>
@@ -255,14 +286,13 @@ function buildReel() {
       });
     }, { passive: true });
 
-    // YouTube lazy-load: click thumb -> swap with iframe
+    // Click thumb -> open in floating mini-player (persists across navigation)
     section.querySelectorAll(".track-thumb").forEach(thumb => {
       thumb.addEventListener("click", () => {
         const vid = thumb.dataset.vid;
-        const wrapper = document.createElement("div");
-        wrapper.className = "track-frame";
-        wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(vid)}?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="YouTube video"></iframe>`;
-        thumb.replaceWith(wrapper);
+        const title = thumb.dataset.title || "";
+        const artistName = thumb.dataset.artist || "";
+        openMiniPlayer(vid, title, artistName);
       });
     });
   });
