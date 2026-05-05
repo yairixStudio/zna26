@@ -471,23 +471,51 @@ a { color: var(--sun-yellow); }
 .chip.cyan { color: var(--neon-cyan); background: rgba(0, 212, 255, 0.1); border-color: rgba(0, 212, 255, 0.3); }
 .chip.pink { color: var(--sun-pink); background: rgba(255, 92, 138, 0.12); border-color: rgba(255, 92, 138, 0.4); }
 
-/* === Panel 2: Bio === */
+/* === About / Info panel === */
 .bio-card {
   background: var(--card-bg);
   border: 1.5px solid var(--card-border);
   border-radius: 20px;
-  padding: 20px 18px;
+  padding: 22px 20px;
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.info-meta {
+  font-size: 12px;
+  color: var(--sun-yellow);
+  letter-spacing: 0.3px;
+  padding: 8px 14px;
+  background: rgba(254, 180, 71, 0.10);
+  border: 1px solid rgba(254, 180, 71, 0.25);
+  border-radius: 999px;
+  align-self: flex-start;
+}
+
+.info-section { display: flex; flex-direction: column; gap: 10px; }
+
+.info-section-title {
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--sun-yellow);
+  font-weight: 700;
+  opacity: 0.85;
+  border-bottom: 1px dashed var(--card-border);
+  padding-bottom: 6px;
+  margin: 0;
 }
 
 .bio-text {
   font-size: clamp(14px, 3.6vw, 17px);
   line-height: 1.8;
   color: var(--text);
+  margin: 0;
 }
 
 .notable {
-  margin-top: 14px;
   padding: 12px 14px;
   background: linear-gradient(135deg, rgba(254, 180, 71, 0.18), rgba(255, 92, 138, 0.1));
   border-right: 4px solid var(--sun-yellow);

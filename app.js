@@ -330,8 +330,9 @@ function onVideoEnded() {
         // Also slide the inner pager to the tracks panel (panel index 3)
         setTimeout(() => {
           const pager = nextSec.querySelector(".pager");
-          if (pager && pager.children[3]) {
-            pager.children[3].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+          // Slide to the tracks panel (3rd panel, index 2: hero, info, tracks, discography)
+          if (pager && pager.children[2]) {
+            pager.children[2].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
           }
         }, 450);
       }
@@ -506,14 +507,48 @@ function panelHero(a) {
   `;
 }
 
-function panelBio(a) {
+function formatAnnouncedDate(yyyymmdd) {
+  if (!yyyymmdd) return "";
+  const months = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+  const m = String(yyyymmdd).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return "";
+  const [_, y, mo, d] = m;
+  const monthName = months[parseInt(mo, 10) - 1] || "";
+  return `${parseInt(d, 10)} ב${monthName} ${y}`;
+}
+
+function panelInfo(a) {
+  const links = a.links || [];
+  const linksHtml = links.length
+    ? `
+      <div class="info-section">
+        <h3 class="info-section-title">קישורים</h3>
+        <div class="links-grid">
+          ${links.map(l => `<a class="link-btn" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} ↗</a>`).join("")}
+        </div>
+      </div>
+    `
+    : "";
+  const announcedHtml = a.announcedAt
+    ? `<div class="info-meta">📣 הוכרז ב-${escapeHtml(formatAnnouncedDate(a.announcedAt))}</div>`
+    : "";
+  const bioHtml = a.bio
+    ? `
+      <div class="info-section">
+        <h3 class="info-section-title">ביוגרפיה</h3>
+        <p class="bio-text">${escapeHtml(a.bio)}</p>
+        ${a.notable ? `<div class="notable">★ ${escapeHtml(a.notable)}</div>` : ""}
+      </div>
+    `
+    : "";
   return `
     <div class="panel">
       <div class="panel-inner">
-        <div class="panel-eyebrow">ביוגרפיה</div>
+        <div class="panel-eyebrow">אודות</div>
         <div class="bio-card">
-          <p class="bio-text">${escapeHtml(a.bio || "")}</p>
-          ${a.notable ? `<div class="notable">★ ${escapeHtml(a.notable)}</div>` : ""}
+          ${announcedHtml}
+          ${bioHtml}
+          ${linksHtml}
         </div>
       </div>
     </div>
@@ -595,33 +630,9 @@ function panelTracks(a) {
   `;
 }
 
-function panelLinks(a) {
-  const links = a.links || [];
-  if (!links.length) {
-    return `
-      <div class="panel">
-        <div class="panel-inner center">
-          <div class="panel-eyebrow">קישורים</div>
-          <p class="muted">בקרוב.</p>
-        </div>
-      </div>
-    `;
-  }
-  const linkBtns = links.map(l => `
-    <a class="link-btn" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} ↗</a>
-  `).join("");
-  return `
-    <div class="panel">
-      <div class="panel-inner">
-        <div class="panel-eyebrow">קישורים</div>
-        <div class="links-grid">${linkBtns}</div>
-      </div>
-    </div>
-  `;
-}
-
 function artistSection(a, idx) {
-  const panels = [panelHero(a), panelBio(a), panelAlbums(a), panelTracks(a), panelLinks(a)];
+  // Order: Hero → About → Tracks → Discography (last)
+  const panels = [panelHero(a), panelInfo(a), panelTracks(a), panelAlbums(a)];
   const panelCount = panels.length;
   const dots = panels.map((_, i) => `<button class="dot ${i === 0 ? "active" : ""}" data-panel="${i}" aria-label="פאנל ${i + 1}"></button>`).join("");
   return `
