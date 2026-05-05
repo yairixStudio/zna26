@@ -1579,12 +1579,17 @@ async function startGuidedTour() {
   tourInProgress = true;
   let current = getCurrentSection();
 
-  // Step 1: snap the artist's pager back to its first panel
+  // Step 1: snap the artist's pager back to the REAL Hero panel.
+  // With the carousel layout, pager.children[0] is cloneStart (a clone of
+  // discography), not the Hero — so scrolling there would visually take the
+  // user further into the discography zone, the opposite of what they expect.
+  // The real Hero (with the artist photo) lives at children[1].
   if (current?.dataset.section === "artist") {
     const pager = current.querySelector(".pager");
-    if (pager && Math.abs(pager.scrollLeft) > 10) {
+    const realHero = pager?.children[1];
+    if (pager && realHero && Math.abs(pager.scrollLeft - realHero.offsetLeft) > 10) {
       const wait1 = waitScrollEnd(pager);
-      pager.children[0]?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+      realHero.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
       await wait1;
       if (!tourInProgress) return;
       await wait(120); // tiny breath between steps so the eye sees the change
@@ -1638,7 +1643,8 @@ function finishTourImmediately() {
   const current = getCurrentSection();
   if (current?.dataset.section === "artist") {
     const pager = current.querySelector(".pager");
-    pager?.children[0]?.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
+    // children[1] = real Hero panel (children[0] is cloneStart of discography)
+    pager?.children[1]?.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
   }
   const heroSec = reel.querySelector('[data-section="hero"]');
   heroSec?.scrollIntoView({ behavior: "auto" });
