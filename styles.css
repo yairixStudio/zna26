@@ -602,6 +602,37 @@ body.has-mini-player .hero-dots {
   font-weight: 700;
 }
 
+/* Two-line eyebrow on Info / Tracks / Discography: artist name on top
+   so the user always knows whose discography or bio they're reading,
+   section label below in the existing accent style. */
+.panel-eyebrow.has-artist {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  letter-spacing: normal;
+  text-transform: none;
+  opacity: 1;
+}
+
+.panel-eyebrow.has-artist .eyebrow-artist {
+  font-size: clamp(15px, 3.6vw, 18px);
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.1;
+}
+
+.panel-eyebrow.has-artist .eyebrow-section {
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--panel-accent, var(--sun-yellow));
+  font-weight: 700;
+  opacity: 0.85;
+}
+
 /* ===== Per-panel color identity (ZNA palette) =====
    --panel-accent feeds eyebrow, card borders, dividers, chips and CTAs. */
 .panel--hero        { --panel-accent: #FEB447; --panel-accent-2: #ff5c8a; }   /* sun yellow → sunset pink */
@@ -1952,6 +1983,22 @@ body.has-mini-player .panel {
   font-size: clamp(13px, 3.6vw, 17px);
   line-height: 1.55;
   margin-bottom: 14px;
+}
+
+/* Artist hero name should center even when it wraps to two lines. The
+   bidi block earlier sets text-align:start, which makes the second line
+   left-align as soon as the first line wraps. Force-center on mobile;
+   the editorial desktop layout (>=1024px) explicitly re-overrides to
+   left-align further down so the magazine treatment still works. */
+.panel-hero .artist-name,
+.panel-hero .artist-real {
+  text-align: center !important;
+}
+@media (min-width: 1024px) {
+  .panel-hero .artist-name,
+  .panel-hero .artist-real {
+    text-align: left !important;
+  }
 }
 
 /* Compact single-line meta — dates · location · count, no icons. */

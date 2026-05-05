@@ -810,7 +810,10 @@ function panelInfo(a) {
   return `
     <div class="panel panel--info">
       <div class="panel-inner">
-        <div class="panel-eyebrow">אודות</div>
+        <div class="panel-eyebrow has-artist">
+          <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
+          <span class="eyebrow-section">אודות</span>
+        </div>
         <div class="bio-card">
           ${announcedHtml}
           ${bioHtml}
@@ -822,11 +825,17 @@ function panelInfo(a) {
 }
 
 function panelAlbums(a) {
+  const eyebrow = (label) => `
+    <div class="panel-eyebrow has-artist">
+      <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
+      <span class="eyebrow-section">${label}</span>
+    </div>
+  `;
   if (!a.albums || !a.albums.length) {
     return `
       <div class="panel panel--discography">
         <div class="panel-inner">
-          <div class="panel-eyebrow">דיסקוגרפיה</div>
+          ${eyebrow("דיסקוגרפיה")}
           <p class="muted">המידע יתעדכן בקרוב</p>
         </div>
       </div>
@@ -841,7 +850,7 @@ function panelAlbums(a) {
   return `
     <div class="panel panel--discography">
       <div class="panel-inner">
-        <div class="panel-eyebrow">דיסקוגרפיה נבחרת</div>
+        ${eyebrow("דיסקוגרפיה נבחרת")}
         <ul class="albums-list">${items}</ul>
       </div>
     </div>
@@ -850,12 +859,18 @@ function panelAlbums(a) {
 
 function panelTracks(a) {
   const tracks = a.tracks || [];
+  const eyebrow = (label) => `
+    <div class="panel-eyebrow has-artist">
+      <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
+      <span class="eyebrow-section">${label}</span>
+    </div>
+  `;
   if (!tracks.length) {
     const q = encodeURIComponent(a.name + " " + (a.tags || []).slice(0, 1).join(" "));
     return `
       <div class="panel panel--tracks">
         <div class="panel-inner center">
-          <div class="panel-eyebrow">טראקים</div>
+          ${eyebrow("טראקים")}
           <p class="no-tracks">עדיין לא הוספנו טראקים מאומתים. חפשו ביוטיוב:</p>
           <a class="search-yt-btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ חיפוש ב-YouTube</a>
         </div>
@@ -889,7 +904,7 @@ function panelTracks(a) {
   return `
     <div class="panel panel--tracks">
       <div class="panel-inner">
-        <div class="panel-eyebrow">טראקים נבחרים</div>
+        ${eyebrow("טראקים נבחרים")}
         <div class="tracks-stack">${cards}</div>
       </div>
     </div>
@@ -1266,9 +1281,18 @@ function observeSections() {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
         setActiveSection(entry.target);
+      } else if (entry.intersectionRatio < 0.25 && entry.target.dataset.section === "artist") {
+        // Section is mostly off-screen — reset its pager to the real Hero
+        // (children[1]) so when the user comes back to it later they always
+        // land on the artist's main card, never mid-panel.
+        const pager = entry.target.querySelector(".pager");
+        const realFirst = pager?.children[1];
+        if (realFirst && Math.abs(pager.scrollLeft - realFirst.offsetLeft) > 4) {
+          pager.scrollTo({ left: realFirst.offsetLeft, behavior: "auto" });
+        }
       }
     });
-  }, { root: reel, threshold: [0.6] });
+  }, { root: reel, threshold: [0, 0.25, 0.6] });
   sections.forEach(s => currentObserver.observe(s));
 }
 
