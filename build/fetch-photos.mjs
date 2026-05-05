@@ -15,7 +15,21 @@ const PAGES = [
   "https://znagathering.com/program/dancefloor/",
   "https://znagathering.com/program/the-market-2026/",
   "https://znagathering.com/program/goa-guardians/",
-  "https://znagathering.com/program/retro-universe/"
+  "https://znagathering.com/program/retro-universe/",
+  "https://znagathering.com/2026/04/27/artist-announcement-retro-universe-35/",
+  "https://znagathering.com/2026/04/06/artist-announcement-retro-universe-32/",
+  "https://znagathering.com/2026/03/30/artist-announcement-retro-universe-31/",
+  "https://znagathering.com/2026/03/25/artist-announcement-market/",
+  "https://znagathering.com/2026/03/23/artist-announcement-retro-universe-30/",
+  "https://znagathering.com/2026/03/16/artist-announcement-retro-universe-29/",
+  "https://znagathering.com/2026/03/04/goa-guardians-line-up-announcement/",
+  "https://znagathering.com/2026/02/24/artist-announcement-retro-universe-26/",
+  "https://znagathering.com/2026/02/16/artist-announcement-retro-universe-25/",
+  "https://znagathering.com/2026/02/09/artist-announcement-retro-universe-24/",
+  "https://znagathering.com/2026/02/02/artist-announcement-retro-universe-23/",
+  "https://znagathering.com/2026/01/26/artist-announcement-retro-universe-22/",
+  "https://znagathering.com/2026/01/19/artist-announcement-retro-universe-21/",
+  "https://znagathering.com/2026/01/12/artist-announcement-retro-universe-20/"
 ];
 
 const UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36";
@@ -130,8 +144,9 @@ function extractImages(html) {
     const altMatch = tag.match(/\balt\s*=\s*["']([^"']*)["']/i);
     const srcsetMatch = tag.match(/\bsrcset\s*=\s*["']([^"']+)["']/i);
     const dataSrcMatch = tag.match(/\bdata-src\s*=\s*["']([^"']+)["']/i);
+    const dataLazySrcMatch = tag.match(/\bdata-lazy-src\s*=\s*["']([^"']+)["']/i);
     const titleMatch = tag.match(/\btitle\s*=\s*["']([^"']*)["']/i);
-    let src = srcMatch?.[1] || dataSrcMatch?.[1];
+    let src = srcMatch?.[1] || dataSrcMatch?.[1] || dataLazySrcMatch?.[1];
     if (!src) continue;
     // Skip data: URIs and tiny placeholders
     if (src.startsWith("data:")) continue;
@@ -141,7 +156,6 @@ function extractImages(html) {
         .split(",")
         .map(s => s.trim().split(/\s+/))
         .filter(p => p[0]);
-      // Sort by descriptor (e.g. "1024w" -> 1024)
       candidates.sort((a, b) => {
         const w = (s) => parseInt((s[1] || "0").replace(/[^0-9]/g, ""), 10) || 0;
         return w(b) - w(a);
@@ -154,42 +168,71 @@ function extractImages(html) {
       title: titleMatch?.[1] || ""
     });
   }
+
+  // Also pull image URLs from inline style background-image / data-bg / similar
+  const bgRe = /(?:background-image\s*:\s*url|data-bg(?:-?img)?\s*=)\s*\(?["']?(https?:[^"')\s]+\.(?:jpe?g|png|webp))["')]?/gi;
+  while ((m = bgRe.exec(html))) {
+    out.push({ src: m[1], alt: "", title: "" });
+  }
+
+  // Pull from JSON blobs / anywhere wp-content/uploads URLs appear
+  const looseRe = /https?:\/\/[^"'\s)]*\/wp-content\/uploads\/[^"'\s)]+\.(?:jpe?g|png|webp)/gi;
+  while ((m = looseRe.exec(html))) {
+    out.push({ src: m[0], alt: "", title: "" });
+  }
   return out;
 }
 
 // Heuristic: filter image URLs to plausible artist photos.
 function isLikelyArtistPhoto(src) {
   if (/\/wp-content\/uploads\//.test(src) === false) return false;
-  // Skip site logo / banners / favicons / placeholders
   const lc = src.toLowerCase();
-  if (/(logo|banner|favicon|placeholder|sprite|footer|header|background|cropped)/.test(lc)) return false;
-  // Reasonable extensions
+  if (/(favicon|sprite|placeholder|emoji)/.test(lc)) return false;
   if (!/\.(jpg|jpeg|png|webp)/i.test(lc)) return false;
   return true;
 }
 
+function urlSlug(src) {
+  try {
+    const u = new URL(src);
+    return decodeURIComponent(u.pathname.split("/").pop() || "").toLowerCase();
+  } catch { return ""; }
+}
+
+// Per-page heuristic: announcement posts contain a single artist name in <title>
+function inferArtistFromPageTitle(html) {
+  const m = html.match(/<title[^>]*>([^<]*)<\/title>/i);
+  if (!m) return null;
+  return matchArtist(m[1]);
+}
+
 async function main() {
   const photos = {};
+  const seenSrcs = new Set();
   const ambiguous = [];
+
   for (const url of PAGES) {
     console.log(`Fetching ${url}`);
     const html = await fetchHtml(url);
     if (!html) continue;
     const images = extractImages(html);
-    console.log(`  found ${images.length} <img> tags`);
+    console.log(`  ${images.length} candidate URLs`);
+    const pageArtistHint = inferArtistFromPageTitle(html);
     for (const img of images) {
       if (!isLikelyArtistPhoto(img.src)) continue;
-      // Try to match by alt text first, then by URL filename slug
-      let id = matchArtist(img.alt) || matchArtist(img.title);
-      if (!id) {
-        const filename = decodeURIComponent(img.src.split("/").pop().toLowerCase());
-        id = matchArtist(filename);
+      if (seenSrcs.has(img.src)) continue;
+      seenSrcs.add(img.src);
+      const slug = urlSlug(img.src);
+      let id = matchArtist(img.alt) || matchArtist(img.title) || matchArtist(slug);
+      // For announcement post pages, the page is mostly about ONE artist - if we
+      // can't match the image directly, fall back to the page's title hint.
+      if (!id && pageArtistHint && /artist-announcement/i.test(url)) {
+        id = pageArtistHint;
       }
       if (!id) {
-        ambiguous.push(img);
+        ambiguous.push({ url: img.src, alt: img.alt, slug });
         continue;
       }
-      // Prefer first-seen URL per artist (highest position usually = featured image)
       if (!photos[id]) photos[id] = img.src;
     }
   }
@@ -199,9 +242,11 @@ async function main() {
     JSON.stringify(photos, null, 2) + "\n"
   );
 
-  console.log(`\nMatched ${Object.keys(photos).length} artists.`);
+  console.log(`\nMatched ${Object.keys(photos).length} artists:`);
+  for (const [id, src] of Object.entries(photos)) console.log(`  ${id}: ${src}`);
   if (ambiguous.length) {
-    console.log(`Skipped ${ambiguous.length} unmatched images.`);
+    console.log(`\nSkipped ${ambiguous.length} unmatched (sample):`);
+    ambiguous.slice(0, 10).forEach(a => console.log(`  alt="${a.alt}" slug=${a.slug}`));
   }
 }
 

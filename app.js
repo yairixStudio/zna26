@@ -7,7 +7,12 @@ const hud = document.getElementById("hud");
 const hudPos = document.getElementById("hud-pos");
 const verticalProgress = document.getElementById("vertical-progress");
 const bgScene = document.getElementById("bg-scene");
-const stagePillEl = document.getElementById("stage-pill");
+
+// Stage selector dropdown
+const stageSelectEl = document.getElementById("stage-select");
+const stageSelectTrigger = document.getElementById("stage-select-trigger");
+const stageSelectLabel = document.getElementById("stage-select-label");
+const stageSelectMenu = document.getElementById("stage-select-menu");
 
 // Mini-player
 const miniPlayer = document.getElementById("mini-player");
@@ -52,27 +57,37 @@ function ensureYTApi() {
 }
 
 window.onYouTubeIframeAPIReady = function () {
-  ytApiReady = true;
-  if (pendingFirstPlay) {
-    const { videoId } = pendingFirstPlay;
-    pendingFirstPlay = null;
-    createPlayer(videoId);
-  }
+  try {
+    ytApiReady = true;
+    if (pendingFirstPlay) {
+      const { videoId } = pendingFirstPlay;
+      pendingFirstPlay = null;
+      createPlayer(videoId);
+    }
+  } catch (e) { console.error("YT api ready error:", e); }
 };
 
 function createPlayer(videoId) {
-  miniPlayerFrame.innerHTML = '<div id="yt-player-target"></div>';
-  ytPlayer = new YT.Player("yt-player-target", {
-    height: "100%",
-    width: "100%",
-    videoId: videoId,
-    playerVars: { autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1 },
-    events: {
-      onStateChange: e => {
-        if (e.data === YT.PlayerState.ENDED) onVideoEnded();
+  if (!miniPlayerFrame || !window.YT || !window.YT.Player) return;
+  try {
+    miniPlayerFrame.innerHTML = '<div id="yt-player-target"></div>';
+    ytPlayer = new YT.Player("yt-player-target", {
+      height: "100%",
+      width: "100%",
+      videoId: videoId,
+      playerVars: { autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1 },
+      events: {
+        onStateChange: e => {
+          if (e.data === YT.PlayerState.ENDED) onVideoEnded();
+        },
+        onError: e => { console.warn("YT player error:", e?.data); }
       }
-    }
-  });
+    });
+  } catch (e) {
+    console.error("createPlayer failed:", e);
+    // Fallback: plain iframe so the user still sees the video
+    miniPlayerFrame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  }
 }
 
 function updateMiniPlayerUI() {
@@ -185,10 +200,12 @@ async function loadPhotos() {
       }
     });
     if (merged > 0) {
-      // Re-render so photos appear (panels were already built before fetch).
-      buildReel();
-      observeSections();
-      setActiveSection(reel.querySelector(".section"));
+      try {
+        // Don't disturb a playing video - the player lives outside the reel.
+        buildReel();
+        observeSections();
+        setActiveSection(reel.querySelector(".section"));
+      } catch (e) { console.warn("photo re-render failed:", e); }
     }
   } catch (e) { /* photos.json optional */ }
 }
@@ -241,6 +258,24 @@ function heroSection() {
       <button class="hero-cta" id="cta-start">
         בואו נתחיל
       </button>
+    </section>
+  `;
+}
+
+function stageHeroSection(stageId) {
+  const stage = FESTIVAL.stages.find(s => s.id === stageId);
+  if (!stage) return "";
+  const count = ARTISTS.filter(a => a.stage === stageId).length;
+  return `
+    <section class="section hero-section" data-section="hero" data-stage="${escapeHtml(stageId)}">
+      <div class="logo-mark" style="font-size: clamp(40px, 11vw, 90px);">${escapeHtml(stage.name)}</div>
+      <div class="hero-subtitle">${escapeHtml(stage.name.toUpperCase())}</div>
+      <p class="hero-tagline">${escapeHtml(stage.desc)}</p>
+      <div class="hero-meta">
+        <span><strong>🎧</strong> ${count} אומנים</span>
+        <span><strong>📅</strong> ${escapeHtml(FESTIVAL.dates)}</span>
+      </div>
+      <button class="hero-cta" id="cta-start">בואו נתחיל</button>
     </section>
   `;
 }
@@ -402,7 +437,8 @@ function artistSection(a, idx) {
 function buildReel() {
   const list = getFilteredArtists();
   const artistSections = list.map((a, i) => artistSection(a, i)).join("");
-  reel.innerHTML = (activeStageFilter === "all" ? heroSection() : "") + artistSections;
+  const hero = activeStageFilter === "all" ? heroSection() : stageHeroSection(activeStageFilter);
+  reel.innerHTML = hero + artistSections;
 
   // CTA scroll to first artist (hero only renders in "all" mode)
   const cta = document.getElementById("cta-start");
@@ -453,14 +489,11 @@ function buildReel() {
 // ===== Vertical progress bar =====
 
 function buildVerticalProgress() {
+  // Hero is always present at index 0 now (per-stage hero or main hero).
   const list = getFilteredArtists();
-  const items = [];
-  if (activeStageFilter === "all") {
-    items.push(`<button class="v-dot active" data-vidx="0" aria-label="ראשי"></button>`);
-  }
-  const offset = activeStageFilter === "all" ? 1 : 0;
+  const items = [`<button class="v-dot active" data-vidx="0" aria-label="ראשי"></button>`];
   list.forEach((a, i) => {
-    items.push(`<button class="v-dot ${activeStageFilter !== "all" && i === 0 ? "active" : ""}" data-vidx="${i + offset}" aria-label="${escapeHtml(a.name)}"></button>`);
+    items.push(`<button class="v-dot" data-vidx="${i + 1}" aria-label="${escapeHtml(a.name)}"></button>`);
   });
   verticalProgress.innerHTML = items.join("");
 }
@@ -477,7 +510,7 @@ verticalProgress.addEventListener("click", e => {
 // ===== Active section tracking =====
 
 function setActiveSection(section) {
-  if (!section) return;
+  if (!section || !verticalProgress || !bgScene) return;
 
   const sections = Array.from(reel.querySelectorAll(".section"));
   const idx = sections.indexOf(section);
@@ -490,6 +523,10 @@ function setActiveSection(section) {
     d.classList.toggle("active", i === idx);
   });
 
+  // Hide vertical dots while we are on a hero section (any stage)
+  const isHero = section.dataset.section === "hero";
+  verticalProgress.classList.toggle("is-hidden", isHero);
+
   // HUD + retint background by stage
   const stage = section.dataset.stage;
   if (stage && stageColor[stage]) {
@@ -497,13 +534,13 @@ function setActiveSection(section) {
   }
 
   const list = getFilteredArtists();
-  if (section.dataset.section === "hero") {
-    hudPos.textContent = "ראשי";
-  } else {
-    const artistIdx = +section.dataset.index;
-    const a = list[artistIdx];
-    if (a) {
-      hudPos.textContent = `${a.name} · ${artistIdx + 1}/${list.length}`;
+  if (hudPos) {
+    if (isHero) {
+      hudPos.textContent = stageLabel(activeStageFilter);
+    } else {
+      const artistIdx = +section.dataset.index;
+      const a = list[artistIdx];
+      if (a) hudPos.textContent = `${a.name} · ${artistIdx + 1}/${list.length}`;
     }
   }
 }
@@ -527,28 +564,36 @@ function observeSections() {
 
 function getCurrentSection() {
   const sections = Array.from(reel.querySelectorAll(".section"));
+  if (!sections.length) return null;
   const reelTop = reel.scrollTop;
-  return sections.find(s => s.offsetTop >= reelTop - 10) || sections[sections.length - 1];
+  return sections.find(s => s.offsetTop >= reelTop - 10) || sections[sections.length - 1] || null;
 }
 
 function navVertical(dir) {
   const sections = Array.from(reel.querySelectorAll(".section"));
-  const idx = sections.indexOf(getCurrentSection());
+  if (!sections.length) return;
+  const cur = getCurrentSection();
+  const idx = cur ? sections.indexOf(cur) : 0;
   const next = sections[idx + dir];
-  next?.scrollIntoView({ behavior: "smooth" });
+  if (next && typeof next.scrollIntoView === "function") {
+    next.scrollIntoView({ behavior: "smooth" });
+  }
 }
 
 function navHorizontal(dir) {
   const current = getCurrentSection();
   if (!current || current.dataset.section !== "artist") return;
   const pager = current.querySelector(".pager");
-  if (!pager) return;
-  const w = pager.clientWidth;
+  if (!pager || !pager.children.length) return;
+  const w = pager.clientWidth || 1;
   const sl = Math.abs(pager.scrollLeft);
   const cur = Math.round(sl / w);
-  const total = +pager.dataset.panelCount;
+  const total = (+pager.dataset.panelCount) || pager.children.length;
   const next = Math.max(0, Math.min(total - 1, cur + dir));
-  pager.children[next]?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  const target = pager.children[next];
+  if (target && typeof target.scrollIntoView === "function") {
+    target.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  }
 }
 
 document.addEventListener("keydown", e => {
@@ -575,33 +620,60 @@ reel.addEventListener("wheel", e => {
   }
 }, { passive: false });
 
-// ===== Stage pill: filter the reel to a single stage =====
+// ===== Stage dropdown: filter the reel to a single stage =====
 
-function buildStagePill() {
-  if (!stagePillEl) return;
-  const items = [
-    `<button data-stage="all" class="${activeStageFilter === "all" ? "active" : ""}">הכל <span style="opacity:0.6">${ARTISTS.length}</span></button>`,
-    ...FESTIVAL.stages.map(s => {
-      const count = ARTISTS.filter(a => a.stage === s.id).length;
-      return `<button data-stage="${s.id}" class="${activeStageFilter === s.id ? "active" : ""}">${s.name} <span style="opacity:0.6">${count}</span></button>`;
-    })
-  ];
-  stagePillEl.innerHTML = items.join("");
+function stageLabel(id) {
+  if (id === "all") return "הכל";
+  return (FESTIVAL.stages.find(s => s.id === id) || {}).name || id;
 }
 
-stagePillEl.addEventListener("click", e => {
+function buildStageDropdown() {
+  if (!stageSelectMenu) return;
+  const opts = [
+    { id: "all", name: "הכל", count: ARTISTS.length },
+    ...FESTIVAL.stages.map(s => ({ id: s.id, name: s.name, count: ARTISTS.filter(a => a.stage === s.id).length }))
+  ];
+  stageSelectMenu.innerHTML = opts.map(o =>
+    `<li><button data-stage="${o.id}" class="${activeStageFilter === o.id ? "active" : ""}" role="option">${o.name}<span class="count">${o.count}</span></button></li>`
+  ).join("");
+  if (stageSelectLabel) stageSelectLabel.textContent = stageLabel(activeStageFilter);
+}
+
+function closeStageDropdown() {
+  stageSelectEl?.classList.remove("is-open");
+  if (stageSelectMenu) stageSelectMenu.hidden = true;
+  stageSelectTrigger?.setAttribute("aria-expanded", "false");
+}
+
+function openStageDropdown() {
+  stageSelectEl?.classList.add("is-open");
+  if (stageSelectMenu) stageSelectMenu.hidden = false;
+  stageSelectTrigger?.setAttribute("aria-expanded", "true");
+}
+
+stageSelectTrigger?.addEventListener("click", e => {
+  e.stopPropagation();
+  if (stageSelectEl?.classList.contains("is-open")) closeStageDropdown();
+  else openStageDropdown();
+});
+
+document.addEventListener("click", e => {
+  if (!stageSelectEl?.contains(e.target)) closeStageDropdown();
+});
+
+stageSelectMenu?.addEventListener("click", e => {
   const btn = e.target.closest("button");
   if (!btn) return;
   const stage = btn.dataset.stage;
+  closeStageDropdown();
   if (stage === activeStageFilter) return;
   activeStageFilter = stage;
 
-  // Rebuild reel + progress + pill, jump back to top
   buildReel();
   buildVerticalProgress();
-  buildStagePill();
+  buildStageDropdown();
   observeSections();
-  reel.scrollTo({ top: 0, behavior: "instant" in HTMLElement.prototype ? "auto" : "auto" });
+  try { reel.scrollTo({ top: 0, behavior: "auto" }); } catch (_) {}
   setTimeout(() => setActiveSection(reel.querySelector(".section")), 30);
 });
 
@@ -616,7 +688,7 @@ window.addEventListener("orientationchange", setVH);
 // Boot
 buildReel();
 buildVerticalProgress();
-buildStagePill();
+buildStageDropdown();
 observeSections();
 // Initial active state
 setTimeout(() => setActiveSection(reel.querySelector(".section")), 50);

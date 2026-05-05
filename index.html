@@ -38,8 +38,14 @@
     </button>
   </div>
 
-  <!-- Top stage pill -->
-  <nav class="stage-pill" id="stage-pill" aria-label="בחירת במה"></nav>
+  <!-- Top stage selector dropdown -->
+  <div class="stage-select" id="stage-select" aria-label="בחירת במה">
+    <button class="stage-select-trigger" id="stage-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+      <span id="stage-select-label">הכל</span>
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+    </button>
+    <ul class="stage-select-menu" id="stage-select-menu" role="listbox" hidden></ul>
+  </div>
 
   <!-- UI overlays -->
   <div class="vertical-progress" id="vertical-progress" aria-hidden="true"></div>
