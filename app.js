@@ -1164,7 +1164,97 @@ function setActiveSection(section) {
     bgScene.style.background = stageColor[stage];
   }
 
+  // Hero peek hint: schedule when the active section is a hero, cancel
+  // otherwise so we don't peek behind the user's back on artist sections.
+  if (section.dataset.section === "hero") {
+    schedulePeek();
+  } else {
+    cancelPeek();
+  }
 }
+
+// ===== Hero peek hint =====
+// After a few seconds of inactivity on the multi-hero, gently nudge the
+// hero pager toward the next stage so the user notices they can swipe
+// horizontally between stages.
+let heroPeekTimer = null;
+let isPeeking = false;
+let peekCancelled = false;
+const PEEK_IDLE_MS = 4500;
+const PEEK_NEXT_MS = 9000;
+const PEEK_DISTANCE = 0.13;
+
+function schedulePeek(delay = PEEK_IDLE_MS) {
+  if (isPeeking) return;
+  clearTimeout(heroPeekTimer);
+  heroPeekTimer = setTimeout(performPeek, delay);
+}
+
+function cancelPeek() {
+  clearTimeout(heroPeekTimer);
+  heroPeekTimer = null;
+  if (isPeeking) peekCancelled = true;
+}
+
+async function performPeek() {
+  const current = getCurrentSection();
+  if (!current || current.dataset.section !== "hero") return;
+  const heroPager = document.getElementById("hero-pager");
+  if (!heroPager) return;
+  const w = heroPager.clientWidth;
+  if (!w) return;
+  const startLeft = heroPager.scrollLeft;
+  const cur = Math.round(startLeft / w);
+  const total = heroPager.children.length;
+  if (total < 2) return;
+
+  // Direction: forward unless we're at the last stage, then backward.
+  const dir = cur < total - 1 ? 1 : -1;
+  const peekDelta = dir * w * PEEK_DISTANCE;
+
+  isPeeking = true;
+  peekCancelled = false;
+  suppressHeroScroll = true;
+  // Disable snap so we can rest on a non-snap scroll position briefly.
+  const prevSnap = heroPager.style.scrollSnapType;
+  heroPager.style.scrollSnapType = "none";
+  heroPager.classList.add("is-peeking");
+
+  try {
+    heroPager.scrollTo({ left: startLeft + peekDelta, behavior: "smooth" });
+    await waitScrollEnd(heroPager, 700);
+    if (peekCancelled) return;
+    // Hold a tiny beat at the peek extent so the eye registers the motion.
+    await new Promise(r => setTimeout(r, 220));
+    if (peekCancelled) return;
+    heroPager.scrollTo({ left: startLeft, behavior: "smooth" });
+    await waitScrollEnd(heroPager, 600);
+  } finally {
+    heroPager.style.scrollSnapType = prevSnap;
+    heroPager.classList.remove("is-peeking");
+    // If we got cancelled, snap back instantly to be safe.
+    if (peekCancelled) heroPager.scrollLeft = startLeft;
+    isPeeking = false;
+    suppressHeroScroll = false;
+    // Reschedule the next peek if we're still on a hero.
+    const stillHero = getCurrentSection()?.dataset.section === "hero";
+    if (stillHero && !peekCancelled) schedulePeek(PEEK_NEXT_MS);
+  }
+}
+
+// Any user activity reschedules the peek (or cancels an in-flight one).
+const peekActivityHandler = () => {
+  if (isPeeking) {
+    peekCancelled = true;
+    return;
+  }
+  const current = getCurrentSection();
+  if (current?.dataset.section === "hero") schedulePeek();
+  else cancelPeek();
+};
+["pointerdown", "touchstart", "wheel", "keydown"].forEach(ev => {
+  document.addEventListener(ev, peekActivityHandler, { passive: true });
+});
 
 let currentObserver = null;
 
