@@ -727,6 +727,7 @@ function rerenderArtistsBelowHero() {
   heroSec.parentElement.append(...tpl.content.children);
   buildVerticalProgress();
   observeSections();
+  observeArtistInitialScroll();
   reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installSnapClamp(p, "x"));
 }
 
@@ -895,11 +896,25 @@ function panelTracks(a) {
   `;
 }
 
+// Inject extra HTML attributes onto the first <div class="panel ..."> tag in
+// a panel HTML string. Used to mark real-vs-clone panels for the loop logic.
+function injectPanelAttrs(html, attrs) {
+  return html.replace(/<div\s+(class="panel)/, `<div ${attrs} $1`);
+}
+
 function artistSection(a, idx, isFirstOfStage = false) {
   // Order: Hero → About → Tracks → Discography (last)
-  const panels = [panelHero(a), panelInfo(a), panelTracks(a), panelAlbums(a)];
-  const panelCount = panels.length;
-  const dots = panels.map((_, i) => `<button class="dot ${i === 0 ? "active" : ""}" data-panel="${i}" aria-label="פאנל ${i + 1}"></button>`).join("");
+  const real = [panelHero(a), panelInfo(a), panelTracks(a), panelAlbums(a)];
+  const realCount = real.length;
+  const realTagged = real.map((html, i) => injectPanelAttrs(html, `data-real-idx="${i}"`));
+  // Bookend clones for the infinite loop: clone-of-last sits before the real
+  // first, clone-of-first sits after the real last. Settle-handler instant
+  // jumps between them and their real counterpart, which is invisible to the
+  // user because they have identical content.
+  const cloneStart = injectPanelAttrs(real[realCount - 1], `data-real-idx="${realCount - 1}" data-clone="start" aria-hidden="true"`);
+  const cloneEnd = injectPanelAttrs(real[0], `data-real-idx="0" data-clone="end" aria-hidden="true"`);
+  const allPanels = [cloneStart, ...realTagged, cloneEnd].join("");
+  const dots = real.map((_, i) => `<button class="dot ${i === 0 ? "active" : ""}" data-panel="${i}" aria-label="פאנל ${i + 1}"></button>`).join("");
   const cls = `section artist-section${isFirstOfStage ? " is-first-of-stage" : ""}`;
   return `
     <section class="${cls}"
@@ -907,8 +922,9 @@ function artistSection(a, idx, isFirstOfStage = false) {
              data-artist-id="${escapeHtml(a.id)}"
              data-stage="${escapeHtml(a.stage)}"
              data-index="${idx}"
+             data-real-count="${realCount}"
              style="--accent: ${a.color || "#FEB447"};">
-      <div class="pager" data-panel-count="${panelCount}">${panels.join("")}</div>
+      <div class="pager" data-panel-count="${realCount}">${allPanels}</div>
       <div class="dots">${dots}</div>
     </section>
   `;
@@ -967,6 +983,7 @@ function buildReel() {
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
   reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installSnapClamp(p, "x"));
+  observeArtistInitialScroll();
 
 
 
@@ -980,12 +997,20 @@ function buildReel() {
 
 // Global capture-phase scroll listener: any time a .pager inside the reel
 // scrolls, update its section's dot highlights and toggle vertical-progress
-// visibility (dots only matter on panel 0). Capture phase is needed because
-// 'scroll' events do not bubble.
+// visibility (dots only matter on real panel 0). Capture phase is needed
+// because 'scroll' events do not bubble. A debounced settle handler does the
+// instant-jump for the infinite loop.
 let pagerScrollTicking = false;
+const pagerSettleTimers = new WeakMap();
 reel.addEventListener("scroll", e => {
   const pager = e.target?.closest?.(".pager");
   if (!pager) return;
+
+  // Debounced settle handler: 100ms after the last scroll event = settled.
+  const existing = pagerSettleTimers.get(pager);
+  if (existing) clearTimeout(existing);
+  pagerSettleTimers.set(pager, setTimeout(() => handlePagerSettle(pager), 100));
+
   if (pagerScrollTicking) return;
   pagerScrollTicking = true;
   requestAnimationFrame(() => {
@@ -993,23 +1018,42 @@ reel.addEventListener("scroll", e => {
     const section = pager.closest('[data-section="artist"]');
     if (!section) return;
     const w = pager.clientWidth || 1;
-    const idx = Math.round(Math.abs(pager.scrollLeft) / w);
-    section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === idx));
+    const scrollIdx = Math.round(Math.abs(pager.scrollLeft) / w);
+    const child = pager.children[scrollIdx];
+    const realIdx = child ? (+child.dataset.realIdx || 0) : 0;
+    section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === realIdx));
     if (section.classList.contains("is-active")) {
-      verticalProgress?.classList.toggle("is-hidden", idx > 0);
+      verticalProgress?.classList.toggle("is-hidden", realIdx > 0);
     }
   });
 }, true);
 
-// Global delegated click for the per-artist horizontal panel dots
+// Settle handler: if the pager landed on a clone, instant-jump to the
+// matching real panel. Identical content makes the jump invisible.
+function handlePagerSettle(pager) {
+  if (!pager || !pager.isConnected) return;
+  const w = pager.clientWidth || 1;
+  const scrollIdx = Math.round(Math.abs(pager.scrollLeft) / w);
+  const child = pager.children[scrollIdx];
+  if (!child || !child.dataset.clone) return;
+  const section = pager.closest('[data-section="artist"]');
+  const realCount = +(section?.dataset.realCount) || (pager.children.length - 2);
+  // Real panels live at scrollIdx 1..realCount (cloneStart is at 0, cloneEnd at realCount+1)
+  const targetScrollIdx = child.dataset.clone === "start" ? realCount : 1;
+  const target = pager.children[targetScrollIdx];
+  if (target) pager.scrollTo({ left: target.offsetLeft, behavior: "auto" });
+}
+
+// Global delegated click for the per-artist horizontal panel dots.
+// Real panels live at scrollIdx 1..realCount, so dot[i] → pager.children[i+1].
 reel.addEventListener("click", e => {
   const dot = e.target.closest(".dot");
   if (!dot) return;
   const section = dot.closest('[data-section="artist"]');
   const pager = section?.querySelector(".pager");
-  const idx = +dot.dataset.panel;
-  if (pager && pager.children[idx]) {
-    pager.children[idx].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  const realIdx = +dot.dataset.panel;
+  if (pager && pager.children[realIdx + 1]) {
+    pager.children[realIdx + 1].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
   }
 });
 
@@ -1131,18 +1175,42 @@ function navHorizontal(dir) {
     }
     return;
   }
-  // Artist section: route to the inner pager (panels)
+  // Artist section: route to the inner pager (panels). With cloneStart at
+  // scrollIdx 0 and cloneEnd at the last index, we can simply step ±1; the
+  // settle handler will wrap us back to the matching real panel after the
+  // smooth scroll lands on a clone.
   const pager = current.querySelector(".pager");
   if (!pager || !pager.children.length) return;
   const w = pager.clientWidth || 1;
-  const sl = Math.abs(pager.scrollLeft);
-  const cur = Math.round(sl / w);
-  const total = (+pager.dataset.panelCount) || pager.children.length;
-  const next = Math.max(0, Math.min(total - 1, cur + dir));
+  const cur = Math.round(Math.abs(pager.scrollLeft) / w);
+  const next = cur + dir;
+  if (next < 0 || next >= pager.children.length) return;
   const target = pager.children[next];
   if (target && typeof target.scrollIntoView === "function") {
     target.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
   }
+}
+
+// One-shot observer that sets each artist pager's initial scrollLeft to the
+// real first panel (scrollIdx 1) before the user can see it. Without this,
+// a freshly-rendered section opens on cloneStart (scrollIdx 0) which shows
+// the discography as if it were the artist's hero.
+const heroInitObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting || entry.target.dataset.scrollInit === "1") return;
+    const pager = entry.target.querySelector(".pager");
+    if (pager && pager.children[1]) {
+      const realFirst = pager.children[1];
+      pager.scrollLeft = realFirst.offsetLeft;
+      entry.target.dataset.scrollInit = "1";
+    }
+  });
+}, { root: reel, threshold: 0, rootMargin: "300px" });
+
+function observeArtistInitialScroll() {
+  reel.querySelectorAll('[data-section="artist"]').forEach(s => {
+    if (s.dataset.scrollInit !== "1") heroInitObserver.observe(s);
+  });
 }
 
 document.addEventListener("keydown", e => {
