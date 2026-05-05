@@ -3,8 +3,6 @@
 // Horizontal (within each artist) = panels: hero / bio / discography / tracks / links
 
 const reel = document.getElementById("reel");
-const hud = document.getElementById("hud");
-const hudPos = document.getElementById("hud-pos");
 const verticalProgress = document.getElementById("vertical-progress");
 const bgScene = document.getElementById("bg-scene");
 
@@ -469,15 +467,14 @@ function stageHeroSection(stageId) {
   if (!stage) return "";
   const count = ARTISTS.filter(a => a.stage === stageId).length;
   return `
-    <section class="section hero-section" data-section="hero" data-stage="${escapeHtml(stageId)}">
-      <div class="logo-mark" style="font-size: clamp(40px, 11vw, 90px);">${escapeHtml(stage.name)}</div>
-      <div class="hero-subtitle">${escapeHtml(stage.name.toUpperCase())}</div>
+    <section class="section hero-section hero-section--${escapeHtml(stageId)}" data-section="hero" data-stage="${escapeHtml(stageId)}">
+      <div class="hero-stage-tag">במה</div>
+      <div class="logo-mark hero-stage-name">${escapeHtml(stage.name)}</div>
       <p class="hero-tagline">${escapeHtml(stage.desc)}</p>
       <div class="hero-meta">
         <span><strong>🎧</strong> ${count} אומנים</span>
-        <span><strong>📅</strong> ${escapeHtml(FESTIVAL.dates)}</span>
       </div>
-      <button class="hero-cta" id="cta-start">בואו נתחיל</button>
+      <button class="hero-cta" data-go-stage="${escapeHtml(stageId)}">צללו לתוך הבמה</button>
     </section>
   `;
 }
@@ -643,19 +640,38 @@ function artistSection(a, idx) {
 // ===== Render reel =====
 
 function buildReel() {
-  const list = getFilteredArtists();
-  const artistSections = list.map((a, i) => artistSection(a, i)).join("");
-  const hero = activeStageFilter === "all" ? heroSection() : stageHeroSection(activeStageFilter);
-  reel.innerHTML = hero + artistSections;
+  let html = "";
+  let globalIdx = 0;
+  if (activeStageFilter === "all") {
+    // Main hero, then for each stage: stage hero -> that stage's artists
+    html += heroSection();
+    FESTIVAL.stages.forEach(stage => {
+      html += stageHeroSection(stage.id);
+      const stageArtists = SORTED_ARTISTS.filter(a => a.stage === stage.id);
+      html += stageArtists.map(a => artistSection(a, globalIdx++)).join("");
+    });
+  } else {
+    html += stageHeroSection(activeStageFilter);
+    html += getFilteredArtists().map((a, i) => artistSection(a, i)).join("");
+  }
+  reel.innerHTML = html;
 
-  // CTA scroll to first artist (hero only renders in "all" mode)
+  // CTA on the main hero scrolls to the first artist (or stage hero) below it
   const cta = document.getElementById("cta-start");
   if (cta) {
     cta.addEventListener("click", () => {
-      const first = reel.querySelector('[data-section="artist"]');
-      first?.scrollIntoView({ behavior: "smooth" });
+      const sections = reel.querySelectorAll(".section");
+      sections[1]?.scrollIntoView({ behavior: "smooth" });
     });
   }
+  // Stage-hero CTAs jump into that stage's first artist (within the same all-mode reel)
+  reel.querySelectorAll(".hero-cta[data-go-stage]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const stage = btn.dataset.goStage;
+      const target = reel.querySelector(`[data-section="artist"][data-stage="${stage}"]`);
+      target?.scrollIntoView({ behavior: "smooth" });
+    });
+  });
 
   // Wire pager dots and YouTube thumbs for each artist section
   reel.querySelectorAll('[data-section="artist"]').forEach(section => {
@@ -696,11 +712,13 @@ function buildReel() {
 // ===== Vertical progress bar =====
 
 function buildVerticalProgress() {
-  // Hero is always present at index 0 now (per-stage hero or main hero).
-  const list = getFilteredArtists();
-  const items = [`<button class="v-dot active" data-vidx="0" aria-label="ראשי"></button>`];
-  list.forEach((a, i) => {
-    items.push(`<button class="v-dot" data-vidx="${i + 1}" aria-label="${escapeHtml(a.name)}"></button>`);
+  // Build dots in lockstep with whatever buildReel emitted
+  const sections = reel.querySelectorAll(".section");
+  const items = Array.from(sections).map((s, i) => {
+    const label = s.dataset.section === "hero"
+      ? (s.dataset.stage === "retro" ? "ראשי" : stageLabel(s.dataset.stage))
+      : (s.dataset.artistId || "");
+    return `<button class="v-dot ${i === 0 ? "active" : ""}" data-vidx="${i}" aria-label="${escapeHtml(label)}"></button>`;
   });
   verticalProgress.innerHTML = items.join("");
 }
@@ -755,16 +773,6 @@ function setActiveSection(section) {
     bgScene.style.background = stageColor[stage];
   }
 
-  const list = getFilteredArtists();
-  if (hudPos) {
-    if (isHero) {
-      hudPos.textContent = stageLabel(activeStageFilter);
-    } else {
-      const artistIdx = +section.dataset.index;
-      const a = list[artistIdx];
-      if (a) hudPos.textContent = `${a.name} · ${artistIdx + 1}/${list.length}`;
-    }
-  }
 }
 
 let currentObserver = null;

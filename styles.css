@@ -135,6 +135,12 @@ a { color: var(--sun-yellow); }
   text-align: center;
   padding: 24px 18px;
   position: relative;
+  --hero-glow-1: var(--sun-yellow);
+  --hero-glow-2: var(--sun-pink);
+  --hero-glow-shadow: rgba(255, 126, 31, 0.6);
+  --hero-text-1: var(--sun-yellow);
+  --hero-text-2: var(--sun-pink);
+  --hero-text-3: var(--neon-purple);
 }
 
 .hero-section::before {
@@ -149,18 +155,81 @@ a { color: var(--sun-yellow); }
   background:
     repeating-linear-gradient(
       0deg,
-      var(--sun-yellow) 0 18px,
+      var(--hero-glow-1) 0 18px,
       transparent 18px 24px,
-      var(--sun-pink) 24px 50px,
+      var(--hero-glow-2) 24px 50px,
       transparent 50px 56px
     );
   filter: blur(0.4px);
-  box-shadow: 0 0 120px rgba(255, 126, 31, 0.6);
+  box-shadow: 0 0 120px var(--hero-glow-shadow);
   animation: sun-pulse 8s ease-in-out infinite;
   z-index: -1;
   opacity: 0.85;
   pointer-events: none;
 }
+
+/* Per-stage hero color identity */
+.hero-section--retro {
+  --hero-glow-1: #FEB447;
+  --hero-glow-2: #ff5c8a;
+  --hero-glow-shadow: rgba(255, 126, 31, 0.65);
+  --hero-text-1: #FEB447;
+  --hero-text-2: #ff7e1f;
+  --hero-text-3: #ff5c8a;
+}
+.hero-section--zambu {
+  --hero-glow-1: #ff006e;
+  --hero-glow-2: #9b51e0;
+  --hero-glow-shadow: rgba(155, 81, 224, 0.65);
+  --hero-text-1: #ff006e;
+  --hero-text-2: #9b51e0;
+  --hero-text-3: #5a189a;
+}
+.hero-section--guardians {
+  --hero-glow-1: #00d4ff;
+  --hero-glow-2: #FEB447;
+  --hero-glow-shadow: rgba(0, 212, 255, 0.55);
+  --hero-text-1: #00d4ff;
+  --hero-text-2: #ffd23f;
+  --hero-text-3: #118ab2;
+}
+.hero-section--market {
+  --hero-glow-1: #ffd60a;
+  --hero-glow-2: #ffbf69;
+  --hero-glow-shadow: rgba(255, 191, 105, 0.6);
+  --hero-text-1: #ffd60a;
+  --hero-text-2: #ffbf69;
+  --hero-text-3: #fb8500;
+}
+
+.hero-section .logo-mark {
+  background: linear-gradient(180deg, var(--hero-text-1) 0%, var(--hero-text-2) 60%, var(--hero-text-3) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-section--retro .logo-mark,
+.hero-section--zambu .logo-mark,
+.hero-section--guardians .logo-mark,
+.hero-section--market .logo-mark {
+  font-size: clamp(40px, 11vw, 90px);
+}
+
+.hero-stage-tag {
+  font-size: 11px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--hero-text-1);
+  opacity: 0.85;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.hero-section--retro .hero-cta { background: linear-gradient(135deg, #ff5c8a, #ff7e1f); }
+.hero-section--zambu .hero-cta { background: linear-gradient(135deg, #ff006e, #9b51e0); color: white; }
+.hero-section--guardians .hero-cta { background: linear-gradient(135deg, #00d4ff, #ffd23f); }
+.hero-section--market .hero-cta { background: linear-gradient(135deg, #ffd60a, #ffbf69); }
 
 @keyframes sun-pulse {
   0%, 100% { transform: translateX(-50%) translateY(50%) scale(1); }
@@ -610,13 +679,32 @@ a { color: var(--sun-yellow); }
   transform: translateX(-50%);
   display: flex;
   gap: 6px;
-  z-index: 10;
-  background: rgba(10, 5, 36, 0.55);
-  padding: 6px 12px;
+  z-index: 12;
+  background: rgba(10, 5, 36, 0.92);
+  padding: 8px 14px;
   border-radius: 999px;
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   border: 1px solid var(--card-border);
   transition: bottom 0.25s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Soft fade over the bottom of the panel so scrolled content doesn't visually
+   collide with the dots pill above it. */
+.section[data-section="artist"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 80px;
+  background: linear-gradient(180deg, transparent, rgba(10, 5, 36, 0.85));
+  pointer-events: none;
+  z-index: 8;
+}
+
+body.has-mini-player .section[data-section="artist"]::after {
+  bottom: calc(70px + env(safe-area-inset-bottom, 0px));
 }
 
 /* When the mini-player is open, lift the dots so they're not covered. */
@@ -1278,34 +1366,50 @@ body.has-mini-player .panel {
 }
 
 @media (min-width: 1024px) {
-  .panel { padding: 110px 48px 130px; }
-  .panel-inner { max-width: 900px; }
-  .artist-hero-art { width: min(30vw, 360px); }
-  .artist-name { font-size: clamp(48px, 5vw, 72px); }
-  .panel-hero .panel-inner { max-width: 700px; }
+  .panel { padding: 110px 48px 140px; }
+  .panel-inner { max-width: 1080px; }
 
-  /* Two-column tracks on wide screens */
-  .tracks-stack {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+  /* Hero panel: two-column on desktop. Avatar + headline on the start side,
+     tags + chips on the end side. Reads more like a magazine cover. */
+  .panel-hero { padding-bottom: 100px; }
+  .panel-hero .panel-inner {
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) 1fr;
+    gap: 48px;
+    align-items: center;
+    text-align: start;
   }
-  /* If only 1 track, keep it centered single-col */
+  .panel-hero .artist-hero-art { width: 100%; max-width: 380px; margin: 0; }
+  .panel-hero .artist-name { font-size: clamp(48px, 4.5vw, 76px); text-align: start; }
+  .panel-hero .artist-real { font-size: 18px; text-align: start; }
+  .panel-hero .panel-eyebrow { text-align: start; grid-column: 1 / -1; }
+  .panel-hero .artist-quick { justify-content: flex-start; }
+
+  /* Bio panel: wider, more readable */
+  .bio-card { padding: 32px 36px; }
+  .bio-text { font-size: 18px; line-height: 1.85; }
+
+  /* Discography: 2-col when there are many albums */
+  .albums-list { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+  /* Tracks: 2-col grid; 3-col on extra-wide */
+  .tracks-stack { grid-template-columns: repeat(2, 1fr); gap: 18px; }
   .tracks-stack:has(> .track-card:only-child) {
     grid-template-columns: minmax(0, 560px);
     justify-content: center;
   }
-
-  /* Two-column albums on wide screens (when many) */
-  .albums-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  /* Mini-player positions away from progress bar */
-  .mini-player { width: 420px; }
 }
 
 @media (min-width: 1400px) {
-  .panel-inner { max-width: 1040px; }
-  .panel-hero .panel-inner { max-width: 720px; }
+  .panel { padding: 120px 64px 160px; }
+  .panel-inner { max-width: 1200px; }
+  .panel-hero .panel-inner { max-width: 1160px; grid-template-columns: minmax(320px, 440px) 1fr; gap: 64px; }
+  .tracks-stack { grid-template-columns: repeat(3, 1fr); }
+  .tracks-stack:has(> .track-card:only-child),
+  .tracks-stack:has(> .track-card:nth-child(2):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 480px));
+    justify-content: center;
+  }
 }
+
