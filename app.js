@@ -327,8 +327,13 @@ function panelTracks(a) {
       </div>
     `;
   }
-  const cards = tracks.map((t, i) => `
-    <div class="track-card">
+  // Sort: ZNA-festival recordings first, then by year (newest first)
+  const sortedTracks = tracks.slice().sort((x, y) => {
+    if (!!x.zna !== !!y.zna) return x.zna ? -1 : 1;
+    return (y.year || 0) - (x.year || 0);
+  });
+  const cards = sortedTracks.map((t, i) => `
+    <div class="track-card ${t.zna ? "is-zna" : ""}">
       <button class="track-thumb" data-vid="${escapeHtml(t.id)}" data-title="${escapeHtml(t.title)}" data-artist="${escapeHtml(a.name)}" style="background-image: url('https://i.ytimg.com/vi/${escapeHtml(t.id)}/hqdefault.jpg');" aria-label="נגן ${escapeHtml(t.title)}">
         <span class="play-btn">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>

@@ -530,6 +530,20 @@ a { color: var(--sun-yellow); }
 
 .track-year { font-size: 11px; color: var(--text-muted); }
 
+/* ZNA festival recording badge */
+.track-card.is-zna {
+  border-color: var(--sun-yellow);
+  box-shadow: 0 0 20px rgba(254, 180, 71, 0.25);
+}
+
+.track-card.is-zna .track-title::before {
+  content: "🌅 ZNA · ";
+  color: var(--sun-yellow);
+  font-weight: 800;
+  font-size: 11px;
+  margin-inline-end: 4px;
+}
+
 .no-tracks {
   text-align: center;
   padding: 20px 18px;

@@ -74,7 +74,7 @@ const ARTISTS = [
     tracks: [
       { id: "MFd7_zTci_g", title: "Prana - Geomantik", year: 1997 },
       { id: "Oo9lag7Bz5o", title: "Prana - Geomantik (Full Album)", year: 1997 },
-      { id: "BkvxkraxaNU", title: "Tsuyoshi Suzuki @ ZNA Gathering 2022", year: 2022 }
+      { id: "BkvxkraxaNU", title: "Live @ ZNA Gathering 2022 dancefloor", year: 2022, zna: true }
     ]
   },
   {
@@ -547,7 +547,7 @@ const ARTISTS = [
     ],
     links: [],
     tracks: [
-      { id: "zkzTd8ba-Mo", title: "Live @ ZNA Gathering 2022", year: 2022 },
+      { id: "zkzTd8ba-Mo", title: "Live @ ZNA Gathering 2022", year: 2022, zna: true },
       { id: "TdZ_SuOwrUQ", title: "Live @ Cycles of Life", year: 2023 },
       { id: "jOriE5DfSLk", title: "Spontaneous Human Combustion (Burning Man)", year: null }
     ]
