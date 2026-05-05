@@ -14,34 +14,184 @@ const miniPlayer = document.getElementById("mini-player");
 const miniPlayerFrame = document.getElementById("mini-player-frame");
 const miniPlayerTitle = document.getElementById("mini-player-title");
 const miniPlayerArtist = document.getElementById("mini-player-artist");
+const miniPlayerNext = document.getElementById("mini-player-next");
 const miniPlayerExpand = document.getElementById("mini-player-expand");
 const miniPlayerClose = document.getElementById("mini-player-close");
+const miniPlayerSkip = document.getElementById("mini-player-skip");
 
-let currentMiniVideoId = null;
+// Build a flat playback queue across the currently rendered (filtered+sorted) reel
+function buildPlayQueue() {
+  const queue = [];
+  getFilteredArtists().forEach(a => {
+    (a.tracks || []).forEach(t => {
+      queue.push({
+        videoId: t.id,
+        title: t.title,
+        year: t.year,
+        artistId: a.id,
+        artistName: a.name
+      });
+    });
+  });
+  return queue;
+}
 
-function openMiniPlayer(videoId, title, artist) {
-  currentMiniVideoId = videoId;
-  miniPlayerFrame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="YouTube video"></iframe>`;
-  miniPlayerTitle.textContent = title || "";
-  miniPlayerArtist.textContent = artist || "";
+let playQueue = [];
+let queueIndex = -1;
+let ytPlayer = null;
+let ytApiReady = !!(window.YT && window.YT.Player);
+let pendingFirstPlay = null;
+
+// Lazy-load the YouTube IFrame API
+function ensureYTApi() {
+  if (ytApiReady || document.querySelector('script[data-yt-api]')) return;
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  tag.dataset.ytApi = "1";
+  document.head.appendChild(tag);
+}
+
+window.onYouTubeIframeAPIReady = function () {
+  ytApiReady = true;
+  if (pendingFirstPlay) {
+    const { videoId } = pendingFirstPlay;
+    pendingFirstPlay = null;
+    createPlayer(videoId);
+  }
+};
+
+function createPlayer(videoId) {
+  miniPlayerFrame.innerHTML = '<div id="yt-player-target"></div>';
+  ytPlayer = new YT.Player("yt-player-target", {
+    height: "100%",
+    width: "100%",
+    videoId: videoId,
+    playerVars: { autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1 },
+    events: {
+      onStateChange: e => {
+        if (e.data === YT.PlayerState.ENDED) onVideoEnded();
+      }
+    }
+  });
+}
+
+function updateMiniPlayerUI() {
+  const cur = playQueue[queueIndex];
+  const next = playQueue[queueIndex + 1];
+  if (cur) {
+    miniPlayerTitle.textContent = cur.title;
+    miniPlayerArtist.textContent = cur.artistName;
+  }
+  if (next) {
+    miniPlayerNext.textContent = `${next.artistName} — ${next.title}`;
+    miniPlayerNext.classList.add("has-next");
+  } else {
+    miniPlayerNext.textContent = "סוף הרשימה";
+    miniPlayerNext.classList.remove("has-next");
+  }
+}
+
+function playFromQueue(idx) {
+  if (idx < 0 || idx >= playQueue.length) return;
+  queueIndex = idx;
+  const item = playQueue[idx];
+
+  if (ytPlayer && ytApiReady) {
+    ytPlayer.loadVideoById(item.videoId);
+  } else if (ytApiReady) {
+    createPlayer(item.videoId);
+  } else {
+    pendingFirstPlay = { videoId: item.videoId };
+    ensureYTApi();
+  }
+
+  updateMiniPlayerUI();
   miniPlayer.classList.add("is-open");
   miniPlayer.setAttribute("aria-hidden", "false");
+}
+
+function onVideoEnded() {
+  const prev = playQueue[queueIndex];
+  const nextIdx = queueIndex + 1;
+  if (nextIdx >= playQueue.length) return;
+  const next = playQueue[nextIdx];
+
+  // If user is sitting on the previously-playing artist's section, follow along
+  if (prev && next && prev.artistId !== next.artistId) {
+    const currentSec = getCurrentSection();
+    if (currentSec && currentSec.dataset.artistId === prev.artistId) {
+      const nextSec = reel.querySelector(`[data-artist-id="${next.artistId}"]`);
+      if (nextSec) {
+        nextSec.scrollIntoView({ behavior: "smooth" });
+        // Also slide the inner pager to the tracks panel (panel index 3)
+        setTimeout(() => {
+          const pager = nextSec.querySelector(".pager");
+          if (pager && pager.children[3]) {
+            pager.children[3].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+          }
+        }, 450);
+      }
+    }
+  }
+
+  playFromQueue(nextIdx);
+}
+
+function openMiniPlayerByVideoId(videoId) {
+  // Locate this video in the current queue (rebuild fresh in case filter changed)
+  playQueue = buildPlayQueue();
+  const idx = playQueue.findIndex(item => item.videoId === videoId);
+  if (idx === -1) {
+    // Fallback: single-track queue
+    playQueue = [{ videoId, title: "", year: null, artistId: null, artistName: "" }];
+    playFromQueue(0);
+  } else {
+    playFromQueue(idx);
+  }
 }
 
 function closeMiniPlayer() {
   miniPlayer.classList.remove("is-open", "is-expanded");
   miniPlayer.setAttribute("aria-hidden", "true");
+  if (ytPlayer && typeof ytPlayer.stopVideo === "function") {
+    try { ytPlayer.stopVideo(); } catch (e) {}
+  }
   miniPlayerFrame.innerHTML = "";
-  currentMiniVideoId = null;
+  ytPlayer = null;
+  queueIndex = -1;
 }
 
 miniPlayerClose.addEventListener("click", closeMiniPlayer);
 miniPlayerExpand.addEventListener("click", () => {
   miniPlayer.classList.toggle("is-expanded");
 });
+miniPlayerSkip.addEventListener("click", onVideoEnded);
 
 // Active stage filter ("all" = show every artist)
 let activeStageFilter = "all";
+
+// Try to load build-time-fetched photos and merge them onto artist records.
+// photos.json is generated by build/fetch-photos.mjs in the GitHub Action.
+async function loadPhotos() {
+  try {
+    const res = await fetch("photos.json", { cache: "no-cache" });
+    if (!res.ok) return;
+    const photos = await res.json();
+    let merged = 0;
+    ARTISTS.forEach(a => {
+      if (photos[a.id] && !a.photo) {
+        a.photo = photos[a.id];
+        merged++;
+      }
+    });
+    if (merged > 0) {
+      // Re-render so photos appear (panels were already built before fetch).
+      buildReel();
+      observeSections();
+      setActiveSection(reel.querySelector(".section"));
+    }
+  } catch (e) { /* photos.json optional */ }
+}
 
 // Sort artists by announcement date - newest first
 const SORTED_ARTISTS = ARTISTS.slice().sort((a, b) => {
@@ -289,10 +439,7 @@ function buildReel() {
     // Click thumb -> open in floating mini-player (persists across navigation)
     section.querySelectorAll(".track-thumb").forEach(thumb => {
       thumb.addEventListener("click", () => {
-        const vid = thumb.dataset.vid;
-        const title = thumb.dataset.title || "";
-        const artistName = thumb.dataset.artist || "";
-        openMiniPlayer(vid, title, artistName);
+        openMiniPlayerByVideoId(thumb.dataset.vid);
       });
     });
   });
@@ -468,3 +615,6 @@ buildStagePill();
 observeSections();
 // Initial active state
 setTimeout(() => setActiveSection(reel.querySelector(".section")), 50);
+
+// Try to merge build-time-fetched artist photos
+loadPhotos();
