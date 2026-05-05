@@ -1241,8 +1241,10 @@ body.has-mini-player .panel {
   right: 14px;
   z-index: 25;
   display: flex;
+  flex-wrap: nowrap;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 8px;
   pointer-events: none;
 }
 
@@ -1250,6 +1252,7 @@ body.has-mini-player .panel {
 
 .top-bar-side {
   display: flex;
+  flex-wrap: nowrap;
   gap: 8px;
   align-items: center;
   flex-shrink: 0;
@@ -1329,7 +1332,7 @@ body.has-mini-player .panel {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 18px;
+  padding: 11px 16px;
   border-radius: 999px;
   color: var(--text);
   font-family: inherit;
@@ -1338,9 +1341,16 @@ body.has-mini-player .panel {
   cursor: pointer;
   letter-spacing: 0.3px;
   transition: transform 0.15s;
-  max-width: 50vw;
+  max-width: 38vw;
   white-space: nowrap;
   overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .stage-select-trigger { padding: 10px 12px; font-size: 12px; max-width: 32vw; }
+  .round-btn { width: 40px; height: 40px; }
+  .top-bar { gap: 6px; top: 10px; left: 10px; right: 10px; }
+  .top-bar-side { gap: 6px; }
 }
 
 .stage-select-trigger > span {
@@ -1728,18 +1738,24 @@ body.has-mini-player .panel {
   .panel-inner { max-width: 1080px; }
 
   /* === Artist Hero — editorial desktop layout ===
-     Photo left at a fixed editorial size, text content stacked right with
-     left-aligned typography, generous gap, and a thin accent rule above
-     the name. */
-  .panel-hero { padding: 120px 56px; text-align: start; }
+     Photo on the LEFT, text on the RIGHT (English magazine layout). Forces
+     direction:ltr on the grid container so the columns flow left → right
+     regardless of the text content's own bidi resolution. */
+  .panel-hero { padding: 120px 56px; text-align: left; direction: ltr; }
   .panel-hero .panel-inner {
     max-width: 1080px;
     display: grid;
     grid-template-columns: minmax(280px, 420px) 1fr;
     gap: 64px;
     align-items: center;
-    text-align: start;
+    text-align: left;
+    direction: ltr;
   }
+  .panel-hero .artist-hero-art { grid-column: 1; }
+  .panel-hero .artist-hero-text { grid-column: 2; text-align: left; align-items: flex-start; }
+  .panel-hero .artist-hero-text > * { text-align: left; }
+  .panel-hero .artist-meta-line { justify-content: flex-start; }
+  .panel-hero .artist-tags-row { justify-content: flex-start; }
   .panel-hero .artist-hero-art {
     width: 100%;
     max-width: 420px;
@@ -1747,11 +1763,7 @@ body.has-mini-player .panel {
     margin: 0;
     border-radius: 24px;
   }
-  .panel-hero .artist-hero-text {
-    align-items: flex-start;
-    gap: 18px;
-    text-align: start;
-  }
+  .panel-hero .artist-hero-text { gap: 18px; }
   .panel-hero .artist-hero-text::before {
     content: "";
     display: block;
@@ -1765,20 +1777,14 @@ body.has-mini-player .panel {
     font-size: clamp(56px, 5.6vw, 96px);
     line-height: 0.95;
     letter-spacing: -2px;
-    text-align: start;
     margin: 0;
   }
   .panel-hero .artist-real {
     font-size: 20px;
-    text-align: start;
     color: var(--text-muted);
     margin: 0;
   }
-  .panel-hero .artist-meta-line {
-    justify-content: flex-start;
-    font-size: 15px;
-  }
-  .panel-hero .artist-tags-row { justify-content: flex-start; }
+  .panel-hero .artist-meta-line { font-size: 15px; }
 
   /* Bio panel: wider, more readable */
   .bio-card { padding: 32px 36px; }

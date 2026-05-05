@@ -1003,9 +1003,12 @@ reel.addEventListener("wheel", e => {
   const horiz = Math.abs(e.deltaX) > Math.abs(e.deltaY);
   if (horiz) {
     const current = getCurrentSection();
-    // Hero AND artist sections both accept horizontal wheel — hero pager
-    // moves between Main/stages, artist pager between hero/info/tracks/disco.
     if (!current) return;
+    // Hero section: let native scroll-snap handle the swipe so it moves
+    // exactly one panel. The hero-pager's own scroll listener picks up the
+    // resulting position and updates activeStageFilter on settle. Doing JS
+    // navHorizontal here on top of native would page twice.
+    if (current.dataset.section === "hero") return;
     e.preventDefault();
     wheelAccumX += e.deltaX;
     if (Math.abs(wheelAccumX) > 60) {
