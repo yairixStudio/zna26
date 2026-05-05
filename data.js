@@ -18,6 +18,7 @@ const FESTIVAL = {
 const ARTISTS = [
   {
     id: "yahel",
+    announcedAt: "2026-01-26",
     name: "Yahel",
     realName: "יהל שרמן",
     country: "🇮🇱 ישראל",
@@ -48,6 +49,7 @@ const ARTISTS = [
   },
   {
     id: "tsuyoshi-suzuki",
+    announcedAt: "2026-04-27",
     name: "Tsuyoshi Suzuki",
     realName: "צויושי סוזוקי",
     country: "🇯🇵 יפן (לונדון)",
@@ -77,6 +79,7 @@ const ARTISTS = [
   },
   {
     id: "kris-kylven",
+    announcedAt: "2026-02-24",
     name: "Kris Kylven",
     realName: "כריס קילבן (\"הנסיך האפל\")",
     country: "🇸🇪 שוודיה / 🇫🇷 צרפת",
@@ -102,6 +105,7 @@ const ARTISTS = [
   },
   {
     id: "simon-ghahary",
+    announcedAt: "2026-03-04",
     name: "Simon Ghahary",
     realName: "סיימון גהארי",
     country: "🇬🇧 בריטניה",
@@ -126,6 +130,7 @@ const ARTISTS = [
   },
   {
     id: "ray-castle",
+    announcedAt: "2026-03-04",
     name: "Ray Castle",
     realName: "ריי קאסל",
     country: "🇳🇿 ניו זילנד",
@@ -153,6 +158,7 @@ const ARTISTS = [
   },
   {
     id: "robert-leiner",
+    announcedAt: "2025-12-15",
     name: "Robert Leiner",
     realName: "רוברט ליינר (The Source Experience)",
     country: "🇸🇪 שוודיה",
@@ -179,6 +185,7 @@ const ARTISTS = [
   },
   {
     id: "sean-williams",
+    announcedAt: "2025-12-08",
     name: "Sean Williams",
     realName: "שון ויליאמס (Process / Satori)",
     country: "🇬🇧 בריטניה",
@@ -204,6 +211,7 @@ const ARTISTS = [
   },
   {
     id: "james-monro",
+    announcedAt: "2025-12-01",
     name: "James Monro",
     realName: "ג'יימס מונרו",
     country: "🇬🇧 בריטניה / 🇧🇷 ברזיל",
@@ -230,6 +238,7 @@ const ARTISTS = [
   },
   {
     id: "joti-sidhu",
+    announcedAt: "2026-03-23",
     name: "Joti Sidhu",
     realName: "ג'וטי סידהו (Psychaos)",
     country: "🇬🇧 בריטניה",
@@ -257,6 +266,7 @@ const ARTISTS = [
   },
   {
     id: "extrawelt",
+    announcedAt: "2026-02-16",
     name: "Extrawelt",
     realName: "ארנה שאפהאוזן + ויאן ראבה",
     country: "🇩🇪 גרמניה",
@@ -285,6 +295,7 @@ const ARTISTS = [
   },
   {
     id: "mathew-jonson",
+    announcedAt: "2026-02-16",
     name: "Mathew Jonson",
     realName: "מתיו ג'ונסון",
     country: "🇨🇦 קנדה / 🇩🇪 ברלין",
@@ -312,6 +323,7 @@ const ARTISTS = [
   },
   {
     id: "gabriel-le-mar",
+    announcedAt: "2025-12-25",
     name: "Gabriel Le Mar",
     realName: "גבריאל לה מאר (Saafi Brothers)",
     country: "🇩🇪 גרמניה",
@@ -339,6 +351,7 @@ const ARTISTS = [
   },
   {
     id: "psara",
+    announcedAt: "2026-03-04",
     name: "Psara",
     realName: "פסארה",
     country: "🇵🇹 פורטוגל",
@@ -360,6 +373,7 @@ const ARTISTS = [
   },
   {
     id: "ukiro",
+    announcedAt: "2026-03-04",
     name: "Ukiro",
     realName: "אוקירו",
     country: "🇸🇪 שוודיה",
@@ -376,6 +390,7 @@ const ARTISTS = [
   },
   {
     id: "damir-ludvig",
+    announcedAt: "2026-01-19",
     name: "Damir Ludvig",
     realName: "דמיר לודביג",
     country: "🇭🇷 קרואטיה",
@@ -392,6 +407,7 @@ const ARTISTS = [
   },
   {
     id: "goran-stetic",
+    announcedAt: "2026-01-19",
     name: "Goran Stetic",
     realName: "גוראן סטטיץ'",
     country: "🇭🇷 קרואטיה",
@@ -408,6 +424,7 @@ const ARTISTS = [
   },
   {
     id: "dogma",
+    announcedAt: "2026-03-25",
     name: "Dogma 3000",
     realName: "Dogma (Damir Ludvig & Goran Stetic)",
     country: "🇭🇷 קרואטיה",
@@ -434,6 +451,7 @@ const ARTISTS = [
   },
   {
     id: "alex-tolstey",
+    announcedAt: "2026-03-25",
     name: "Alex Tolstey",
     realName: "אלכס טולסטיי (Boshke Beats)",
     country: "🇪🇪 אסטוניה",
@@ -454,6 +472,7 @@ const ARTISTS = [
   },
   {
     id: "alien-rain",
+    announcedAt: "2026-03-25",
     name: "Alien Rain",
     realName: "מילטון ברדלי (Alien Rain)",
     country: "🇩🇪 ברלין",
@@ -477,6 +496,7 @@ const ARTISTS = [
   },
   {
     id: "anais-lin",
+    announcedAt: "2026-03-25",
     name: "Anaïs Lin",
     realName: "אנאי לין",
     country: "🇫🇷 צרפת",
@@ -493,6 +513,7 @@ const ARTISTS = [
   },
   {
     id: "extra-cheers",
+    announcedAt: "2026-03-25",
     name: "Cheers",
     realName: "Cheers",
     country: "🌍 בינלאומי",
@@ -509,6 +530,7 @@ const ARTISTS = [
   },
   {
     id: "marc-van-der-vlugt",
+    announcedAt: "2026-03-25",
     name: "Marc Van Der Vlugt",
     realName: "מארק ון דר פלוכט",
     country: "🇳🇱 הולנד",
@@ -532,6 +554,7 @@ const ARTISTS = [
   },
   {
     id: "solitare",
+    announcedAt: "2026-03-30",
     name: "DJ Solitare",
     realName: "מארק איינלי (DJ Solitare)",
     country: "🇨🇦 קנדה (ונקובר)",
@@ -555,6 +578,7 @@ const ARTISTS = [
   },
   {
     id: "earl-peal",
+    announcedAt: "2026-03-25",
     name: "Earl Peal",
     realName: "ארל פיל",
     country: "🌍 בינלאומי",
@@ -571,6 +595,7 @@ const ARTISTS = [
   },
   {
     id: "isoquant",
+    announcedAt: "2026-03-25",
     name: "Isoquant",
     realName: "Isoquant",
     country: "🌍 בינלאומי",
@@ -587,6 +612,7 @@ const ARTISTS = [
   },
   {
     id: "gabi-von-dub",
+    announcedAt: "2026-03-25",
     name: "Gabi Vøn Dub",
     realName: "גאבי ון דאב (Arctic Dub Studios)",
     country: "🇵🇹 פורטוגל",
@@ -603,6 +629,7 @@ const ARTISTS = [
   },
   {
     id: "ree-k",
+    announcedAt: "2026-03-25",
     name: "Ree.K",
     realName: "רי קיי",
     country: "🇯🇵 יפן",
@@ -613,18 +640,19 @@ const ARTISTS = [
     tags: ["Hypnodisk", "Matsuri Family", "Japanese Goa"],
     color: "#fb6f92",
     bio: "DJ ויוצרת חלוצה יפנית - מנגנת מ-1992 וחלק מהמשפחה המורחבת של Matsuri Productions/Digital שעזרה לזרוע את סצנת הפסיטראנס היפנית. ב-2002 ייסדה את החותמת Hypnodisk. הפילוסופיה האמנותית שלה מכוונת לטרנספורמציה תודעתית דרך צליל. מופיעה לעיתים עם השותף Masa בלהקת Kinocosmo.",
-    notable: "'Early Tracks 1' (Hypnodisk) - אוסף גואה יפני בלתי-משוחרר משנת 1995-1998",
+    notable: "אלבום 'Yammataikoku' (1996, Psy-Harmonics) - אבן יסוד של גואה יפני",
     albums: [
+      { name: "Yammataikoku", year: 1996, project: "Psy-Harmonics" },
       { name: "Early Tracks 1", year: 2010, project: "Hypnodisk" }
     ],
-    links: [],
-    tracks: [
-      { id: "vZdeEa-D160", title: "Kage", year: 1996 },
-      { id: "TPIUjK_4aXA", title: "Live @ Unite - Psytrance Sessions", year: null }
-    ]
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/45548-ReeK" }
+    ],
+    tracks: []
   },
   {
     id: "klil-co",
+    announcedAt: "2026-03-25",
     name: "Klil.co",
     realName: "Klil.co",
     country: "🌍 בינלאומי",
@@ -641,6 +669,7 @@ const ARTISTS = [
   },
   {
     id: "mathew-tecnica",
+    announcedAt: "2026-03-25",
     name: "Tecnica",
     realName: "Tecnica",
     country: "🌍 בינלאומי",
@@ -657,6 +686,7 @@ const ARTISTS = [
   },
   {
     id: "triple-distilled",
+    announcedAt: "2026-03-25",
     name: "Triple Distilled Disco Squad",
     realName: "אלכס בושקה טולסטיי + קולקטיב",
     country: "🇪🇪 אסטוניה",
@@ -673,6 +703,7 @@ const ARTISTS = [
   },
   {
     id: "bill-robin-maya",
+    announcedAt: "2026-03-25",
     name: "Bill Robin & Maya Wada",
     realName: "ביל רובין ומאיה ואדה",
     country: "🌍 בינלאומי",
@@ -689,6 +720,7 @@ const ARTISTS = [
   },
   {
     id: "e-sko",
+    announcedAt: "2026-03-25",
     name: "E-Skø",
     realName: "E-Skø",
     country: "🌍 בינלאומי",
@@ -705,6 +737,7 @@ const ARTISTS = [
   },
   {
     id: "sancho-meiso",
+    announcedAt: "2026-03-25",
     name: "Sancho Meisø Chaya",
     realName: "Sancho Meisø Chaya",
     country: "🌍 בינלאומי",
@@ -722,6 +755,7 @@ const ARTISTS = [
   // ===== 2026 announcement additions =====
   {
     id: "jaia",
+    announcedAt: "2025-11-24",
     name: "Jaïa",
     realName: "ז'רום הרוואה",
     country: "🇫🇷 צרפת",
@@ -731,32 +765,43 @@ const ARTISTS = [
     role: "Live",
     tags: ["French Goa", "Mosaïc", "Live"],
     color: "#fb8500",
-    bio: "פרויקט גואה טראנס חי של ז'רום הרוואה מצרפת. ב-ZNA 2026 פותח את רחבת הריקודים עם סט בילד-אפ שמתחיל את המסע של Retro Universe.",
-    notable: "אלבום 'Mai Mai' (1999) על Mosaïc Records - קלאסיקה צרפתית",
+    bio: "פרויקט גואה טראנס חי של ז'רום הרוואה מצרפת. אלבום הביכורים 'Blue Energy' (1998, Mosaïc) הוא אבן יסוד של הסצנה הצרפתית. ב-ZNA 2026 פותח את רחבת הריקודים עם סט בילד-אפ.",
+    notable: "'Mai Mai' מתוך 'Blue Energy' (1998, Mosaïc) - קלאסיקה צרפתית",
     albums: [
-      { name: "Mai Mai", year: 1999, project: "Jaïa" }
+      { name: "Blue Energy", year: 1998, project: "Mosaïc" }
     ],
-    links: [],
-    tracks: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/4892-Ja%C3%AFa" },
+      { type: "Bandcamp", url: "https://jaia.bandcamp.com/track/mai-mai" }
+    ],
+    tracks: [
+      { id: "WbRgoRdBokk", title: "Mai Mai", year: 1998 }
+    ]
   },
   {
     id: "graham-wood",
+    announcedAt: "2026-01-12",
     name: "Graham Wood",
-    realName: "גרהאם וודס (Total Eclipse)",
+    realName: "גרהאם וודס (The Infinity Project)",
     country: "🇬🇧 בריטניה",
     age: null,
     born: "פעיל מתחילת שנות ה-90",
     stage: "retro",
-    role: "Live",
-    tags: ["Total Eclipse", "Transient Records", "Goa Pioneer"],
+    role: "DJ Set",
+    tags: ["The Infinity Project", "TIP Records", "Goa Pioneer"],
     color: "#3a86ff",
-    bio: "אגדה של גואה טראנס - חלק מ-Total Eclipse וממייסדי Transient Records הבריטית. ב-ZNA 2026 משחרר את מלוא המאסטריות שלו במה לחגיגה הרטרו-פוטוריסטית.",
-    notable: "Total Eclipse - אחד הפרויקטים המכוננים של גואה הצרפתי-בריטי",
-    albums: [],
-    links: []
+    bio: "אגדה של גואה טראנס - חלק מ-The Infinity Project וממייסדי TIP Records הבריטית האגדית. הפיק את התקליטונים שעיצבו את הסאונד של גואה הקלאסי. ב-ZNA 2026 משחרר את מלוא המאסטריות שלו ב-Retro Universe.",
+    notable: "The Infinity Project / TIP Records - מהחותמות המעצבות של גואה",
+    albums: [
+      { name: "Mystical Experiences", year: 1995, project: "The Infinity Project" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/16456-The-Infinity-Project" }
+    ]
   },
   {
     id: "sid-shanti",
+    announcedAt: "2025-11-17",
     name: "Sid Shanti",
     realName: "Sid Shanti",
     country: "🌍 בינלאומי",
@@ -773,9 +818,10 @@ const ARTISTS = [
   },
   {
     id: "orion-borelli",
+    announcedAt: "2025-11-17",
     name: "Orion (Jean Borelli)",
     realName: "ז'אן בורלי (Orion)",
-    country: "🇫🇷 צרפת",
+    country: "🇩🇰 דנמרק / 🇫🇷 צרפת",
     age: null,
     born: "פעיל משנות ה-90",
     stage: "retro",
@@ -785,26 +831,36 @@ const ARTISTS = [
     bio: "דמות מפתח מהשנים המעצבות של פסיטראנס. ב-ZNA 2026 חולק תקליטים בסט VS אקסקלוסיבי עם Sid Shanti - לכל מבריקי הסצנה.",
     notable: "VS Sid Shanti - מפגש ויניל מיוחד",
     albums: [],
-    links: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/77371-Jean-Borelli" },
+      { type: "Bandcamp", url: "https://orionmemo604.bandcamp.com/" }
+    ]
   },
   {
     id: "takeshi-isogai",
+    announcedAt: "2026-03-16",
     name: "Takeshi Isogai",
-    realName: "טאקשי איסוגאי",
+    realName: "טאקשי איסוגאי (Ubar Tmar)",
     country: "🇯🇵 יפן",
     age: null,
     born: "פעיל מאמצע שנות ה-90",
     stage: "retro",
     role: "Live",
-    tags: ["Japanese Pioneer", "Experimental Psy"],
+    tags: ["Ubar Tmar", "Japanese Pioneer", "Matsuri"],
     color: "#e63946",
-    bio: "מפיק ניסיוני יפני שפעיל מאמצע שנות ה-90. הופעות חיות שלו הופכות ל'מבוכי מוזיקה' פסיכדליים. חלק מסט VS חלוצים מיוחד ב-ZNA 2026.",
-    notable: "סט VS חלוצים - חוויה הסטורית",
-    albums: [],
-    links: []
+    bio: "מפיק ניסיוני יפני שפעיל מאמצע שנות ה-90. ידוע יותר תחת הכינוי Ubar Tmar עם אלבום 'Fusion' (1997, Boom!) ו-'True' (1998, Matsuri). הופעות חיות שלו הופכות ל'מבוכי מוזיקה' פסיכדליים.",
+    notable: "Ubar Tmar - אלבומי 'Fusion' ו-'True' של גואה יפני קלאסי",
+    albums: [
+      { name: "Fusion", year: 1997, project: "Ubar Tmar / Boom!" },
+      { name: "True", year: 1998, project: "Ubar Tmar / Matsuri" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/228673-Takeshi-Isogai" }
+    ]
   },
   {
     id: "battle-future-buddhas",
+    announcedAt: "2026-04-06",
     name: "Battle of the Future Buddhas",
     realName: "דייוויד (Battle of the Future Buddhas)",
     country: "🇸🇪 שוודיה",
@@ -817,12 +873,19 @@ const ARTISTS = [
     bio: "אומן של פסקולי לילה - אגדה ב-Boom Records עם האלבום 'Twin Sharkfins'. סטים לילה אפלים ועצימים שלוקחים את הקהל למחילות זמן עמוקות.",
     notable: "אלבום 'Twin Sharkfins' (Boom Records) - קלאסיקה של לילה",
     albums: [
-      { name: "Twin Sharkfins", year: 2003, project: "Boom Records" }
+      { name: "Twin Sharkfins", year: 1998, project: "Boom Records" }
     ],
-    links: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/41480-Battle-Of-The-Future-Buddhas" },
+      { type: "Bandcamp", url: "https://battlebuddhas.bandcamp.com/" }
+    ],
+    tracks: [
+      { id: "dX6a2ISyjy8", title: "Twin Sharkfins (Full Album)", year: 1998 }
+    ]
   },
   {
     id: "goaacen",
+    announcedAt: "2026-03-04",
     name: "Goaacen",
     realName: "Goaacen",
     country: "🇵🇹 פורטוגל",
@@ -839,6 +902,7 @@ const ARTISTS = [
   },
   {
     id: "dark-el-kante",
+    announcedAt: "2026-03-04",
     name: "Dark El Kante",
     realName: "חורחה בזאן (Dark El Kante)",
     country: "🌍 בינלאומי",
@@ -851,12 +915,17 @@ const ARTISTS = [
     bio: "DJ מוביל של ז'אנר ה-Suomisaundi - גואה טראנס פיני אקסצנטרי וחופשי. מנהל את החותמת ללא רווח Random Records שתומכת בארגוני זכויות-ילידים.",
     notable: "Random Records - חותמת אקטיביסטית",
     albums: [],
-    links: []
+    links: [
+      { type: "Bandcamp", url: "https://randomrecords.bandcamp.com/" },
+      { type: "SoundCloud", url: "https://soundcloud.com/darkelkante" }
+    ]
   },
+
   {
     id: "merrow",
+    announcedAt: "2026-03-04",
     name: "Merr0w",
-    realName: "בריס (Merr0w)",
+    realName: "בריס פרויט (Merr0w)",
     country: "🇫🇷 צרפת",
     age: null,
     born: "פעיל מתחילת שנות ה-2000",
@@ -864,14 +933,20 @@ const ARTISTS = [
     role: "DJ Set",
     tags: ["Modern Goa", "Suntrip", "Global Sect"],
     color: "#ff5c8a",
-    bio: "חלוץ של גואה מודרני מצרפת - מפיק מאז תחילת שנות ה-2000 עם שחרורים על Suntrip ו-Global Sect.",
-    notable: "Suntrip & Global Sect - חתום על שתי חותמות מובילות",
-    albums: [],
-    links: []
+    bio: "בריס פרויט - חלוץ של גואה מודרני מצרפת. מפיק מאז תחילת שנות ה-2000 עם שחרורים על Suntrip ו-Global Sect. אלבום 'Odysseus' (2019, Global Sect) הוא מהמסעות המוכרים שלו.",
+    notable: "אלבום 'Odysseus' (2019, Global Sect)",
+    albums: [
+      { name: "Odysseus", year: 2019, project: "Global Sect" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/737661-Merr0w" },
+      { type: "Bandcamp", url: "https://globalsect.bandcamp.com/album/merrow-odysseus" }
+    ]
   },
   // ===== Additional verified ZNA 2026 artists =====
   {
     id: "atmos",
+    announcedAt: "2026-03-23",
     name: "Atmos",
     realName: "תומאש באליצקי (Atmos)",
     country: "🇸🇪 שוודיה",
@@ -884,29 +959,44 @@ const ARTISTS = [
     bio: "אומן גואה טראנס שוודי שהיה מהפיקים החזקים של Spirit Zone Recordings בסוף שנות ה-90. סגנונו - מלודי, חלמני וצבעוני - הפך לאחד מהקולות המוכרים של גואה הסקנדינבי. אומן Retro Universe ב-ZNA 2026.",
     notable: "אלבומי Spirit Zone וסיפו של גואה הקלאסי - חזרה לשורשים",
     albums: [
-      { name: "The Only Process", year: 2002, project: "Spirit Zone" },
+      { name: "The Only Process", year: 1999, project: "Spirit Zone" },
       { name: "Headcleaner", year: 2005 }
     ],
-    links: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/9013-Atmos" }
+    ],
+    tracks: [
+      { id: "Fat-5AwNPXk", title: "The Only Process (Original Mix)", year: 1999 }
+    ]
   },
   {
     id: "alphanaut",
+    announcedAt: "2026-02-02",
     name: "Alphanaut",
     realName: "Hall + Antill (Alphanaut)",
     country: "🇬🇧 בריטניה",
     age: null,
-    born: "פעילים מ-2010",
+    born: "פעילים מ-1997",
     stage: "retro",
     role: "Live",
-    tags: ["Old School Goa", "Modern Retro"],
+    tags: ["Old School Goa", "Goa Pioneer"],
     color: "#118ab2",
-    bio: "פרויקט אנגלי המוקדש להחיאת הסאונד הקלאסי של גואה טראנס משנות ה-90 בקפדנות פרודוקציונית מודרנית. ההופעות החיות שלהם הם חוויות מסע מלאות-נשמה שמרגישות כמו זיכרון משוחזר.",
-    notable: "מהפרויקטים המובילים של 'New School Goa' המודרני",
-    albums: [],
-    links: []
+    bio: "פרויקט אנגלי שהחל בסוף שנות ה-90 עם ה-12\" של 'India / Abduction / Centauri' (1997). פרודוקציה מוקפדת בסאונד הקלאסי של גואה טראנס - הופעות חיות שמרגישות כמו זיכרון משוחזר.",
+    notable: "מהפרויקטים המוכרים של גואה הקלאסי-בריטי",
+    albums: [
+      { name: "India / Abduction / Centauri", year: 1997, project: "12\" EP" },
+      { name: "Cosmonaut", year: 1998 }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/27998-Alphanaut" }
+    ],
+    tracks: [
+      { id: "_0-7f9AJ3lU", title: "Cosmonaut", year: 1998 }
+    ]
   },
   {
     id: "blue-planet-corporation",
+    announcedAt: "2026-02-09",
     name: "Blue Planet Corporation",
     realName: "גבריאל מסורל",
     country: "🇫🇷 צרפת",
@@ -914,19 +1004,27 @@ const ARTISTS = [
     born: "פעיל משנות ה-90",
     stage: "retro",
     role: "Live",
-    tags: ["French Goa", "Total Eclipse Spirit"],
+    tags: ["French Goa", "Mosaïc"],
     color: "#0077b6",
-    bio: "פרויקט הסולו של גבריאל מסורל - שותף של Total Eclipse, ויוצר חלוץ צרפתי של גואה טראנס. ב-ZNA 2026 חוזר עם הופעה חיה מלאה של חוויה אופורית-פסיכדלית.",
-    notable: "אלבומים על Mosaïc Records - מופתי הגואה הצרפתי",
+    bio: "פרויקט הסולו של גבריאל מסורל - יוצר חלוץ צרפתי של גואה טראנס. שחרורים על Mosaïc Records הצרפתית. ב-ZNA 2026 חוזר עם הופעה חיה מלאה של חוויה אופורית-פסיכדלית.",
+    notable: "'Overbloody Flood' (1993) - מהטראקים הצרפתיים החלוצים של גואה",
     albums: [
+      { name: "Overbloody Flood", year: 1993 },
       { name: "The Trip Continues", year: 2002, project: "Mosaïc" }
     ],
-    links: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/4754-Blue-Planet-Corporation" },
+      { type: "Bandcamp", url: "https://blueplanetcorporation.bandcamp.com/" }
+    ],
+    tracks: [
+      { id: "NCNJHQHzo7w", title: "Overbloody Flood", year: 1993 }
+    ]
   },
   {
     id: "merv-eat-static",
+    announcedAt: "2026-02-09",
     name: "Merv (Eat Static)",
-    realName: "מרוין פפווורת'",
+    realName: "מרב פפלר (Merv Pepler)",
     country: "🇬🇧 בריטניה",
     age: null,
     born: "פעיל משנות ה-90",
@@ -934,21 +1032,27 @@ const ARTISTS = [
     role: "Live",
     tags: ["Eat Static", "Planet Dog", "Ozric Tentacles"],
     color: "#52b788",
-    bio: "מרוין פפווורת', חלק מ-Eat Static האגדי - הצוות שיצר את המוזיקה האלקטרונית הפסיכדלית הבריטית של שנות ה-90 דרך Planet Dog. גם חבר ב-Ozric Tentacles. הופעה חיה מיוחדת ב-Zambu Temple.",
+    bio: "מרב פפלר, ממייסדי Eat Static האגדי יחד עם Joie Hinton - הצוות שיצר את המוזיקה האלקטרונית הפסיכדלית הבריטית של שנות ה-90 דרך Planet Dog. גם חבר ב-Ozric Tentacles. הופעה חיה מיוחדת ב-Zambu Temple.",
     notable: "Eat Static / Planet Dog Records - אבות הטכנו פסיכדלי הבריטי",
     albums: [
       { name: "Implant", year: 1994, project: "Eat Static" },
       { name: "Science of the Gods", year: 1997, project: "Eat Static" }
     ],
-    links: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/4759-Eat-Static" }
+    ],
+    tracks: [
+      { id: "0mgFLx_0iDM", title: "Bony Incus", year: 1994 }
+    ]
   },
   {
     id: "cosmosis",
+    announcedAt: "2025-12-25",
     name: "Cosmosis",
     realName: "ביל הולסטרום (Cosmosis)",
     country: "🇬🇧 בריטניה",
     age: null,
-    born: "פעיל מ-1996",
+    born: "פעיל מ-1995",
     stage: "retro",
     role: "Live",
     tags: ["Transient Records", "Holophonic", "Goa Trance"],
@@ -960,30 +1064,44 @@ const ARTISTS = [
       { name: "Synergy", year: 1998 },
       { name: "Trip Tych", year: 2002 }
     ],
-    links: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/11439-Cosmosis" },
+      { type: "Bandcamp", url: "https://cosmosis.bandcamp.com/album/cosmology" }
+    ],
+    tracks: [
+      { id: "ilWeV9isl5o", title: "Cannabanoid", year: 1995 }
+    ]
   },
   {
     id: "filteria",
+    announcedAt: "2025-12-25",
     name: "Filteria",
-    realName: "יוהאן אוטמן (Filteria)",
-    country: "🇸🇪 שוודיה",
+    realName: "יאניס ציקאס (Filteria)",
+    country: "🇬🇷 יוון / 🇸🇪 סטוקהולם",
     age: null,
     born: "פעיל מ-2003",
     stage: "retro",
     role: "Live",
     tags: ["Suntrip", "Goa Revival", "Sky Input"],
     color: "#7209b7",
-    bio: "יוהאן אוטמן השוודי - ממנהיגי תחיית הגואה טראנס. אלבום הביכורים שלו 'Sky Input' (2004, Suntrip) הצית מחדש את הז'אנר וקבע סטנדרט חדש לגואה מלודי-עוצמתי-מסוער. הופעה חיה ב-ZNA 2026.",
+    bio: "יאניס ציקאס - יווני שמתגורר בסטוקהולם, ממנהיגי תחיית הגואה טראנס. אלבום הביכורים שלו 'Sky Input' (2004, Suntrip) הצית מחדש את הז'אנר וקבע סטנדרט חדש לגואה מלודי-עוצמתי-מסוער. הופעה חיה ב-ZNA 2026.",
     notable: "'Sky Input' (2004, Suntrip) - אלבום מהפכני שהפך לאיקון של גואה הניאו",
     albums: [
       { name: "Sky Input", year: 2004, project: "Suntrip" },
       { name: "Heliopolis", year: 2007 },
       { name: "Daze of Our Lives", year: 2014 }
     ],
-    links: []
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/331833-Filteria" },
+      { type: "Bandcamp", url: "https://filteria.bandcamp.com/album/sky-input" }
+    ],
+    tracks: [
+      { id: "tGlq2ErFjU8", title: "Sky Input (Full Album)", year: 2004 }
+    ]
   },
   {
     id: "sjamadan",
+    announcedAt: "2026-03-04",
     name: "Sjamadan",
     realName: "Sjamadan",
     country: "🇩🇰 דנמרק",
