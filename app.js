@@ -998,18 +998,33 @@ function buildReel() {
 // Global capture-phase scroll listener: any time a .pager inside the reel
 // scrolls, update its section's dot highlights and toggle vertical-progress
 // visibility (dots only matter on real panel 0). Capture phase is needed
-// because 'scroll' events do not bubble. A debounced settle handler does the
-// instant-jump for the infinite loop.
+// because 'scroll' events do not bubble. A settle handler does the
+// instant-jump for the infinite loop, using the native scrollend event when
+// supported and a short polling fallback otherwise.
 let pagerScrollTicking = false;
 const pagerSettleTimers = new WeakMap();
+const pagersBeingWrapped = new WeakSet();
+const supportsScrollend = "onscrollend" in window;
+
 reel.addEventListener("scroll", e => {
   const pager = e.target?.closest?.(".pager");
   if (!pager) return;
+  // Don't fire while we're snapping back from a clone — the synthetic scroll
+  // would queue another settle, creating thrashing.
+  if (pagersBeingWrapped.has(pager)) return;
 
-  // Debounced settle handler: 100ms after the last scroll event = settled.
-  const existing = pagerSettleTimers.get(pager);
-  if (existing) clearTimeout(existing);
-  pagerSettleTimers.set(pager, setTimeout(() => handlePagerSettle(pager), 100));
+  // Settle scheduling: scrollend if supported (zero-latency), else short
+  // polling fallback that only fires if scroll actually stopped.
+  if (supportsScrollend) {
+    if (!pager.dataset.scrollendBound) {
+      pager.dataset.scrollendBound = "1";
+      pager.addEventListener("scrollend", () => handlePagerSettle(pager));
+    }
+  } else {
+    const existing = pagerSettleTimers.get(pager);
+    if (existing) clearTimeout(existing);
+    pagerSettleTimers.set(pager, setTimeout(() => handlePagerSettle(pager), 60));
+  }
 
   if (pagerScrollTicking) return;
   pagerScrollTicking = true;
@@ -1032,6 +1047,7 @@ reel.addEventListener("scroll", e => {
 // matching real panel. Identical content makes the jump invisible.
 function handlePagerSettle(pager) {
   if (!pager || !pager.isConnected) return;
+  if (pagersBeingWrapped.has(pager)) return;
   const w = pager.clientWidth || 1;
   const scrollIdx = Math.round(Math.abs(pager.scrollLeft) / w);
   const child = pager.children[scrollIdx];
@@ -1041,7 +1057,13 @@ function handlePagerSettle(pager) {
   // Real panels live at scrollIdx 1..realCount (cloneStart is at 0, cloneEnd at realCount+1)
   const targetScrollIdx = child.dataset.clone === "start" ? realCount : 1;
   const target = pager.children[targetScrollIdx];
-  if (target) pager.scrollTo({ left: target.offsetLeft, behavior: "auto" });
+  if (!target) return;
+  // Suppress the scroll listener during the synthetic jump so we don't
+  // re-trigger the settle pipeline.
+  pagersBeingWrapped.add(pager);
+  pager.scrollTo({ left: target.offsetLeft, behavior: "auto" });
+  // Two RAFs is enough for the scroll event from scrollTo to flush.
+  requestAnimationFrame(() => requestAnimationFrame(() => pagersBeingWrapped.delete(pager)));
 }
 
 // Global delegated click for the per-artist horizontal panel dots.
@@ -1107,13 +1129,34 @@ function setActiveSection(section) {
   }
   verticalProgress.classList.toggle("is-hidden", isHero || panelIdx > 0);
 
-  // Reset other artist sections back to their first panel so vertical
-  // navigation always lands the user on the artist's main card.
+  // Reset every other artist section's pager back to its real first panel
+  // (scrollIdx=1 with the carousel layout, since scrollIdx=0 is cloneStart =
+  // discography clone). That way, vertical navigation always lands the user
+  // on the next/previous artist's main hero card, never mid-panel and never
+  // on a clone that looks like discography.
   reel.querySelectorAll('[data-section="artist"]').forEach(s => {
     if (s === section) return;
     const p = s.querySelector(".pager");
-    if (p && p.scrollLeft !== 0) p.scrollTo({ left: 0, behavior: "auto" });
+    if (!p) return;
+    const realFirst = p.children[1];
+    if (realFirst && Math.abs(p.scrollLeft - realFirst.offsetLeft) > 4) {
+      p.scrollTo({ left: realFirst.offsetLeft, behavior: "auto" });
+    }
+    // Make sure the init flag is set so the heroInitObserver doesn't override.
+    s.dataset.scrollInit = "1";
   });
+  // Also: when the new active section is itself an artist, ensure it sits on
+  // the real hero (not a clone) — covers the "scrolled into existing
+  // mid-panel position" edge case.
+  if (section.dataset.section === "artist" && pager) {
+    const realFirst = pager.children[1];
+    const sl = Math.abs(pager.scrollLeft);
+    const w = pager.clientWidth || 1;
+    const onClone = sl < w * 0.5 || sl > (pager.children.length - 1.5) * w;
+    if (realFirst && onClone) {
+      pager.scrollTo({ left: realFirst.offsetLeft, behavior: "auto" });
+    }
+  }
 
   // HUD + retint background by stage
   const stage = section.dataset.stage;

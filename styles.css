@@ -1178,6 +1178,27 @@ body.has-mini-player .panel {
   pointer-events: auto;
 }
 
+/* Desktop: center the mini-player as a fixed-width pill instead of letting
+   it span the full width like a Spotify bar. Looks more like Apple Music's
+   floating Now Playing pill on macOS. */
+@media (min-width: 768px) {
+  .mini-player {
+    left: 50%;
+    right: auto;
+    bottom: 16px;
+    width: min(620px, calc(100vw - 32px));
+    border: 1px solid var(--card-border);
+    border-top: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 10px 14px;
+    transform: translate(-50%, calc(100% + 32px));
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  }
+  .mini-player.is-open {
+    transform: translate(-50%, 0);
+  }
+}
+
 .mini-player-frame {
   position: relative;
   width: 88px;
