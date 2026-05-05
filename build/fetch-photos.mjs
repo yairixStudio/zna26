@@ -43,6 +43,9 @@ const ARTIST_ALIASES = [
   ["kris kylven", "kris-kylven"],
   ["kris klyven", "kris-kylven"],
   ["kylven", "kris-kylven"],
+  ["ux vs syb", "kris-kylven"],
+  ["ux_vs_syb", "kris-kylven"],
+  ["syb unity", "kris-kylven"],
   ["simon ghahary", "simon-ghahary"],
   ["ghahary", "simon-ghahary"],
   ["ray castle", "ray-castle"],
@@ -50,6 +53,7 @@ const ARTIST_ALIASES = [
   ["source experience", "robert-leiner"],
   ["sean williams", "sean-williams"],
   ["satori", "sean-williams"],
+  ["zna_process", "sean-williams"],
   ["james monro", "james-monro"],
   ["joti sidhu", "joti-sidhu"],
   ["psychaos", "joti-sidhu"],
@@ -68,6 +72,8 @@ const ARTIST_ALIASES = [
   ["anais lin", "anais-lin"],
   ["marc van der vlugt", "marc-van-der-vlugt"],
   ["marc-van-der-vlugt", "marc-van-der-vlugt"],
+  ["mark van der vlugt", "marc-van-der-vlugt"],
+  ["mark-van-der-vlugt", "marc-van-der-vlugt"],
   ["solitare", "solitare"],
   ["earl peal", "earl-peal"],
   ["isoquant", "isoquant"],
@@ -85,6 +91,9 @@ const ARTIST_ALIASES = [
   ["jaia", "jaia"],
   ["ja%c3%afa", "jaia"],
   ["graham wood", "graham-wood"],
+  ["theinfinityproject", "graham-wood"],
+  ["the infinity project", "graham-wood"],
+  ["infinity project", "graham-wood"],
   ["sid shanti", "sid-shanti"],
   ["jean borelli", "orion-borelli"],
   ["orion", "orion-borelli"],
@@ -102,11 +111,15 @@ const ARTIST_ALIASES = [
   ["alphanaut", "alphanaut"],
   ["blue planet corporation", "blue-planet-corporation"],
   ["blue-planet-corporation", "blue-planet-corporation"],
+  ["blueplanetcoportation", "blue-planet-corporation"],
+  ["blue planet coportation", "blue-planet-corporation"],
   ["merv", "merv-eat-static"],
   ["eat static", "merv-eat-static"],
   ["cosmosis", "cosmosis"],
   ["filteria", "filteria"],
   ["sjamadan", "sjamadan"],
+  ["sjama_dan", "sjamadan"],
+  ["sjama-dan", "sjamadan"],
   ["cheers", "extra-cheers"]
 ];
 
@@ -117,6 +130,75 @@ function matchArtist(text) {
     if (lc.includes(needle)) return id;
   }
   return null;
+}
+
+// Normalize input so "ZNA_BluePlanetCoportation_500x500.jpg" matches alias
+// "blue planet corporation". Splits camelCase, replaces -/_/. with spaces,
+// strips common chrome (zna_ prefix, _500x500 suffix).
+function normalize(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/([a-z])([A-Z])/g, "$1 $2")     // camelCase -> camel Case
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2") // ABCdef -> AB Cdef
+    .toLowerCase()
+    .replace(/\.[a-z0-9]{2,4}$/, "")          // strip extension
+    .replace(/[-_.]+/g, " ")
+    .replace(/\b(zna|wp content|uploads|\d{4}|\d+x\d+|scaled)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Find ALL matching artist ids (shared photos: "Jean Borelli vs Sid Shanti").
+// Each alias is checked in three forms: as-given, no-spaces, and against the
+// normalized text — covers spaces, dashes, underscores and camelCase slugs.
+function matchAllArtists(...texts) {
+  const ids = new Set();
+  const norms = texts.filter(Boolean).map(t => {
+    const lc = String(t).toLowerCase();
+    return [lc, lc.replace(/[\s_-]/g, ""), normalize(t)];
+  });
+  for (const [needle, id] of ARTIST_ALIASES) {
+    const needleNoSpace = needle.replace(/\s+/g, "");
+    for (const [lc, lcNoSpace, norm] of norms) {
+      if (lc.includes(needle) || lcNoSpace.includes(needleNoSpace) || norm.includes(needle)) {
+        ids.add(id);
+        break;
+      }
+    }
+  }
+  return Array.from(ids);
+}
+
+const IMG_DIR = path.join(ROOT, "images", "artists");
+
+function extFromUrl(src) {
+  try {
+    const u = new URL(src);
+    const last = u.pathname.split("/").pop() || "";
+    const m = last.match(/\.(jpe?g|png|webp)$/i);
+    return m ? m[1].toLowerCase().replace("jpeg", "jpg") : "jpg";
+  } catch { return "jpg"; }
+}
+
+async function downloadImage(src, id) {
+  fs.mkdirSync(IMG_DIR, { recursive: true });
+  const ext = extFromUrl(src);
+  const file = path.join(IMG_DIR, `${id}.${ext}`);
+  const rel = path.posix.join("images", "artists", `${id}.${ext}`);
+  if (fs.existsSync(file) && fs.statSync(file).size > 0) return rel;
+  try {
+    const res = await fetch(src, { headers: { "User-Agent": UA, "Referer": "https://znagathering.com/" } });
+    if (!res.ok) {
+      console.error(`  download ${src} -> ${res.status}`);
+      return null;
+    }
+    const buf = Buffer.from(await res.arrayBuffer());
+    fs.writeFileSync(file, buf);
+    return rel;
+  } catch (e) {
+    console.error(`  download ${src} -> ${e.message}`);
+    return null;
+  }
 }
 
 async function fetchHtml(url) {
@@ -207,7 +289,7 @@ function inferArtistFromPageTitle(html) {
 }
 
 async function main() {
-  const photos = {};
+  const assignments = new Map(); // id -> remote URL
   const seenSrcs = new Set();
   const ambiguous = [];
 
@@ -223,18 +305,27 @@ async function main() {
       if (seenSrcs.has(img.src)) continue;
       seenSrcs.add(img.src);
       const slug = urlSlug(img.src);
-      let id = matchArtist(img.alt) || matchArtist(img.title) || matchArtist(slug);
-      // For announcement post pages, the page is mostly about ONE artist - if we
-      // can't match the image directly, fall back to the page's title hint.
-      if (!id && pageArtistHint && /artist-announcement/i.test(url)) {
-        id = pageArtistHint;
+      let ids = matchAllArtists(img.alt, img.title, slug);
+      // For announcement post pages the page is mostly about ONE artist - fall
+      // back to the page title hint when the image itself didn't match.
+      if (!ids.length && pageArtistHint && /artist-announcement/i.test(url)) {
+        ids = [pageArtistHint];
       }
-      if (!id) {
+      if (!ids.length) {
         ambiguous.push({ url: img.src, alt: img.alt, slug });
         continue;
       }
-      if (!photos[id]) photos[id] = img.src;
+      for (const id of ids) {
+        if (!assignments.has(id)) assignments.set(id, img.src);
+      }
     }
+  }
+
+  // Download each assigned image into images/artists/<id>.<ext>
+  const photos = {};
+  for (const [id, src] of assignments) {
+    const local = await downloadImage(src, id);
+    if (local) photos[id] = local;
   }
 
   fs.writeFileSync(
