@@ -872,61 +872,52 @@ function streamingLinks(a) {
 
 function panelInfo(a) {
   const links = a.links || [];
-  const streams = streamingLinks(a);
-  const streamingHtml = streams.length
-    ? `<div class="info-stream">${streams.map(s => `
-        <a class="stream-icon stream-icon--${s.platform} ${s.verified ? "is-verified" : ""}"
-           href="${escapeHtml(s.url)}" target="_blank" rel="noopener"
-           title="${escapeHtml(s.label)}${s.verified ? " · ערוץ רשמי" : ""}"
-           aria-label="${escapeHtml(s.label)}${s.verified ? " (ערוץ רשמי)" : ""}">
-          ${s.icon}
-          ${s.verified ? `<span class="stream-verified" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></svg>
-          </span>` : ""}
-        </a>`).join("")}</div>`
-    : "";
-
-  // Build details rows once, render only if non-empty.
-  const detailRows = [];
-  if (a.announcedAt) detailRows.push(["הוכרז", escapeHtml(formatAnnouncedDate(a.announcedAt))]);
-  if (a.representedBy) detailRows.push(["ניהול / Label", escapeHtml(a.representedBy)]);
-  if (a.country) detailRows.push(["מקור", escapeHtml(a.country)]);
-  if (a.role) detailRows.push(["תפקיד ב-ZNA", escapeHtml(a.role)]);
-  if (a.age) detailRows.push(["גיל", `${a.age}`]);
-  if (a.tags?.length) detailRows.push(["סגנון", a.tags.map(t => escapeHtml(t)).join(" · ")]);
-
-  const detailsHtml = detailRows.length
-    ? `<details class="info-acc" data-key="meta">
-        <summary>
-          <span>פרטים</span>
-          <svg class="info-acc-chev" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
-        </summary>
-        <dl class="info-acc-dl">
-          ${detailRows.map(([k, v]) => `<div class="info-acc-row"><dt>${escapeHtml(k)}</dt><dd>${v}</dd></div>`).join("")}
-        </dl>
-      </details>`
-    : "";
-
+  // Streaming icons row — always renders all 4 platforms.
+  const streamingHtml = `
+    <div class="info-section">
+      <h3 class="info-section-title">סטרימינג</h3>
+      <div class="streaming-row">
+        ${streamingLinks(a).map(s => `
+          <a class="stream-icon stream-icon--${s.platform} ${s.verified ? "is-verified" : ""}"
+             href="${escapeHtml(s.url)}" target="_blank" rel="noopener"
+             title="${escapeHtml(s.label)}${s.verified ? " · ערוץ רשמי" : ""}"
+             aria-label="${escapeHtml(s.label)}${s.verified ? " (ערוץ רשמי)" : ""}">
+            ${s.icon}
+            ${s.verified ? `<span class="stream-verified" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></svg>
+            </span>` : ""}
+          </a>
+        `).join("")}
+      </div>
+    </div>
+  `;
+  // Other links (Discogs / Bandcamp / Resident Advisor / Website / Wikipedia / etc).
   const linksHtml = links.length
-    ? `<details class="info-acc" data-key="links">
-        <summary>
-          <span>קישורים נוספים</span>
-          <span class="info-acc-count">${links.length}</span>
-          <svg class="info-acc-chev" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
-        </summary>
-        <div class="info-acc-links">
-          ${links.map(l => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} <span aria-hidden="true">↗</span></a>`).join("")}
+    ? `
+      <div class="info-section">
+        <h3 class="info-section-title">קישורים נוספים</h3>
+        <div class="links-grid">
+          ${links.map(l => `<a class="link-btn" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} ↗</a>`).join("")}
         </div>
-      </details>`
+      </div>
+    `
     : "";
-
-  const notableHtml = a.notable
-    ? `<p class="bio-notable">— ${escapeHtml(a.notable)}</p>`
+  // Representatives — label / management / agency.
+  const repHtml = a.representedBy
+    ? `<div class="info-rep">🎧 ${escapeHtml(a.representedBy)}</div>`
+    : "";
+  const announcedHtml = a.announcedAt
+    ? `<div class="info-meta">📣 הוכרז ב-${escapeHtml(formatAnnouncedDate(a.announcedAt))}</div>`
     : "";
   const bioHtml = a.bio
-    ? `<p class="bio-text">${escapeHtml(a.bio)}</p>`
+    ? `
+      <div class="info-section">
+        <h3 class="info-section-title">ביוגרפיה</h3>
+        <p class="bio-text">${escapeHtml(a.bio)}</p>
+        ${a.notable ? `<div class="notable">★ ${escapeHtml(a.notable)}</div>` : ""}
+      </div>
+    `
     : "";
-
   return `
     <div class="panel panel--info">
       <div class="panel-inner">
@@ -934,12 +925,12 @@ function panelInfo(a) {
           <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
           <span class="eyebrow-section">אודות</span>
         </div>
-        <div class="bio-card bio-card--minimal">
+        <div class="bio-card">
+          ${announcedHtml}
+          ${repHtml}
           ${bioHtml}
-          ${notableHtml}
           ${streamingHtml}
           ${linksHtml}
-          ${detailsHtml}
         </div>
       </div>
     </div>
