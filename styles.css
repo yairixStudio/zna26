@@ -1092,6 +1092,73 @@ body.has-mini-player .hero-dots {
 
 .link-btn:active { transform: translateY(1px); }
 
+/* ===== Streaming icons row =====
+   YouTube / Spotify / SoundCloud / Apple Music. Icon-only buttons; verified
+   official channels get a small blue check. Unknown channels still link out
+   via a search URL on that platform so the buttons always do something. */
+.streaming-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stream-icon {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  text-decoration: none;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  transition: transform 0.15s, background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.stream-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.stream-icon--youtube:hover    { background: #FF0000; color: #fff; }
+.stream-icon--spotify:hover    { background: #1DB954; color: #fff; }
+.stream-icon--soundcloud:hover { background: #FF5500; color: #fff; }
+.stream-icon--applemusic:hover { background: linear-gradient(135deg, #FA233B, #FB5C74); color: #fff; }
+
+.stream-verified {
+  position: absolute;
+  inset-inline-end: -3px;
+  bottom: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #1d9bf0;          /* Twitter/X blue check */
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--card-bg, #0a0524);
+  box-shadow: 0 2px 6px rgba(29, 155, 240, 0.6);
+}
+
+/* Representatives line (label / booking / management). */
+.info-rep {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--panel-accent, var(--sun-yellow));
+  background: color-mix(in oklab, var(--panel-accent, var(--sun-yellow)) 10%, transparent);
+  border: 1px solid color-mix(in oklab, var(--panel-accent, var(--sun-yellow)) 28%, transparent);
+  border-radius: 999px;
+  letter-spacing: 0.2px;
+}
+
 /* ===== Pager dots (horizontal) ===== */
 .dots {
   position: absolute;

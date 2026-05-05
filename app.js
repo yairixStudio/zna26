@@ -783,17 +783,79 @@ function formatAnnouncedDate(yyyymmdd) {
   return `${parseInt(d, 10)} ב${monthName} ${y}`;
 }
 
+// Per-platform icon SVG (single-color, currentColor) so each artist can be
+// linked to YouTube / Spotify / SoundCloud / Apple Music with a single icon.
+const STREAM_ICONS = {
+  youtube:    `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M23.5 6.51a3.02 3.02 0 0 0-2.13-2.14C19.45 4 12 4 12 4s-7.45 0-9.37.37A3.02 3.02 0 0 0 .5 6.51 31.5 31.5 0 0 0 .12 12a31.5 31.5 0 0 0 .38 5.49 3.02 3.02 0 0 0 2.13 2.14C4.55 20 12 20 12 20s7.45 0 9.37-.37a3.02 3.02 0 0 0 2.13-2.14A31.5 31.5 0 0 0 23.88 12a31.5 31.5 0 0 0-.38-5.49zM9.75 15.5v-7l6.5 3.5-6.5 3.5z"/></svg>`,
+  spotify:    `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.59 14.42c-.18.3-.57.4-.87.22-2.4-1.47-5.42-1.8-8.97-.99a.63.63 0 0 1-.27-1.23c3.88-.88 7.22-.5 9.92 1.13.3.18.4.57.19.87zm1.22-2.72a.79.79 0 0 1-1.08.26c-2.75-1.69-6.94-2.18-10.18-1.2a.79.79 0 1 1-.46-1.51c3.72-1.13 8.36-.58 11.52 1.36.37.23.49.71.2 1.09zm.1-2.83c-3.28-1.95-8.7-2.13-11.83-1.18a.95.95 0 1 1-.55-1.81c3.6-1.09 9.6-.88 13.39 1.36a.95.95 0 1 1-1.01 1.63z"/></svg>`,
+  soundcloud: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M2 14a.5.5 0 0 1 .5.5v3a.5.5 0 1 1-1 0v-3A.5.5 0 0 1 2 14zm2 1a.5.5 0 0 1 .5.5v2a.5.5 0 1 1-1 0v-2A.5.5 0 0 1 4 15zm2-2a.5.5 0 0 1 .5.5v4a.5.5 0 1 1-1 0v-4A.5.5 0 0 1 6 13zm2 0a.5.5 0 0 1 .5.5v4a.5.5 0 1 1-1 0v-4A.5.5 0 0 1 8 13zm2-2a.5.5 0 0 1 .5.5v6a.5.5 0 1 1-1 0v-6a.5.5 0 0 1 .5-.5zm2-2a.5.5 0 0 1 .5.5v8a.5.5 0 1 1-1 0V9.5a.5.5 0 0 1 .5-.5zm10.5 4.5c0 1.93-1.57 3.5-3.5 3.5h-7v-9c1.7-.7 3.6-.4 5 1 .9.9 1.4 2 1.5 3.2.3-.1.6-.2 1-.2 1.93 0 3.5 1.57 3.5 3.5z"/></svg>`,
+  applemusic: `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M22 4.34c0-.43-.04-.85-.13-1.25a3.4 3.4 0 0 0-.43-1.13 2.8 2.8 0 0 0-.86-.91A3.5 3.5 0 0 0 19.4.6a4.7 4.7 0 0 0-1.4-.18c-.42 0-.83.05-1.24.14L8.6 2.32c-.5.11-.93.27-1.3.5-.36.21-.65.5-.86.85-.21.36-.36.78-.45 1.27a8 8 0 0 0-.13 1.49v9.78a3.32 3.32 0 0 1-.66-.05c-.4-.06-.78-.04-1.13.07-.36.1-.67.27-.95.5a2.4 2.4 0 0 0-.66.83 2.6 2.6 0 0 0-.24 1.13c0 .4.08.79.24 1.14.16.34.38.63.66.85.28.23.6.4.96.5.36.1.74.13 1.13.07.4-.06.77-.18 1.12-.36.36-.18.67-.41.93-.7.27-.3.48-.62.62-1 .14-.36.21-.76.21-1.18V8.83l9.6-2.16v8.16a3.32 3.32 0 0 1-.65-.04 2.7 2.7 0 0 0-1.13.06c-.36.1-.67.27-.96.5-.27.22-.5.5-.66.83a2.6 2.6 0 0 0-.24 1.14c0 .4.08.78.24 1.13.16.35.38.64.66.86.28.22.6.39.96.5.36.1.74.12 1.13.06.4-.05.77-.17 1.12-.35.36-.18.67-.41.93-.7.27-.3.48-.62.62-1 .14-.36.21-.76.21-1.18V4.34z"/></svg>`
+};
+
+const PLATFORM_LABEL = {
+  youtube: "YouTube",
+  spotify: "Spotify",
+  soundcloud: "SoundCloud",
+  applemusic: "Apple Music"
+};
+
+// Build the four streaming-platform icon links for an artist. Uses verified
+// channel URLs from a.channels when available (renders with a verified badge);
+// otherwise falls back to a search URL that opens that platform with the
+// artist's name pre-filled — so every icon always works.
+function streamingLinks(a) {
+  const q = encodeURIComponent(a.name);
+  const ch = a.channels || {};
+  const search = {
+    youtube:    `https://www.youtube.com/results?search_query=${q}`,
+    spotify:    `https://open.spotify.com/search/${q}`,
+    soundcloud: `https://soundcloud.com/search?q=${q}`,
+    applemusic: `https://music.apple.com/us/search?term=${q}`
+  };
+  return ["youtube", "spotify", "soundcloud", "applemusic"].map(p => ({
+    platform: p,
+    url: ch[p] || search[p],
+    verified: !!ch[p],
+    icon: STREAM_ICONS[p],
+    label: PLATFORM_LABEL[p]
+  }));
+}
+
 function panelInfo(a) {
   const links = a.links || [];
+  // Streaming icons row — always renders all 4 platforms.
+  const streamingHtml = `
+    <div class="info-section">
+      <h3 class="info-section-title">סטרימינג</h3>
+      <div class="streaming-row">
+        ${streamingLinks(a).map(s => `
+          <a class="stream-icon stream-icon--${s.platform} ${s.verified ? "is-verified" : ""}"
+             href="${escapeHtml(s.url)}" target="_blank" rel="noopener"
+             title="${escapeHtml(s.label)}${s.verified ? " · ערוץ רשמי" : ""}"
+             aria-label="${escapeHtml(s.label)}${s.verified ? " (ערוץ רשמי)" : ""}">
+            ${s.icon}
+            ${s.verified ? `<span class="stream-verified" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></svg>
+            </span>` : ""}
+          </a>
+        `).join("")}
+      </div>
+    </div>
+  `;
+  // Other links (Discogs / Bandcamp / Resident Advisor / Website / Wikipedia / etc).
   const linksHtml = links.length
     ? `
       <div class="info-section">
-        <h3 class="info-section-title">קישורים</h3>
+        <h3 class="info-section-title">קישורים נוספים</h3>
         <div class="links-grid">
           ${links.map(l => `<a class="link-btn" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} ↗</a>`).join("")}
         </div>
       </div>
     `
+    : "";
+  // Representatives — label / management / agency.
+  const repHtml = a.representedBy
+    ? `<div class="info-rep">🎧 ${escapeHtml(a.representedBy)}</div>`
     : "";
   const announcedHtml = a.announcedAt
     ? `<div class="info-meta">📣 הוכרז ב-${escapeHtml(formatAnnouncedDate(a.announcedAt))}</div>`
@@ -816,7 +878,9 @@ function panelInfo(a) {
         </div>
         <div class="bio-card">
           ${announcedHtml}
+          ${repHtml}
           ${bioHtml}
+          ${streamingHtml}
           ${linksHtml}
         </div>
       </div>
@@ -1010,16 +1074,62 @@ function buildReel() {
   });
 }
 
-// Global capture-phase scroll listener: any time a .pager inside the reel
-// scrolls, update its section's dot highlights and toggle vertical-progress
-// visibility (dots only matter on real panel 0). Capture phase is needed
-// because 'scroll' events do not bubble. A settle handler does the
-// instant-jump for the infinite loop, using the native scrollend event when
-// supported and a short polling fallback otherwise.
-let pagerScrollTicking = false;
+// Live dot tracking: a continuous RAF loop polls scrollLeft on whichever
+// pager is currently being interacted with, so the active dot updates
+// frame-by-frame as the user swipes — not just when scroll events happen
+// to fire (iOS Safari batches them during momentum scroll, which is why
+// the old code felt like the dot only updated AFTER a swipe finished).
 const pagerSettleTimers = new WeakMap();
 const pagersBeingWrapped = new WeakSet();
 const supportsScrollend = "onscrollend" in window;
+let liveTrackingPager = null;
+let liveTrackingRaf = null;
+let liveTrackingStopTimer = null;
+
+function applyDotsForPager(pager) {
+  if (!pager || !pager.isConnected) return;
+  const section = pager.closest('[data-section="artist"]');
+  if (!section) return;
+  const w = pager.clientWidth || 1;
+  // Use a slightly biased index: switch to the next dot once the user has
+  // crossed ~30% of the gap, instead of the strict 50% that scroll-snap uses
+  // to settle. Feels noticeably more "live" while still reading correctly
+  // when the gesture finishes mid-flight.
+  const sl = Math.abs(pager.scrollLeft);
+  const idx = Math.floor((sl + w * 0.3) / w);
+  const child = pager.children[idx];
+  if (!child) return;
+  const realIdx = +child.dataset.realIdx || 0;
+  section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === realIdx));
+  if (section.classList.contains("is-active")) {
+    verticalProgress?.classList.toggle("is-hidden", realIdx > 0);
+  }
+}
+
+function startLiveTracking(pager) {
+  liveTrackingPager = pager;
+  if (liveTrackingRaf) return;
+  const tick = () => {
+    if (!liveTrackingPager) { liveTrackingRaf = null; return; }
+    applyDotsForPager(liveTrackingPager);
+    liveTrackingRaf = requestAnimationFrame(tick);
+  };
+  liveTrackingRaf = requestAnimationFrame(tick);
+}
+
+function pingLiveTracking() {
+  // Keep the loop alive for ~220ms after the last scroll event. iOS bursts
+  // events during momentum and pauses between bursts; this window stays open
+  // through those pauses so the loop doesn't shut off mid-flick.
+  clearTimeout(liveTrackingStopTimer);
+  liveTrackingStopTimer = setTimeout(() => {
+    liveTrackingPager = null;
+    if (liveTrackingRaf) {
+      cancelAnimationFrame(liveTrackingRaf);
+      liveTrackingRaf = null;
+    }
+  }, 220);
+}
 
 reel.addEventListener("scroll", e => {
   const pager = e.target?.closest?.(".pager");
@@ -1041,21 +1151,11 @@ reel.addEventListener("scroll", e => {
     pagerSettleTimers.set(pager, setTimeout(() => handlePagerSettle(pager), 60));
   }
 
-  if (pagerScrollTicking) return;
-  pagerScrollTicking = true;
-  requestAnimationFrame(() => {
-    pagerScrollTicking = false;
-    const section = pager.closest('[data-section="artist"]');
-    if (!section) return;
-    const w = pager.clientWidth || 1;
-    const scrollIdx = Math.round(Math.abs(pager.scrollLeft) / w);
-    const child = pager.children[scrollIdx];
-    const realIdx = child ? (+child.dataset.realIdx || 0) : 0;
-    section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === realIdx));
-    if (section.classList.contains("is-active")) {
-      verticalProgress?.classList.toggle("is-hidden", realIdx > 0);
-    }
-  });
+  // Live-track this pager's scroll position with a continuous RAF loop.
+  startLiveTracking(pager);
+  pingLiveTracking();
+  // Apply once immediately for the case where the loop is just spinning up.
+  applyDotsForPager(pager);
 }, true);
 
 // Settle handler: if the pager landed on a clone, instant-jump to the
