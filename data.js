@@ -1141,3 +1141,218 @@ const ARTISTS = [
     links: []
   }
 ];
+
+// Verified streaming channel URLs + representedBy (label / booking).
+// Merged onto each artist record at boot in app.js. Filled per artist by a
+// research pass; some artists with no clearly-verified official channel
+// are omitted intentionally — the UI then falls back to a search URL.
+const ARTIST_EXTRAS = {
+  "yahel": {
+    representedBy: "HOMmega Productions",
+    channels: {
+      spotify: "https://open.spotify.com/artist/7CHdJ8rVKe6cez9PKlpKrF",
+      youtube: "https://www.youtube.com/@DJYahelMusic",
+      soundcloud: "https://soundcloud.com/djyahel"
+    }
+  },
+  "tsuyoshi-suzuki": {
+    representedBy: "Matsuri Digital",
+    channels: {
+      spotify: "https://open.spotify.com/artist/6FPDZzGbAgGNYUZgj0QozQ",
+      soundcloud: "https://soundcloud.com/matsuritsuyoshi",
+      youtube: "https://www.youtube.com/channel/UCjuPV5iw7ZON7B9nrHhpAGg"
+    }
+  },
+  "kris-kylven": {
+    representedBy: "self-released (Bandcamp); historically Dragonfly Records",
+    channels: { spotify: "https://open.spotify.com/artist/1735Dsr0jq46SzEgVoNQ4u" }
+  },
+  "simon-ghahary": {
+    representedBy: "Blue Room Released / Blue Room Sounds",
+    channels: {}
+  },
+  "ray-castle": {
+    representedBy: "self-managed",
+    channels: { soundcloud: "https://soundcloud.com/raycastle" }
+  },
+  "robert-leiner": {
+    representedBy: "Apollo Records (R&S)",
+    channels: {
+      spotify: "https://open.spotify.com/artist/3rQBSwv53vH5WgPz4YDill",
+      soundcloud: "https://soundcloud.com/robert-leiner-official"
+    }
+  },
+  "sean-williams": {
+    representedBy: "self-managed (ex-Spirit Zone / Slinky Wizard)",
+    channels: { soundcloud: "https://soundcloud.com/seanwilliamsofficial" }
+  },
+  "james-monro": {
+    representedBy: "Nano Records / Flying Rhino",
+    channels: {
+      spotify: "https://open.spotify.com/artist/5Q7y5nc9bp7vFHhTskDUPy",
+      soundcloud: "https://soundcloud.com/jamesmonro"
+    }
+  },
+  "joti-sidhu": {
+    representedBy: "self-managed (Psychaos Recordings)",
+    channels: { soundcloud: "https://soundcloud.com/jotisidhu" }
+  },
+  "extrawelt": {
+    representedBy: "Cocoon Recordings",
+    channels: {
+      spotify: "https://open.spotify.com/artist/3VRvi42U8SsiT4YKP5LNCB",
+      youtube: "https://www.youtube.com/channel/UC59ouHBVkicjgFD_0C2vPtA"
+    }
+  },
+  "mathew-jonson": {
+    representedBy: "Wagon Repair · LittleBig Music Agency booking",
+    channels: {
+      spotify: "https://open.spotify.com/artist/6PTy8QkZxHr7Thp8SPYE71",
+      soundcloud: "https://soundcloud.com/mathew-jonson",
+      applemusic: "https://music.apple.com/us/artist/mathew-jonson/196558699"
+    }
+  },
+  "gabriel-le-mar": {
+    representedBy: "Liquid Sound Design (Saafi Brothers)",
+    channels: {
+      spotify: "https://open.spotify.com/artist/1E3U6xaEyLnpqVFO3x5fIN",
+      soundcloud: "https://soundcloud.com/saafibrothers",
+      youtube: "https://www.youtube.com/channel/UCpTcRRpmkDGjBETUCJPjFow"
+    }
+  },
+  "psara": {
+    representedBy: "self-managed (Dino Psaras)",
+    channels: {
+      spotify: "https://open.spotify.com/artist/3k6WtSml3aARRUNPOe4TVp",
+      soundcloud: "https://soundcloud.com/dino-psaras"
+    }
+  },
+  "ukiro": {
+    representedBy: "self-released",
+    channels: {
+      spotify: "https://open.spotify.com/artist/1oA60VFXfTHSSAofApL74t",
+      soundcloud: "https://soundcloud.com/ukiro"
+    }
+  },
+  "damir-ludvig": {
+    representedBy: "self-managed (Astralis events, Zagreb)",
+    channels: {}
+  },
+  "alex-tolstey": {
+    representedBy: "Boshke Beats Records",
+    channels: { soundcloud: "https://soundcloud.com/boshkebeatsrecords" }
+  },
+  "alien-rain": {
+    representedBy: "Alien Rain Records (self-run)",
+    channels: { soundcloud: "https://soundcloud.com/do-not-resist-the-beat" }
+  },
+  "anais-lin": {
+    representedBy: "self-managed",
+    channels: { soundcloud: "https://soundcloud.com/anaislin" }
+  },
+  "marc-van-der-vlugt": {
+    representedBy: "Psilowave Records",
+    channels: {}
+  },
+  "solitare": {
+    representedBy: "Matsuri Digital · DAT Records",
+    channels: { soundcloud: "https://soundcloud.com/djsolitare" }
+  },
+  "ree-k": {
+    representedBy: "Matsuri Digital",
+    channels: {
+      spotify: "https://open.spotify.com/artist/5ByduiQHKIfWdakyYeaVZC",
+      soundcloud: "https://soundcloud.com/ree-k2013"
+    }
+  },
+  "klil-co": {
+    representedBy: "self-managed",
+    channels: { soundcloud: "https://soundcloud.com/klil-cohen-38185142" }
+  },
+  "triple-distilled": {
+    representedBy: "Boshke Beats Records",
+    channels: { soundcloud: "https://soundcloud.com/boshkebeatsrecords" }
+  },
+  "e-sko": {
+    representedBy: "self-managed",
+    channels: { soundcloud: "https://soundcloud.com/e-sko" }
+  },
+  "sancho-meiso": {
+    representedBy: "self-managed",
+    channels: {
+      spotify: "https://open.spotify.com/artist/5R2atQNZwxCphuQxWh7LGn",
+      soundcloud: "https://soundcloud.com/sanchomeisochaya"
+    }
+  },
+  "graham-wood": {
+    representedBy: "TIP Records",
+    channels: {}
+  },
+  "orion-borelli": {
+    representedBy: "Zion 604 / TesseracTstudio",
+    channels: { soundcloud: "https://soundcloud.com/orion_psy" }
+  },
+  "takeshi-isogai": {
+    representedBy: "Suntrip Records / Zion 604 Records",
+    channels: {
+      spotify: "https://open.spotify.com/artist/4ExGofvDZsrxku9DDoO3rK",
+      soundcloud: "https://soundcloud.com/ubar-tmar"
+    }
+  },
+  "battle-future-buddhas": {
+    representedBy: "Suntrip Records",
+    channels: { spotify: "https://open.spotify.com/artist/3gy1NMglkqMhyS7y8mlxQc" }
+  },
+  "dark-el-kante": {
+    representedBy: "Random Records · 6 Dimension Soundz",
+    channels: { soundcloud: "https://soundcloud.com/darkelkante" }
+  },
+  "merrow": {
+    representedBy: "Global Sect Music",
+    channels: {
+      spotify: "https://open.spotify.com/artist/6lMwUV4nVScxzSAQYX4JNF",
+      soundcloud: "https://soundcloud.com/merrow416"
+    }
+  },
+  "atmos": {
+    representedBy: "Iboga Records / Spiral Trax",
+    channels: {
+      spotify: "https://open.spotify.com/artist/6pqvOCqzJlsUWlVjeHBw0v",
+      soundcloud: "https://soundcloud.com/atmotech"
+    }
+  },
+  "alphanaut": {
+    representedBy: "self-released",
+    channels: {
+      spotify: "https://open.spotify.com/artist/6kUvdxucEVxa2njpAdNhBm",
+      soundcloud: "https://soundcloud.com/alphanaut"
+    }
+  },
+  "blue-planet-corporation": {
+    representedBy: "self-managed (ex-Flying Rhino) · Echo Booking",
+    channels: {
+      spotify: "https://open.spotify.com/artist/4pIoxLfPD98PSY4Vd6koKn",
+      soundcloud: "https://soundcloud.com/blue-planet-corporation"
+    }
+  },
+  "merv-eat-static": {
+    representedBy: "self-managed (Eat Static)",
+    channels: {
+      spotify: "https://open.spotify.com/artist/5NzgIP3Nss2uao20MDXavK",
+      soundcloud: "https://soundcloud.com/eat-static",
+      youtube: "https://www.youtube.com/channel/UCWt6ad08bK9wSbf0oBylaAA"
+    }
+  },
+  "cosmosis": {
+    representedBy: "Holophonic Records (self-run)",
+    channels: {
+      spotify: "https://open.spotify.com/artist/2Wrq8GQOVU5fxs791ypz0W",
+      soundcloud: "https://soundcloud.com/cosmosis-official",
+      youtube: "https://www.youtube.com/c/BillyCosmosis"
+    }
+  },
+  "filteria": {
+    representedBy: "Suntrip Records",
+    channels: { spotify: "https://open.spotify.com/artist/1GYwH0iIUKPlyhrcSq8rJ8" }
+  }
+};

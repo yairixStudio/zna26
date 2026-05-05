@@ -424,13 +424,44 @@ function closeMiniPlayer() {
   queueIndex = -1;
 }
 
-miniPlayerClose.addEventListener("click", closeMiniPlayer);
-miniPlayerExpand.addEventListener("click", () => {
+miniPlayerClose.addEventListener("click", e => {
+  e.stopPropagation();
+  closeMiniPlayer();
+});
+miniPlayerExpand.addEventListener("click", e => {
+  e.stopPropagation();
   miniPlayer.classList.toggle("is-expanded");
 });
-miniPlayerSkip.addEventListener("click", onVideoEnded);
+miniPlayerSkip.addEventListener("click", e => {
+  e.stopPropagation();
+  onVideoEnded();
+});
+
+// Click anywhere on the collapsed mini-player (outside the buttons or the
+// iframe itself) to expand it. The iframe gets its own click events for
+// YouTube playback control, so we only respond to taps on bar chrome.
+miniPlayer.addEventListener("click", e => {
+  if (miniPlayer.classList.contains("is-expanded")) return;
+  // Ignore clicks inside the YouTube iframe (YouTube handles its own play/pause)
+  if (e.target.closest("iframe")) return;
+  // Buttons handle their own clicks via stopPropagation above
+  if (e.target.closest(".mini-player-btn")) return;
+  miniPlayer.classList.add("is-expanded");
+});
 
 // Active stage filter ("all" = show every artist)
+// Merge per-artist extras (representedBy + verified streaming channels) onto
+// each artist record. Defined in data.js as ARTIST_EXTRAS, kept separate
+// from the main ARTISTS list so the data table stays scannable.
+if (typeof ARTIST_EXTRAS !== "undefined") {
+  ARTISTS.forEach(a => {
+    const extra = ARTIST_EXTRAS[a.id];
+    if (!extra) return;
+    if (extra.representedBy && !a.representedBy) a.representedBy = extra.representedBy;
+    if (extra.channels) a.channels = { ...(a.channels || {}), ...extra.channels };
+  });
+}
+
 let activeStageFilter = "all";
 
 // Try to load build-time-fetched photos and merge them onto artist records.

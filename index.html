@@ -28,14 +28,16 @@
       <div class="mini-player-next" id="mini-player-next"></div>
     </div>
     <div class="mini-player-controls">
-      <button class="mini-player-btn" id="mini-player-skip" title="הבא" aria-label="הטראק הבא">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 6l8 6-8 6V6zm10 0h2v12h-2z"/></svg>
-      </button>
-      <button class="mini-player-btn" id="mini-player-expand" title="הרחב/כווץ" aria-label="הרחב או כווץ">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M5 5h6v2H7v4H5V5zm14 0v6h-2V7h-4V5h6zM5 19v-6h2v4h4v2H5zm14 0h-6v-2h4v-4h2v6z"/></svg>
-      </button>
       <button class="mini-player-btn" id="mini-player-close" title="סגור" aria-label="סגור">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6.4 5L5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z"/></svg>
+      </button>
+      <button class="mini-player-btn" id="mini-player-expand" title="הגדל / הקטן" aria-label="הגדל או הקטן">
+        <!-- collapsed shows ⌃ (chevron-up = expand). Expanded shows ⌄ (chevron-down = collapse). -->
+        <svg class="icon-when-collapsed" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 8l-7 7 1.4 1.4L12 10.8l5.6 5.6L19 15z"/></svg>
+        <svg class="icon-when-expanded" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 16l7-7-1.4-1.4L12 13.2 6.4 7.6 5 9z"/></svg>
+      </button>
+      <button class="mini-player-btn" id="mini-player-skip" title="הבא" aria-label="הטראק הבא">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M6 6l8 6-8 6V6zm10 0h2v12h-2z"/></svg>
       </button>
     </div>
   </div>
