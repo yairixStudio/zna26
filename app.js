@@ -67,9 +67,9 @@ window.onYouTubeIframeAPIReady = function () {
   try {
     ytApiReady = true;
     if (pendingFirstPlay) {
-      const { videoId, host } = pendingFirstPlay;
+      const { videoId, host, startSeconds } = pendingFirstPlay;
       pendingFirstPlay = null;
-      createPlayer(videoId, host || miniPlayerFrame);
+      createPlayerAt(host || miniPlayerFrame, videoId, startSeconds || 0);
     }
   } catch (e) { console.error("YT api ready error:", e); }
 };
@@ -82,33 +82,6 @@ let inlineHostEl = null;     // when "inline", the .track-frame host
 let currentVideoId = null;
 let inlineFrameObserver = null;
 
-function createPlayer(videoId, host) {
-  if (!host || !window.YT || !window.YT.Player) return;
-  try {
-    host.innerHTML = '<div id="yt-player-target"></div>';
-    ytPlayer = new YT.Player("yt-player-target", {
-      height: "100%",
-      width: "100%",
-      videoId: videoId,
-      playerVars: { autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1 },
-      events: {
-        onStateChange: e => {
-          if (e.data === YT.PlayerState.ENDED) onVideoEnded();
-        },
-        onError: e => { console.warn("YT player error:", e?.data); }
-      }
-    });
-  } catch (e) {
-    console.error("createPlayer failed:", e);
-    host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-  }
-}
-
-function getPlayerIframe() {
-  if (ytPlayer && typeof ytPlayer.getIframe === "function") return ytPlayer.getIframe();
-  return miniPlayerFrame?.querySelector("iframe") || (inlineHostEl ? inlineHostEl.querySelector("iframe") : null);
-}
-
 // Restore the original thumb markup of an inline frame so the user can
 // re-click the track later. Uses the cardHtml we stashed at click time.
 function restoreInlineThumb(host) {
@@ -116,20 +89,6 @@ function restoreInlineThumb(host) {
   const card = host.closest(".track-card");
   if (!card || !host.dataset.cardHtml) return;
   card.outerHTML = host.dataset.cardHtml;
-}
-
-// Move the iframe DOM node to the requested host (inline frame or mini frame)
-// without unmounting it. Audio/playback continues seamlessly.
-function moveIframeTo(targetHost) {
-  const iframe = getPlayerIframe();
-  if (!iframe || !targetHost) return;
-  if (iframe.parentElement === targetHost) return;
-  // If we're leaving an inline host that isn't the new target, restore its thumb
-  if (playerLocation === "inline" && inlineHostEl && inlineHostEl !== targetHost) {
-    restoreInlineThumb(inlineHostEl);
-  }
-  targetHost.innerHTML = "";
-  targetHost.appendChild(iframe);
 }
 
 // Top-level click router: a single delegated handler covers all thumbs,
@@ -146,28 +105,100 @@ function prepareInlineFrameAndPlay(thumb) {
   if (!card) return;
   const vid = thumb.dataset.vid;
 
-  // Edge case: user clicked the thumb of the same video that's already playing
-  // somewhere. Either restore inline (if it was migrated to mini) or no-op.
+  // Same video that's already playing — depends on where the player lives
   if (currentVideoId === vid && ytPlayer) {
     if (playerLocation === "mini") {
-      // Bring the player back inline at this thumb's location
+      // User came back to the playing track's panel — restore inline,
+      // preserving the current playback time.
+      const resumeTime = safeGetCurrentTime();
+      destroyPlayer();
       const frame = installFrame(card, thumb, vid);
-      moveIframeTo(frame);
+      createPlayerAt(frame, vid, resumeTime);
       inlineHostEl = frame;
       playerLocation = "inline";
       miniPlayer.classList.remove("is-open");
       miniPlayer.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("has-mini-player");
       watchInlineFrame(frame);
       updateMiniPlayerUI();
       return;
     }
-    // Already inline at the same place - do nothing (let user keep watching)
+    // Already inline at the same location — let it keep playing
     return;
   }
 
-  // New video (or different one). Build a frame in this card and play.
+  // Different video. Per UX request: if a video is currently playing in the
+  // mini-player, fully kill it (close mini, stop audio) and start the new
+  // video fresh inline. No background continuation.
+  if (currentVideoId && currentVideoId !== vid && ytPlayer) {
+    destroyPlayer();
+    miniPlayer.classList.remove("is-open", "is-expanded");
+    miniPlayer.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("has-mini-player");
+    if (miniPlayerFrame) miniPlayerFrame.innerHTML = "";
+  }
+
+  // Fresh play in the clicked card
   const frame = installFrame(card, thumb, vid);
   startPlayback(vid, frame);
+}
+
+function safeGetCurrentTime() {
+  try {
+    return Math.max(0, Math.floor(ytPlayer?.getCurrentTime?.() || 0) - 1);
+  } catch (e) {
+    return 0;
+  }
+}
+
+function destroyPlayer() {
+  if (inlineFrameObserver) {
+    try { inlineFrameObserver.disconnect(); } catch (_) {}
+    inlineFrameObserver = null;
+  }
+  if (ytPlayer) {
+    try { ytPlayer.stopVideo?.(); } catch (e) {}
+    try { ytPlayer.destroy?.(); } catch (e) {}
+    ytPlayer = null;
+  }
+  // The destroy() removes the iframe from DOM. Restore inline thumb if needed.
+  if (playerLocation === "inline" && inlineHostEl) {
+    restoreInlineThumb(inlineHostEl);
+  }
+  inlineHostEl = null;
+  currentVideoId = null;
+  playerLocation = "none";
+}
+
+// Create a fresh player in `host`, optionally starting at `startSeconds`.
+function createPlayerAt(host, videoId, startSeconds = 0) {
+  if (!host || !window.YT || !window.YT.Player) {
+    pendingFirstPlay = { videoId, host, startSeconds };
+    ensureYTApi();
+    return;
+  }
+  try {
+    host.innerHTML = '<div id="yt-player-target"></div>';
+    ytPlayer = new YT.Player("yt-player-target", {
+      height: "100%",
+      width: "100%",
+      videoId,
+      playerVars: {
+        autoplay: 1, rel: 0, playsinline: 1, modestbranding: 1,
+        start: Math.max(0, Math.floor(startSeconds || 0))
+      },
+      events: {
+        onStateChange: e => {
+          if (e.data === YT.PlayerState.ENDED) onVideoEnded();
+        },
+        onError: e => { console.warn("YT player error:", e?.data); }
+      }
+    });
+  } catch (e) {
+    console.error("createPlayerAt failed:", e);
+    host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(videoId)}?autoplay=1&rel=0&start=${Math.floor(startSeconds || 0)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  }
+  currentVideoId = videoId;
 }
 
 function installFrame(card, thumb, vid) {
@@ -198,13 +229,26 @@ function watchInlineFrame(frame) {
 
 function migratePlayerToMini() {
   if (playerLocation === "mini" || !inlineHostEl) return;
-  moveIframeTo(miniPlayerFrame);
-  // restoreInlineThumb already called inside moveIframeTo via the playerLocation check
+
+  // Capture playback time so the user resumes at (about) the same spot
+  // after the iframe gets reparented (which forces a YT reload).
+  const resumeTime = safeGetCurrentTime();
+  const vid = currentVideoId;
+
+  // Tear down the inline player and restore the thumbnail
   if (inlineFrameObserver) {
     try { inlineFrameObserver.disconnect(); } catch (_) {}
     inlineFrameObserver = null;
   }
+  if (ytPlayer) {
+    try { ytPlayer.destroy?.(); } catch (e) {}
+    ytPlayer = null;
+  }
+  if (inlineHostEl) restoreInlineThumb(inlineHostEl);
   inlineHostEl = null;
+
+  // Re-create in the mini-player at the captured time
+  createPlayerAt(miniPlayerFrame, vid, resumeTime);
   playerLocation = "mini";
   miniPlayer.classList.add("is-open");
   miniPlayer.setAttribute("aria-hidden", "false");
@@ -233,22 +277,25 @@ function playFromQueue(idx, options = {}) {
   queueIndex = idx;
   const item = playQueue[idx];
 
-  // Default target: wherever the player currently lives. On a fresh inline
-  // click, options.inlineHost overrides.
+  // Decide where the player should live. If the caller passed an inline host
+  // (from a thumb click), prefer that; otherwise stay in whatever location
+  // is current; otherwise default to mini.
   const targetInline = options.inlineHost || (playerLocation === "inline" ? inlineHostEl : null);
   const host = targetInline || miniPlayerFrame;
 
-  currentVideoId = item.videoId;
-
-  if (ytPlayer && ytApiReady) {
-    // Player exists: move iframe to target host (no-op if already there) and load new video
-    moveIframeTo(host);
+  // Same iframe, same parent → just swap the video without remount
+  if (ytPlayer && ytApiReady && (
+      (targetInline && inlineHostEl === targetInline) ||
+      (!targetInline && playerLocation === "mini"))) {
     try { ytPlayer.loadVideoById(item.videoId); } catch (e) { console.warn(e); }
-  } else if (ytApiReady) {
-    createPlayer(item.videoId, host);
+    currentVideoId = item.videoId;
   } else {
-    pendingFirstPlay = { videoId: item.videoId, host };
-    ensureYTApi();
+    // Different parent or no player yet → recreate fresh
+    if (ytPlayer) {
+      try { ytPlayer.destroy?.(); } catch (e) {}
+      ytPlayer = null;
+    }
+    createPlayerAt(host, item.videoId, 0);
   }
 
   if (targetInline) {
@@ -802,8 +849,9 @@ reel.addEventListener("wheel", e => {
     e.preventDefault();
     wheelAccumX += e.deltaX;
     if (Math.abs(wheelAccumX) > 60) {
-      // RTL: positive deltaX = swipe right-to-left = move forward
-      navHorizontal(wheelAccumX > 0 ? 1 : -1);
+      // RTL flip: a leftward swipe (deltaX < 0) means "go forward" because
+      // visually the next panel reveals from the left.
+      navHorizontal(wheelAccumX < 0 ? 1 : -1);
       wheelAccumX = 0;
       wheelLockUntil = now + 450;
     }
