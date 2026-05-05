@@ -487,6 +487,9 @@ async function loadPhotos() {
         buildReel();
         observeSections();
         setActiveSection(reel.querySelector(".section"));
+        // The rebuild wipes whatever section the deep-link landed on. If
+        // we came in on a deep-link, re-apply it so the URL target sticks.
+        if (typeof applyInitialRoute === "function") applyInitialRoute();
       } catch (e) { console.warn("photo re-render failed:", e); }
     }
   } catch (e) { /* photos.json optional */ }
@@ -788,8 +791,13 @@ function multiHeroSection() {
 function panelHero(a) {
   const initials = getInitials(a.name);
   const tags = (a.tags || []).slice(0, 4).map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("");
+  // If the user came in on a deep-link to this artist, load their photo
+  // eagerly with high priority so the first paint isn't waiting on it.
+  const isDeepLinkTarget = (typeof _initialRoute !== "undefined") && _initialRoute && _initialRoute.a === a.id;
+  const loadingAttr = isDeepLinkTarget ? "eager" : "lazy";
+  const fetchAttr = isDeepLinkTarget ? ' fetchpriority="high"' : "";
   const photo = a.photo
-    ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
+    ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="${loadingAttr}"${fetchAttr} decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
     : "";
   return `
     <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
@@ -1250,9 +1258,14 @@ function buildVerticalProgress() {
   // Build dots in lockstep with whatever buildReel emitted
   const sections = reel.querySelectorAll(".section");
   const items = Array.from(sections).map((s, i) => {
-    const label = s.dataset.section === "hero"
-      ? (s.dataset.stage === "retro" ? "ראשי" : stageLabel(s.dataset.stage))
-      : (s.dataset.artistId || "");
+    let label;
+    if (s.dataset.section === "hero") {
+      label = "ראשי";
+    } else {
+      const id = s.dataset.artistId;
+      const artist = id ? ARTISTS.find(a => a.id === id) : null;
+      label = artist?.name || id || "";
+    }
     return `<button class="v-dot ${i === 0 ? "active" : ""}" data-vidx="${i}" aria-label="${escapeHtml(label)}"></button>`;
   });
   verticalProgress.innerHTML = items.join("");
@@ -2014,21 +2027,33 @@ function applyInitialRoute() {
       buildStageDropdown();
       updateHeroDots();
     }
-    // Two requestAnimationFrame passes so layout has settled.
-    requestAnimationFrame(() => requestAnimationFrame(() => {
+    // Apply the scroll across multiple settle points: now, next-frame, and
+    // again at +200ms. Some other code in the app (intersection observers,
+    // scroll-snap hand-off, content-visibility virtualisation) can land
+    // exactly when we'd otherwise scroll, leaving the reel pinned to 0.
+    // Re-asserting the target a few times is a cheap way to guarantee it.
+    const scrollToArtist = () => {
       const sec = reel.querySelector(`[data-artist-id="${CSS.escape(a)}"]`);
       if (!sec) return;
-      sec.scrollIntoView({ behavior: "auto", block: "start" });
+      reel.scrollTo({ top: sec.offsetTop, behavior: "auto" });
       const pIdx = PANEL_KEYS.indexOf(p);
       if (pIdx > 0) {
         const pager = sec.querySelector(".pager");
         if (pager) {
           const w = pager.clientWidth || 1;
-          // scrollIdx for real panel idx i is i+1 (cloneStart at 0).
           pager.scrollTo({ left: (pIdx + 1) * w, behavior: "auto" });
         }
       }
-    }));
+      // The IntersectionObserver doesn't fire reliably for programmatic
+      // scrolls (especially with content-visibility:auto), so we mark the
+      // target section active manually. setActiveSection itself drives the
+      // dot highlights, bg tint, and URL sync.
+      setActiveSection(sec);
+    };
+    scrollToArtist();
+    requestAnimationFrame(scrollToArtist);
+    setTimeout(scrollToArtist, 200);
+    setTimeout(scrollToArtist, 600);
     return;
   }
 

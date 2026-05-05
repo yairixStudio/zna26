@@ -2426,3 +2426,278 @@ body.is-on-hero #random-btn { display: inline-flex; }
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(3px); }
 }
+
+/* =====================================================================
+   v2 polish: info panel + main hero desktop + dock-style v-dots
+   ===================================================================== */
+
+/* ---------- About panel: brand-aligned, 2-col on desktop ---------- */
+.bio-card--minimal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Subtle accent line above the bio, picks up the artist's accent color. */
+.bio-card--minimal::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent, var(--sun-yellow)), transparent);
+  margin-bottom: 4px;
+}
+
+.bio-card--minimal .bio-text {
+  font-size: clamp(14.5px, 2.4vw, 16.5px);
+  line-height: 1.75;
+  color: var(--text);
+  letter-spacing: 0.1px;
+}
+
+.bio-card--minimal .bio-notable {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  font-style: italic;
+  padding-inline-start: 14px;
+  border-inline-start: 2px solid rgba(254, 180, 71, 0.5);
+  margin: 0;
+  background: none;
+  border-radius: 0;
+}
+
+.bio-card--minimal .info-stream {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.bio-card--minimal .info-links {
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.bio-card--minimal .info-links a {
+  color: var(--sun-yellow);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(254, 180, 71, 0.35);
+  padding-bottom: 1px;
+  transition: color 0.18s, border-color 0.18s;
+}
+
+.bio-card--minimal .info-links a:hover {
+  color: var(--text);
+  border-bottom-color: var(--sun-yellow);
+}
+
+.bio-card--minimal .info-sep {
+  display: inline-block;
+  margin: 0 8px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  user-select: none;
+}
+
+.bio-card--minimal .info-footnote {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  opacity: 0.65;
+  letter-spacing: 0.2px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* === Info panel: editorial 2-col layout from 1024px === */
+@media (min-width: 1024px) {
+  .panel--info .panel-inner {
+    max-width: 1080px;
+  }
+  .bio-card--minimal {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+    gap: 56px;
+    align-items: start;
+    max-width: 1080px;
+    column-gap: 64px;
+  }
+  .bio-card--minimal::before {
+    grid-column: 1 / -1;
+  }
+  .bio-card--minimal .bio-text {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 17px;
+    line-height: 1.85;
+  }
+  .bio-card--minimal .bio-notable {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .bio-card--minimal .info-stream {
+    grid-column: 2;
+    grid-row: 2 / span 1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 18px;
+    background: rgba(15, 8, 40, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .bio-card--minimal .info-stream .stream-icon {
+    width: 100%;
+    border-radius: 12px;
+    aspect-ratio: auto;
+    height: 38px;
+    justify-content: center;
+  }
+  .bio-card--minimal .info-links {
+    grid-column: 2;
+    grid-row: 3 / span 1;
+    text-align: start;
+    font-size: 14px;
+  }
+  .bio-card--minimal .info-footnote {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    margin-top: 24px;
+  }
+}
+
+/* ---------- Main hero: better composition on tablet/desktop ---------- */
+@media (min-width: 768px) {
+  .hero-panel--main .hero-zna-mark {
+    width: clamp(220px, 28vw, 320px);
+    margin-bottom: 12px;
+  }
+  .hero-panel--main .logo-mark {
+    font-size: clamp(96px, 14vw, 180px);
+    letter-spacing: -5px;
+    margin-bottom: 18px;
+  }
+  .hero-panel--main .hero-tagline {
+    font-size: 17px !important;
+    max-width: 580px !important;
+    line-height: 1.65 !important;
+  }
+  .hero-panel--main .hero-meta { font-size: 13.5px; }
+  .hero-panel--main .live-status { width: min(460px, calc(100% - 36px)); }
+}
+
+@media (min-width: 1024px) {
+  .hero-panel--main {
+    padding: 32px 40px 100px;
+  }
+  .hero-panel--main .hero-zna-mark {
+    width: clamp(260px, 22vw, 360px);
+  }
+  .hero-panel--main .logo-mark {
+    font-size: clamp(120px, 13vw, 220px);
+    line-height: 0.88;
+  }
+  .hero-panel--main .hero-subtitle {
+    font-size: 16px;
+    letter-spacing: 6px;
+  }
+  /* Stage panels: bigger wordmarks on desktop */
+  .hero-panel--retro .logo-mark,
+  .hero-panel--zambu .logo-mark,
+  .hero-panel--guardians .logo-mark,
+  .hero-panel--market .logo-mark {
+    font-size: clamp(72px, 9vw, 160px);
+  }
+  .hero-panel .hero-tagline {
+    font-size: 18px !important;
+    max-width: 640px !important;
+  }
+}
+
+/* Prevent the giant ZNA 2026 wordmark from spilling out at any width.
+   `letter-spacing: normal` falls back when the negative tracking would
+   pull the last glyph past the panel edge on narrow desktops. */
+.hero-panel--main .logo-mark {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* ---------- Vertical dots: dock-style hover + tooltip (desktop) ---------- */
+@media (hover: hover) and (pointer: fine) {
+  /* Wider hit-zone so users don't need pixel-perfect aim */
+  .vertical-progress {
+    padding: 8px 24px 8px 4px;
+    margin-inline-start: -4px;
+  }
+
+  .v-dot {
+    transition:
+      transform 0.18s ease,
+      width 0.18s ease,
+      height 0.18s ease,
+      background 0.18s ease,
+      box-shadow 0.18s ease;
+    position: relative;
+  }
+
+  /* Hovered dot: scaled, glowing, full-color */
+  .v-dot:hover,
+  .v-dot:focus-visible {
+    width: 5px;
+    height: 28px;
+    background: var(--sun-yellow);
+    box-shadow: 0 0 14px var(--sun-yellow);
+  }
+
+  /* Adjacent dots: gentle lift (Apple Dock effect). */
+  .v-dot:hover + .v-dot,
+  .v-dot:has(+ .v-dot:hover) {
+    height: 20px;
+    background: rgba(255, 255, 255, 0.55);
+  }
+  .v-dot:hover + .v-dot + .v-dot,
+  .v-dot:has(+ .v-dot + .v-dot:hover) {
+    height: 16px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Tooltip: artist name (or "ראשי") shown to the right of the dot. */
+  .v-dot::after {
+    content: attr(aria-label);
+    position: absolute;
+    left: calc(100% + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(10, 5, 36, 0.92);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 30;
+    direction: rtl;
+  }
+  .v-dot:hover::after,
+  .v-dot:focus-visible::after {
+    opacity: 1;
+  }
+}
