@@ -487,7 +487,7 @@ function panelHero(a) {
     ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
     : "";
   return `
-    <div class="panel panel-hero">
+    <div class="panel panel-hero panel--hero">
       <div class="panel-inner center">
         <div class="panel-eyebrow">${escapeHtml(stageInfo(a.stage).name)}</div>
         <div class="artist-hero-art ${a.photo ? "has-photo" : ""}" style="--accent: ${a.color || "#FEB447"};">
@@ -542,7 +542,7 @@ function panelInfo(a) {
     `
     : "";
   return `
-    <div class="panel">
+    <div class="panel panel--info">
       <div class="panel-inner">
         <div class="panel-eyebrow">אודות</div>
         <div class="bio-card">
@@ -558,7 +558,7 @@ function panelInfo(a) {
 function panelAlbums(a) {
   if (!a.albums || !a.albums.length) {
     return `
-      <div class="panel">
+      <div class="panel panel--discography">
         <div class="panel-inner">
           <div class="panel-eyebrow">דיסקוגרפיה</div>
           <p class="muted">המידע יתעדכן בקרוב</p>
@@ -573,7 +573,7 @@ function panelAlbums(a) {
     </li>
   `).join("");
   return `
-    <div class="panel">
+    <div class="panel panel--discography">
       <div class="panel-inner">
         <div class="panel-eyebrow">דיסקוגרפיה נבחרת</div>
         <ul class="albums-list">${items}</ul>
@@ -587,7 +587,7 @@ function panelTracks(a) {
   if (!tracks.length) {
     const q = encodeURIComponent(a.name + " " + (a.tags || []).slice(0, 1).join(" "));
     return `
-      <div class="panel">
+      <div class="panel panel--tracks">
         <div class="panel-inner center">
           <div class="panel-eyebrow">טראקים</div>
           <p class="no-tracks">עדיין לא הוספנו טראקים מאומתים. חפשו ביוטיוב:</p>
@@ -621,7 +621,7 @@ function panelTracks(a) {
   `;
   }).join("");
   return `
-    <div class="panel">
+    <div class="panel panel--tracks">
       <div class="panel-inner">
         <div class="panel-eyebrow">טראקים נבחרים</div>
         <div class="tracks-stack">${cards}</div>

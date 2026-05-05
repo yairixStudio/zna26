@@ -363,11 +363,72 @@ a { color: var(--sun-yellow); }
   font-size: 11px;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: var(--sun-yellow);
+  color: var(--panel-accent, var(--sun-yellow));
   text-align: center;
   opacity: 0.85;
   font-weight: 700;
 }
+
+/* ===== Per-panel color identity (ZNA palette) =====
+   --panel-accent feeds eyebrow, card borders, dividers, chips and CTAs. */
+.panel--hero        { --panel-accent: #FEB447; --panel-accent-2: #ff5c8a; }   /* sun yellow → sunset pink */
+.panel--info        { --panel-accent: #ff7e1f; --panel-accent-2: #ff5c8a; }   /* warm orange → pink */
+.panel--tracks      { --panel-accent: #00d4ff; --panel-accent-2: #9b51e0; }   /* neon cyan → purple (media/screens) */
+.panel--discography { --panel-accent: #9b51e0; --panel-accent-2: #ff006e; }   /* deep purple → magenta (vinyl/wax) */
+
+.panel--info .bio-card,
+.panel--tracks .track-card,
+.panel--discography .albums-list li {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 0 0 1px color-mix(in oklab, var(--panel-accent) 30%, transparent);
+}
+
+.panel--info .info-section-title,
+.panel--info .info-meta {
+  color: var(--panel-accent);
+  border-color: color-mix(in oklab, var(--panel-accent) 35%, transparent);
+}
+
+.panel--info .info-meta {
+  background: color-mix(in oklab, var(--panel-accent) 12%, transparent);
+}
+
+.panel--info .notable {
+  border-right-color: var(--panel-accent);
+  background: linear-gradient(135deg,
+    color-mix(in oklab, var(--panel-accent) 22%, transparent),
+    color-mix(in oklab, var(--panel-accent-2) 12%, transparent));
+  color: var(--panel-accent);
+}
+
+.panel--info .link-btn {
+  color: var(--panel-accent);
+  border-color: color-mix(in oklab, var(--panel-accent) 40%, transparent);
+}
+.panel--info .link-btn:hover {
+  background: var(--panel-accent);
+  color: var(--bg-deep);
+  box-shadow: 0 8px 24px color-mix(in oklab, var(--panel-accent) 40%, transparent);
+}
+
+.panel--tracks .track-card.is-zna {
+  border-color: var(--sun-yellow);
+}
+.panel--tracks .play-btn {
+  background: var(--panel-accent);
+  box-shadow: 0 8px 30px color-mix(in oklab, var(--panel-accent) 50%, transparent);
+}
+.panel--tracks .search-yt-btn {
+  background: linear-gradient(135deg, var(--panel-accent), var(--panel-accent-2));
+}
+
+.panel--discography .albums-list li {
+  border-right: 3px solid color-mix(in oklab, var(--panel-accent) 50%, transparent);
+}
+.panel--discography .album-name { color: var(--text); }
+.panel--discography .album-meta { color: color-mix(in oklab, var(--panel-accent) 70%, white 30%); }
 
 /* === Panel 1: Hero === */
 .panel-hero { text-align: center; }
@@ -1318,23 +1379,30 @@ body.has-mini-player .panel {
   50% { transform: translateX(-50%) translateY(8px); }
 }
 
-/* Entry animation when section becomes active */
+/* Entry transitions: element starts hidden, becomes visible when its section
+   becomes active. Using transitions instead of keyframes avoids the visible
+   flash that happened when the image painted and then the keyframe restarted
+   it from opacity:0. */
+.panel-inner {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.5s ease, transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
 .section.is-active .panel-inner {
-  animation: panel-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.artist-hero-art {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.3);
 }
 
 .section.is-active .artist-hero-art {
-  animation: avatar-pop 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
-}
-
-@keyframes panel-in {
-  0% { opacity: 0; transform: translateY(22px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes avatar-pop {
-  0% { opacity: 0; transform: scale(0.85) rotate(-3deg); }
-  100% { opacity: 1; transform: scale(1) rotate(0); }
+  opacity: 1;
+  transform: scale(1);
 }
 
 .section-title {
@@ -1354,9 +1422,11 @@ body.has-mini-player .panel {
   .hero-cta {
     animation: none !important;
   }
-  .section.is-active .panel-inner,
-  .section.is-active .artist-hero-art {
-    animation: none !important;
+  .panel-inner,
+  .artist-hero-art {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 
