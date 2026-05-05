@@ -547,22 +547,50 @@ function getScheduleStatus(stageId = "all") {
   return { state: "idle", title: "אין סט פעיל כרגע", next, hasAnySchedule };
 }
 
+function formatCountdown(targetDate) {
+  if (!targetDate) return "";
+  const ms = Math.max(0, targetDate.getTime() - Date.now());
+  if (ms === 0) return "מתחיל עכשיו";
+  const days = Math.floor(ms / 86_400_000);
+  const hours = Math.floor((ms % 86_400_000) / 3_600_000);
+  const minutes = Math.floor((ms % 3_600_000) / 60_000);
+  const pad = n => String(n).padStart(2, "0");
+  if (days > 0) return `עוד ${days} ימים · ${pad(hours)}:${pad(minutes)}`;
+  if (hours > 0) return `עוד ${pad(hours)}:${pad(minutes)} שעות`;
+  return `עוד ${minutes} דקות`;
+}
+
 function liveStatusCard(stageId = "all") {
   const status = getScheduleStatus(stageId);
-  const nextText = status.next
-    ? `הבא: ${status.next.artist.name} · ${formatScheduleRange(status.next.schedule)}`
-    : "זמני הסטים הרשמיים יופיעו כאן";
-  const body = status.state === "live"
-    ? `${status.artist.name} · ${stageLabel(status.artist.stage)} · ${formatScheduleRange(status.schedule)}`
-    : status.hasAnySchedule ? nextText : "כאן יוצג בזמן אמת מי מנגן עכשיו כשיפורסם הלו״ז";
+  const startsAt = parseScheduleTime(FESTIVAL.startsAt);
+
+  if (status.state === "live") {
+    return `
+      <div class="live-status live-status--live" aria-live="polite">
+        <div class="live-now-track is-live"><span class="live-now-dot"></span></div>
+        <strong class="live-status-title">${escapeHtml(status.artist.name)}</strong>
+        <span class="live-status-meta">${escapeHtml(stageLabel(status.artist.stage))} · ${escapeHtml(formatScheduleRange(status.schedule))}</span>
+      </div>
+    `;
+  }
+
+  const countdownText = startsAt ? formatCountdown(startsAt) : "";
+  const countdownAttr = startsAt ? startsAt.toISOString() : "";
   return `
     <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
-      <span class="live-status-kicker">${status.state === "live" ? "LIVE NOW" : "NOW PLAYING"}</span>
-      <strong>${escapeHtml(status.title)}</strong>
-      <span>${escapeHtml(body)}</span>
+      <div class="live-now-track"><span class="live-now-dot"></span></div>
+      <strong class="live-status-title">האירוע עוד לא התחיל</strong>
+      ${countdownAttr ? `<span class="live-status-countdown" data-countdown="${escapeHtml(countdownAttr)}">${escapeHtml(countdownText)}</span>` : ""}
     </div>
   `;
 }
+
+setInterval(() => {
+  document.querySelectorAll("[data-countdown]").forEach(el => {
+    const target = parseScheduleTime(el.dataset.countdown);
+    if (target) el.textContent = formatCountdown(target);
+  });
+}, 30_000);
 
 function artistSetTimeBadge(a) {
   const schedule = completeSchedule(a);
@@ -591,13 +619,9 @@ function heroPanelMain() {
       <div class="logo-mark">ZNA<br/>2026</div>
       <div class="hero-subtitle">RETRO · FUTURISTIC · GATHERING</div>
       <p class="hero-tagline">${escapeHtml(FESTIVAL.description)}</p>
-      <div class="hero-meta">
-        <span><strong>📅</strong> ${escapeHtml(FESTIVAL.dates)}</span>
-        <span><strong>📍</strong> ${escapeHtml(FESTIVAL.location)}</span>
-        <span><strong>🎧</strong> ${ARTISTS.length} אומנים</span>
-      </div>
+      <div class="hero-meta">${escapeHtml(FESTIVAL.dates)} · ${escapeHtml(FESTIVAL.location)} · ${ARTISTS.length} אומנים</div>
       ${liveStatusCard("all")}
-      <div class="hero-hint">החליקו ימינה לבמות הפסטיבל →</div>
+      <p class="hero-disclaimer">אתר מעריצים בלתי-רשמי, נבנה ע״י משתתפים מתנדבים — לא קשור לארגון הפסטיבל.</p>
     </div>
   `;
 }
@@ -703,6 +727,7 @@ function rerenderArtistsBelowHero() {
   heroSec.parentElement.append(...tpl.content.children);
   buildVerticalProgress();
   observeSections();
+  reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installSnapClamp(p, "x"));
 }
 
 function multiHeroSection() {
@@ -897,6 +922,40 @@ function renderArtistSections(list) {
 
 // ===== Render reel =====
 
+// One-touch one-step. mobile Safari occasionally lets a fast flick blow
+// past `scroll-snap-stop: always` and lands two panels away. We watch
+// touchstart/touchend on each scroll container and, if the user ended >1
+// snap-step from where they started, programmatically pull the scroll back
+// to a single-step move. No effect on mouse wheel or programmatic scroll.
+function installSnapClamp(container, axis) {
+  if (!container || container.dataset.snapClamp === "1") return;
+  container.dataset.snapClamp = "1";
+  const dim = () => axis === "y" ? container.clientHeight : container.clientWidth;
+  const pos = () => axis === "y" ? container.scrollTop : container.scrollLeft;
+  let startIdx = null;
+  let isCorrecting = false;
+  container.addEventListener("touchstart", () => {
+    if (!isCorrecting) startIdx = Math.round(pos() / dim());
+  }, { passive: true });
+  container.addEventListener("touchend", () => {
+    setTimeout(() => {
+      if (isCorrecting || startIdx === null) return;
+      const w = dim();
+      const idx = Math.round(pos() / w);
+      const delta = idx - startIdx;
+      if (Math.abs(delta) > 1) {
+        const targetIdx = startIdx + Math.sign(delta);
+        isCorrecting = true;
+        const opts = axis === "y" ? { top: targetIdx * w, behavior: "smooth" } : { left: targetIdx * w, behavior: "smooth" };
+        container.scrollTo(opts);
+        setTimeout(() => { isCorrecting = false; startIdx = targetIdx; }, 500);
+      } else {
+        startIdx = idx;
+      }
+    }, 260);
+  }, { passive: true });
+}
+
 function buildReel() {
   // Single multi-panel hero at the top, then artist sections of the
   // currently-active stage filter below it.
@@ -905,6 +964,9 @@ function buildReel() {
   const artistsHtml = renderArtistSections(list);
   reel.innerHTML = heroHtml + artistsHtml;
   wireHeroPager();
+  installSnapClamp(reel, "y");
+  installSnapClamp(document.getElementById("hero-pager"), "x");
+  reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installSnapClamp(p, "x"));
 
 
 
