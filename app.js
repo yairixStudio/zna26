@@ -797,6 +797,14 @@ setVH();
 window.addEventListener("resize", setVH);
 window.addEventListener("orientationchange", setVH);
 
+// Defensive global error handlers — keep the page alive on iOS Safari hiccups
+window.addEventListener("error", e => {
+  console.error("[ZNA] global error:", e?.message, e?.error);
+});
+window.addEventListener("unhandledrejection", e => {
+  console.error("[ZNA] unhandled rejection:", e?.reason);
+});
+
 // ===== Logo button: jump back to main hero, clearing filter ======
 logoBtn?.addEventListener("click", () => {
   if (activeStageFilter !== "all") {
