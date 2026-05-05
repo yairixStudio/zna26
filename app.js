@@ -1063,18 +1063,67 @@ window.addEventListener("unhandledrejection", e => {
   console.error("[ZNA] unhandled rejection:", e?.reason);
 });
 
-// ===== Logo button: jump back to main hero, clearing filter ======
-logoBtn?.addEventListener("click", () => {
-  reel.scrollTo({ top: 0, behavior: "smooth" });
-  if (activeStageFilter !== "all") {
-    activeStageFilter = "all";
-    buildStageDropdown();
-    scrollHeroToStage("all", false);
-    rerenderArtistsBelowHero();
-    updateHeroDots();
-  } else {
-    scrollHeroToStage("all", false);
+// ===== Logo button: guided tour back to the hero =====
+// Click once: animate the path the user's been on in reverse
+//   Step 1: slide the artist pager back to panel 0 (artist's main card)
+//   Step 2: scroll vertically up through artists to the multi-hero section
+//   Step 3: ensure the hero pager is on the current stage's panel
+// Click again while the tour is animating: skip ahead and snap to the end.
+let tourInProgress = false;
+
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function startGuidedTour() {
+  tourInProgress = true;
+  let current = getCurrentSection();
+
+  // Step 1: snap the artist's pager back to its first panel
+  if (current?.dataset.section === "artist") {
+    const pager = current.querySelector(".pager");
+    if (pager && Math.abs(pager.scrollLeft) > 10) {
+      pager.children[0]?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+      await wait(380);
+      if (!tourInProgress) return;
+    }
   }
+
+  // Step 2: scroll up to the multi-hero section
+  const heroSec = reel.querySelector('[data-section="hero"]');
+  current = getCurrentSection();
+  if (heroSec && current !== heroSec) {
+    heroSec.scrollIntoView({ behavior: "smooth" });
+    await wait(440);
+    if (!tourInProgress) return;
+  }
+
+  // Step 3: make sure the hero pager is on the current stage's panel
+  scrollHeroToStage(activeStageFilter, false);
+  await wait(280);
+
+  tourInProgress = false;
+}
+
+function finishTourImmediately() {
+  tourInProgress = false;
+  const current = getCurrentSection();
+  if (current?.dataset.section === "artist") {
+    const pager = current.querySelector(".pager");
+    if (pager) {
+      const target = pager.children[0];
+      target?.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
+    }
+  }
+  const heroSec = reel.querySelector('[data-section="hero"]');
+  heroSec?.scrollIntoView({ behavior: "auto" });
+  scrollHeroToStage(activeStageFilter, true);
+}
+
+logoBtn?.addEventListener("click", () => {
+  if (tourInProgress) {
+    finishTourImmediately();
+    return;
+  }
+  startGuidedTour();
 });
 
 // ===== Search modal =====
