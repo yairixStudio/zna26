@@ -330,6 +330,9 @@ body.has-mini-player .hero-dots {
   --hero-text-1: #FEB447;
   --hero-text-2: #ff7e1f;
   --hero-text-3: #ff5c8a;
+  background:
+    radial-gradient(ellipse at 50% 110%, rgba(255, 126, 31, 0.18), transparent 65%),
+    linear-gradient(160deg, rgba(255, 92, 138, 0.10), rgba(255, 126, 31, 0.06) 60%, transparent);
 }
 .hero-section--zambu,
 .hero-panel--zambu {
@@ -339,6 +342,9 @@ body.has-mini-player .hero-dots {
   --hero-text-1: #ff006e;
   --hero-text-2: #9b51e0;
   --hero-text-3: #5a189a;
+  background:
+    radial-gradient(ellipse at 50% 110%, rgba(155, 81, 224, 0.22), transparent 65%),
+    linear-gradient(160deg, rgba(255, 0, 110, 0.12), rgba(90, 24, 154, 0.10) 60%, transparent);
 }
 .hero-section--guardians,
 .hero-panel--guardians {
@@ -348,6 +354,9 @@ body.has-mini-player .hero-dots {
   --hero-text-1: #00d4ff;
   --hero-text-2: #ffd23f;
   --hero-text-3: #118ab2;
+  background:
+    radial-gradient(ellipse at 50% 110%, rgba(0, 212, 255, 0.18), transparent 65%),
+    linear-gradient(160deg, rgba(17, 138, 178, 0.14), rgba(254, 180, 71, 0.05) 60%, transparent);
 }
 .hero-section--market,
 .hero-panel--market {
@@ -357,6 +366,17 @@ body.has-mini-player .hero-dots {
   --hero-text-1: #ffd60a;
   --hero-text-2: #ffbf69;
   --hero-text-3: #fb8500;
+  background:
+    radial-gradient(ellipse at 50% 110%, rgba(255, 191, 105, 0.18), transparent 65%),
+    linear-gradient(160deg, rgba(251, 133, 0, 0.10), rgba(255, 214, 10, 0.06) 60%, transparent);
+}
+
+/* The "All / Main" hero deserves its own subtle look so the peek shows
+   contrast against any of the four stage panels next to it. */
+.hero-panel--main {
+  background:
+    radial-gradient(ellipse at 50% 110%, rgba(254, 180, 71, 0.20), transparent 65%),
+    linear-gradient(160deg, rgba(155, 81, 224, 0.12), rgba(255, 126, 31, 0.05) 60%, transparent);
 }
 
 .hero-section .logo-mark,
