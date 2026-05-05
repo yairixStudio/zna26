@@ -42,6 +42,7 @@ const ARTISTS = [
       { type: "Discogs", url: "https://www.discogs.com/artist/13834-Yahel" }
     ],
     tracks: [
+      { id: "NnDXKyVj148", title: "Producer set @ ZNA 2022 (Zambu Temple)", year: 2022, zna: true },
       { id: "KCbcjoHmSJc", title: "Voyage (with Eyal Barkan)", year: 2000 },
       { id: "dOfoHoVmPBQ", title: "For The People", year: 2001 },
       { id: "cqj25UxWKlQ", title: "For The People (Full Album)", year: 2001 }
@@ -72,9 +73,12 @@ const ARTISTS = [
       { type: "Resident Advisor", url: "https://ra.co/dj/tsuyoshi" }
     ],
     tracks: [
+      { id: "XYKHlV2rd60", title: "Full 3h classics set @ ZNA 2019", year: 2019, zna: true },
+      { id: "BkvxkraxaNU", title: "Dancefloor Action @ ZNA 2022", year: 2022, zna: true },
+      { id: "58dnkJqQQu8", title: "Get the party started @ ZNA 2022", year: 2022, zna: true },
+      { id: "cKsA8Vsb02c", title: "Live @ ZNA 2022", year: 2022, zna: true },
       { id: "MFd7_zTci_g", title: "Prana - Geomantik", year: 1997 },
-      { id: "Oo9lag7Bz5o", title: "Prana - Geomantik (Full Album)", year: 1997 },
-      { id: "BkvxkraxaNU", title: "Live @ ZNA Gathering 2022 dancefloor", year: 2022, zna: true }
+      { id: "Oo9lag7Bz5o", title: "Prana - Geomantik (Full Album)", year: 1997 }
     ]
   },
   {
@@ -151,6 +155,7 @@ const ARTISTS = [
       { type: "Discogs", url: "https://www.discogs.com/artist/30879-Ray-Castle" }
     ],
     tracks: [
+      { id: "SaVxeY7cPo0", title: "Live @ ZNA Gathering 2024", year: 2024, zna: true },
       { id: "s_HIUmQjb7E", title: "Time Traveller [Masaray]", year: 1995 },
       { id: "dltPf5Ni7sg", title: "Insectoid - Tribedelic Nomads (Feral Mix)", year: 2018 },
       { id: "0J5TBoGo1mg", title: "Rhythmystec - Plasmatik", year: null }
@@ -232,7 +237,9 @@ const ARTISTS = [
       { type: "Beatport", url: "https://www.beatport.com/artist/james-monro/35028" }
     ],
     tracks: [
-      { id: "hB9lYBllghc", title: "James Monro (Flying Rhino) Mix 1995", year: 1995 },
+      { id: "nMdUHczq3Pc", title: "Live @ The Market - ZNA 2024", year: 2024, zna: true },
+      { id: "bwoya2jEB3k", title: "Live @ ZNA Gathering 2013", year: 2013, zna: true },
+      { id: "hB9lYBllghc", title: "Flying Rhino Mix 1995", year: 1995 },
       { id: "-fD7XL6AswY", title: "The James Monro Collection Mix", year: 2017 }
     ]
   },
@@ -361,13 +368,14 @@ const ARTISTS = [
     role: "Vinyl Set",
     tags: ["Goa Vinyl", "Storyteller", "Portuguese Scene"],
     color: "#ef476f",
-    bio: "נוכחות פעילה בסצנה הפורטוגזית כבר 30 שנה. אומן בלתי רגיל ביצירת סיפורים מהטראקים הגדולים של שנות ה-90 - יודע איך לקחת את הקהל למסע מעוצב ועמוק שמרגיש כמו זמן ומקום אחר.",
-    notable: "מאסטר של 'Goa Guardians' - שומרי המורשת",
+    bio: "נוכחות פעילה בסצנה הפורטוגזית כבר 30 שנה. אומן בלתי רגיל ביצירת סיפורים מהטראקים הגדולים של שנות ה-90 - יודע איך לקחת את הקהל למסע מעוצב ועמוק שמרגיש כמו זמן ומקום אחר. שותף-מייסד של ZNA Gathering.",
+    notable: "מאסטר של 'Goa Guardians' - שומרי המורשת. ממקימי הפסטיבל",
     albums: [
       { name: "DJ sets קלאסיים", year: "מתמשך" }
     ],
     links: [],
     tracks: [
+      { id: "UU6gRA3ULjs", title: "Goa Guardians DJ Set @ ZNA 2017", year: 2017, zna: true },
       { id: "_awxLPKmT_M", title: "VA Goa Trance Legacy Vol.3 (compiled)", year: 2017 }
     ]
   },
@@ -571,6 +579,7 @@ const ARTISTS = [
       { type: "Website", url: "https://djsolitare.com/" }
     ],
     tracks: [
+      { id: "ykBk7w50b1s", title: "DJ Set @ ZNA Gathering 2017", year: 2017, zna: true },
       { id: "1k-XbkfMl2k", title: "Retro Goa Explorations Ep.123", year: null },
       { id: "nGIkRxh3xiw", title: "Retro Goa Explorations Ep.64", year: null },
       { id: "-a_-fnGYhi4", title: "Retro Goa Explorations Ep.117", year: null }
@@ -775,6 +784,7 @@ const ARTISTS = [
       { type: "Bandcamp", url: "https://jaia.bandcamp.com/track/mai-mai" }
     ],
     tracks: [
+      { id: "yjWWicu-EHI", title: "DJ Set @ ZNA Gathering 2019", year: 2019, zna: true },
       { id: "WbRgoRdBokk", title: "Mai Mai", year: 1998 }
     ]
   },
@@ -880,6 +890,7 @@ const ARTISTS = [
       { type: "Bandcamp", url: "https://battlebuddhas.bandcamp.com/" }
     ],
     tracks: [
+      { id: "s9T6noBLRGw", title: "B2B Ka-Sol live @ ZNA Gathering 2019 (4h producer set)", year: 2019, zna: true },
       { id: "dX6a2ISyjy8", title: "Twin Sharkfins (Full Album)", year: 1998 }
     ]
   },
@@ -918,6 +929,9 @@ const ARTISTS = [
     links: [
       { type: "Bandcamp", url: "https://randomrecords.bandcamp.com/" },
       { type: "SoundCloud", url: "https://soundcloud.com/darkelkante" }
+    ],
+    tracks: [
+      { id: "3nEsTMApDdc", title: "Live @ Goa Guardians - ZNA 2024", year: 2024, zna: true }
     ]
   },
 
@@ -1096,6 +1110,9 @@ const ARTISTS = [
       { type: "Bandcamp", url: "https://filteria.bandcamp.com/album/sky-input" }
     ],
     tracks: [
+      { id: "Qb7LSlsl1mI", title: "Closing the Zambu Temple @ ZNA 2024", year: 2024, zna: true },
+      { id: "GZsbynvptSw", title: "Live @ ZNA 2022 (Part 2)", year: 2022, zna: true },
+      { id: "TpWlPKBs64w", title: "Closing Party @ ZNA 2019 (Part 2)", year: 2019, zna: true },
       { id: "tGlq2ErFjU8", title: "Sky Input (Full Album)", year: 2004 }
     ]
   },
