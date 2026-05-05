@@ -700,7 +700,7 @@ body.has-mini-player .panel {
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 -10px 36px rgba(0, 0, 0, 0.4);
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr) auto auto auto;
+  grid-template-columns: 88px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
@@ -709,6 +709,12 @@ body.has-mini-player .panel {
   opacity: 0;
   pointer-events: none;
   transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 0.25s;
+}
+
+.mini-player-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .mini-player-next {
@@ -796,11 +802,12 @@ body.has-mini-player .panel {
   color: white;
 }
 
-/* Expanded view: large 16:9 player above the bar */
+/* Expanded view: large 16:9 player on top, info below, controls at the
+   bottom — buttons NEVER overlay the iframe. */
 .mini-player.is-expanded {
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto;
-  gap: 8px;
+  grid-template-rows: auto auto auto;
+  gap: 10px;
   padding: 12px 16px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
 }
@@ -820,27 +827,14 @@ body.has-mini-player .panel {
   text-align: center;
 }
 
-.mini-player.is-expanded .mini-player-btn {
-  position: absolute;
-  top: 10px;
-}
-
-.mini-player.is-expanded #mini-player-close {
-  inset-inline-start: 12px;
-  inset-inline-end: auto;
-}
-
-.mini-player.is-expanded #mini-player-expand {
-  inset-inline-end: 56px;
-}
-
-.mini-player.is-expanded #mini-player-skip {
-  inset-inline-end: 12px;
+.mini-player.is-expanded .mini-player-controls {
+  grid-column: 1 / -1;
+  justify-content: center;
 }
 
 @media (max-width: 480px) {
   .mini-player {
-    grid-template-columns: 60px minmax(0, 1fr) auto auto auto;
+    grid-template-columns: 60px minmax(0, 1fr) auto;
     gap: 8px;
     padding: 8px 10px;
     padding-bottom: max(8px, env(safe-area-inset-bottom));
@@ -850,6 +844,7 @@ body.has-mini-player .panel {
   .mini-player-title { font-size: 12px; }
   .mini-player-artist { font-size: 10px; }
   .mini-player-next { display: none; }
+  .mini-player-controls { gap: 4px; }
 }
 
 /* ===== Top bar: dropdown left, action buttons right ===== */
@@ -870,6 +865,7 @@ body.has-mini-player .panel {
 .top-bar-actions {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 /* ===== Apple Liquid Glass primitives ===== */
@@ -955,6 +951,14 @@ body.has-mini-player .panel {
   cursor: pointer;
   letter-spacing: 0.3px;
   transition: transform 0.15s;
+  max-width: 50vw;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.stage-select-trigger > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stage-select-trigger svg {
@@ -973,11 +977,13 @@ body.has-mini-player .panel {
   inset-inline-start: 0;
   border-radius: 18px;
   padding: 8px;
-  min-width: 240px;
+  min-width: 220px;
+  max-width: min(320px, calc(100vw - 28px));
   max-height: 70vh;
   overflow-y: auto;
   animation: glass-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
   display: block;
+  z-index: 30;
 }
 
 @keyframes glass-pop {
