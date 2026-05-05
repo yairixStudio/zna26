@@ -1148,8 +1148,21 @@ async function startGuidedTour() {
         const wait3 = waitScrollEnd(heroPager);
         scrollHeroToStage(activeStageFilter, false);
         await wait3;
+        if (!tourInProgress) return;
+        await wait(120);
       }
     }
+  }
+
+  // Step 4: finally slide all the way back to the Main hero panel
+  if (heroPager && activeStageFilter !== "all") {
+    activeStageFilter = "all";
+    buildStageDropdown();
+    const wait4 = waitScrollEnd(heroPager);
+    scrollHeroToStage("all", false);
+    await wait4;
+    rerenderArtistsBelowHero();
+    updateHeroDots();
   }
 
   tourInProgress = false;
@@ -1160,14 +1173,18 @@ function finishTourImmediately() {
   const current = getCurrentSection();
   if (current?.dataset.section === "artist") {
     const pager = current.querySelector(".pager");
-    if (pager) {
-      const target = pager.children[0];
-      target?.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
-    }
+    pager?.children[0]?.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
   }
   const heroSec = reel.querySelector('[data-section="hero"]');
   heroSec?.scrollIntoView({ behavior: "auto" });
-  scrollHeroToStage(activeStageFilter, true);
+  // End on Main hero with filter cleared
+  if (activeStageFilter !== "all") {
+    activeStageFilter = "all";
+    buildStageDropdown();
+    rerenderArtistsBelowHero();
+    updateHeroDots();
+  }
+  scrollHeroToStage("all", true);
 }
 
 logoBtn?.addEventListener("click", () => {
