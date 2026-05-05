@@ -1073,6 +1073,43 @@ let tourInProgress = false;
 
 function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+// Resolves when the given scroll container actually finishes its smooth scroll.
+// Uses the native `scrollend` event (Safari 17+, Chrome 114+) and falls back
+// to a polling check on scroll position stability for older browsers.
+function waitScrollEnd(scroller, fallbackMs = 1100) {
+  return new Promise(resolve => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      scroller.removeEventListener("scrollend", finish);
+      clearTimeout(fallbackTimer);
+      clearInterval(pollTimer);
+      resolve();
+    };
+    scroller.addEventListener("scrollend", finish);
+    // Polling fallback: when the scroll position stops changing for ~80ms in a
+    // row, the smooth scroll is done.
+    let lastLeft = scroller.scrollLeft;
+    let lastTop = scroller.scrollTop;
+    let stableTicks = 0;
+    const pollTimer = setInterval(() => {
+      const sameLeft = scroller.scrollLeft === lastLeft;
+      const sameTop = scroller.scrollTop === lastTop;
+      if (sameLeft && sameTop) {
+        stableTicks++;
+        if (stableTicks >= 2) finish(); // ~80ms stable = scroll ended
+      } else {
+        stableTicks = 0;
+        lastLeft = scroller.scrollLeft;
+        lastTop = scroller.scrollTop;
+      }
+    }, 40);
+    // Hard ceiling so we never hang the tour
+    const fallbackTimer = setTimeout(finish, fallbackMs);
+  });
+}
+
 async function startGuidedTour() {
   tourInProgress = true;
   let current = getCurrentSection();
@@ -1081,9 +1118,11 @@ async function startGuidedTour() {
   if (current?.dataset.section === "artist") {
     const pager = current.querySelector(".pager");
     if (pager && Math.abs(pager.scrollLeft) > 10) {
+      const wait1 = waitScrollEnd(pager);
       pager.children[0]?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-      await wait(380);
+      await wait1;
       if (!tourInProgress) return;
+      await wait(120); // tiny breath between steps so the eye sees the change
     }
   }
 
@@ -1091,14 +1130,27 @@ async function startGuidedTour() {
   const heroSec = reel.querySelector('[data-section="hero"]');
   current = getCurrentSection();
   if (heroSec && current !== heroSec) {
+    const wait2 = waitScrollEnd(reel);
     heroSec.scrollIntoView({ behavior: "smooth" });
-    await wait(440);
+    await wait2;
     if (!tourInProgress) return;
+    await wait(120);
   }
 
   // Step 3: make sure the hero pager is on the current stage's panel
-  scrollHeroToStage(activeStageFilter, false);
-  await wait(280);
+  const heroPager = document.getElementById("hero-pager");
+  if (heroPager) {
+    const targetIdx = HERO_STAGES.findIndex(s => s.id === activeStageFilter);
+    const targetEl = heroPager.children[targetIdx];
+    if (targetEl) {
+      const onTarget = Math.abs(heroPager.scrollLeft - targetEl.offsetLeft) < 8;
+      if (!onTarget) {
+        const wait3 = waitScrollEnd(heroPager);
+        scrollHeroToStage(activeStageFilter, false);
+        await wait3;
+      }
+    }
+  }
 
   tourInProgress = false;
 }
