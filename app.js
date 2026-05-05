@@ -437,17 +437,20 @@ miniPlayerSkip.addEventListener("click", e => {
   onVideoEnded();
 });
 
-// Click anywhere on the collapsed mini-player (outside the buttons or the
-// iframe itself) to expand it. The iframe gets its own click events for
-// YouTube playback control, so we only respond to taps on bar chrome.
-miniPlayer.addEventListener("click", e => {
+// Click anywhere on the collapsed mini-player chrome (artist name, title,
+// next-track preview, the small thumbnail border, empty space) to expand
+// it. We listen on both `click` and `pointerup` because iOS Safari is
+// sometimes flaky about firing `click` on non-interactive divs — the
+// pointerup hook gives us a more direct path. Buttons stopPropagation, and
+// the YouTube iframe captures its own events, so neither bubbles here.
+function handleMiniPlayerExpandIntent(e) {
   if (miniPlayer.classList.contains("is-expanded")) return;
-  // Ignore clicks inside the YouTube iframe (YouTube handles its own play/pause)
   if (e.target.closest("iframe")) return;
-  // Buttons handle their own clicks via stopPropagation above
   if (e.target.closest(".mini-player-btn")) return;
   miniPlayer.classList.add("is-expanded");
-});
+}
+miniPlayer.addEventListener("click", handleMiniPlayerExpandIntent);
+miniPlayer.addEventListener("pointerup", handleMiniPlayerExpandIntent);
 
 // Active stage filter ("all" = show every artist)
 // Merge per-artist extras (representedBy + verified streaming channels) onto
@@ -759,7 +762,11 @@ function rerenderArtistsBelowHero() {
   buildVerticalProgress();
   observeSections();
   observeArtistInitialScroll();
-  reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installSnapClamp(p, "x"));
+  // NOTE: not clamping per-artist .pager elements. Their carousel logic
+  // performs instant-jump wraps that the clamp would misread as
+  // "user-jumped > 1 step", causing spurious correction scrolls that can
+  // hijack the user's next vertical pan. Native scroll-snap-stop:always
+  // is sufficient for those.
 }
 
 function multiHeroSection() {
@@ -1053,6 +1060,13 @@ function renderArtistSections(list) {
 // touchstart/touchend on each scroll container and, if the user ended >1
 // snap-step from where they started, programmatically pull the scroll back
 // to a single-step move. No effect on mouse wheel or programmatic scroll.
+// One-touch one-step iOS safeguard. Only used on the OUTER reel (vertical
+// section snap) and the multi-hero pager (horizontal stage snap) — the
+// per-artist pager is intentionally NOT clamped because the carousel
+// instant-jumps positions during loop wraps. Those wraps look like
+// "delta > 1" to a naive clamp and trigger spurious "correction" scrolls
+// that can fight with the user's gestures and feel like vertical scroll
+// is broken on the section.
 function installSnapClamp(container, axis) {
   if (!container || container.dataset.snapClamp === "1") return;
   container.dataset.snapClamp = "1";
@@ -1092,7 +1106,11 @@ function buildReel() {
   wireHeroPager();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
-  reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installSnapClamp(p, "x"));
+  // NOTE: not clamping per-artist .pager elements. Their carousel logic
+  // performs instant-jump wraps that the clamp would misread as
+  // "user-jumped > 1 step", causing spurious correction scrolls that can
+  // hijack the user's next vertical pan. Native scroll-snap-stop:always
+  // is sufficient for those.
   observeArtistInitialScroll();
 
 
@@ -1208,8 +1226,12 @@ function handlePagerSettle(pager) {
   // re-trigger the settle pipeline.
   pagersBeingWrapped.add(pager);
   pager.scrollTo({ left: target.offsetLeft, behavior: "auto" });
-  // Two RAFs is enough for the scroll event from scrollTo to flush.
+  // Two RAFs is normally enough for the synthetic scroll event to flush;
+  // a 250ms hard fallback guarantees we always release the lock even if
+  // the page is busy (e.g. tab backgrounded, heavy paint), so vertical
+  // scrolling never gets permanently blocked by a stuck wrap-lock.
   requestAnimationFrame(() => requestAnimationFrame(() => pagersBeingWrapped.delete(pager)));
+  setTimeout(() => pagersBeingWrapped.delete(pager), 250);
 }
 
 // Global delegated click for the per-artist horizontal panel dots.

@@ -1408,8 +1408,16 @@ body.has-mini-player .panel {
 /* Expanded view: large 16:9 player on top, info below, controls at the
    bottom — buttons NEVER overlay the iframe. */
 .mini-player.is-expanded {
+  /* Explicit named-area layout: controls on top, frame in the middle, info
+     at the bottom. Using grid-template-areas guarantees the row order
+     across browsers — earlier `grid-row: N` declarations weren't always
+     respected when grid-template-rows used `auto auto auto`. */
+  display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "controls"
+    "frame"
+    "info";
   gap: 10px;
   padding: 12px 16px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
@@ -1420,8 +1428,7 @@ body.has-mini-player .panel {
    close/skip/expand buttons never overlay the YouTube player. Order along
    the row: close (start) · expand (middle) · skip (end). */
 .mini-player.is-expanded .mini-player-controls {
-  grid-row: 1;
-  grid-column: 1 / -1;
+  grid-area: controls;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1431,8 +1438,7 @@ body.has-mini-player .panel {
 }
 
 .mini-player.is-expanded .mini-player-frame {
-  grid-row: 2;
-  grid-column: 1 / -1;
+  grid-area: frame;
   width: 100%;
   max-width: 720px;
   height: auto;
@@ -1442,8 +1448,7 @@ body.has-mini-player .panel {
 }
 
 .mini-player.is-expanded .mini-player-info {
-  grid-row: 3;
-  grid-column: 1 / -1;
+  grid-area: info;
   text-align: center;
 }
 
