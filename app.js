@@ -471,11 +471,18 @@ function getFilteredArtists() {
     : SORTED_ARTISTS.filter(a => a.stage === activeStageFilter);
 }
 
+// Per-stage backgrounds. All stay deep/near-black, but each carries a
+// distinct hue so the user feels a real visual shift moving between stages.
+// Tints are saturated enough to read at the top of the panel, where the
+// synthwave sun-glow doesn't dominate. The same gradient bleeds into the
+// first artist card of every stage via bgScene, keeping the dive from a
+// stage hero into its artists visually continuous.
 const stageColor = {
-  retro: "linear-gradient(180deg, #0a0524 0%, #1a0a3e 30%, #4a1e6e 60%, #c0367a 80%, #ff7e1f 100%)",
-  zambu: "linear-gradient(180deg, #050217 0%, #1c0635 30%, #3b0f5b 60%, #6e1d8a 80%, #ff5c8a 100%)",
-  guardians: "linear-gradient(180deg, #0a1024 0%, #0f1f4a 30%, #134f6e 60%, #229ec0 80%, #FEB447 100%)",
-  market: "linear-gradient(180deg, #100b24 0%, #2b1a4a 30%, #5b2e7a 60%, #b04c8a 80%, #ffbf69 100%)"
+  all:       "linear-gradient(180deg, #08051c 0%, #14082e 50%, #1c0a40 100%)", // deep cosmic violet
+  retro:     "linear-gradient(180deg, #1a0810 0%, #2a0c1a 50%, #381020 100%)", // dark wine / burgundy
+  zambu:     "linear-gradient(180deg, #14062e 0%, #1f0a45 50%, #2a0c54 100%)", // saturated dark royal purple
+  guardians: "linear-gradient(180deg, #07182c 0%, #0c2444 50%, #103354 100%)", // saturated dark navy / teal
+  market:    "linear-gradient(180deg, #1c1408 0%, #2a1c0c 50%, #38240e 100%)"  // saturated dark amber / brown
 };
 
 function getInitials(name) {
@@ -490,6 +497,79 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+function artistSchedule(a) {
+  return a.schedule || ARTIST_SCHEDULE?.[a.id] || null;
+}
+
+function parseScheduleTime(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function completeSchedule(a) {
+  const schedule = artistSchedule(a);
+  if (!schedule) return null;
+  const start = parseScheduleTime(schedule.start);
+  const end = parseScheduleTime(schedule.end);
+  return start && end ? { start, end } : null;
+}
+
+function formatScheduleRange(schedule) {
+  if (!schedule) return "T.B.A.";
+  const opts = { timeZone: FESTIVAL.timezone || "Europe/Lisbon", weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" };
+  const dayTime = new Intl.DateTimeFormat("he-IL", opts);
+  const timeOnly = new Intl.DateTimeFormat("he-IL", { timeZone: FESTIVAL.timezone || "Europe/Lisbon", hour: "2-digit", minute: "2-digit" });
+  const sameDay = schedule.start.toLocaleDateString("en-CA", { timeZone: FESTIVAL.timezone || "Europe/Lisbon" }) ===
+    schedule.end.toLocaleDateString("en-CA", { timeZone: FESTIVAL.timezone || "Europe/Lisbon" });
+  return sameDay
+    ? `${dayTime.format(schedule.start)}–${timeOnly.format(schedule.end)}`
+    : `${dayTime.format(schedule.start)}–${dayTime.format(schedule.end)}`;
+}
+
+function getScheduleStatus(stageId = "all") {
+  const now = new Date();
+  const startsAt = parseScheduleTime(FESTIVAL.startsAt);
+  const endsAt = parseScheduleTime(FESTIVAL.endsAt);
+  const artists = stageId === "all" ? SORTED_ARTISTS : SORTED_ARTISTS.filter(a => a.stage === stageId);
+  const scheduled = artists
+    .map(a => ({ artist: a, schedule: completeSchedule(a) }))
+    .filter(item => item.schedule)
+    .sort((x, y) => x.schedule.start - y.schedule.start);
+  const live = scheduled.find(item => now >= item.schedule.start && now < item.schedule.end);
+  const next = scheduled.find(item => item.schedule.start > now);
+  const hasAnySchedule = scheduled.length > 0;
+
+  if (live) return { state: "live", title: "עכשיו בלייב", artist: live.artist, schedule: live.schedule, next };
+  if (startsAt && now < startsAt) return { state: "upcoming", title: "האירוע עוד לא התחיל", next, hasAnySchedule };
+  if (endsAt && now > endsAt) return { state: "ended", title: "האירוע הסתיים", hasAnySchedule };
+  if (!hasAnySchedule) return { state: "tba", title: "לוח הזמנים T.B.A.", hasAnySchedule };
+  return { state: "idle", title: "אין סט פעיל כרגע", next, hasAnySchedule };
+}
+
+function liveStatusCard(stageId = "all") {
+  const status = getScheduleStatus(stageId);
+  const nextText = status.next
+    ? `הבא: ${status.next.artist.name} · ${formatScheduleRange(status.next.schedule)}`
+    : "זמני הסטים הרשמיים יופיעו כאן";
+  const body = status.state === "live"
+    ? `${status.artist.name} · ${stageLabel(status.artist.stage)} · ${formatScheduleRange(status.schedule)}`
+    : status.hasAnySchedule ? nextText : "כאן יוצג בזמן אמת מי מנגן עכשיו כשיפורסם הלו״ז";
+  return `
+    <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
+      <span class="live-status-kicker">${status.state === "live" ? "LIVE NOW" : "NOW PLAYING"}</span>
+      <strong>${escapeHtml(status.title)}</strong>
+      <span>${escapeHtml(body)}</span>
+    </div>
+  `;
+}
+
+function artistSetTimeBadge(a) {
+  const schedule = completeSchedule(a);
+  const text = schedule ? formatScheduleRange(schedule) : "שעת הופעה: T.B.A.";
+  return `<div class="artist-set-time ${schedule ? "has-time" : "is-tba"}">${escapeHtml(text)}</div>`;
+}
+
 // ===== Build sections =====
 
 const HERO_STAGES = [
@@ -497,9 +577,17 @@ const HERO_STAGES = [
   ...FESTIVAL.stages.map(s => ({ id: s.id, name: s.name, desc: s.desc, isMain: false }))
 ];
 
+const HERO_STAGE_ELEMENTS = {
+  retro: "images/zna-3d/custom-goa-sound-totem-element.png",
+  zambu: "images/zna-3d/custom-festival-portal-element.png",
+  guardians: "images/zna-3d/custom-chillout-organism-element.png",
+  market: "images/zna-3d/custom-market-shrine-element.png"
+};
+
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
+      <img class="hero-zna-mark" src="images/zna-3d/LogoElements.png" alt="ZNA Gathering" loading="lazy" />
       <div class="logo-mark">ZNA<br/>2026</div>
       <div class="hero-subtitle">RETRO · FUTURISTIC · GATHERING</div>
       <p class="hero-tagline">${escapeHtml(FESTIVAL.description)}</p>
@@ -508,6 +596,7 @@ function heroPanelMain() {
         <span><strong>📍</strong> ${escapeHtml(FESTIVAL.location)}</span>
         <span><strong>🎧</strong> ${ARTISTS.length} אומנים</span>
       </div>
+      ${liveStatusCard("all")}
       <div class="hero-hint">החליקו ימינה לבמות הפסטיבל →</div>
     </div>
   `;
@@ -515,14 +604,17 @@ function heroPanelMain() {
 
 function heroPanelStage(stage) {
   const count = ARTISTS.filter(a => a.stage === stage.id).length;
+  const elementSrc = HERO_STAGE_ELEMENTS[stage.id];
   return `
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
+      ${elementSrc ? `<img class="hero-stage-element hero-stage-element--${escapeHtml(stage.id)}" src="${escapeHtml(elementSrc)}" alt="" loading="lazy" aria-hidden="true" />` : ""}
       <div class="hero-stage-tag">במה</div>
       <div class="logo-mark hero-stage-name">${escapeHtml(stage.name)}</div>
       <p class="hero-tagline">${escapeHtml(stage.desc)}</p>
       <div class="hero-meta">
         <span><strong>🎧</strong> ${count} אומנים</span>
       </div>
+      ${liveStatusCard(stage.id)}
       <div class="hero-hint">↓ צללו לתוך הבמה</div>
     </div>
   `;
@@ -591,8 +683,8 @@ function updateHeroDots() {
   dots.querySelectorAll(".hero-dot").forEach(d => {
     d.classList.toggle("active", d.dataset.stage === activeStageFilter);
   });
-  // Also update bg tint
-  const tintStage = activeStageFilter === "all" ? "retro" : activeStageFilter;
+  // Also update bg tint — Main uses its own "all" gradient now
+  const tintStage = activeStageFilter;
   if (stageColor[tintStage]) bgScene.style.background = stageColor[tintStage];
   // Update hero section's data-stage so the active hero panel drives bg
   const sec = reel.querySelector('[data-section="hero"]');
@@ -607,7 +699,7 @@ function rerenderArtistsBelowHero() {
   while (heroSec.nextElementSibling) heroSec.nextElementSibling.remove();
   const list = getFilteredArtists();
   const tpl = document.createElement("template");
-  tpl.innerHTML = list.map((a, i) => artistSection(a, i)).join("");
+  tpl.innerHTML = renderArtistSections(list);
   heroSec.parentElement.append(...tpl.content.children);
   buildVerticalProgress();
   observeSections();
@@ -647,6 +739,7 @@ function panelHero(a) {
             ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
             <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
           </div>
+          ${artistSetTimeBadge(a)}
           ${tags ? `<div class="artist-tags-row">${tags}</div>` : ""}
         </div>
       </div>
@@ -777,13 +870,14 @@ function panelTracks(a) {
   `;
 }
 
-function artistSection(a, idx) {
+function artistSection(a, idx, isFirstOfStage = false) {
   // Order: Hero → About → Tracks → Discography (last)
   const panels = [panelHero(a), panelInfo(a), panelTracks(a), panelAlbums(a)];
   const panelCount = panels.length;
   const dots = panels.map((_, i) => `<button class="dot ${i === 0 ? "active" : ""}" data-panel="${i}" aria-label="פאנל ${i + 1}"></button>`).join("");
+  const cls = `section artist-section${isFirstOfStage ? " is-first-of-stage" : ""}`;
   return `
-    <section class="section artist-section"
+    <section class="${cls}"
              data-section="artist"
              data-artist-id="${escapeHtml(a.id)}"
              data-stage="${escapeHtml(a.stage)}"
@@ -795,6 +889,12 @@ function artistSection(a, idx) {
   `;
 }
 
+function renderArtistSections(list) {
+  return list
+    .map((a, i) => artistSection(a, i, i === 0 || list[i - 1].stage !== a.stage))
+    .join("");
+}
+
 // ===== Render reel =====
 
 function buildReel() {
@@ -802,7 +902,7 @@ function buildReel() {
   // currently-active stage filter below it.
   const heroHtml = multiHeroSection();
   const list = getFilteredArtists();
-  const artistsHtml = list.map((a, i) => artistSection(a, i)).join("");
+  const artistsHtml = renderArtistSections(list);
   reel.innerHTML = heroHtml + artistsHtml;
   wireHeroPager();
 

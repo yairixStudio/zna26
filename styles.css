@@ -57,6 +57,8 @@ body {
 .search-result-meta,
 .info-meta,
 .info-section-title,
+.live-status,
+.artist-set-time,
 .panel-eyebrow,
 .chip,
 .meta-item {
@@ -194,6 +196,24 @@ a { color: var(--sun-yellow); }
   --hero-text-3: var(--neon-purple);
 }
 
+.hero-panel > :not(.hero-stage-element) {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-stage-element {
+  position: absolute;
+  bottom: -4px;
+  right: max(-86px, -13vw);
+  width: clamp(210px, 48vw, 390px);
+  height: auto;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.45));
+}
+
 .hero-dots {
   position: absolute;
   bottom: 22px;
@@ -289,6 +309,23 @@ body.has-mini-player .hero-dots {
   pointer-events: none;
 }
 
+/* Decorative ZNA "gathering" 3D wordmark on the Main hero only */
+.hero-zna-mark {
+  display: block;
+  width: clamp(160px, 42vw, 260px);
+  height: auto;
+  margin: 0 auto 6px;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
+  animation: zna-mark-float 6s ease-in-out infinite;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@keyframes zna-mark-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
 /* Per-stage hero color identity */
 .hero-section--retro,
 .hero-panel--retro {
@@ -377,16 +414,6 @@ body.has-mini-player .hero-dots {
   font-weight: 700;
 }
 
-.hero-stage-tag {
-  font-size: 11px;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--hero-text-1);
-  opacity: 0.85;
-  margin-bottom: 10px;
-  font-weight: 700;
-}
-
 .hero-section--retro .hero-cta { background: linear-gradient(135deg, #ff5c8a, #ff7e1f); }
 .hero-section--zambu .hero-cta { background: linear-gradient(135deg, #ff006e, #9b51e0); color: white; }
 .hero-section--guardians .hero-cta { background: linear-gradient(135deg, #00d4ff, #ffd23f); }
@@ -447,6 +474,50 @@ body.has-mini-player .hero-dots {
 
 .hero-meta strong { color: var(--text); margin-inline-end: 4px; }
 
+.live-status {
+  width: min(540px, calc(100% - 28px));
+  display: grid;
+  gap: 5px;
+  padding: 12px 16px;
+  margin: -6px auto 2px;
+  background: rgba(10, 5, 36, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+}
+
+.live-status-kicker {
+  font-family: "Orbitron", "Heebo", sans-serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--neon-cyan);
+}
+
+.live-status strong {
+  font-size: clamp(17px, 4vw, 24px);
+  line-height: 1.15;
+  color: var(--sun-yellow);
+}
+
+.live-status span:last-child {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.live-status--live {
+  border-color: rgba(57, 255, 20, 0.55);
+  box-shadow: 0 0 28px rgba(57, 255, 20, 0.18), 0 12px 34px rgba(0, 0, 0, 0.35);
+}
+
+.live-status--live .live-status-kicker,
+.live-status--live strong {
+  color: #39ff14;
+}
+
 .hero-cta {
   display: inline-flex;
   align-items: center;
@@ -474,6 +545,22 @@ body.has-mini-player .hero-dots {
   padding: 0;
   overflow: hidden;
 }
+
+/* First artist of each stage: top edge picks up the stage's background tint
+   so the dive from the stage hero into its first artist feels seamless. */
+.artist-section.is-first-of-stage::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 55%;
+  background: linear-gradient(180deg, var(--stage-tint, transparent) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+.artist-section.is-first-of-stage[data-stage="retro"]     { --stage-tint: rgba(56, 16, 32, 0.85); }
+.artist-section.is-first-of-stage[data-stage="zambu"]     { --stage-tint: rgba(42, 12, 84, 0.85); }
+.artist-section.is-first-of-stage[data-stage="guardians"] { --stage-tint: rgba(16, 51, 84, 0.85); }
+.artist-section.is-first-of-stage[data-stage="market"]    { --stage-tint: rgba(56, 36, 14, 0.85); }
 
 .pager {
   height: 100%;
@@ -633,6 +720,25 @@ body.has-mini-player .hero-dots {
   margin-inline-end: 14px;
   margin-inline-start: -8px;
   font-weight: 900;
+}
+
+.artist-set-time {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(10, 5, 36, 0.7);
+  border: 1px solid rgba(254, 180, 71, 0.34);
+  color: var(--sun-yellow);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.artist-set-time.is-tba {
+  color: var(--text-muted);
+  border-style: dashed;
 }
 
 .artist-tags-row {
@@ -1737,6 +1843,11 @@ body.has-mini-player .panel {
   .panel { padding: 110px 48px 140px; }
   .panel-inner { max-width: 1080px; }
 
+  .hero-stage-element {
+    right: max(-88px, -6vw);
+    width: clamp(300px, 30vw, 520px);
+  }
+
   /* === Artist Hero — editorial desktop layout ===
      Photo on the LEFT, text on the RIGHT (English magazine layout). Forces
      direction:ltr on the grid container so the columns flow left → right
@@ -1819,4 +1930,3 @@ body.has-mini-player .panel {
     justify-content: center;
   }
 }
-

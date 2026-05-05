@@ -5,6 +5,9 @@ const FESTIVAL = {
   name: "ZNA Gathering 2026",
   tagline: "The Retro-Futuristic Celebration",
   dates: "15-22 ביולי 2026",
+  startsAt: "2026-07-15T00:00:00+01:00",
+  endsAt: "2026-07-22T23:59:59+01:00",
+  timezone: "Europe/Lisbon",
   location: "ים מונטרגיל, פורטוגל",
   description: "המקדש העולמי של גואה טראנס בסגנון הישן. פסטיבל דו-שנתי עם כ-5,000 משתתפים בלבד שחוגג את רוח אנג'ונה של שנות ה-90.",
   stages: [
@@ -13,6 +16,11 @@ const FESTIVAL = {
     { id: "guardians", name: "Goa Guardians", desc: "במת הוויניל - שומרי הסאונד הישן" },
     { id: "market", name: "Market", desc: "במת חימום ושוק" }
   ]
+};
+
+const ARTIST_SCHEDULE = {
+  // Fill when official set times are known:
+  // "yahel": { start: "2026-07-20T04:00:00+01:00", end: "2026-07-20T06:00:00+01:00" }
 };
 
 const ARTISTS = [
