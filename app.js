@@ -649,7 +649,7 @@ const HERO_STAGE_ELEMENTS = {
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
-      <img class="hero-zna-mark" src="images/zna-3d/LogoElements.png" alt="ZNA Gathering" loading="lazy" />
+      <img class="hero-zna-mark" src="images/zna-3d/community-zna-logo.png" alt="ZNA Community" loading="lazy" />
       <div class="logo-mark">ZNA<br/>2026</div>
       <div class="hero-subtitle">RETRO · FUTURISTIC · GATHERING</div>
       <p class="hero-tagline">${escapeHtml(FESTIVAL.description)}</p>
@@ -666,14 +666,11 @@ function heroPanelStage(stage) {
   return `
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementSrc ? `<img class="hero-stage-element hero-stage-element--${escapeHtml(stage.id)}" src="${escapeHtml(elementSrc)}" alt="" loading="lazy" aria-hidden="true" />` : ""}
-      <div class="hero-stage-tag">במה</div>
       <div class="logo-mark hero-stage-name">${escapeHtml(stage.name)}</div>
       <p class="hero-tagline">${escapeHtml(stage.desc)}</p>
-      <div class="hero-meta">
-        <span><strong>🎧</strong> ${count} אומנים</span>
-      </div>
+      <div class="hero-meta">${count} אומנים</div>
       ${liveStatusCard(stage.id)}
-      <div class="hero-hint">↓ צללו לתוך הבמה</div>
+      <div class="hero-hint"><span>צללו לתוך הבמה</span><span class="hero-hint-arrow">↓</span></div>
     </div>
   `;
 }
@@ -1292,6 +1289,7 @@ function setActiveSection(section) {
   // off the visible panel — otherwise just-arrived sections look like
   // panelIdx=1 which would always be flagged "non-hero".
   const isHero = section.dataset.section === "hero";
+  document.body.classList.toggle("is-on-hero", isHero);
   const pager = section.querySelector(".pager");
   // Compute realIdx after any anchoring scrollTo below — defer to a single
   // pass at the end of setActiveSection.
@@ -1885,6 +1883,28 @@ function renderSearchResults(query) {
 }
 
 searchBtn?.addEventListener("click", openSearch);
+
+// Random-artist button: pick a random artist from whatever's currently
+// visible on the hero (Main → all artists; a stage hero → that stage only).
+const randomBtn = document.getElementById("random-btn");
+randomBtn?.addEventListener("click", () => {
+  const stage = activeStageFilter;
+  const pool = stage === "all" ? ARTISTS : ARTISTS.filter(a => a.stage === stage);
+  if (!pool.length) return;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  // Make sure the artist is actually rendered (filter may exclude it). If
+  // the current filter wouldn't include the pick, switch to "all" first.
+  if (!reel.querySelector(`[data-artist-id="${pick.id}"]`)) {
+    activeStageFilter = "all";
+    rerenderArtistsBelowHero();
+  }
+  const sec = reel.querySelector(`[data-artist-id="${pick.id}"]`);
+  if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
+  // Tiny tactile spin so the click feels playful
+  randomBtn.classList.remove("is-spinning");
+  void randomBtn.offsetWidth;
+  randomBtn.classList.add("is-spinning");
+});
 searchOverlay?.addEventListener("click", e => {
   if (e.target === searchOverlay) closeSearch();
 });
