@@ -126,7 +126,101 @@ a { color: var(--sun-yellow); }
   contain-intrinsic-size: 100vh;
 }
 
-/* ===== Hero ===== */
+/* ===== Multi-hero section: horizontal pager of stage heroes ===== */
+.section--multi-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-pager {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+  scrollbar-width: none;
+}
+.hero-pager::-webkit-scrollbar { display: none; }
+
+.hero-panel {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 18px 80px;
+  position: relative;
+  --hero-glow-1: var(--sun-yellow);
+  --hero-glow-2: var(--sun-pink);
+  --hero-glow-shadow: rgba(255, 126, 31, 0.6);
+  --hero-text-1: var(--sun-yellow);
+  --hero-text-2: var(--sun-pink);
+  --hero-text-3: var(--neon-purple);
+}
+
+.hero-dots {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 12;
+  padding: 8px 14px;
+  background: rgba(10, 5, 36, 0.85);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hero-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.3);
+  transition: all 0.25s ease;
+}
+
+.hero-dot.active {
+  background: var(--sun-yellow);
+  width: 24px;
+  border-radius: 999px;
+  box-shadow: 0 0 12px var(--sun-yellow);
+}
+
+body.has-mini-player .hero-dots {
+  bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 22px);
+}
+
+.hero-hint {
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  opacity: 0.8;
+  animation: hint-bounce 2.4s ease-in-out infinite;
+}
+
+@keyframes hint-bounce {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Legacy: keep .hero-section selector working for the old standalone hero
+   variant, but inherit color variables and centering from .hero-panel. */
 .hero-section {
   display: flex;
   flex-direction: column;
@@ -169,7 +263,8 @@ a { color: var(--sun-yellow); }
 }
 
 /* Per-stage hero color identity */
-.hero-section--retro {
+.hero-section--retro,
+.hero-panel--retro {
   --hero-glow-1: #FEB447;
   --hero-glow-2: #ff5c8a;
   --hero-glow-shadow: rgba(255, 126, 31, 0.65);
@@ -177,7 +272,8 @@ a { color: var(--sun-yellow); }
   --hero-text-2: #ff7e1f;
   --hero-text-3: #ff5c8a;
 }
-.hero-section--zambu {
+.hero-section--zambu,
+.hero-panel--zambu {
   --hero-glow-1: #ff006e;
   --hero-glow-2: #9b51e0;
   --hero-glow-shadow: rgba(155, 81, 224, 0.65);
@@ -185,7 +281,8 @@ a { color: var(--sun-yellow); }
   --hero-text-2: #9b51e0;
   --hero-text-3: #5a189a;
 }
-.hero-section--guardians {
+.hero-section--guardians,
+.hero-panel--guardians {
   --hero-glow-1: #00d4ff;
   --hero-glow-2: #FEB447;
   --hero-glow-shadow: rgba(0, 212, 255, 0.55);
@@ -193,7 +290,8 @@ a { color: var(--sun-yellow); }
   --hero-text-2: #ffd23f;
   --hero-text-3: #118ab2;
 }
-.hero-section--market {
+.hero-section--market,
+.hero-panel--market {
   --hero-glow-1: #ffd60a;
   --hero-glow-2: #ffbf69;
   --hero-glow-shadow: rgba(255, 191, 105, 0.6);
@@ -202,18 +300,54 @@ a { color: var(--sun-yellow); }
   --hero-text-3: #fb8500;
 }
 
-.hero-section .logo-mark {
+.hero-section .logo-mark,
+.hero-panel .logo-mark {
   background: linear-gradient(180deg, var(--hero-text-1) 0%, var(--hero-text-2) 60%, var(--hero-text-3) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.hero-section--retro .logo-mark,
-.hero-section--zambu .logo-mark,
-.hero-section--guardians .logo-mark,
-.hero-section--market .logo-mark {
+.hero-panel--retro .logo-mark,
+.hero-panel--zambu .logo-mark,
+.hero-panel--guardians .logo-mark,
+.hero-panel--market .logo-mark {
   font-size: clamp(40px, 11vw, 90px);
+}
+
+/* Sun glow inside each hero panel */
+.hero-panel::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(50%);
+  width: min(560px, 90vw);
+  height: min(560px, 90vw);
+  border-radius: 50%;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      var(--hero-glow-1) 0 18px,
+      transparent 18px 24px,
+      var(--hero-glow-2) 24px 50px,
+      transparent 50px 56px
+    );
+  filter: blur(0.4px);
+  box-shadow: 0 0 120px var(--hero-glow-shadow);
+  z-index: -1;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.hero-stage-tag {
+  font-size: 11px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--hero-text-1);
+  opacity: 0.85;
+  margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .hero-stage-tag {
@@ -432,6 +566,70 @@ a { color: var(--sun-yellow); }
 
 /* === Panel 1: Hero === */
 .panel-hero { text-align: center; }
+
+/* Stage pill at top of artist hero - tappable jump to that stage */
+.hero-stage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent, var(--sun-yellow));
+  background: color-mix(in oklab, var(--accent, var(--sun-yellow)) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent, var(--sun-yellow)) 35%, transparent);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 16px;
+}
+
+.hero-stage-pill:hover {
+  background: var(--accent, var(--sun-yellow));
+  color: var(--bg-deep);
+  transform: scale(1.04);
+}
+
+/* Play first track CTA */
+.hero-play-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent, var(--sun-yellow)), color-mix(in oklab, var(--accent, var(--sun-yellow)) 60%, var(--sun-pink)));
+  color: var(--bg-deep);
+  border: none;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px color-mix(in oklab, var(--accent, var(--sun-yellow)) 40%, transparent);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.hero-play-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px color-mix(in oklab, var(--accent, var(--sun-yellow)) 55%, transparent);
+}
+
+.hero-play-cta:active { transform: translateY(0); }
+
+.hero-play-cta svg { margin-inline-end: 2px; }
+
+/* Bottom hint encouraging horizontal swipe */
+.hero-swipe-hint {
+  margin-top: 22px;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+.artist-tags-row { margin-top: 6px; }
 
 .artist-hero-art {
   width: min(70vw, 240px);

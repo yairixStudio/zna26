@@ -445,9 +445,14 @@ function escapeHtml(s) {
 
 // ===== Build sections =====
 
-function heroSection() {
+const HERO_STAGES = [
+  { id: "all", name: "ZNA 2026", desc: FESTIVAL.description, isMain: true },
+  ...FESTIVAL.stages.map(s => ({ id: s.id, name: s.name, desc: s.desc, isMain: false }))
+];
+
+function heroPanelMain() {
   return `
-    <section class="section hero-section" data-section="hero" data-stage="retro">
+    <div class="hero-panel hero-panel--main" data-stage="all">
       <div class="logo-mark">ZNA<br/>2026</div>
       <div class="hero-subtitle">RETRO · FUTURISTIC · GATHERING</div>
       <p class="hero-tagline">${escapeHtml(FESTIVAL.description)}</p>
@@ -456,26 +461,120 @@ function heroSection() {
         <span><strong>📍</strong> ${escapeHtml(FESTIVAL.location)}</span>
         <span><strong>🎧</strong> ${ARTISTS.length} אומנים</span>
       </div>
-      <button class="hero-cta" id="cta-start">
-        בואו נתחיל
-      </button>
-    </section>
+      <div class="hero-hint">החליקו ימינה לבמות הפסטיבל →</div>
+    </div>
   `;
 }
 
-function stageHeroSection(stageId) {
-  const stage = FESTIVAL.stages.find(s => s.id === stageId);
-  if (!stage) return "";
-  const count = ARTISTS.filter(a => a.stage === stageId).length;
+function heroPanelStage(stage) {
+  const count = ARTISTS.filter(a => a.stage === stage.id).length;
   return `
-    <section class="section hero-section hero-section--${escapeHtml(stageId)}" data-section="hero" data-stage="${escapeHtml(stageId)}">
+    <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       <div class="hero-stage-tag">במה</div>
       <div class="logo-mark hero-stage-name">${escapeHtml(stage.name)}</div>
       <p class="hero-tagline">${escapeHtml(stage.desc)}</p>
       <div class="hero-meta">
         <span><strong>🎧</strong> ${count} אומנים</span>
       </div>
-      <button class="hero-cta" data-go-stage="${escapeHtml(stageId)}">צללו לתוך הבמה</button>
+      <div class="hero-hint">↓ צללו לתוך הבמה</div>
+    </div>
+  `;
+}
+
+let heroScrollTimer = null;
+let suppressHeroScroll = false;
+
+function wireHeroPager() {
+  const pager = document.getElementById("hero-pager");
+  const dots = document.getElementById("hero-dots");
+  if (!pager) return;
+
+  // Initial scroll position to currently-active stage
+  setTimeout(() => scrollHeroToStage(activeStageFilter, true), 0);
+
+  pager.addEventListener("scroll", () => {
+    if (suppressHeroScroll) return;
+    clearTimeout(heroScrollTimer);
+    heroScrollTimer = setTimeout(() => {
+      const w = pager.clientWidth || 1;
+      const idx = Math.round(Math.abs(pager.scrollLeft) / w);
+      const stage = HERO_STAGES[idx]?.id;
+      if (stage && stage !== activeStageFilter) {
+        activeStageFilter = stage;
+        // Update dots & dropdown
+        updateHeroDots();
+        buildStageDropdown();
+        // Re-render only artist sections beneath the hero
+        rerenderArtistsBelowHero();
+      }
+    }, 160);
+  }, { passive: true });
+
+  if (dots) {
+    dots.addEventListener("click", e => {
+      const btn = e.target.closest(".hero-dot");
+      if (!btn) return;
+      scrollHeroToStage(btn.dataset.stage, false);
+    });
+  }
+}
+
+function scrollHeroToStage(stageId, instant) {
+  const pager = document.getElementById("hero-pager");
+  if (!pager) return;
+  const idx = HERO_STAGES.findIndex(s => s.id === stageId);
+  if (idx < 0) return;
+  const w = pager.clientWidth || pager.offsetWidth;
+  // RTL: pager is laid out right-to-left, so we need negative scrollLeft for forward panels.
+  // Use scrollTo with the raw left value the browser computes for that index.
+  const target = pager.children[idx];
+  if (!target) return;
+  suppressHeroScroll = true;
+  if (instant) {
+    target.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
+  } else {
+    target.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  }
+  setTimeout(() => { suppressHeroScroll = false; }, 400);
+}
+
+function updateHeroDots() {
+  const dots = document.getElementById("hero-dots");
+  if (!dots) return;
+  dots.querySelectorAll(".hero-dot").forEach(d => {
+    d.classList.toggle("active", d.dataset.stage === activeStageFilter);
+  });
+  // Also update bg tint
+  const tintStage = activeStageFilter === "all" ? "retro" : activeStageFilter;
+  if (stageColor[tintStage]) bgScene.style.background = stageColor[tintStage];
+  // Update hero section's data-stage so the active hero panel drives bg
+  const sec = reel.querySelector('[data-section="hero"]');
+  if (sec) sec.dataset.stage = tintStage;
+}
+
+function rerenderArtistsBelowHero() {
+  // Remove existing artist sections, build new ones for the current filter.
+  const heroSec = reel.querySelector('[data-section="hero"]');
+  if (!heroSec) return;
+  // Remove everything after the hero
+  while (heroSec.nextElementSibling) heroSec.nextElementSibling.remove();
+  const list = getFilteredArtists();
+  const tpl = document.createElement("template");
+  tpl.innerHTML = list.map((a, i) => artistSection(a, i)).join("");
+  heroSec.parentElement.append(...tpl.content.children);
+  buildVerticalProgress();
+  observeSections();
+}
+
+function multiHeroSection() {
+  const panels = HERO_STAGES.map(s => s.isMain ? heroPanelMain() : heroPanelStage(s)).join("");
+  const dots = HERO_STAGES.map((s, i) => `<button class="hero-dot ${activeStageFilter === s.id ? "active" : ""}" data-stage="${escapeHtml(s.id)}" aria-label="${escapeHtml(s.name)}"></button>`).join("");
+  // The active hero panel sets the section's stage data attribute (used for bg tint)
+  const activeStage = activeStageFilter === "all" ? "retro" : activeStageFilter;
+  return `
+    <section class="section section--multi-hero" data-section="hero" data-stage="${escapeHtml(activeStage)}">
+      <div class="hero-pager" id="hero-pager">${panels}</div>
+      <div class="hero-dots" id="hero-dots">${dots}</div>
     </section>
   `;
 }
@@ -486,22 +585,31 @@ function panelHero(a) {
   const photo = a.photo
     ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
     : "";
+  const firstTrack = (a.tracks || [])[0];
+  const playCta = firstTrack
+    ? `<button class="hero-play-cta" data-vid="${escapeHtml(firstTrack.id)}" data-title="${escapeHtml(firstTrack.title)}" data-artist="${escapeHtml(a.name)}" type="button">
+         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+         השמע טראק
+       </button>`
+    : "";
   return `
-    <div class="panel panel-hero panel--hero">
+    <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
       <div class="panel-inner center">
-        <div class="panel-eyebrow">${escapeHtml(stageInfo(a.stage).name)}</div>
-        <div class="artist-hero-art ${a.photo ? "has-photo" : ""}" style="--accent: ${a.color || "#FEB447"};">
+        <div class="hero-stage-pill" data-go-stage="${escapeHtml(a.stage)}">${escapeHtml(stageInfo(a.stage).name)}</div>
+        <div class="artist-hero-art ${a.photo ? "has-photo" : ""}">
           ${photo}
           <span class="artist-initials">${initials}</span>
         </div>
         <div class="artist-name">${escapeHtml(a.name)}</div>
-        <div class="artist-real">${escapeHtml(a.realName || "")}</div>
+        ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
         <div class="artist-quick">
           <span class="chip cyan">📍 ${escapeHtml(a.country)}</span>
           ${a.age ? `<span class="chip cyan">🎂 ${a.age}</span>` : ""}
           <span class="chip pink">🎧 ${escapeHtml(a.role)}</span>
         </div>
-        <div class="artist-quick" style="margin-top:6px;">${tags}</div>
+        ${tags ? `<div class="artist-quick artist-tags-row">${tags}</div>` : ""}
+        ${playCta}
+        <div class="hero-swipe-hint">החליקו ימינה לאודות ולטראקים →</div>
       </div>
     </div>
   `;
@@ -651,38 +759,55 @@ function artistSection(a, idx) {
 // ===== Render reel =====
 
 function buildReel() {
-  let html = "";
-  let globalIdx = 0;
-  if (activeStageFilter === "all") {
-    // Main hero, then for each stage: stage hero -> that stage's artists
-    html += heroSection();
-    FESTIVAL.stages.forEach(stage => {
-      html += stageHeroSection(stage.id);
-      const stageArtists = SORTED_ARTISTS.filter(a => a.stage === stage.id);
-      html += stageArtists.map(a => artistSection(a, globalIdx++)).join("");
-    });
-  } else {
-    html += stageHeroSection(activeStageFilter);
-    html += getFilteredArtists().map((a, i) => artistSection(a, i)).join("");
-  }
-  reel.innerHTML = html;
+  // Single multi-panel hero at the top, then artist sections of the
+  // currently-active stage filter below it.
+  const heroHtml = multiHeroSection();
+  const list = getFilteredArtists();
+  const artistsHtml = list.map((a, i) => artistSection(a, i)).join("");
+  reel.innerHTML = heroHtml + artistsHtml;
+  wireHeroPager();
 
-  // CTA on the main hero scrolls to the first artist (or stage hero) below it
-  const cta = document.getElementById("cta-start");
-  if (cta) {
-    cta.addEventListener("click", () => {
-      const sections = reel.querySelectorAll(".section");
-      sections[1]?.scrollIntoView({ behavior: "smooth" });
-    });
-  }
-  // Stage-hero CTAs jump into that stage's first artist (within the same all-mode reel)
-  reel.querySelectorAll(".hero-cta[data-go-stage]").forEach(btn => {
-    btn.addEventListener("click", () => {
+  // Stage pill on each artist card jumps the hero pager to that stage
+  reel.querySelectorAll("[data-go-stage]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
       const stage = btn.dataset.goStage;
-      const target = reel.querySelector(`[data-section="artist"][data-stage="${stage}"]`);
-      target?.scrollIntoView({ behavior: "smooth" });
+      reel.scrollTo({ top: 0, behavior: "smooth" });
+      if (stage !== activeStageFilter) {
+        activeStageFilter = stage;
+        buildStageDropdown();
+        scrollHeroToStage(stage, false);
+        rerenderArtistsBelowHero();
+        updateHeroDots();
+      } else {
+        scrollHeroToStage(stage, false);
+      }
     });
   });
+
+  // "Play first track" CTA on each artist hero
+  reel.querySelectorAll(".hero-play-cta").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const vid = btn.dataset.vid;
+      // Find the matching track-thumb in this artist's tracks panel and trigger
+      // the existing inline-play flow so animation/observer behave consistently.
+      const section = btn.closest('[data-section="artist"]');
+      const thumb = section?.querySelector(`.track-thumb[data-vid="${CSS.escape(vid)}"]`);
+      if (thumb) {
+        prepareInlineFrameAndPlay(thumb);
+        // Also slide the inner pager to the tracks panel so the player is visible
+        const pager = section.querySelector(".pager");
+        if (pager && pager.children[2]) {
+          pager.children[2].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+        }
+      } else {
+        // Fallback: just open in mini-player using the queue
+        startPlayback(vid, null);
+      }
+    });
+  });
+
 
   // Wire pager dots and YouTube thumbs for each artist section
   reel.querySelectorAll('[data-section="artist"]').forEach(section => {
@@ -938,15 +1063,19 @@ stageSelectMenu?.addEventListener("click", e => {
   if (!btn) return;
   const stage = btn.dataset.stage;
   closeStageDropdown();
-  if (stage === activeStageFilter) return;
+  if (stage === activeStageFilter) {
+    // Same filter — just bring the user up to that hero panel
+    try { reel.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) {}
+    return;
+  }
   activeStageFilter = stage;
-
-  buildReel();
-  buildVerticalProgress();
   buildStageDropdown();
-  observeSections();
-  try { reel.scrollTo({ top: 0, behavior: "auto" }); } catch (_) {}
-  setTimeout(() => setActiveSection(reel.querySelector(".section")), 30);
+  // Slide the hero pager to the chosen stage; the pager's scroll handler
+  // will re-render artists below.
+  try { reel.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) {}
+  scrollHeroToStage(stage, false);
+  rerenderArtistsBelowHero();
+  updateHeroDots();
 });
 
 // iOS Safari address-bar fix: keep --vh in sync
@@ -967,14 +1096,16 @@ window.addEventListener("unhandledrejection", e => {
 
 // ===== Logo button: jump back to main hero, clearing filter ======
 logoBtn?.addEventListener("click", () => {
+  reel.scrollTo({ top: 0, behavior: "smooth" });
   if (activeStageFilter !== "all") {
     activeStageFilter = "all";
-    buildReel();
-    buildVerticalProgress();
     buildStageDropdown();
-    observeSections();
+    scrollHeroToStage("all", false);
+    rerenderArtistsBelowHero();
+    updateHeroDots();
+  } else {
+    scrollHeroToStage("all", false);
   }
-  reel.scrollTo({ top: 0, behavior: "smooth" });
 });
 
 // ===== Search modal =====
