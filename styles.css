@@ -585,14 +585,12 @@ body.has-mini-player .hero-dots {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  /* Allow vertical scroll to chain UP to the reel when the panel can't
-     scroll further. Without this, panels with long content (Info, Tracks
-     with many videos) trap the vertical pan on iOS — the user could swipe
-     horizontally to a tall panel, then suddenly find that swiping up/down
-     stayed inside that panel and never moved between artists. Horizontal
-     chaining is contained because the .pager handles that axis. */
-  overscroll-behavior-x: contain;
-  overscroll-behavior-y: auto;
+  /* Suppress iOS Safari's native rubber-band on overflowing panels so it
+     doesn't fight our explicit pull-to-navigate gesture (long bios/videos
+     panels were swallowing the over-pull as their own bounce, never
+     advancing to the next artist). The pull gesture handler in app.js
+     replaces that chain with a real navigation. */
+  overscroll-behavior: contain;
 }
 
 /* While the user is pulling past the panel edge, take control of the touch
@@ -1891,9 +1889,18 @@ body.has-mini-player .panel {
   border-color: rgba(255, 255, 255, 0.25);
 }
 
-.stage-select-menu .lang-cell-flag {
-  font-size: 22px;
+.stage-select-menu .lang-cell-code {
+  font-family: "Orbitron", "Heebo", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
   line-height: 1;
+  color: var(--text);
+  opacity: 0.95;
+}
+.stage-select-menu .lang-cell.active .lang-cell-code {
+  color: white;
+  opacity: 1;
 }
 
 .stage-select-menu .lang-cell-name {

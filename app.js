@@ -22,12 +22,12 @@ const searchResults = document.getElementById("search-results");
 // ===== i18n =====
 // Three supported languages. UI defaults to English; users can switch via
 // the flag-row at the bottom of the stage dropdown menu.
-const LANG_FLAGS = { he: "🇮🇱", en: "🇬🇧", pt: "🇵🇹" };
+const LANG_CODES  = { he: "IL", en: "EN", pt: "PT" };
 const LANG_LABELS = { he: "עברית", en: "English", pt: "Português" };
 let currentLang = (function() {
   try {
     const stored = localStorage.getItem("zna-lang");
-    if (stored && LANG_FLAGS[stored]) return stored;
+    if (stored && LANG_CODES[stored]) return stored;
   } catch (_) {}
   return "en"; // default English per product spec
 })();
@@ -156,7 +156,7 @@ function tStage(stageId, field = "name") {
 }
 
 function applyLang(lang) {
-  if (!LANG_FLAGS[lang]) return;
+  if (!LANG_CODES[lang]) return;
   currentLang = lang;
   try { localStorage.setItem("zna-lang", lang); } catch (_) {}
   document.documentElement.lang = lang;
@@ -1834,22 +1834,31 @@ function navVertical(dir) {
 
 // ===== Telegram-style pull-to-navigate =====
 // When a panel has long content (overflow scroll) and the user reaches the
-// top or bottom, native scroll-chain to the reel is unreliable on iOS/Android
-// — the touch keeps getting eaten by the panel's bounce. So we explicitly
-// detect the edge-pull, paint a rubber-band offset on the panel content, and
-// commit to a vertical section navigation if the user pulls past a threshold.
-// Panels that don't overflow get the same treatment so the gesture is
-// consistent: a deliberate over-pull anywhere flips to the next/prev artist.
+// top or bottom, native scroll-chain to the reel is unreliable — iOS Safari
+// in particular swallows the over-pull as its rubber-band bounce and the
+// reel never advances. So we detect the edge-pull explicitly, paint a
+// rubber-band offset on the panel content, and commit to a vertical section
+// navigation if the user pulls past a threshold.
+//
+// iOS specifics that matter here:
+//   * Once iOS commits a touch sequence to native scrolling on an
+//     overflow:auto element, preventDefault on touchmove is ignored. The
+//     fix is to call preventDefault on the FIRST move of any touch
+//     sequence that starts at an edge — before iOS makes its decision.
+//   * On panels that don't overflow we still want this gesture to work
+//     (short bios should still let the user pull to the next artist), so
+//     "at the top edge" and "at the bottom edge" are both true and any
+//     vertical drag flips into a pull.
 function setupPanelPullToNavigate(panel) {
   if (!panel || panel.__pullSetup) return;
   panel.__pullSetup = true;
 
-  const PULL_THRESHOLD = 88;       // px past the rubber-band needed to commit
-  const PULL_MIN_START = 8;        // ignore tiny finger jitters
-  const RUBBER_DAMP = 240;         // higher = stiffer rubber-band
+  const PULL_THRESHOLD = 80;       // px past the rubber-band needed to commit
+  const RUBBER_DAMP = 220;         // higher = stiffer rubber-band
 
   let startY = null;
-  let startScrollTop = 0;
+  let startedAtTop = false;
+  let startedAtBottom = false;
   let direction = null;            // 'top' | 'bottom' | null
   let lastDelta = 0;
   let intercepting = false;
@@ -1921,7 +1930,12 @@ function setupPanelPullToNavigate(panel) {
   panel.addEventListener("touchstart", (e) => {
     if (e.touches.length !== 1) return;
     startY = e.touches[0].clientY;
-    startScrollTop = panel.scrollTop;
+    const max = Math.max(0, panel.scrollHeight - panel.clientHeight);
+    // Snapshot the panel's scroll position relative to its edges right now;
+    // we use these flags throughout the gesture to decide whether to take
+    // over native scroll or let the panel scroll itself.
+    startedAtTop    = panel.scrollTop <= 0;
+    startedAtBottom = panel.scrollTop >= max - 1;
     direction = null;
     lastDelta = 0;
     intercepting = false;
@@ -1930,29 +1944,27 @@ function setupPanelPullToNavigate(panel) {
   panel.addEventListener("touchmove", (e) => {
     if (startY == null || e.touches.length !== 1) return;
     const dy = e.touches[0].clientY - startY;
-    const max = Math.max(0, panel.scrollHeight - panel.clientHeight);
-    const atTop = panel.scrollTop <= 0;
-    const atBottom = panel.scrollTop >= max - 1;
 
+    // First move that's clearly vertical: lock in a direction if we're
+    // pulling past an edge we started on. This MUST happen before iOS
+    // commits the touch sequence to native scrolling (which it does on
+    // its own first touchmove for overflow:auto elements). Anything more
+    // than 1 pixel of vertical motion qualifies — waiting for a larger
+    // threshold gives iOS time to lock and ignore preventDefault later.
     if (!direction) {
-      // Only initiate the gesture if we started AT an edge AND finger is
-      // pulling further past that edge. This way a normal scroll-from-the-
-      // middle gesture is left untouched and feels native.
-      if (dy > PULL_MIN_START && atTop && startScrollTop <= 0) {
-        direction = "top";
-        intercepting = true;
-        panel.classList.add("is-pulling");
-      } else if (dy < -PULL_MIN_START && atBottom && startScrollTop >= max - 1) {
-        direction = "bottom";
-        intercepting = true;
-        panel.classList.add("is-pulling");
-      } else {
+      const isPullTop    = startedAtTop    && dy > 0;
+      const isPullBottom = startedAtBottom && dy < 0;
+      if (!isPullTop && !isPullBottom) {
+        // Not a pull (started mid-panel, or pulling toward the panel's
+        // own scrollable interior) — let native scroll handle it.
         return;
       }
+      direction = isPullTop ? "top" : "bottom";
+      intercepting = true;
+      panel.classList.add("is-pulling");
     }
 
-    // If user reverses past zero, abort the gesture and let native scroll
-    // resume on the next move (we don't fight back).
+    // User reversed past zero — abort and let native scroll resume.
     if ((direction === "top" && dy <= 0) || (direction === "bottom" && dy >= 0)) {
       reset(true);
       direction = null;
@@ -1961,7 +1973,8 @@ function setupPanelPullToNavigate(panel) {
       return;
     }
 
-    if (intercepting && e.cancelable) e.preventDefault();
+    // Stop iOS from running its own bounce on top of our rubber-band.
+    if (e.cancelable) e.preventDefault();
     lastDelta = dy;
     apply(dy, direction);
   }, { passive: false });
@@ -1969,7 +1982,6 @@ function setupPanelPullToNavigate(panel) {
   function endTouch() {
     if (intercepting && Math.abs(lastDelta) >= PULL_THRESHOLD) {
       const dir = direction === "bottom" ? 1 : -1;
-      // Animate the inner back smoothly while we navigate.
       reset(true);
       navVertical(dir);
     } else {
@@ -1979,6 +1991,8 @@ function setupPanelPullToNavigate(panel) {
     direction = null;
     intercepting = false;
     lastDelta = 0;
+    startedAtTop = false;
+    startedAtBottom = false;
   }
 
   panel.addEventListener("touchend", endTouch, { passive: true });
@@ -2144,13 +2158,14 @@ function buildStageDropdown() {
   const stageItems = opts.map(o =>
     `<li><button data-stage="${escapeHtml(o.id)}" class="${activeStageFilter === o.id ? "active" : ""}" role="option">${escapeHtml(o.name)}<span class="count">${o.count}</span></button></li>`
   ).join("");
-  // Language picker — last row, three flag columns. Tapping a flag switches
-  // the whole UI (and bios/notable text) to that language.
+  // Language picker — last row, three columns. Per festival principle (no
+  // national flags), each cell shows a 2-letter code (IL / EN / PT) above
+  // the language name. Tapping switches the whole UI + bios/notable text.
   const langRow = `
     <li class="lang-row" aria-label="${escapeHtml(t("nav.language"))}">
       ${["en", "he", "pt"].map(lang => `
         <button class="lang-cell ${currentLang === lang ? "active" : ""}" data-set-lang="${lang}" type="button" aria-label="${escapeHtml(LANG_LABELS[lang])}">
-          <span class="lang-cell-flag">${LANG_FLAGS[lang]}</span>
+          <span class="lang-cell-code">${LANG_CODES[lang]}</span>
           <span class="lang-cell-name">${escapeHtml(LANG_LABELS[lang])}</span>
         </button>
       `).join("")}
@@ -2617,17 +2632,41 @@ function applyInitialRoute() {
 }
 
 // ===== Vertical dots auto-hide on idle =====
+// Only the reel's own VERTICAL scroll wakes the dots. Horizontal scrolls
+// inside artist pagers / hero pager are explicitly NOT activity for the
+// vertical dots — when the user starts a horizontal swipe the dots fade
+// away immediately ("you're not navigating the lineup right now"). 1.5s
+// after the last vertical scroll event the dots also relax.
 let dotsIdleTimer = null;
-function bumpDotsActivity() {
+let lastReelScrollTop = 0;
+function showVDots() {
   if (!verticalProgress) return;
   verticalProgress.classList.remove("is-idle");
   clearTimeout(dotsIdleTimer);
   dotsIdleTimer = setTimeout(() => {
     verticalProgress.classList.add("is-idle");
-  }, 2000);
+  }, 1500);
 }
-// Any scroll inside the reel (vertical) or its pagers wakes the dots.
-reel.addEventListener("scroll", bumpDotsActivity, { capture: true, passive: true });
+function hideVDotsImmediately() {
+  if (!verticalProgress) return;
+  clearTimeout(dotsIdleTimer);
+  verticalProgress.classList.add("is-idle");
+}
+// Vertical scroll on the reel itself = the user IS navigating the lineup.
+reel.addEventListener("scroll", () => {
+  const top = reel.scrollTop;
+  if (top !== lastReelScrollTop) {
+    lastReelScrollTop = top;
+    showVDots();
+  }
+}, { passive: true });
+// Horizontal scroll on any inner pager (hero or artist carousel) = the
+// user is exploring sideways, not browsing artists. Hide the dots now.
+reel.addEventListener("scroll", e => {
+  const t = e.target;
+  if (!t || t === reel) return;
+  if (t.closest?.(".pager, .hero-pager")) hideVDotsImmediately();
+}, { capture: true, passive: true });
 
 // Boot
 buildReel();
@@ -2638,8 +2677,8 @@ observeSections();
 setTimeout(() => setActiveSection(reel.querySelector(".section")), 50);
 // Apply deep-link from URL after first render
 setTimeout(applyInitialRoute, 80);
-// Start the idle countdown so dots fade if the user just sits there.
-bumpDotsActivity();
+// Start hidden — dots only appear once the user actually scrolls vertically.
+hideVDotsImmediately();
 
 // Try to merge build-time-fetched artist photos
 loadPhotos();
