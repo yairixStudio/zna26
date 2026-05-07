@@ -828,17 +828,18 @@ function wireHeroPager() {
   pager.addEventListener("scroll", () => {
     if (suppressHeroScroll) return;
     clearTimeout(heroScrollTimer);
+    // Live dot/bg tracking is handled by the global RAF loop on .reel scroll,
+    // so this debounced handler is left to the heavy work only — flipping
+    // activeStageFilter and re-rendering the artist sections below.
     heroScrollTimer = setTimeout(() => {
       const w = pager.clientWidth || 1;
       const idx = Math.round(Math.abs(pager.scrollLeft) / w);
       const stage = HERO_STAGES[idx]?.id;
       if (stage && stage !== activeStageFilter) {
         activeStageFilter = stage;
-        // Update dots & dropdown
-        updateHeroDots();
         buildStageDropdown();
-        // Re-render only artist sections beneath the hero
         rerenderArtistsBelowHero();
+        if (typeof syncUrlFromActive === "function") syncUrlFromActive();
       }
     }, 160);
   }, { passive: true });
@@ -1214,6 +1215,17 @@ function renderArtistSections(list) {
 // "delta > 1" to a naive clamp and trigger spurious "correction" scrolls
 // that can fight with the user's gestures and feel like vertical scroll
 // is broken on the section.
+// Container-level "I'm in the middle of a wrap-jump, leave me alone" flag.
+// When the user swipes past the last section we synthesise a smooth scroll
+// back to the hero — without this hint the snap-clamp below would read the
+// big delta as "user jumped > 1 step" and yank us back to the previous
+// section instead of letting the wrap finish.
+const wrappingContainers = new WeakSet();
+function markWrapInProgress(container, ms = 800) {
+  wrappingContainers.add(container);
+  setTimeout(() => wrappingContainers.delete(container), ms);
+}
+
 function installSnapClamp(container, axis) {
   if (!container || container.dataset.snapClamp === "1") return;
   container.dataset.snapClamp = "1";
@@ -1227,6 +1239,13 @@ function installSnapClamp(container, axis) {
   container.addEventListener("touchend", () => {
     setTimeout(() => {
       if (isCorrecting || startIdx === null) return;
+      // A wrap is mid-flight (e.g. last section → hero) — let it finish.
+      // Re-anchor startIdx to the new position so the next gesture reads
+      // a fresh delta.
+      if (wrappingContainers.has(container)) {
+        startIdx = Math.round(pos() / dim());
+        return;
+      }
       const w = dim();
       const idx = Math.round(pos() / w);
       const delta = idx - startIdx;
@@ -1331,6 +1350,30 @@ let liveTrackingStopTimer = null;
 
 function applyDotsForPager(pager) {
   if (!pager || !pager.isConnected) return;
+
+  // Hero pager: same live-tracking treatment as the artist pagers — a RAF
+  // loop polls scrollLeft and we update the active stage dot + bg tint
+  // every frame, so the dot keeps up with the finger. The HEAVY work
+  // (activeStageFilter mutation + rerendering artist sections) still
+  // debounces in wireHeroPager so the rerender doesn't fire mid-flick.
+  if (pager.classList.contains("hero-pager")) {
+    const wH = pager.clientWidth || 1;
+    const slH = Math.abs(pager.scrollLeft);
+    const idxH = Math.floor((slH + wH * 0.3) / wH);
+    const stage = HERO_STAGES[idxH]?.id;
+    if (!stage) return;
+    const dotsEl = document.getElementById("hero-dots");
+    if (dotsEl) {
+      dotsEl.querySelectorAll(".hero-dot").forEach(d => {
+        d.classList.toggle("active", d.dataset.stage === stage);
+      });
+    }
+    if (stageColor[stage]) bgScene.style.background = stageColor[stage];
+    const sec = reel.querySelector('[data-section="hero"]');
+    if (sec) sec.dataset.stage = stage;
+    return;
+  }
+
   const section = pager.closest('[data-section="artist"]');
   if (!section) return;
   const w = pager.clientWidth || 1;
@@ -1377,14 +1420,17 @@ function pingLiveTracking() {
 }
 
 reel.addEventListener("scroll", e => {
-  const pager = e.target?.closest?.(".pager");
+  // Match both artist .pager (carousel with clone bookends) and the hero
+  // .hero-pager (finite stage list) so both use the same RAF live-tracker.
+  const pager = e.target?.closest?.(".pager, .hero-pager");
   if (!pager) return;
   // Don't fire while we're snapping back from a clone — the synthetic scroll
   // would queue another settle, creating thrashing.
   if (pagersBeingWrapped.has(pager)) return;
 
   // Settle scheduling: scrollend if supported (zero-latency), else short
-  // polling fallback that only fires if scroll actually stopped.
+  // polling fallback that only fires if scroll actually stopped. The hero
+  // pager has no clones, so handlePagerSettle is a no-op for it (safe).
   if (supportsScrollend) {
     if (!pager.dataset.scrollendBound) {
       pager.dataset.scrollendBound = "1";
@@ -1433,9 +1479,10 @@ function handlePagerSettle(pager) {
 // Global delegated click for the per-artist horizontal panel dots.
 // Two-stage tap: the FIRST tap on the dots strip just "arms" it (the strip
 // grows ~3x, the pill chrome appears) so the user can hit a specific dot
-// accurately. Only taps while armed actually navigate. After 4 seconds of
-// no further taps, the strip relaxes back to its tiny idle state.
-const DOT_ARMED_TTL = 4000;
+// accurately. Only taps while armed actually navigate. After 2 seconds of
+// no further taps — or any tap outside the strip — it relaxes back to its
+// tiny idle state.
+const DOT_ARMED_TTL = 2000;
 const dotArmTimers = new WeakMap();
 
 function armDots(strip) {
@@ -1444,6 +1491,15 @@ function armDots(strip) {
   const old = dotArmTimers.get(strip);
   if (old) clearTimeout(old);
   dotArmTimers.set(strip, setTimeout(() => strip.classList.remove("is-armed"), DOT_ARMED_TTL));
+}
+
+function disarmAllDots(except) {
+  document.querySelectorAll(".dots.is-armed").forEach(strip => {
+    if (strip === except) return;
+    strip.classList.remove("is-armed");
+    const t = dotArmTimers.get(strip);
+    if (t) { clearTimeout(t); dotArmTimers.delete(strip); }
+  });
 }
 
 reel.addEventListener("click", e => {
@@ -1458,7 +1514,7 @@ reel.addEventListener("click", e => {
     return;
   }
   // Already armed: route a tap on a specific dot to its panel; any tap on
-  // the strip resets the 4s timer.
+  // the strip resets the 2s timer.
   armDots(strip); // refresh the TTL
   const dot = e.target.closest(".dot");
   if (!dot) return;
@@ -1469,6 +1525,16 @@ reel.addEventListener("click", e => {
     pager.children[realIdx + 1].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
   }
 });
+
+// Any tap (or touch) outside an armed dots strip is a strong "you don't
+// need this thing big anymore" signal — collapse the strip immediately
+// instead of waiting out the 2s TTL.
+function maybeDisarmFromOutside(e) {
+  const strip = e.target.closest?.(".dots");
+  disarmAllDots(strip || null);
+}
+document.addEventListener("pointerdown", maybeDisarmFromOutside, { passive: true, capture: true });
+document.addEventListener("touchstart", maybeDisarmFromOutside, { passive: true, capture: true });
 
 // ===== Vertical progress bar =====
 
@@ -1748,13 +1814,20 @@ function navVertical(dir) {
   if (!sections.length) return;
   const cur = getCurrentSection();
   const idx = cur ? sections.indexOf(cur) : 0;
-  // Vertical loop: scrolling past the last section wraps back to the hero;
-  // scrolling above the hero wraps to the last section.
   let nextIdx = idx + dir;
-  if (nextIdx < 0) nextIdx = sections.length - 1;
+  // Hero is the first section and is also "the top" — never wrap upwards
+  // from it. The user explicitly doesn't want pulling up from the hero to
+  // teleport them to the last artist (felt confusing). The downward wrap
+  // (last section → hero) is preserved.
+  if (nextIdx < 0) {
+    if (cur?.dataset.section === "hero") return;
+    nextIdx = sections.length - 1;
+  }
   if (nextIdx >= sections.length) nextIdx = 0;
   const next = sections[nextIdx];
   if (next && typeof next.scrollIntoView === "function") {
+    // Tell any listening snap-clamps that this big jump is intentional.
+    markWrapInProgress(reel, 800);
     next.scrollIntoView({ behavior: "smooth" });
   }
 }
@@ -1926,16 +1999,19 @@ reel.addEventListener("touchend", e => {
   const swipeUp = _verticalTouchY - endY;       // > 0 = finger moved up = trying to scroll DOWN
   _verticalTouchY = null;
   const atBottom = reel.scrollTop + reel.clientHeight >= reel.scrollHeight - 8;
-  const atTop = reel.scrollTop <= 8;
   if (atBottom && swipeUp > 70) {
-    // At the last section, swiping up further → loop back to first
+    // At the last section, swiping up further → loop back to the hero.
+    // Mark the wrap so the snap-clamp won't read the big delta as a
+    // "user jumped multiple sections" event and pull us to the previous
+    // section instead.
     const first = reel.querySelector(".section");
-    first?.scrollIntoView({ behavior: "smooth" });
-  } else if (atTop && swipeUp < -70) {
-    // At the first section, swiping down further → loop to last
-    const sections = reel.querySelectorAll(".section");
-    sections[sections.length - 1]?.scrollIntoView({ behavior: "smooth" });
+    if (first) {
+      markWrapInProgress(reel, 800);
+      first.scrollIntoView({ behavior: "smooth" });
+    }
   }
+  // No upward wrap from the hero — hero is the top, period. Pulling down
+  // there now just stays put (the snap-clamp keeps the user on the hero).
 }, { passive: true });
 
 function navHorizontal(dir) {
