@@ -178,25 +178,25 @@ a { color: var(--sun-yellow); }
 }
 .hero-pager::-webkit-scrollbar { display: none; }
 
-/* Idle peek hint: visually nudge the pager content sideways so the user
-   sees the next stage panel slide in from one edge while the current one
-   slides out the other. We animate the PANELS (children) — not the pager
-   itself — so the pager's clipping window stays put and the next panel
-   actually peeks into view. Animating the pager would have moved everything
-   together with no reveal.
-
-   We use CSS transitions (not @keyframes) so that if the user interacts
-   mid-peek and we yank the class off, the transform smoothly interpolates
-   from its current value back to 0 instead of snapping — no shake. */
-.hero-pager > .hero-panel {
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+/* Idle peek hint: nudge the entire hero deck sideways so the user
+   discovers the horizontal swipe gesture. Driving a single transform
+   on .hero-pager (instead of one transform per child .hero-panel)
+   lets the browser keep ONE composited layer for the whole deck —
+   the previous version was re-rasterising five panels, each with its
+   own backdrop-filter live-status pill, every frame, which is what
+   produced the shake/stutter the user saw. translate3d forces a
+   compositing layer; will-change is only set while .is-peeking is
+   on, so we don't permanently inflate memory. */
+.hero-pager {
+  transition: transform 720ms cubic-bezier(0.4, 0.04, 0.2, 1);
 }
-.hero-pager.peek-forward  > .hero-panel { transform: translateX(-16%); }
-.hero-pager.peek-backward > .hero-panel { transform: translateX(16%); }
+.hero-pager.is-peeking { will-change: transform; }
+.hero-pager.peek-forward  { transform: translate3d(-12%, 0, 0); }
+.hero-pager.peek-backward { transform: translate3d( 12%, 0, 0); }
 @media (prefers-reduced-motion: reduce) {
-  .hero-pager > .hero-panel { transition: none; }
-  .hero-pager.peek-forward  > .hero-panel,
-  .hero-pager.peek-backward > .hero-panel { transform: none; }
+  .hero-pager { transition: none; }
+  .hero-pager.peek-forward,
+  .hero-pager.peek-backward { transform: none; }
 }
 
 .hero-panel {
@@ -236,6 +236,12 @@ a { color: var(--sun-yellow); }
   user-select: none;
   -webkit-user-drag: none;
   filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.45));
+}
+.hero-stage-element > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  -webkit-user-drag: none;
 }
 
 .hero-dots {
@@ -335,6 +341,12 @@ body.has-mini-player .hero-dots {
   filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
   animation: zna-mark-float 6s ease-in-out infinite;
   user-select: none;
+  -webkit-user-drag: none;
+}
+.hero-zna-mark > img {
+  display: block;
+  width: 100%;
+  height: auto;
   -webkit-user-drag: none;
 }
 
@@ -873,6 +885,10 @@ body.has-mini-player .hero-dots {
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.2px;
+  /* Extra breathing room above + below the timer; the artist hero
+     stack uses gap, but a per-element margin lets us nudge just the
+     timer (not every sibling) without expanding the rest of the card. */
+  margin: 8px 0 6px;
 }
 
 .artist-set-time.is-tba {
@@ -965,19 +981,23 @@ body.has-mini-player .hero-dots {
    softly filled state once subscribed (state stored per-artist in
    localStorage). */
 .artist-subscribe {
-  margin-top: 8px;
+  margin-top: 4px;
   align-self: center;
+  /* hug-content sizing — was reading too tall vs the rest of the
+     hero stack, especially next to the slim countdown pill above. */
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
+  width: fit-content;
+  line-height: 1;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   color: rgba(255, 255, 255, 0.95);
   font-family: "Heebo", sans-serif;
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  padding: 7px 22px;
+  letter-spacing: 0.4px;
+  padding: 6px 14px;
   border-radius: 8px;
   cursor: pointer;
   direction: ltr;
@@ -988,11 +1008,7 @@ body.has-mini-player .hero-dots {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: block;
   transition: transform 0.2s ease;
 }
 
@@ -1025,15 +1041,14 @@ body.has-mini-player .hero-dots {
 /* More compact pill for the festival hero + per-stage heroes — same look,
    just smaller so it doesn't compete with the big timer/title above it. */
 .artist-subscribe--hero {
-  margin-top: 6px;
+  margin-top: 4px;
   font-size: 12px;
-  padding: 5px 16px;
+  padding: 5px 12px;
   gap: 6px;
 }
 .artist-subscribe--hero .sub-icon {
   width: 12px;
   height: 12px;
-  stroke-width: 2.6;
 }
 
 .artist-hero-art {
@@ -1562,7 +1577,12 @@ body.has-mini-player .panel {
 .vertical-progress {
   position: fixed;
   top: 50%;
-  inset-inline-start: 18px;
+  /* Pin to the left edge with a hard right:auto so a stale `right:8px`
+     from the inline critical CSS can't co-anchor and stretch the
+     strip across the viewport (which made the dots float in the
+     middle on desktop). */
+  left: 18px;
+  right: auto;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
@@ -2399,7 +2419,7 @@ body.has-mini-player .panel {
   .artist-hero-photo,
   .artist-hero-art { width: min(64vw, 200px); }
   .hud-hint { display: none; }
-  .vertical-progress { inset-inline-start: 4px; }
+  .vertical-progress { left: 4px; }
 }
 
 @media (min-width: 768px) {
@@ -2579,6 +2599,13 @@ body.has-mini-player .panel {
 /* Compact live status / countdown card with Apple-Calendar-style "now" line. */
 .hero-panel .live-status {
   width: min(340px, calc(100% - 36px));
+  /* border-box so the padding doesn't push our 340px-wide pill past
+     the visual width — fixes the countdown digits and progress bar
+     spilling outside the pill on phones. overflow:hidden caps any
+     stray child (e.g. the absolute-positioned live-now-dot) at the
+     pill's rounded edge. */
+  box-sizing: border-box;
+  overflow: hidden;
   display: grid;
   gap: 4px;
   padding: 10px 16px 12px;
@@ -2591,6 +2618,15 @@ body.has-mini-player .panel {
   color: var(--text);
   text-align: center !important;
   box-shadow: none;
+}
+
+/* Countdown grid never wider than its parent pill. flex-wrap is on
+   .countdown-timer, so units flow to a second row instead of pushing
+   the pill horizontally. */
+.hero-panel .live-status .countdown-timer {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .live-now-track {
@@ -3160,23 +3196,26 @@ body.is-on-hero #random-btn { display: inline-flex; }
   .hero-panel--main {
     padding: 32px 40px 100px;
   }
+  /* Tightened desktop sizes — prior values were comically large
+     and overflowed the live-status pill on smaller laptops. */
   .hero-panel--main .hero-zna-mark {
-    width: clamp(460px, 46vw, 720px);
+    width: clamp(320px, 30vw, 460px);
   }
   .hero-panel--main .logo-mark {
-    font-size: clamp(120px, 13vw, 220px);
-    line-height: 0.88;
+    font-size: clamp(80px, 9vw, 140px);
+    line-height: 0.92;
   }
   .hero-panel--main .hero-subtitle {
     font-size: 16px;
     letter-spacing: 6px;
   }
-  /* Stage panels: bigger wordmarks on desktop */
+  /* Stage panels: bigger than mobile but capped well below the previous
+     160px ceiling — the title was eating the live-status row. */
   .hero-panel--retro .logo-mark,
   .hero-panel--zambu .logo-mark,
   .hero-panel--guardians .logo-mark,
   .hero-panel--market .logo-mark {
-    font-size: clamp(72px, 9vw, 160px);
+    font-size: clamp(56px, 6.5vw, 110px);
   }
   .hero-panel .hero-tagline {
     font-size: 18px !important;

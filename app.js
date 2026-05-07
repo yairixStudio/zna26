@@ -749,9 +749,17 @@ function pictureTagStatic(base, opts = {}) {
   const { className = "", alt = "", loading = "lazy", width = 600, height = 600, fetchpriority = "" } = opts;
   const fp = fetchpriority ? ` fetchpriority="${fetchpriority}"` : "";
   const ariaHidden = alt === "" ? ' aria-hidden="true"' : "";
-  return `<picture>
+  // The class lands on the <picture> wrapper so the layout rules
+  // (e.g. .hero-stage-element { position: absolute }) target the
+  // outer block instead of the inner <img>. The inner <img> just
+  // fills its parent — keeping it untagged avoids inheriting the
+  // wrapper's position rules which would float it off-screen.
+  // That's why the 3D hero elements disappeared after the perf
+  // overhaul: same class applied to both picture and img made the
+  // img position absolute relative to a zero-sized picture.
+  return `<picture class="${className}">
   <source type="image/avif" srcset="${escapeHtml(base)}.avif">
-  <img class="${className}" src="${escapeHtml(base)}.webp" alt="${escapeHtml(alt)}" width="${width}" height="${height}" loading="${loading}"${fp} decoding="async"${ariaHidden} />
+  <img src="${escapeHtml(base)}.webp" alt="${escapeHtml(alt)}" width="${width}" height="${height}" loading="${loading}"${fp} decoding="async"${ariaHidden} />
 </picture>`;
 }
 
@@ -937,7 +945,6 @@ function heroPanelMain() {
       <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
-      ${subscribeButton("festival", "artist-subscribe--hero")}
       <p class="hero-disclaimer">${escapeHtml(t("hero.disclaimer"))}</p>
     </div>
   `;
@@ -1162,8 +1169,11 @@ function rand01(seed) {
 // No backend — toggling just stores the key locally so the state
 // survives a reload. Icons swap between "+" and "✓".
 const SUBSCRIBE_STORAGE_KEY = "zna-subscriptions";
-const SUBSCRIBE_ICON_PLUS  = '<svg class="sub-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg>';
-const SUBSCRIBE_ICON_CHECK = '<svg class="sub-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>';
+// Heroicons (solid, mini @ 20×20) — filled glyphs render crisper than
+// the 2-pixel-stroked version we shipped before, especially at the
+// 12px size used inside the small subscribe pill on phones.
+const SUBSCRIBE_ICON_PLUS  = '<svg class="sub-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>';
+const SUBSCRIBE_ICON_CHECK = '<svg class="sub-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>';
 
 function getSubscriptions() {
   try {
@@ -2115,7 +2125,7 @@ let isPeeking = false;
 const PEEK_IDLE_MS = 3500;   // first nudge fairly soon
 const PEEK_NEXT_MS = 8000;   // subsequent nudges further apart
 const PEEK_HOLD_MS = 550;    // how long to hold at the peeked position
-const PEEK_TRANSITION_MS = 700; // matches CSS transition duration
+const PEEK_TRANSITION_MS = 720; // matches CSS transition duration
 
 function schedulePeek(delay = PEEK_IDLE_MS) {
   if (isPeeking) return;
@@ -2132,7 +2142,7 @@ function cancelPeek() {
   heroPeekReleaseTimer = null;
   if (isPeeking) {
     const heroPager = document.getElementById("hero-pager");
-    heroPager?.classList.remove("peek-forward", "peek-backward");
+    heroPager?.classList.remove("peek-forward", "peek-backward", "is-peeking");
     isPeeking = false;
   }
 }
@@ -2153,13 +2163,15 @@ function performPeek() {
   const cls = dir > 0 ? "peek-forward" : "peek-backward";
 
   isPeeking = true;
-  heroPager.classList.add(cls);
-  // Hold at the peeked position, then remove the class — the CSS transition
-  // smoothly slides back to translateX(0). Reschedule once the slide back
-  // has finished so the next peek doesn't fight an in-flight transition.
+  // Add is-peeking first so will-change kicks in BEFORE the transform —
+  // the browser hoists the deck onto its own GPU layer ahead of the
+  // first frame, which is what made the previous version stutter.
+  heroPager.classList.add("is-peeking");
+  requestAnimationFrame(() => heroPager.classList.add(cls));
   heroPeekHoldTimer = setTimeout(() => {
     heroPager.classList.remove(cls);
     heroPeekReleaseTimer = setTimeout(() => {
+      heroPager.classList.remove("is-peeking");
       isPeeking = false;
       if (getCurrentSection()?.dataset.section === "hero") {
         schedulePeek(PEEK_NEXT_MS);
