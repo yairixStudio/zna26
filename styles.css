@@ -244,32 +244,50 @@ a { color: var(--sun-yellow); }
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
   z-index: 12;
-  padding: 8px 14px;
-  background: rgba(10, 5, 36, 0.85);
-  border: 1px solid var(--card-border);
+  /* Idle: transparent strip with generous padding for the tap target — same
+     two-stage tap behavior as the per-artist .dots strip. The first tap arms
+     the strip (pill chrome appears), the second tap navigates. */
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 18px 24px;
   border-radius: 999px;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  transition: bottom 0.25s ease, background 0.25s ease, border-color 0.25s ease, padding 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-dots.is-armed {
+  background: rgba(10, 5, 36, 0.92);
+  border-color: var(--card-border);
+  padding: 12px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   border: none;
   padding: 0;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.3);
-  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.55);
+  transition: width 0.18s ease, height 0.18s ease, background 0.25s ease;
+  box-sizing: content-box;
+  outline: 8px solid transparent;
+  outline-offset: -8px;
 }
 
 .hero-dot.active {
   background: var(--sun-yellow);
-  width: 24px;
+  width: 18px;
   border-radius: 999px;
-  box-shadow: 0 0 12px var(--sun-yellow);
+  box-shadow: 0 0 10px var(--sun-yellow);
 }
 
 body.has-mini-player .hero-dots {
@@ -1316,13 +1334,51 @@ body.has-mini-player .hero-dots {
   outline-offset: -8px;
 }
 
-/* Armed state: dots grow to ~3x for accurate tapping. */
-.dots.is-armed .dot {
-  width: 14px;
-  height: 14px;
+/* Armed state: a mild base bump so dots are visible, plus the dock-style
+   graduated magnification driven by [data-near] (set by JS pointer
+   tracking). Only the touched dot + its 1-2 neighbours grow; the rest stay
+   compact so the strip never sprawls off-screen even with many panels. */
+.dots.is-armed .dot,
+.hero-dots.is-armed .hero-dot {
+  width: 9px;
+  height: 9px;
 }
-.dots.is-armed .dot.active {
-  width: 32px;
+.dots.is-armed .dot.active,
+.hero-dots.is-armed .hero-dot.active {
+  width: 22px;
+}
+
+/* Graduated magnification: data-near goes 0 (focused) → 2 (further). The
+   focused dot is comfortably tappable; neighbours are softly enlarged so
+   the bump feels smooth rather than punchy. */
+.dots.is-armed .dot[data-near="2"],
+.hero-dots.is-armed .hero-dot[data-near="2"] {
+  width: 12px;
+  height: 12px;
+}
+.dots.is-armed .dot[data-near="1"],
+.hero-dots.is-armed .hero-dot[data-near="1"] {
+  width: 16px;
+  height: 16px;
+}
+.dots.is-armed .dot[data-near="0"],
+.hero-dots.is-armed .hero-dot[data-near="0"] {
+  width: 22px;
+  height: 22px;
+}
+
+/* Active dot stays pill-shaped; magnification stretches its width too. */
+.dots.is-armed .dot.active[data-near="2"],
+.hero-dots.is-armed .hero-dot.active[data-near="2"] {
+  width: 28px;
+}
+.dots.is-armed .dot.active[data-near="1"],
+.hero-dots.is-armed .hero-dot.active[data-near="1"] {
+  width: 36px;
+}
+.dots.is-armed .dot.active[data-near="0"],
+.hero-dots.is-armed .hero-dot.active[data-near="0"] {
+  width: 44px;
 }
 
 /* Soft fade over the bottom of the panel so scrolled content doesn't visually
@@ -2494,7 +2550,8 @@ body.has-mini-player .panel {
   }
   .hero-hint { font-size: 10px; margin-top: 6px; }
   .hero-stage-tag { font-size: 10px; letter-spacing: 4px; margin-bottom: 6px; }
-  .hero-dots { bottom: 10px; padding: 5px 10px; }
+  .hero-dots { bottom: 10px; padding: 14px 18px; }
+  .hero-dots.is-armed { padding: 8px 12px; }
   .hero-stage-element { display: none; } /* save the GPU + room */
 
   /* Artist sections: tighter padding so dots and content don't fight. */

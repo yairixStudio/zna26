@@ -900,13 +900,10 @@ function wireHeroPager() {
     }, 160);
   }, { passive: true });
 
-  if (dots) {
-    dots.addEventListener("click", e => {
-      const btn = e.target.closest(".hero-dot");
-      if (!btn) return;
-      scrollHeroToStage(btn.dataset.stage, false);
-    });
-  }
+  // The hero-dots strip uses the same delegated two-stage tap handler as
+  // the per-artist .dots strip (see armDots/global click handler below) —
+  // first tap arms it, second tap navigates. We only need the dedicated
+  // listener to stay quiet here.
 }
 
 function scrollHeroToStage(stageId, instant) {
@@ -1535,12 +1532,15 @@ function handlePagerSettle(pager) {
   setTimeout(() => pagersBeingWrapped.delete(pager), 250);
 }
 
-// Global delegated click for the per-artist horizontal panel dots.
-// Two-stage tap: the FIRST tap on the dots strip just "arms" it (the strip
-// grows ~3x, the pill chrome appears) so the user can hit a specific dot
-// accurately. Only taps while armed actually navigate. After 2 seconds of
-// no further taps — or any tap outside the strip — it relaxes back to its
-// tiny idle state.
+// Global delegated click for the horizontal dots strips — both the
+// per-artist panel dots (.dots / .dot) AND the hero stage dots (.hero-dots
+// / .hero-dot). Two-stage tap: the FIRST tap on the strip just "arms" it
+// (the pill chrome appears, dots get visible) so the user can hit a
+// specific dot accurately. Only taps while armed actually navigate. After
+// 2 seconds of no further taps — or any tap outside the strip — it relaxes
+// back to its tiny idle state.
+const DOT_STRIP_SELECTOR = ".dots, .hero-dots";
+const DOT_BTN_SELECTOR = ".dot, .hero-dot";
 const DOT_ARMED_TTL = 2000;
 const dotArmTimers = new WeakMap();
 
@@ -1549,47 +1549,143 @@ function armDots(strip) {
   strip.classList.add("is-armed");
   const old = dotArmTimers.get(strip);
   if (old) clearTimeout(old);
-  dotArmTimers.set(strip, setTimeout(() => strip.classList.remove("is-armed"), DOT_ARMED_TTL));
+  dotArmTimers.set(strip, setTimeout(() => {
+    strip.classList.remove("is-armed");
+    clearDotMagnify(strip);
+  }, DOT_ARMED_TTL));
 }
 
 function disarmAllDots(except) {
-  document.querySelectorAll(".dots.is-armed").forEach(strip => {
+  document.querySelectorAll(".dots.is-armed, .hero-dots.is-armed").forEach(strip => {
     if (strip === except) return;
     strip.classList.remove("is-armed");
+    clearDotMagnify(strip);
     const t = dotArmTimers.get(strip);
     if (t) { clearTimeout(t); dotArmTimers.delete(strip); }
   });
 }
 
-reel.addEventListener("click", e => {
-  // Did the user tap the dots strip at all? (a .dot element OR the .dots
-  // container itself — the bigger idle padding catches off-target taps).
-  const strip = e.target.closest(".dots");
+// ===== Smart dock-style magnification for the dots strip =====
+// When the strip is armed, we track the pointer's X position over the
+// strip and tag the closest dot with data-near="0", its immediate
+// neighbours with data-near="1", and the next ring out with data-near="2".
+// CSS turns those tags into graduated width/height bumps, so only the
+// area under the finger enlarges — the rest of the dots stay compact.
+// This keeps the strip from sprawling off-screen when there are many
+// panels and lets the user place their tap precisely.
+
+function clearDotMagnify(strip) {
   if (!strip) return;
-  const wasArmed = strip.classList.contains("is-armed");
-  // First tap on a relaxed strip: just arm it. Don't navigate yet.
-  if (!wasArmed) {
-    armDots(strip);
+  strip.querySelectorAll("[data-near]").forEach(d => { delete d.dataset.near; });
+}
+
+function updateDotMagnify(strip, clientX) {
+  if (!strip || !strip.classList.contains("is-armed")) {
+    clearDotMagnify(strip);
+    return -1;
+  }
+  const dots = strip.querySelectorAll(DOT_BTN_SELECTOR);
+  if (!dots.length) return -1;
+  let bestIdx = 0, bestDist = Infinity;
+  for (let i = 0; i < dots.length; i++) {
+    const r = dots[i].getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const dist = Math.abs(cx - clientX);
+    if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+  }
+  dots.forEach((d, i) => {
+    const dd = Math.abs(i - bestIdx);
+    if (dd === 0) d.dataset.near = "0";
+    else if (dd === 1) d.dataset.near = "1";
+    else if (dd === 2) d.dataset.near = "2";
+    else if (d.dataset.near != null) delete d.dataset.near;
+  });
+  return bestIdx;
+}
+
+// Route a tap on a specific dot (or "near enough" to one) to its target.
+// Hero strip → scroll the hero-pager to that stage; artist strip → scroll
+// the artist's pager to that panel.
+function navigateDotTap(strip, dotEl) {
+  if (!dotEl) return;
+  if (strip.classList.contains("hero-dots")) {
+    const stage = dotEl.dataset.stage;
+    if (stage && typeof scrollHeroToStage === "function") scrollHeroToStage(stage, false);
     return;
   }
-  // Already armed: route a tap on a specific dot to its panel; any tap on
-  // the strip resets the 2s timer.
-  armDots(strip); // refresh the TTL
-  const dot = e.target.closest(".dot");
-  if (!dot) return;
   const section = strip.closest('[data-section="artist"]');
   const pager = section?.querySelector(".pager");
-  const realIdx = +dot.dataset.panel;
+  const realIdx = +dotEl.dataset.panel;
   if (pager && pager.children[realIdx + 1]) {
     pager.children[realIdx + 1].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
   }
+}
+
+reel.addEventListener("click", e => {
+  // Did the user tap the dots strip at all? (a dot button OR the strip
+  // container itself — the bigger idle padding catches off-target taps).
+  const strip = e.target.closest(DOT_STRIP_SELECTOR);
+  if (!strip) return;
+  const wasArmed = strip.classList.contains("is-armed");
+  // First tap on a relaxed strip: arm it AND seed the magnification under
+  // the tap so the user can immediately see which dot they're aiming at.
+  // Don't navigate yet.
+  if (!wasArmed) {
+    armDots(strip);
+    updateDotMagnify(strip, e.clientX);
+    return;
+  }
+  // Already armed: route a tap on a specific dot to its target; any tap
+  // on the strip resets the 2s timer.
+  armDots(strip);
+  let dot = e.target.closest(DOT_BTN_SELECTOR);
+  // Fallback: if the click landed on whitespace inside the strip but
+  // there's a magnified dot under the pointer, treat that as the target.
+  if (!dot) {
+    const focusedIdx = updateDotMagnify(strip, e.clientX);
+    if (focusedIdx >= 0) {
+      dot = strip.querySelectorAll(DOT_BTN_SELECTOR)[focusedIdx];
+    }
+  }
+  navigateDotTap(strip, dot);
 });
+
+// Live magnification: as the pointer moves over an armed strip, bump the
+// nearest dot. Use document-level delegation so we cover dots strips
+// rendered later too.
+document.addEventListener("pointermove", e => {
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
+  if (!strip) return;
+  if (!strip.classList.contains("is-armed")) return;
+  updateDotMagnify(strip, e.clientX);
+}, { passive: true });
+
+// Touchscreen: pointer events fire too, but iOS Safari sometimes drops
+// pointermove during scroll-snap. Mirror with touchmove on the strips for
+// a reliable update.
+document.addEventListener("touchmove", e => {
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
+  if (!strip || !strip.classList.contains("is-armed")) return;
+  const t = e.touches && e.touches[0];
+  if (t) updateDotMagnify(strip, t.clientX);
+}, { passive: true });
+
+// Pointer leaves a strip (or lifts off): relax the magnification but
+// leave the strip armed — the 2s TTL still runs.
+document.addEventListener("pointerout", e => {
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
+  if (!strip) return;
+  // Only clear when the pointer truly left the strip, not just moved to a
+  // descendant (e.g. from padding into a dot button).
+  if (e.relatedTarget && strip.contains(e.relatedTarget)) return;
+  clearDotMagnify(strip);
+}, { passive: true });
 
 // Any tap (or touch) outside an armed dots strip is a strong "you don't
 // need this thing big anymore" signal — collapse the strip immediately
 // instead of waiting out the 2s TTL.
 function maybeDisarmFromOutside(e) {
-  const strip = e.target.closest?.(".dots");
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
   disarmAllDots(strip || null);
 }
 document.addEventListener("pointerdown", maybeDisarmFromOutside, { passive: true, capture: true });
