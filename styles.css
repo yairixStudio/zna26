@@ -1175,12 +1175,25 @@ body.has-mini-player .hero-dots {
   display: flex;
   gap: 6px;
   z-index: 12;
-  background: rgba(10, 5, 36, 0.92);
-  padding: 8px 14px;
+  /* Idle state: just the dots, no pill chrome. Generous padding makes the
+     whole strip a bigger tap target (the user's first tap arms it without
+     navigating). */
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 18px 24px;
   border-radius: 999px;
-  border: 1px solid var(--card-border);
-  transition: bottom 0.25s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: bottom 0.25s ease, background 0.25s ease, border-color 0.25s ease, padding 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: none;
+}
+
+/* Armed state — appears after the user's first tap on the strip. Now the
+   pill chrome is visible (so the targets read as buttons) and the dots are
+   big enough to hit accurately. A 4s timer reverts back to idle. */
+.dots.is-armed {
+  background: rgba(10, 5, 36, 0.92);
+  border-color: var(--card-border);
+  padding: 12px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
 .dot {
@@ -1192,6 +1205,19 @@ body.has-mini-player .hero-dots {
   border: none;
   padding: 0;
   cursor: pointer;
+  /* Bigger invisible touch target around each dot — easier to hit. */
+  box-sizing: content-box;
+  outline: 8px solid transparent;
+  outline-offset: -8px;
+}
+
+/* Armed state: dots grow to ~3x for accurate tapping. */
+.dots.is-armed .dot {
+  width: 14px;
+  height: 14px;
+}
+.dots.is-armed .dot.active {
+  width: 32px;
 }
 
 /* Soft fade over the bottom of the panel so scrolled content doesn't visually
@@ -1724,6 +1750,55 @@ body.has-mini-player .panel {
   background: linear-gradient(135deg, rgba(255, 92, 138, 0.85), rgba(255, 126, 31, 0.85));
   color: white;
   font-weight: 800;
+}
+
+/* Language picker row at the bottom of the stage dropdown menu — three
+   columns of flag + name. Tapping switches the whole UI language. */
+.stage-select-menu .lang-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.stage-select-menu .lang-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 11px;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.stage-select-menu .lang-cell:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.stage-select-menu .lang-cell.active {
+  background: linear-gradient(135deg, rgba(255, 92, 138, 0.85), rgba(255, 126, 31, 0.85));
+  color: white;
+  font-weight: 800;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.stage-select-menu .lang-cell-flag {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.stage-select-menu .lang-cell-name {
+  font-size: 11px;
+  letter-spacing: 0.2px;
 }
 
 .stage-select-menu .count {

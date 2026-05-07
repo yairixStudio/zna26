@@ -1356,3 +1356,696 @@ const ARTIST_EXTRAS = {
     channels: { spotify: "https://open.spotify.com/artist/1GYwH0iIUKPlyhrcSq8rJ8" }
   }
 };
+
+
+// Per-artist translations: bio / notable / country / born in EN and PT.
+// HE versions live on the source ARTISTS records — these are the additions.
+// Merged in app.js at boot via tArtist().
+const ARTIST_TRANSLATIONS = {
+  "yahel": {
+    "en": {
+      "bio": "Yahel Sherman, one of the most beloved producers in the Israeli trance scene. He started DJing at 14 and in the 90s crafted euphoric trance moments with melodies that became immortal. At ZNA he closes the 24 hours of Zambu Temple — the peak experience of the festival.",
+      "notable": "Signed to the legendary HOMmega label of the late Eyal Yankovich",
+      "country": "🇮🇱 Israel",
+      "born": "12.5.1976"
+    },
+    "pt": {
+      "bio": "Yahel Sherman, um dos produtores mais queridos da cena trance israelita. Começou a fazer DJ aos 14 anos e nos anos 90 criou momentos de trance eufóricos com melodias que se tornaram imortais. No ZNA fecha as 24 horas do Zambu Temple — a experiência culminante do festival.",
+      "notable": "Assinou pela lendária editora HOMmega do falecido Eyal Yankovich",
+      "country": "🇮🇱 Israel",
+      "born": "12.5.1976"
+    }
+  },
+  "tsuyoshi-suzuki": {
+    "en": {
+      "bio": "A psychedelic samurai from the Land of the Rising Sun. A living Goa Trance legend — moved to London in 1992 and founded Matsuri Productions, which became one of the most influential labels in the genre's history. He played the historic Return To The Source parties and came back to launch Matsuri Digital in 2009 to bring the sound to a new generation.",
+      "notable": "Founder of Matsuri Productions / Matsuri Digital, member of Prana",
+      "country": "🇯🇵 Japan (London)",
+      "born": "1967"
+    },
+    "pt": {
+      "bio": "Um samurai psicadélico da Terra do Sol Nascente. Uma lenda viva do Goa Trance — mudou-se para Londres em 1992 e fundou a Matsuri Productions, que se tornou uma das editoras mais influentes da história do género. Tocou nas históricas festas Return To The Source e regressou para lançar a Matsuri Digital em 2009, levando o som a uma nova geração.",
+      "notable": "Fundador da Matsuri Productions / Matsuri Digital, membro dos Prana",
+      "country": "🇯🇵 Japão (Londres)",
+      "born": "1967"
+    }
+  },
+  "kris-kylven": {
+    "en": {
+      "bio": "Producer, composer, electronic drummer and visual artist. In 1995 he became a Goa Trance pioneer with mythical projects: Syb Unity Nettwerk, UX (with Pete Martin), Element Over Nature and Odds. At ZNA he crafts the celestial transition between night and day with the classic sound he shaped in mid-90s London.",
+      "notable": "One of the genre's founding fathers. Signed to Transient, Flying Rhino, Sirius",
+      "country": "🇸🇪 Sweden / 🇫🇷 France",
+      "born": "active since 1995"
+    },
+    "pt": {
+      "bio": "Produtor, compositor, baterista electrónico e artista visual. Em 1995 tornou-se um pioneiro do Goa Trance com projectos míticos: Syb Unity Nettwerk, UX (com Pete Martin), Element Over Nature e Odds. No ZNA cria a transição celestial entre noite e dia com o som clássico que moldou na Londres de meados dos anos 90.",
+      "notable": "Um dos pais do género. Assinou pela Transient, Flying Rhino, Sirius",
+      "country": "🇸🇪 Suécia / 🇫🇷 França",
+      "born": "ativo desde 1995"
+    }
+  },
+  "simon-ghahary": {
+    "en": {
+      "bio": "A massive and influential force in the 90s psychedelic music scene. In 1994 he founded the legendary London label Blue Room Released, which transformed the face of Goa Trance. Under his stewardship came groundbreaking albums by Juno Reactor, Total Eclipse, Koxbox, X-Dream and Saafi Brothers. He brought freshness and new experiments that pushed the genre beyond 'classic Goa'.",
+      "notable": "Founder of Blue Room Released — one of the most important labels in psytrance history",
+      "country": "🇬🇧 UK",
+      "born": "12.5.1972"
+    },
+    "pt": {
+      "bio": "Uma força enorme e influente na cena de música psicadélica dos anos 90. Em 1994 fundou a lendária editora londrina Blue Room Released, que transformou a cara do Goa Trance. Sob a sua direcção saíram álbuns inovadores dos Juno Reactor, Total Eclipse, Koxbox, X-Dream e Saafi Brothers. Trouxe frescura e novas experiências que levaram o género para além do 'Goa clássico'.",
+      "notable": "Fundador da Blue Room Released — uma das editoras mais importantes da história do psytrance",
+      "country": "🇬🇧 Reino Unido",
+      "born": "12.5.1972"
+    }
+  },
+  "ray-castle": {
+    "en": {
+      "bio": "Since 1987, one of the most influential DJs at the early Goa parties in India — blending house, breaks, dub, techno and rock into a hybrid sound from which Goa psytrance was born in the early 90s. He brought the outdoor party concept to Japan in 1988 and is considered one of the founders of the Australian trance scene.",
+      "notable": "Projects: Rhythmystic, Masaray, Insectoid, Mantaray. Author of 'Moon Juice Stomper'",
+      "country": "🇳🇿 New Zealand",
+      "born": "active since the late 60s"
+    },
+    "pt": {
+      "bio": "Desde 1987, um dos DJs mais influentes nas primeiras festas de Goa na Índia — misturava house, breaks, dub, techno e rock num som híbrido do qual nasceu o Goa psytrance no início dos anos 90. Levou o conceito de festas ao ar livre para o Japão em 1988 e é considerado um dos fundadores da cena trance australiana.",
+      "notable": "Projectos: Rhythmystic, Masaray, Insectoid, Mantaray. Autor de 'Moon Juice Stomper'",
+      "country": "🇳🇿 Nova Zelândia",
+      "born": "ativo desde finais dos anos 60"
+    }
+  },
+  "robert-leiner": {
+    "en": {
+      "bio": "A Swedish legend who transformed European techno. He released on the legendary Belgian R&S Records in the early 90s, putting out masterpieces of acid techno and trance. Today, from his base in Gothenburg, he plays live modular sets that blend warm ambient with deep techno.",
+      "notable": "Debut album 'Organized Noise' — a masterpiece of pure acid techno",
+      "country": "🇸🇪 Sweden",
+      "born": "1.8.1966"
+    },
+    "pt": {
+      "bio": "Uma lenda sueca que transformou a techno europeia. Lançou pela lendária editora belga R&S Records no início dos anos 90 e produziu obras-primas de acid techno e trance. Hoje, a partir da sua base em Gotemburgo, toca sets modulares ao vivo que misturam ambient quente com techno profunda.",
+      "notable": "Álbum de estreia 'Organized Noise' — uma obra-prima de acid techno puro",
+      "country": "🇸🇪 Suécia",
+      "born": "1.8.1966"
+    }
+  },
+  "sean-williams": {
+    "en": {
+      "bio": "The creative force behind the beloved Process and Satori projects. One of the founders of Goa Trance who shaped the genre's evolution with innovative soundscapes. Worked in the studio with James Monro, Simon Posford (Hallucinogen), Tristan and Tsuyoshi Suzuki. Also a member of the Beast project with Hallucinogen.",
+      "notable": "Satori with Pete Martin — one of the iconic Goa projects",
+      "country": "🇬🇧 UK",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "A força criativa por trás dos amados projectos Process e Satori. Um dos fundadores do Goa Trance que moldou a evolução do género com paisagens sonoras inovadoras. Trabalhou em estúdio com James Monro, Simon Posford (Hallucinogen), Tristan e Tsuyoshi Suzuki. Também membro do projecto Beast com Hallucinogen.",
+      "notable": "Satori com Pete Martin — um dos projectos icónicos do Goa",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "james-monro": {
+    "en": {
+      "bio": "Co-founder of the legendary Flying Rhino Records label (1995). He lived through the early days of acid house and the summer waves of '88-'89, the Goa beaches in the early 90s, and on through the global festival circuit. Hundreds of releases to his name — a prolific creator with a psychedelic touch in every style.",
+      "notable": "Flying Rhino Records — home of British psytrance in the 90s",
+      "country": "🇬🇧 UK / 🇧🇷 Brazil",
+      "born": "active since 1988"
+    },
+    "pt": {
+      "bio": "Cofundador da lendária editora Flying Rhino Records (1995). Viveu os primeiros dias do acid house e as ondas de Verão de 88-89, as praias de Goa no início dos anos 90 e o circuito global de festivais. Centenas de lançamentos no seu nome — um criador prolífico com um toque psicadélico em todos os estilos.",
+      "notable": "Flying Rhino Records — a casa do psytrance britânico nos anos 90",
+      "country": "🇬🇧 Reino Unido / 🇧🇷 Brasil",
+      "born": "ativo desde 1988"
+    }
+  },
+  "joti-sidhu": {
+    "en": {
+      "bio": "One of the pioneers of psychedelic trance. Acid house in 1988 pulled him into the world of electronic music, and he started DJing in Brighton at 17. In 1993 he produced and created Ayahuasca with Steve Ronan and Dino Psaras, and in 1994 he launched the solo project Psychaos, which deeply influenced the Goa and psytrance scene that followed.",
+      "notable": "Psychaos — one of the most respected projects of classic Goa",
+      "country": "🇬🇧 UK",
+      "born": "active since 1988"
+    },
+    "pt": {
+      "bio": "Um dos pioneiros do psytrance. O acid house em 1988 puxou-o para o mundo da música electrónica e começou a fazer DJ em Brighton aos 17 anos. Em 1993 produziu e criou os Ayahuasca com Steve Ronan e Dino Psaras, e em 1994 lançou o projecto a solo Psychaos, que influenciou profundamente a cena Goa e psytrance que se seguiu.",
+      "notable": "Psychaos — um dos projectos mais respeitados do Goa clássico",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde 1988"
+    }
+  },
+  "extrawelt": {
+    "en": {
+      "bio": "A Hamburg duo who started in 2000 as Midi Miliz in psytrance, and from 2005 broke through as Extrawelt into minimal techno, releasing on James Holden's Border Community and other top-tier labels. Their ZNA set crosses the line between retro and futuristic.",
+      "notable": "Soopertrack — the single that launched them in a big way on James Holden's label",
+      "country": "🇩🇪 Germany",
+      "born": "active since 2005"
+    },
+    "pt": {
+      "bio": "Um duo de Hamburgo que começou em 2000 como Midi Miliz no psytrance, e a partir de 2005 entrou em força como Extrawelt no minimal techno, lançando na Border Community de James Holden e em outras editoras de topo. O set deles no ZNA cruza fronteiras entre o retro e o futurista.",
+      "notable": "Soopertrack — o single que os lançou em grande na editora de James Holden",
+      "country": "🇩🇪 Alemanha",
+      "born": "ativos desde 2005"
+    }
+  },
+  "mathew-jonson": {
+    "en": {
+      "bio": "One of the most distinctive voices in modern dance music. A classical pianist and jazz drummer from childhood, he got his hands on synthesizers at age 9 with help from his musician father. Co-founder of the Wagon Repair label. His love of analog gear and real-time playing turns his shows into unique, living experiences.",
+      "notable": "Co-founder of Wagon Repair, member of Cobblestone Jazz",
+      "country": "🇨🇦 Canada / 🇩🇪 Berlin",
+      "born": "Vancouver"
+    },
+    "pt": {
+      "bio": "Uma das vozes mais distintas da música de dança moderna. Pianista clássico e baterista de jazz desde a infância, pôs as mãos em sintetizadores aos 9 anos com a ajuda do pai músico. Cofundador da editora Wagon Repair. O seu gosto por equipamento analógico e por tocar em tempo real transforma os seus concertos em experiências vivas e únicas.",
+      "notable": "Cofundador da Wagon Repair, membro dos Cobblestone Jazz",
+      "country": "🇨🇦 Canadá / 🇩🇪 Berlim",
+      "born": "Vancouver"
+    }
+  },
+  "gabriel-le-mar": {
+    "en": {
+      "bio": "From Frankfurt. In 1996, after travels in India, he founded Saafi Brothers with Michael Kohlbecker and Groovetitan to explore spiritual flight zones in exotic club settings. Their sound — smoky, contemplative ambient dub — first came out on Blue Room Released. In live performances he plays guitars, bass and dub mixer.",
+      "notable": "Saafi Brothers — cornerstones of psybient and chill-out",
+      "country": "🇩🇪 Germany",
+      "born": "active since 1993"
+    },
+    "pt": {
+      "bio": "De Frankfurt. Em 1996, após viagens pela Índia, fundou os Saafi Brothers com Michael Kohlbecker e Groovetitan para explorar zonas de voo espiritual em ambientes de clube exóticos. O som deles — ambient dub fumarento e contemplativo — saiu primeiro na Blue Room Released. Em concerto toca guitarras, baixo e dub mixer.",
+      "notable": "Saafi Brothers — pedras angulares do psybient e do chill-out",
+      "country": "🇩🇪 Alemanha",
+      "born": "ativo desde 1993"
+    }
+  },
+  "psara": {
+    "en": {
+      "bio": "An active presence in the Portuguese scene for 30 years. An extraordinary craftsman at telling stories with the great tracks of the 90s — he knows how to take the crowd on a sculpted, deep journey that feels like another time and place. Co-founder of ZNA Gathering.",
+      "notable": "Master of 'Goa Guardians' — keepers of the legacy. Co-founder of the festival",
+      "country": "🇵🇹 Portugal",
+      "born": "30 years in the scene"
+    },
+    "pt": {
+      "bio": "Uma presença activa na cena portuguesa há 30 anos. Um artesão extraordinário a contar histórias com os grandes temas dos anos 90 — sabe levar o público numa viagem esculpida e profunda que parece outro tempo e outro lugar. Cofundador do ZNA Gathering.",
+      "notable": "Mestre dos 'Goa Guardians' — guardiões do legado. Cofundador do festival",
+      "country": "🇵🇹 Portugal",
+      "born": "30 anos na cena"
+    }
+  },
+  "ukiro": {
+    "en": {
+      "bio": "A powerful presence in the Swedish Goa scene since the early 90s. Known for his enormous record collection and encyclopedic knowledge. He has played all-vinyl sets across Europe, the US and Mexico.",
+      "notable": "One of the most respected record collectors in the scene",
+      "country": "🇸🇪 Sweden",
+      "born": "active since the early 90s"
+    },
+    "pt": {
+      "bio": "Uma presença poderosa na cena Goa sueca desde o início dos anos 90. Conhecido pela sua enorme colecção de discos e pelo conhecimento enciclopédico. Tocou sets de vinil pela Europa, EUA e México.",
+      "notable": "Um dos coleccionadores de discos mais respeitados da cena",
+      "country": "🇸🇪 Suécia",
+      "born": "ativo desde o início dos anos 90"
+    }
+  },
+  "damir-ludvig": {
+    "en": {
+      "bio": "One of the strong voices of Croatian Goa. Reuniting with Goran Stetic at ZNA 2026 — going back to the music they made in the 90s and sharpening it for the advanced sound system of Zambu Temple.",
+      "notable": "B2B with Goran Stetic — a reunion of the Croatian legend",
+      "country": "🇭🇷 Croatia",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Uma das vozes fortes do Goa croata. Reúne-se de novo com Goran Stetic no ZNA 2026 — regressam à música que criaram nos anos 90 e afinam-na para o sistema de som avançado do Zambu Temple.",
+      "notable": "B2B com Goran Stetic — reunião da lenda croata",
+      "country": "🇭🇷 Croácia",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "goran-stetic": {
+    "en": {
+      "bio": "One of the icons of Goa Trance in Croatia. Reuniting with Damir Ludvig for a special set at ZNA — a journey into treasures that haven't been heard in a long time.",
+      "notable": "B2B with Damir Ludvig — a historic encounter",
+      "country": "🇭🇷 Croatia",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um dos ícones do Goa Trance na Croácia. Reúne-se de novo com Damir Ludvig para um set especial no ZNA — uma viagem por tesouros que há muito não se ouviam.",
+      "notable": "B2B com Damir Ludvig — um encontro histórico",
+      "country": "🇭🇷 Croácia",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "dogma": {
+    "en": {
+      "bio": "The most internationally recognised Croatian Goa project. In 1997 they released their iconic debut album 'Land of Utopia' on the British Blue Moon label. They played London's Brixton Academy, the Roxy in New York, Lust in Tokyo, Dynamo Dvash in Tel Aviv, and in front of 700,000 people at Germany's Love Parade. After years apart, they're reuniting especially for ZNA 2026.",
+      "notable": "'Land of Utopia' (1997, Blue Moon) — a cornerstone of European Goa",
+      "country": "🇭🇷 Croatia",
+      "born": "1996"
+    },
+    "pt": {
+      "bio": "O projecto Goa croata com maior reconhecimento internacional. Em 1997 lançaram o icónico álbum de estreia 'Land of Utopia' pela editora britânica Blue Moon. Tocaram no Brixton Academy em Londres, no Roxy em Nova Iorque, no Lust em Tóquio, no Dynamo Dvash em Telavive e perante 700 000 pessoas na Love Parade alemã. Após anos separados, reúnem-se especialmente para o ZNA 2026.",
+      "notable": "'Land of Utopia' (1997, Blue Moon) — pedra angular do Goa europeu",
+      "country": "🇭🇷 Croácia",
+      "born": "1996"
+    }
+  },
+  "alex-tolstey": {
+    "en": {
+      "bio": "Founder and head of Boshke Beats Records (active since 2001). A legend of the scene's free-thinking — moves through rock, disco, techno, electro and trance in a single flow. In recent years he also performs under the project Triple Distilled Disco Squad — 'Slow disco-techno from beyond'.",
+      "notable": "Founder of Boshke Beats Records — a cult psytrance label",
+      "country": "🇪🇪 Estonia",
+      "born": "active since 2001"
+    },
+    "pt": {
+      "bio": "Fundador e responsável da Boshke Beats Records (activa desde 2001). Uma lenda do pensamento livre na cena — atravessa rock, disco, techno, electro e trance num único fluxo. Nos últimos anos actua também sob o projecto Triple Distilled Disco Squad — 'Slow disco-techno from beyond'.",
+      "notable": "Fundador da Boshke Beats Records — uma editora de culto do psytrance",
+      "country": "🇪🇪 Estónia",
+      "born": "ativo desde 2001"
+    }
+  },
+  "alien-rain": {
+    "en": {
+      "bio": "The acid-techno project of Berlin's Milton Bradley. He has dedicated his career to reviving the raw energy of 90s 303 acid with a modern experimental edge. Releases on his own label Alien Communications, as well as on Mord and Out of Place. A respected name in the Berlin underground scene.",
+      "notable": "The vinyl-only EP series 'Alien Rain I-VI' — a contemporary acid techno classic",
+      "country": "🇩🇪 Berlin",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "O projecto acid-techno de Milton Bradley, de Berlim. Dedica a carreira a fazer renascer a energia crua do acid 303 dos anos 90 com um lado experimental moderno. Lança na sua própria editora Alien Communications e também na Mord e na Out of Place. Um nome respeitado na cena underground berlinense.",
+      "notable": "A série de EPs só em vinil 'Alien Rain I-VI' — um clássico contemporâneo do acid techno",
+      "country": "🇩🇪 Berlim",
+      "born": "ativo na cena"
+    }
+  },
+  "anais-lin": {
+    "en": {
+      "bio": "A selector with an extraordinary ear — Goa, progressive and trance with French elegance.",
+      "notable": "Retro Universe artist",
+      "country": "🇫🇷 France",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Uma selectora com um ouvido extraordinário — Goa, progressive e trance com elegância francesa.",
+      "notable": "Artista do Retro Universe",
+      "country": "🇫🇷 França",
+      "born": "ativa na cena"
+    }
+  },
+  "extra-cheers": {
+    "en": {
+      "bio": "A Retro Universe artist — part of ZNA 2026's retro Goa journey.",
+      "notable": "Retro Universe",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Artista do Retro Universe — faz parte da viagem retro Goa do ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "marc-van-der-vlugt": {
+    "en": {
+      "bio": "A veteran DJ from the early 90s psychedelic scene — blending industrial soundscapes with heavy psychedelic atmospheres. Worked as a promoter for the British labels Blue Room Released and Atomic Records. He withdrew in 2000 and returned to the scene after being invited to ZNA Gathering 2020.",
+      "notable": "1998 album 'Behind The Scenes' (Psilowave) — a milestone of tech-psy",
+      "country": "🇳🇱 Netherlands",
+      "born": "active since the early 90s"
+    },
+    "pt": {
+      "bio": "Um DJ veterano da cena psicadélica do início dos anos 90 — misturava paisagens sonoras industriais com atmosferas psicadélicas pesadas. Trabalhou como promotor das editoras britânicas Blue Room Released e Atomic Records. Retirou-se em 2000 e regressou à cena depois de ser convidado para o ZNA Gathering 2020.",
+      "notable": "O álbum de 1998 'Behind The Scenes' (Psilowave) — um marco do tech-psy",
+      "country": "🇳🇱 Países Baixos",
+      "born": "ativo desde o início dos anos 90"
+    }
+  },
+  "solitare": {
+    "en": {
+      "bio": "A classically trained pianist who fell into psytrance in Tokyo in 1994 and became one of the key selectors of root-deep 90s Goa Trance. Co-producer and DJ for Italy's DAT Records and international representative of Matsuri Digital. His vinyl-only sets have made him a fixture at Zambu Temple and at retro parties around the world.",
+      "notable": "Marathon vinyl sets — an asset of the retro scene",
+      "country": "🇨🇦 Canada (Vancouver)",
+      "born": "1994"
+    },
+    "pt": {
+      "bio": "Um pianista de formação clássica que caiu no psytrance em Tóquio em 1994 e se tornou um dos selectores-chave do Goa Trance de raiz dos anos 90. Coprodutor e DJ na italiana DAT Records e representante internacional da Matsuri Digital. Os seus sets só em vinil tornaram-no presença habitual no Zambu Temple e em festas retro por todo o mundo.",
+      "notable": "Sets maratona em vinil — um trunfo da cena retro",
+      "country": "🇨🇦 Canadá (Vancouver)",
+      "born": "1994"
+    }
+  },
+  "earl-peal": {
+    "en": {
+      "bio": "A Retro Universe artist at ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Artista do Retro Universe no ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "isoquant": {
+    "en": {
+      "bio": "A retro Goa artist with a live performance at ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Um artista de Goa retro com actuação ao vivo no ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "gabi-von-dub": {
+    "en": {
+      "bio": "A Portuguese DJ and producer working from Arctic Dub studio — specialising in ambient, post-dub techno and dub-inspired experimental electronics. Curator and central pillar of the Arctic Dub label (Sursumcorda), active in the Portuguese underground dub and bass community.",
+      "notable": "The 'Arctic Dub Sursumcorda' compilation series — a cornerstone of Portuguese dub",
+      "country": "🇵🇹 Portugal",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "DJ e produtor português que trabalha a partir do estúdio Arctic Dub — especializa-se em ambient, post-dub techno e electrónica experimental inspirada no dub. Curador e pilar central da editora Arctic Dub (Sursumcorda), activo na comunidade underground portuguesa de dub e bass.",
+      "notable": "A série de compilações 'Arctic Dub Sursumcorda' — pedra angular do dub português",
+      "country": "🇵🇹 Portugal",
+      "born": "ativo na cena"
+    }
+  },
+  "ree-k": {
+    "en": {
+      "bio": "A pioneering Japanese DJ and producer — playing since 1992 and part of the extended Matsuri Productions/Digital family that helped seed the Japanese psytrance scene. In 2002 she founded the Hypnodisk label. Her artistic philosophy aims at conscious transformation through sound. She sometimes performs with her partner Masa as the duo Kinocosmo.",
+      "notable": "'Yammataikoku' album (1996, Psy-Harmonics) — a cornerstone of Japanese Goa",
+      "country": "🇯🇵 Japan",
+      "born": "active since 1992"
+    },
+    "pt": {
+      "bio": "Uma DJ e produtora japonesa pioneira — toca desde 1992 e faz parte da família alargada da Matsuri Productions/Digital que ajudou a semear a cena psytrance japonesa. Em 2002 fundou a editora Hypnodisk. A sua filosofia artística aponta para a transformação da consciência através do som. Por vezes actua com o seu parceiro Masa no duo Kinocosmo.",
+      "notable": "O álbum 'Yammataikoku' (1996, Psy-Harmonics) — pedra angular do Goa japonês",
+      "country": "🇯🇵 Japão",
+      "born": "ativa desde 1992"
+    }
+  },
+  "klil-co": {
+    "en": {
+      "bio": "A Retro Universe selector — part of the ZNA 2026 family.",
+      "notable": "Retro Universe",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Selector do Retro Universe — faz parte da família ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "mathew-tecnica": {
+    "en": {
+      "bio": "A live Goa project — part of the Retro Universe lineup at ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Projecto Goa ao vivo — faz parte do alinhamento do Retro Universe no ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "triple-distilled": {
+    "en": {
+      "bio": "The freestyle DJ project of Alex 'Boshke' Tolstey, founder of Boshke Beats Records (active since 2001). The set is unplanned and eclectic — rock, disco, techno, electro and trance merge into one improvised flow. 'Slow disco-techno from beyond' — a hyper-card at festivals like Daad Gathering.",
+      "notable": "Daad Gathering 2022 — a legendary mini-max disco and techno performance",
+      "country": "🇪🇪 Estonia",
+      "born": "collective"
+    },
+    "pt": {
+      "bio": "O projecto de DJ em estilo freestyle de Alex 'Boshke' Tolstey, fundador da Boshke Beats Records (activa desde 2001). O set não é planeado e é eclético — rock, disco, techno, electro e trance fundem-se num só fluxo improvisado. 'Slow disco-techno from beyond' — um trunfo absoluto em festivais como o Daad Gathering.",
+      "notable": "Daad Gathering 2022 — uma actuação lendária de mini-max disco e techno",
+      "country": "🇪🇪 Estónia",
+      "born": "colectivo"
+    }
+  },
+  "bill-robin-maya": {
+    "en": {
+      "bio": "A powerful B2B duo — a deep Goa experience at Zambu Temple.",
+      "notable": "Zambu Temple B2B",
+      "country": "🌍 International",
+      "born": "duo"
+    },
+    "pt": {
+      "bio": "Um poderoso duo B2B — uma experiência Goa profunda no Zambu Temple.",
+      "notable": "Zambu Temple B2B",
+      "country": "🌍 Internacional",
+      "born": "duo"
+    }
+  },
+  "e-sko": {
+    "en": {
+      "bio": "A Retro Universe selector — member of the ZNA 2026 family.",
+      "notable": "Retro Universe",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Selector do Retro Universe — membro da família ZNA 2026.",
+      "notable": "Retro Universe",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "sancho-meiso": {
+    "en": {
+      "bio": "Chill vibes and spiritual depth — part of ZNA's market and warm-up area.",
+      "notable": "Market vibes",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Vibe chill e profundidade espiritual — parte da zona de Market e warm-up do ZNA.",
+      "notable": "Market vibes",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "jaia": {
+    "en": {
+      "bio": "The live Goa Trance project of France's Jérôme Hervé. His debut album 'Blue Energy' (1998, Mosaïc) is a cornerstone of the French scene. At ZNA 2026 he opens the dancefloor with a build-up set.",
+      "notable": "'Mai Mai' from 'Blue Energy' (1998, Mosaïc) — a French classic",
+      "country": "🇫🇷 France",
+      "born": "active since the late 90s"
+    },
+    "pt": {
+      "bio": "O projecto de Goa Trance ao vivo do francês Jérôme Hervé. O seu álbum de estreia 'Blue Energy' (1998, Mosaïc) é uma pedra angular da cena francesa. No ZNA 2026 abre a pista de dança com um set de build-up.",
+      "notable": "'Mai Mai' do álbum 'Blue Energy' (1998, Mosaïc) — um clássico francês",
+      "country": "🇫🇷 França",
+      "born": "ativo desde finais dos anos 90"
+    }
+  },
+  "graham-wood": {
+    "en": {
+      "bio": "A Goa Trance legend — part of The Infinity Project and co-founder of the legendary British TIP Records. He produced the records that shaped the sound of classic Goa. At ZNA 2026 he unleashes his full mastery in Retro Universe.",
+      "notable": "The Infinity Project / TIP Records — among the labels that defined Goa",
+      "country": "🇬🇧 UK",
+      "born": "active since the early 90s"
+    },
+    "pt": {
+      "bio": "Uma lenda do Goa Trance — parte de The Infinity Project e cofundador da lendária britânica TIP Records. Produziu os discos que moldaram o som do Goa clássico. No ZNA 2026 liberta toda a sua mestria no Retro Universe.",
+      "notable": "The Infinity Project / TIP Records — entre as editoras que definiram o Goa",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde o início dos anos 90"
+    }
+  },
+  "sid-shanti": {
+    "en": {
+      "bio": "A veteran DJ and producer whose musical intuition helped define an era. Returning to ZNA 2026 for a special set.",
+      "notable": "Exclusive vinyl VS set with Orion at ZNA 2026",
+      "country": "🌍 International",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um DJ e produtor veterano cuja intuição musical ajudou a definir uma época. Regressa ao ZNA 2026 para um set especial.",
+      "notable": "Set VS exclusivo em vinil com Orion no ZNA 2026",
+      "country": "🌍 Internacional",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "orion-borelli": {
+    "en": {
+      "bio": "A key figure from the formative years of psytrance. At ZNA 2026 he shares records in an exclusive VS set with Sid Shanti — for all the diehards of the scene.",
+      "notable": "VS Sid Shanti — a special vinyl encounter",
+      "country": "🇩🇰 Denmark / 🇫🇷 France",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Uma figura-chave dos anos formativos do psytrance. No ZNA 2026 partilha discos num set VS exclusivo com Sid Shanti — para todos os apaixonados da cena.",
+      "notable": "VS Sid Shanti — um encontro especial em vinil",
+      "country": "🇩🇰 Dinamarca / 🇫🇷 França",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "takeshi-isogai": {
+    "en": {
+      "bio": "A Japanese experimental producer active since the mid-90s. Better known under the alias Ubar Tmar with the album 'Fusion' (1997, Boom!) and 'True' (1998, Matsuri). His live performances turn into psychedelic 'music labyrinths'.",
+      "notable": "Ubar Tmar — the 'Fusion' and 'True' albums of classic Japanese Goa",
+      "country": "🇯🇵 Japan",
+      "born": "active since the mid-90s"
+    },
+    "pt": {
+      "bio": "Um produtor experimental japonês activo desde meados dos anos 90. Mais conhecido pelo nome Ubar Tmar, com o álbum 'Fusion' (1997, Boom!) e 'True' (1998, Matsuri). Os seus concertos transformam-se em 'labirintos musicais' psicadélicos.",
+      "notable": "Ubar Tmar — os álbuns 'Fusion' e 'True' do Goa japonês clássico",
+      "country": "🇯🇵 Japão",
+      "born": "ativo desde meados dos anos 90"
+    }
+  },
+  "battle-future-buddhas": {
+    "en": {
+      "bio": "An artist of night soundtracks — a legend on Boom Records with the album 'Twin Sharkfins'. Dark, intense night sets that pull the crowd through deep tunnels of time.",
+      "notable": "Album 'Twin Sharkfins' (Boom Records) — a night-time classic",
+      "country": "🇸🇪 Sweden",
+      "born": "active since the late 90s"
+    },
+    "pt": {
+      "bio": "Um artista de bandas sonoras nocturnas — uma lenda da Boom Records com o álbum 'Twin Sharkfins'. Sets nocturnos escuros e intensos que arrastam o público por túneis profundos de tempo.",
+      "notable": "Álbum 'Twin Sharkfins' (Boom Records) — um clássico nocturno",
+      "country": "🇸🇪 Suécia",
+      "born": "ativo desde finais dos anos 90"
+    }
+  },
+  "goaacen": {
+    "en": {
+      "bio": "A leading Portuguese DJ and Suntrip artist — exploring the darker, deeper territories of Goa Trance. Part of the Goa Guardians lineup.",
+      "notable": "DJ for the Suntrip label — a leading imprint of modern Goa",
+      "country": "🇵🇹 Portugal",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Um DJ português de referência e artista da Suntrip — explora os territórios mais escuros e profundos do Goa Trance. Faz parte do alinhamento dos Goa Guardians.",
+      "notable": "DJ da editora Suntrip — uma editora de referência do Goa moderno",
+      "country": "🇵🇹 Portugal",
+      "born": "ativo na cena"
+    }
+  },
+  "dark-el-kante": {
+    "en": {
+      "bio": "A leading DJ of the Suomisaundi genre — the eccentric, free-spirited Finnish Goa Trance. He runs the non-profit Random Records label, which supports indigenous rights organisations.",
+      "notable": "Random Records — an activist label",
+      "country": "🌍 International",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "DJ de referência do género Suomisaundi — o Goa Trance finlandês excêntrico e de espírito livre. Dirige a editora sem fins lucrativos Random Records, que apoia organizações de direitos dos povos indígenas.",
+      "notable": "Random Records — uma editora activista",
+      "country": "🌍 Internacional",
+      "born": "ativo na cena"
+    }
+  },
+  "merrow": {
+    "en": {
+      "bio": "Brice Pruit — a French pioneer of modern Goa. Producing since the early 2000s with releases on Suntrip and Global Sect. The album 'Odysseus' (2019, Global Sect) is one of his best-known journeys.",
+      "notable": "Album 'Odysseus' (2019, Global Sect)",
+      "country": "🇫🇷 France",
+      "born": "active since the early 2000s"
+    },
+    "pt": {
+      "bio": "Brice Pruit — um pioneiro francês do Goa moderno. Produz desde o início dos anos 2000 com lançamentos na Suntrip e Global Sect. O álbum 'Odysseus' (2019, Global Sect) é uma das suas viagens mais conhecidas.",
+      "notable": "Álbum 'Odysseus' (2019, Global Sect)",
+      "country": "🇫🇷 França",
+      "born": "ativo desde o início dos anos 2000"
+    }
+  },
+  "atmos": {
+    "en": {
+      "bio": "A Swedish Goa Trance artist who was one of the strongest producers on Spirit Zone Recordings in the late 90s. His style — melodic, dreamy and colourful — became one of the signature voices of Scandinavian Goa. A Retro Universe artist at ZNA 2026.",
+      "notable": "Spirit Zone albums and the heyday of classic Goa — a return to the roots",
+      "country": "🇸🇪 Sweden",
+      "born": "active since the late 90s"
+    },
+    "pt": {
+      "bio": "Um artista sueco de Goa Trance que foi um dos produtores mais fortes da Spirit Zone Recordings em finais dos anos 90. O seu estilo — melódico, sonhador e colorido — tornou-se uma das vozes marcantes do Goa escandinavo. Artista do Retro Universe no ZNA 2026.",
+      "notable": "Álbuns na Spirit Zone e o auge do Goa clássico — um regresso às raízes",
+      "country": "🇸🇪 Suécia",
+      "born": "ativo desde finais dos anos 90"
+    }
+  },
+  "alphanaut": {
+    "en": {
+      "bio": "An English project that began in the late 90s with the 12 inch 'India / Abduction / Centauri' (1997). Meticulous production in the classic Goa Trance sound — live performances that feel like a memory restored.",
+      "notable": "One of the recognised projects of British classic Goa",
+      "country": "🇬🇧 UK",
+      "born": "active since 1997"
+    },
+    "pt": {
+      "bio": "Um projecto inglês que começou em finais dos anos 90 com o 12 polegadas 'India / Abduction / Centauri' (1997). Produção minuciosa no som clássico do Goa Trance — concertos ao vivo que parecem uma memória restaurada.",
+      "notable": "Um dos projectos reconhecidos do Goa clássico britânico",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativos desde 1997"
+    }
+  },
+  "blue-planet-corporation": {
+    "en": {
+      "bio": "The solo project of Gabriel Massorel — a French pioneer of Goa Trance. Releases on France's Mosaïc Records. At ZNA 2026 he returns with a full live performance of euphoric, psychedelic experience.",
+      "notable": "'Overbloody Flood' (1993) — one of the pioneering French Goa tracks",
+      "country": "🇫🇷 France",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "O projecto a solo de Gabriel Massorel — um pioneiro francês do Goa Trance. Lança na francesa Mosaïc Records. No ZNA 2026 regressa com um concerto ao vivo completo de experiência eufórica e psicadélica.",
+      "notable": "'Overbloody Flood' (1993) — um dos temas pioneiros do Goa francês",
+      "country": "🇫🇷 França",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "merv-eat-static": {
+    "en": {
+      "bio": "Merv Pepler, co-founder of the legendary Eat Static together with Joie Hinton — the team that created British psychedelic electronic music in the 90s through Planet Dog. Also a member of Ozric Tentacles. A special live performance at Zambu Temple.",
+      "notable": "Eat Static / Planet Dog Records — the fathers of British psychedelic techno",
+      "country": "🇬🇧 UK",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Merv Pepler, cofundador dos lendários Eat Static juntamente com Joie Hinton — a equipa que criou a música electrónica psicadélica britânica dos anos 90 através da Planet Dog. Também membro dos Ozric Tentacles. Uma actuação ao vivo especial no Zambu Temple.",
+      "notable": "Eat Static / Planet Dog Records — os pais da techno psicadélica britânica",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "cosmosis": {
+    "en": {
+      "bio": "Bill Halsey, one of the most beloved producers of classic Goa. He released his debut album 'Cosmology' (1996) on Transient Records and started his own label, Holophonic. His sets are euphoric psychedelic strips that feel like flying through space.",
+      "notable": "'Cosmology' (1996, Transient) — a masterpiece of classic Goa",
+      "country": "🇬🇧 UK",
+      "born": "active since 1995"
+    },
+    "pt": {
+      "bio": "Bill Halsey, um dos produtores mais queridos do Goa clássico. Lançou o álbum de estreia 'Cosmology' (1996) na Transient Records e abriu a sua própria editora, Holophonic. Os seus sets são fitas psicadélicas eufóricas que parecem um voo pelo espaço.",
+      "notable": "'Cosmology' (1996, Transient) — uma obra-prima do Goa clássico",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde 1995"
+    }
+  },
+  "filteria": {
+    "en": {
+      "bio": "Yannis Tsikas — a Greek who lives in Stockholm, one of the leaders of the Goa Trance revival. His debut album 'Sky Input' (2004, Suntrip) reignited the genre and set a new standard for melodic, powerful, stormy Goa. Live performance at ZNA 2026.",
+      "notable": "'Sky Input' (2004, Suntrip) — a revolutionary album that became a neo-Goa icon",
+      "country": "🇬🇷 Greece / 🇸🇪 Stockholm",
+      "born": "active since 2003"
+    },
+    "pt": {
+      "bio": "Yannis Tsikas — um grego que vive em Estocolmo, um dos líderes do renascimento do Goa Trance. O seu álbum de estreia 'Sky Input' (2004, Suntrip) reacendeu o género e definiu um novo padrão para um Goa melódico, poderoso e tempestuoso. Concerto ao vivo no ZNA 2026.",
+      "notable": "'Sky Input' (2004, Suntrip) — um álbum revolucionário que se tornou ícone do neo-Goa",
+      "country": "🇬🇷 Grécia / 🇸🇪 Estocolmo",
+      "born": "ativo desde 2003"
+    }
+  },
+  "sjamadan": {
+    "en": {
+      "bio": "A Scandinavian Goa vinyl selector — part of Goa Guardians at ZNA 2026.",
+      "notable": "Goa Guardians artist — keeper of the legacy",
+      "country": "🇩🇰 Denmark",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Um selector escandinavo de Goa em vinil — faz parte dos Goa Guardians no ZNA 2026.",
+      "notable": "Artista dos Goa Guardians — guardião do legado",
+      "country": "🇩🇰 Dinamarca",
+      "born": "ativo na cena"
+    }
+  }
+};

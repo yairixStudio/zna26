@@ -19,52 +19,158 @@ const searchOverlay = document.getElementById("search-overlay");
 const searchInput = document.getElementById("search-input");
 const searchResults = document.getElementById("search-results");
 
-// Language picker
-const langSelectEl = document.getElementById("lang-select");
-const langBtn = document.getElementById("lang-btn");
-const langFlag = document.getElementById("lang-flag");
-const langMenu = document.getElementById("lang-menu");
-
+// ===== i18n =====
+// Three supported languages. UI defaults to English; users can switch via
+// the flag-row at the bottom of the stage dropdown menu.
 const LANG_FLAGS = { he: "🇮🇱", en: "🇬🇧", pt: "🇵🇹" };
 const LANG_LABELS = { he: "עברית", en: "English", pt: "Português" };
 let currentLang = (function() {
-  try { return localStorage.getItem("zna-lang") || "he"; }
-  catch (_) { return "he"; }
+  try {
+    const stored = localStorage.getItem("zna-lang");
+    if (stored && LANG_FLAGS[stored]) return stored;
+  } catch (_) {}
+  return "en"; // default English per product spec
 })();
+
+// All UI strings keyed by short id, with HE/EN/PT values. Missing translations
+// fall back through EN → HE → the key itself.
+const STRINGS = {
+  // Navigation / generic
+  "nav.all":           { he: "הכל", en: "All", pt: "Tudo" },
+  "nav.searchArtist":  { he: "חיפוש אומן", en: "Search artist", pt: "Procurar artista" },
+  "nav.backHome":      { he: "חזרה לדף הראשי", en: "Back to home", pt: "Voltar ao início" },
+  "nav.language":      { he: "שפה", en: "Language", pt: "Idioma" },
+  "nav.stage":         { he: "במה", en: "Stage", pt: "Palco" },
+
+  // Artist panels
+  "panel.about":       { he: "אודות", en: "About", pt: "Sobre" },
+  "panel.bio":         { he: "ביוגרפיה", en: "Biography", pt: "Biografia" },
+  "panel.tracks":      { he: "טראקים", en: "Tracks", pt: "Faixas" },
+  "panel.tracksTop":   { he: "טראקים נבחרים", en: "Selected tracks", pt: "Faixas selecionadas" },
+  "panel.discography": { he: "דיסקוגרפיה", en: "Discography", pt: "Discografia" },
+  "panel.discographyTop": { he: "דיסקוגרפיה נבחרת", en: "Selected discography", pt: "Discografia selecionada" },
+  "panel.streaming":   { he: "סטרימינג", en: "Streaming", pt: "Streaming" },
+  "panel.moreLinks":   { he: "קישורים נוספים", en: "More links", pt: "Mais ligações" },
+  "panel.label":       { he: "🎧", en: "🎧", pt: "🎧" },
+  "panel.tba":         { he: "המידע יתעדכן בקרוב", en: "Information will be updated soon", pt: "Informação será atualizada em breve" },
+  "panel.ariaPanelN":  { he: "פאנל", en: "Panel", pt: "Painel" },
+
+  // Tracks empty state
+  "tracks.empty":      { he: "עדיין לא הוספנו טראקים מאומתים. חפשו ביוטיוב:", en: "No verified tracks yet. Search on YouTube:", pt: "Ainda sem faixas verificadas. Procurar no YouTube:" },
+  "tracks.searchYT":   { he: "▶ חיפוש ב-YouTube", en: "▶ Search on YouTube", pt: "▶ Procurar no YouTube" },
+  "tracks.play":       { he: "נגן", en: "Play", pt: "Reproduzir" },
+
+  // Hero
+  "hero.subtitle":     { he: "RETRO · FUTURISTIC · GATHERING", en: "RETRO · FUTURISTIC · GATHERING", pt: "RETRO · FUTURISTIC · GATHERING" },
+  "hero.artistsCount": { he: "אומנים", en: "artists", pt: "artistas" },
+  "hero.diveStage":    { he: "↓ צללו לתוך הבמה", en: "↓ Dive into the stage", pt: "↓ Mergulhe no palco" },
+  "hero.swipeRightHint":{ he: "החליקו ימינה לבמות הפסטיבל →", en: "Swipe right for the festival stages →", pt: "Deslize para a direita pelos palcos →" },
+  "hero.disclaimer":   { he: "אתר מעריצים בלתי-רשמי, נבנה ע״י משתתפים מתנדבים — לא קשור לארגון הפסטיבל.", en: "Unofficial fan site, built by volunteer attendees — not affiliated with the festival's organisation.", pt: "Site de fãs não oficial, criado por voluntários — sem afiliação à organização do festival." },
+
+  // Live status
+  "live.now":          { he: "עכשיו בלייב", en: "Live now", pt: "Em direto agora" },
+  "live.notStarted":   { he: "האירוע עוד לא התחיל", en: "The event hasn't started yet", pt: "O evento ainda não começou" },
+  "live.ended":        { he: "האירוע הסתיים", en: "The event has ended", pt: "O evento terminou" },
+  "live.tba":          { he: "לוח הזמנים T.B.A.", en: "Schedule T.B.A.", pt: "Horário T.B.A." },
+  "live.idle":         { he: "אין סט פעיל כרגע", en: "No active set right now", pt: "Sem set ativo neste momento" },
+  "live.startsNow":    { he: "מתחיל עכשיו", en: "Starts now", pt: "Começa agora" },
+  "live.daysHHMM":     { he: "עוד {d} ימים · {hm}", en: "{d} days · {hm}", pt: "{d} dias · {hm}" },
+  "live.hoursHHMM":    { he: "עוד {hm} שעות", en: "in {hm}", pt: "em {hm}" },
+  "live.minutesM":     { he: "עוד {m} דקות", en: "in {m} min", pt: "dentro de {m} min" },
+
+  // Set time badge
+  "setTime.tba":       { he: "שעת הופעה: T.B.A.", en: "Set time: T.B.A.", pt: "Horário do set: T.B.A." },
+
+  // Announcement
+  "announced.prefix":  { he: "📣 הוכרז ב-", en: "📣 Announced on ", pt: "📣 Anunciado em " },
+
+  // Mini-player
+  "mp.next":           { he: "הבא:", en: "Next up:", pt: "A seguir:" },
+  "mp.endOfList":      { he: "סוף הרשימה", en: "End of the queue", pt: "Fim da lista" },
+  "mp.close":          { he: "סגור", en: "Close", pt: "Fechar" },
+  "mp.skip":           { he: "הטראק הבא", en: "Next track", pt: "Próxima faixa" },
+  "mp.expand":         { he: "הגדל / הקטן", en: "Expand / collapse", pt: "Expandir / minimizar" },
+
+  // Search
+  "search.placeholder":{ he: "חפש אומן...", en: "Search artist…", pt: "Procurar artista…" },
+  "search.empty":      { he: "לא נמצא אומן בשם הזה", en: "No artist matches that name", pt: "Nenhum artista encontrado" },
+
+  // Stream icon hover
+  "stream.officialChannel": { he: "ערוץ רשמי", en: "Official channel", pt: "Canal oficial" },
+
+  // ZNA festival meta (kept consistent across languages where natural)
+  "festival.dates":    { he: "15-22 ביולי 2026", en: "15-22 July 2026", pt: "15-22 julho 2026" },
+  "festival.location": { he: "ים מונטרגיל, פורטוגל", en: "Lake Montargil, Portugal", pt: "Lago de Montargil, Portugal" },
+  "festival.description": {
+    he: "המקדש העולמי של גואה טראנס בסגנון הישן. פסטיבל דו-שנתי עם כ-5,000 משתתפים בלבד שחוגג את רוח אנג'ונה של שנות ה-90.",
+    en: "The world headquarters of old-school Goa Trance. A biennial gathering of just 5,000 attendees celebrating the spirit of '90s Anjuna.",
+    pt: "A sede mundial do Goa Trance da velha-guarda. Encontro bienal de apenas 5.000 participantes que celebra o espírito de Anjuna nos anos 90."
+  },
+
+  // Stage names + descriptions
+  "stage.retro":           { he: "Retro Universe", en: "Retro Universe", pt: "Retro Universe" },
+  "stage.zambu":           { he: "Zambu Temple", en: "Zambu Temple", pt: "Zambu Temple" },
+  "stage.guardians":       { he: "Goa Guardians", en: "Goa Guardians", pt: "Goa Guardians" },
+  "stage.market":          { he: "Market", en: "Market", pt: "Market" },
+  "stage.retro.desc":      { he: "במה ראשית - גואה טראנס קלאסי", en: "Main stage — classic Goa Trance", pt: "Palco principal — Goa Trance clássico" },
+  "stage.zambu.desc":      { he: "מקדש הריקודים - 24 שעות פסיכדליה רצופות", en: "Dancefloor temple — 24 continuous hours of psychedelia", pt: "Templo da pista — 24 horas de psicadelismo contínuo" },
+  "stage.guardians.desc":  { he: "במת הוויניל - שומרי הסאונד הישן", en: "The vinyl stage — guardians of the old sound", pt: "Palco do vinil — guardiões do som antigo" },
+  "stage.market.desc":     { he: "במת חימום ושוק", en: "Warm-up & market stage", pt: "Palco de aquecimento e mercado" }
+};
+
+// Hebrew month names — used by the announced-on date formatter when current
+// language is HE. EN uses English months; PT uses Portuguese.
+const MONTH_NAMES = {
+  he: ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"],
+  en: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+  pt: ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"]
+};
+
+// Look up a UI string by key, with optional {placeholder} substitution.
+function t(key, vars) {
+  const entry = STRINGS[key];
+  if (!entry) return key;
+  let str = entry[currentLang] || entry.en || entry.he || key;
+  if (vars) Object.keys(vars).forEach(k => { str = str.replace(`{${k}}`, vars[k]); });
+  return str;
+}
+
+// Per-artist translated field. Falls back through current lang → en → he → original.
+function tArtist(a, field) {
+  const tr = a.translations || {};
+  return tr[currentLang]?.[field] || tr.en?.[field] || tr.he?.[field] || a[field] || "";
+}
+
+// Per-stage translated field (name / description).
+function tStage(stageId, field = "name") {
+  const key = field === "desc" ? `stage.${stageId}.desc` : `stage.${stageId}`;
+  if (STRINGS[key]) return t(key);
+  const stage = FESTIVAL.stages.find(s => s.id === stageId);
+  return field === "desc" ? (stage?.desc || "") : (stage?.name || stageId);
+}
 
 function applyLang(lang) {
   if (!LANG_FLAGS[lang]) return;
   currentLang = lang;
-  if (langFlag) langFlag.textContent = LANG_FLAGS[lang];
-  if (langBtn) langBtn.title = LANG_LABELS[lang];
-  langMenu?.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.lang === lang));
   try { localStorage.setItem("zna-lang", lang); } catch (_) {}
-  // i18n hook for future translations: data-i18n elements would re-render here.
+  document.documentElement.lang = lang;
+  // Update static UI chrome that sits outside the reel.
+  const searchBtn = document.getElementById("search-btn");
+  const logoBtn = document.getElementById("logo-btn");
+  const searchInput = document.getElementById("search-input");
+  if (searchBtn) { searchBtn.title = t("nav.searchArtist"); searchBtn.setAttribute("aria-label", t("nav.searchArtist")); }
+  if (logoBtn) { logoBtn.title = t("nav.backHome"); logoBtn.setAttribute("aria-label", t("nav.backHome")); }
+  if (searchInput) searchInput.placeholder = t("search.placeholder");
+  // Re-render the entire reel so every translated string refreshes.
+  if (typeof rerenderArtistsBelowHero === "function" && typeof buildReel === "function") {
+    buildReel();
+    if (typeof buildVerticalProgress === "function") buildVerticalProgress();
+    if (typeof buildStageDropdown === "function") buildStageDropdown();
+    if (typeof observeSections === "function") observeSections();
+  }
 }
 
-applyLang(currentLang);
-
-langBtn?.addEventListener("click", e => {
-  e.stopPropagation();
-  if (!langMenu) return;
-  langMenu.hidden = !langMenu.hidden;
-  langBtn.setAttribute("aria-expanded", String(!langMenu.hidden));
-});
-
-langMenu?.addEventListener("click", e => {
-  const btn = e.target.closest("button[data-lang]");
-  if (!btn) return;
-  applyLang(btn.dataset.lang);
-  langMenu.hidden = true;
-  langBtn?.setAttribute("aria-expanded", "false");
-});
-
-document.addEventListener("click", e => {
-  if (langMenu && !langSelectEl?.contains(e.target)) {
-    langMenu.hidden = true;
-    langBtn?.setAttribute("aria-expanded", "false");
-  }
-});
+document.documentElement.lang = currentLang;
 
 // Mini-player
 const miniPlayer = document.getElementById("mini-player");
@@ -312,7 +418,7 @@ function updateMiniPlayerUI() {
     miniPlayerNext.textContent = `${next.artistName} — ${next.title}`;
     miniPlayerNext.classList.add("has-next");
   } else {
-    miniPlayerNext.textContent = "סוף הרשימה";
+    miniPlayerNext.textContent = t("mp.endOfList");
     miniPlayerNext.classList.remove("has-next");
   }
 }
@@ -465,6 +571,22 @@ if (typeof ARTIST_EXTRAS !== "undefined") {
   });
 }
 
+// Merge per-artist translations (en/pt for bio, notable, country, born) onto
+// each artist record. The HE values stay where they are; tArtist() reads
+// from a.translations[currentLang] first, falls back to en, then he.
+if (typeof ARTIST_TRANSLATIONS !== "undefined") {
+  ARTISTS.forEach(a => {
+    const tr = ARTIST_TRANSLATIONS[a.id];
+    if (!tr) return;
+    a.translations = a.translations || {};
+    a.translations.he = a.translations.he || {
+      bio: a.bio, notable: a.notable, country: a.country, born: a.born
+    };
+    if (tr.en) a.translations.en = tr.en;
+    if (tr.pt) a.translations.pt = tr.pt;
+  });
+}
+
 let activeStageFilter = "all";
 
 // Try to load build-time-fetched photos and merge them onto artist records.
@@ -558,9 +680,11 @@ function completeSchedule(a) {
 
 function formatScheduleRange(schedule) {
   if (!schedule) return "T.B.A.";
+  const localeMap = { he: "he-IL", en: "en-GB", pt: "pt-PT" };
+  const locale = localeMap[currentLang] || "en-GB";
   const opts = { timeZone: FESTIVAL.timezone || "Europe/Lisbon", weekday: "short", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" };
-  const dayTime = new Intl.DateTimeFormat("he-IL", opts);
-  const timeOnly = new Intl.DateTimeFormat("he-IL", { timeZone: FESTIVAL.timezone || "Europe/Lisbon", hour: "2-digit", minute: "2-digit" });
+  const dayTime = new Intl.DateTimeFormat(locale, opts);
+  const timeOnly = new Intl.DateTimeFormat(locale, { timeZone: FESTIVAL.timezone || "Europe/Lisbon", hour: "2-digit", minute: "2-digit" });
   const sameDay = schedule.start.toLocaleDateString("en-CA", { timeZone: FESTIVAL.timezone || "Europe/Lisbon" }) ===
     schedule.end.toLocaleDateString("en-CA", { timeZone: FESTIVAL.timezone || "Europe/Lisbon" });
   return sameDay
@@ -581,24 +705,25 @@ function getScheduleStatus(stageId = "all") {
   const next = scheduled.find(item => item.schedule.start > now);
   const hasAnySchedule = scheduled.length > 0;
 
-  if (live) return { state: "live", title: "עכשיו בלייב", artist: live.artist, schedule: live.schedule, next };
-  if (startsAt && now < startsAt) return { state: "upcoming", title: "האירוע עוד לא התחיל", next, hasAnySchedule };
-  if (endsAt && now > endsAt) return { state: "ended", title: "האירוע הסתיים", hasAnySchedule };
-  if (!hasAnySchedule) return { state: "tba", title: "לוח הזמנים T.B.A.", hasAnySchedule };
-  return { state: "idle", title: "אין סט פעיל כרגע", next, hasAnySchedule };
+  if (live) return { state: "live", title: t("live.now"), artist: live.artist, schedule: live.schedule, next };
+  if (startsAt && now < startsAt) return { state: "upcoming", title: t("live.notStarted"), next, hasAnySchedule };
+  if (endsAt && now > endsAt) return { state: "ended", title: t("live.ended"), hasAnySchedule };
+  if (!hasAnySchedule) return { state: "tba", title: t("live.tba"), hasAnySchedule };
+  return { state: "idle", title: t("live.idle"), next, hasAnySchedule };
 }
 
 function formatCountdown(targetDate) {
   if (!targetDate) return "";
   const ms = Math.max(0, targetDate.getTime() - Date.now());
-  if (ms === 0) return "מתחיל עכשיו";
+  if (ms === 0) return t("live.startsNow");
   const days = Math.floor(ms / 86_400_000);
   const hours = Math.floor((ms % 86_400_000) / 3_600_000);
   const minutes = Math.floor((ms % 3_600_000) / 60_000);
   const pad = n => String(n).padStart(2, "0");
-  if (days > 0) return `עוד ${days} ימים · ${pad(hours)}:${pad(minutes)}`;
-  if (hours > 0) return `עוד ${pad(hours)}:${pad(minutes)} שעות`;
-  return `עוד ${minutes} דקות`;
+  const hm = `${pad(hours)}:${pad(minutes)}`;
+  if (days > 0) return t("live.daysHHMM", { d: days, hm });
+  if (hours > 0) return t("live.hoursHHMM", { hm });
+  return t("live.minutesM", { m: minutes });
 }
 
 function liveStatusCard(stageId = "all") {
@@ -620,7 +745,7 @@ function liveStatusCard(stageId = "all") {
   return `
     <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
       <div class="live-now-track"><span class="live-now-dot"></span></div>
-      <strong class="live-status-title">האירוע עוד לא התחיל</strong>
+      <strong class="live-status-title">${escapeHtml(t("live.notStarted"))}</strong>
       ${countdownAttr ? `<span class="live-status-countdown" data-countdown="${escapeHtml(countdownAttr)}">${escapeHtml(countdownText)}</span>` : ""}
     </div>
   `;
@@ -635,7 +760,7 @@ setInterval(() => {
 
 function artistSetTimeBadge(a) {
   const schedule = completeSchedule(a);
-  const text = schedule ? formatScheduleRange(schedule) : "שעת הופעה: T.B.A.";
+  const text = schedule ? formatScheduleRange(schedule) : t("setTime.tba");
   return `<div class="artist-set-time ${schedule ? "has-time" : "is-tba"}">${escapeHtml(text)}</div>`;
 }
 
@@ -658,11 +783,11 @@ function heroPanelMain() {
     <div class="hero-panel hero-panel--main" data-stage="all">
       <img class="hero-zna-mark" src="images/zna-3d/community-zna-logo.png" alt="ZNA Community" loading="lazy" />
       <div class="logo-mark">ZNA<br/>2026</div>
-      <div class="hero-subtitle">RETRO · FUTURISTIC · GATHERING</div>
-      <p class="hero-tagline">${escapeHtml(FESTIVAL.description)}</p>
-      <div class="hero-meta">${escapeHtml(FESTIVAL.dates)} · ${escapeHtml(FESTIVAL.location)} · ${ARTISTS.length} אומנים</div>
+      <div class="hero-subtitle">${escapeHtml(t("hero.subtitle"))}</div>
+      <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
+      <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
-      <p class="hero-disclaimer">אתר מעריצים בלתי-רשמי, נבנה ע״י משתתפים מתנדבים — לא קשור לארגון הפסטיבל.</p>
+      <p class="hero-disclaimer">${escapeHtml(t("hero.disclaimer"))}</p>
     </div>
   `;
 }
@@ -673,11 +798,12 @@ function heroPanelStage(stage) {
   return `
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementSrc ? `<img class="hero-stage-element hero-stage-element--${escapeHtml(stage.id)}" src="${escapeHtml(elementSrc)}" alt="" loading="lazy" aria-hidden="true" />` : ""}
-      <div class="logo-mark hero-stage-name">${escapeHtml(stage.name)}</div>
-      <p class="hero-tagline">${escapeHtml(stage.desc)}</p>
-      <div class="hero-meta">${count} אומנים</div>
+      <div class="hero-stage-tag">${escapeHtml(t("nav.stage"))}</div>
+      <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
+      <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
+      <div class="hero-meta">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard(stage.id)}
-      <div class="hero-hint"><span>צללו לתוך הבמה</span><span class="hero-hint-arrow">↓</span></div>
+      <div class="hero-hint"><span>${escapeHtml(t("hero.diveStage").replace(/^[↓\s]+/, ""))}</span><span class="hero-hint-arrow">↓</span></div>
     </div>
   `;
 }
@@ -789,7 +915,7 @@ function multiHeroSection() {
 
 function panelHero(a) {
   const initials = getInitials(a.name);
-  const tags = (a.tags || []).slice(0, 4).map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("");
+  const tagItems = (a.tags || []).slice(0, 4).map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("");
   // If the user came in on a deep-link to this artist, load their photo
   // eagerly with high priority so the first paint isn't waiting on it.
   const isDeepLinkTarget = (typeof _initialRoute !== "undefined") && _initialRoute && _initialRoute.a === a.id;
@@ -809,12 +935,12 @@ function panelHero(a) {
           <h1 class="artist-name">${escapeHtml(a.name)}</h1>
           ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
           <div class="artist-meta-line">
-            <span class="meta-item">📍 ${escapeHtml(a.country)}</span>
+            <span class="meta-item">📍 ${escapeHtml(tArtist(a, "country"))}</span>
             ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
             <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
           </div>
           ${artistSetTimeBadge(a)}
-          ${tags ? `<div class="artist-tags-row">${tags}</div>` : ""}
+          ${tagItems ? `<div class="artist-tags-row">${tagItems}</div>` : ""}
         </div>
       </div>
     </div>
@@ -823,12 +949,14 @@ function panelHero(a) {
 
 function formatAnnouncedDate(yyyymmdd) {
   if (!yyyymmdd) return "";
-  const months = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+  const months = MONTH_NAMES[currentLang] || MONTH_NAMES.en;
   const m = String(yyyymmdd).match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return "";
   const [_, y, mo, d] = m;
   const monthName = months[parseInt(mo, 10) - 1] || "";
-  return `${parseInt(d, 10)} ב${monthName} ${y}`;
+  if (currentLang === "he") return `${parseInt(d, 10)} ב${monthName} ${y}`;
+  if (currentLang === "pt") return `${parseInt(d, 10)} ${monthName} ${y}`;
+  return `${monthName} ${parseInt(d, 10)}, ${y}`;
 }
 
 // Per-platform icon SVG (single-color, currentColor) so each artist can be
@@ -871,16 +999,17 @@ function streamingLinks(a) {
 
 function panelInfo(a) {
   const links = a.links || [];
+  const officialChannel = t("stream.officialChannel");
   // Streaming icons row — always renders all 4 platforms.
   const streamingHtml = `
     <div class="info-section">
-      <h3 class="info-section-title">סטרימינג</h3>
+      <h3 class="info-section-title">${escapeHtml(t("panel.streaming"))}</h3>
       <div class="streaming-row">
         ${streamingLinks(a).map(s => `
           <a class="stream-icon stream-icon--${s.platform} ${s.verified ? "is-verified" : ""}"
              href="${escapeHtml(s.url)}" target="_blank" rel="noopener"
-             title="${escapeHtml(s.label)}${s.verified ? " · ערוץ רשמי" : ""}"
-             aria-label="${escapeHtml(s.label)}${s.verified ? " (ערוץ רשמי)" : ""}">
+             title="${escapeHtml(s.label)}${s.verified ? " · " + escapeHtml(officialChannel) : ""}"
+             aria-label="${escapeHtml(s.label)}${s.verified ? " (" + escapeHtml(officialChannel) + ")" : ""}">
             ${s.icon}
             ${s.verified ? `<span class="stream-verified" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="11" height="11" fill="currentColor"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></svg>
@@ -894,7 +1023,7 @@ function panelInfo(a) {
   const linksHtml = links.length
     ? `
       <div class="info-section">
-        <h3 class="info-section-title">קישורים נוספים</h3>
+        <h3 class="info-section-title">${escapeHtml(t("panel.moreLinks"))}</h3>
         <div class="links-grid">
           ${links.map(l => `<a class="link-btn" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} ↗</a>`).join("")}
         </div>
@@ -906,14 +1035,16 @@ function panelInfo(a) {
     ? `<div class="info-rep">🎧 ${escapeHtml(a.representedBy)}</div>`
     : "";
   const announcedHtml = a.announcedAt
-    ? `<div class="info-meta">📣 הוכרז ב-${escapeHtml(formatAnnouncedDate(a.announcedAt))}</div>`
+    ? `<div class="info-meta">${escapeHtml(t("announced.prefix"))}${escapeHtml(formatAnnouncedDate(a.announcedAt))}</div>`
     : "";
-  const bioHtml = a.bio
+  const bioText = tArtist(a, "bio");
+  const notableText = tArtist(a, "notable");
+  const bioHtml = bioText
     ? `
       <div class="info-section">
-        <h3 class="info-section-title">ביוגרפיה</h3>
-        <p class="bio-text">${escapeHtml(a.bio)}</p>
-        ${a.notable ? `<div class="notable">★ ${escapeHtml(a.notable)}</div>` : ""}
+        <h3 class="info-section-title">${escapeHtml(t("panel.bio"))}</h3>
+        <p class="bio-text">${escapeHtml(bioText)}</p>
+        ${notableText ? `<div class="notable">★ ${escapeHtml(notableText)}</div>` : ""}
       </div>
     `
     : "";
@@ -922,7 +1053,7 @@ function panelInfo(a) {
       <div class="panel-inner">
         <div class="panel-eyebrow has-artist">
           <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
-          <span class="eyebrow-section">אודות</span>
+          <span class="eyebrow-section">${escapeHtml(t("panel.about"))}</span>
         </div>
         <div class="bio-card">
           ${announcedHtml}
@@ -940,15 +1071,15 @@ function panelAlbums(a) {
   const eyebrow = (label) => `
     <div class="panel-eyebrow has-artist">
       <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
-      <span class="eyebrow-section">${label}</span>
+      <span class="eyebrow-section">${escapeHtml(label)}</span>
     </div>
   `;
   if (!a.albums || !a.albums.length) {
     return `
       <div class="panel panel--discography">
         <div class="panel-inner">
-          ${eyebrow("דיסקוגרפיה")}
-          <p class="muted">המידע יתעדכן בקרוב</p>
+          ${eyebrow(t("panel.discography"))}
+          <p class="muted">${escapeHtml(t("panel.tba"))}</p>
         </div>
       </div>
     `;
@@ -962,7 +1093,7 @@ function panelAlbums(a) {
   return `
     <div class="panel panel--discography">
       <div class="panel-inner">
-        ${eyebrow("דיסקוגרפיה נבחרת")}
+        ${eyebrow(t("panel.discographyTop"))}
         <ul class="albums-list">${items}</ul>
       </div>
     </div>
@@ -974,7 +1105,7 @@ function panelTracks(a) {
   const eyebrow = (label) => `
     <div class="panel-eyebrow has-artist">
       <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
-      <span class="eyebrow-section">${label}</span>
+      <span class="eyebrow-section">${escapeHtml(label)}</span>
     </div>
   `;
   if (!tracks.length) {
@@ -982,9 +1113,9 @@ function panelTracks(a) {
     return `
       <div class="panel panel--tracks">
         <div class="panel-inner center">
-          ${eyebrow("טראקים")}
-          <p class="no-tracks">עדיין לא הוספנו טראקים מאומתים. חפשו ביוטיוב:</p>
-          <a class="search-yt-btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ חיפוש ב-YouTube</a>
+          ${eyebrow(t("panel.tracks"))}
+          <p class="no-tracks">${escapeHtml(t("tracks.empty"))}</p>
+          <a class="search-yt-btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">${escapeHtml(t("tracks.searchYT"))}</a>
         </div>
       </div>
     `;
@@ -1016,7 +1147,7 @@ function panelTracks(a) {
   return `
     <div class="panel panel--tracks">
       <div class="panel-inner">
-        ${eyebrow("טראקים נבחרים")}
+        ${eyebrow(t("panel.tracksTop"))}
         <div class="tracks-stack">${cards}</div>
       </div>
     </div>
@@ -1289,11 +1420,38 @@ function handlePagerSettle(pager) {
 }
 
 // Global delegated click for the per-artist horizontal panel dots.
-// Real panels live at scrollIdx 1..realCount, so dot[i] → pager.children[i+1].
+// Two-stage tap: the FIRST tap on the dots strip just "arms" it (the strip
+// grows ~3x, the pill chrome appears) so the user can hit a specific dot
+// accurately. Only taps while armed actually navigate. After 4 seconds of
+// no further taps, the strip relaxes back to its tiny idle state.
+const DOT_ARMED_TTL = 4000;
+const dotArmTimers = new WeakMap();
+
+function armDots(strip) {
+  if (!strip) return;
+  strip.classList.add("is-armed");
+  const old = dotArmTimers.get(strip);
+  if (old) clearTimeout(old);
+  dotArmTimers.set(strip, setTimeout(() => strip.classList.remove("is-armed"), DOT_ARMED_TTL));
+}
+
 reel.addEventListener("click", e => {
+  // Did the user tap the dots strip at all? (a .dot element OR the .dots
+  // container itself — the bigger idle padding catches off-target taps).
+  const strip = e.target.closest(".dots");
+  if (!strip) return;
+  const wasArmed = strip.classList.contains("is-armed");
+  // First tap on a relaxed strip: just arm it. Don't navigate yet.
+  if (!wasArmed) {
+    armDots(strip);
+    return;
+  }
+  // Already armed: route a tap on a specific dot to its panel; any tap on
+  // the strip resets the 4s timer.
+  armDots(strip); // refresh the TTL
   const dot = e.target.closest(".dot");
   if (!dot) return;
-  const section = dot.closest('[data-section="artist"]');
+  const section = strip.closest('[data-section="artist"]');
   const pager = section?.querySelector(".pager");
   const realIdx = +dot.dataset.panel;
   if (pager && pager.children[realIdx + 1]) {
@@ -1526,11 +1684,42 @@ function navVertical(dir) {
   if (!sections.length) return;
   const cur = getCurrentSection();
   const idx = cur ? sections.indexOf(cur) : 0;
-  const next = sections[idx + dir];
+  // Vertical loop: scrolling past the last section wraps back to the hero;
+  // scrolling above the hero wraps to the last section.
+  let nextIdx = idx + dir;
+  if (nextIdx < 0) nextIdx = sections.length - 1;
+  if (nextIdx >= sections.length) nextIdx = 0;
+  const next = sections[nextIdx];
   if (next && typeof next.scrollIntoView === "function") {
     next.scrollIntoView({ behavior: "smooth" });
   }
 }
+
+// Touch-driven vertical loop: detect a swipe-up that ends with the reel
+// pinned at the bottom (or a swipe-down pinned at the top) and animate to
+// the wrap target. iOS won't let you swipe past the snap edge natively, so
+// we have to read the gesture and synthesize the wrap.
+let _verticalTouchY = null;
+reel.addEventListener("touchstart", e => {
+  _verticalTouchY = e.touches[0]?.clientY ?? null;
+}, { passive: true });
+reel.addEventListener("touchend", e => {
+  if (_verticalTouchY == null) return;
+  const endY = e.changedTouches[0]?.clientY ?? _verticalTouchY;
+  const swipeUp = _verticalTouchY - endY;       // > 0 = finger moved up = trying to scroll DOWN
+  _verticalTouchY = null;
+  const atBottom = reel.scrollTop + reel.clientHeight >= reel.scrollHeight - 8;
+  const atTop = reel.scrollTop <= 8;
+  if (atBottom && swipeUp > 70) {
+    // At the last section, swiping up further → loop back to first
+    const first = reel.querySelector(".section");
+    first?.scrollIntoView({ behavior: "smooth" });
+  } else if (atTop && swipeUp < -70) {
+    // At the first section, swiping down further → loop to last
+    const sections = reel.querySelectorAll(".section");
+    sections[sections.length - 1]?.scrollIntoView({ behavior: "smooth" });
+  }
+}, { passive: true });
 
 function navHorizontal(dir) {
   const current = getCurrentSection();
@@ -1649,19 +1838,32 @@ reel.addEventListener("wheel", e => {
 // ===== Stage dropdown: filter the reel to a single stage =====
 
 function stageLabel(id) {
-  if (id === "all") return "הכל";
-  return (FESTIVAL.stages.find(s => s.id === id) || {}).name || id;
+  if (id === "all") return t("nav.all");
+  return tStage(id);
 }
 
 function buildStageDropdown() {
   if (!stageSelectMenu) return;
   const opts = [
-    { id: "all", name: "הכל", count: ARTISTS.length },
-    ...FESTIVAL.stages.map(s => ({ id: s.id, name: s.name, count: ARTISTS.filter(a => a.stage === s.id).length }))
+    { id: "all", name: t("nav.all"), count: ARTISTS.length },
+    ...FESTIVAL.stages.map(s => ({ id: s.id, name: tStage(s.id), count: ARTISTS.filter(a => a.stage === s.id).length }))
   ];
-  stageSelectMenu.innerHTML = opts.map(o =>
-    `<li><button data-stage="${o.id}" class="${activeStageFilter === o.id ? "active" : ""}" role="option">${o.name}<span class="count">${o.count}</span></button></li>`
+  const stageItems = opts.map(o =>
+    `<li><button data-stage="${escapeHtml(o.id)}" class="${activeStageFilter === o.id ? "active" : ""}" role="option">${escapeHtml(o.name)}<span class="count">${o.count}</span></button></li>`
   ).join("");
+  // Language picker — last row, three flag columns. Tapping a flag switches
+  // the whole UI (and bios/notable text) to that language.
+  const langRow = `
+    <li class="lang-row" aria-label="${escapeHtml(t("nav.language"))}">
+      ${["en", "he", "pt"].map(lang => `
+        <button class="lang-cell ${currentLang === lang ? "active" : ""}" data-set-lang="${lang}" type="button" aria-label="${escapeHtml(LANG_LABELS[lang])}">
+          <span class="lang-cell-flag">${LANG_FLAGS[lang]}</span>
+          <span class="lang-cell-name">${escapeHtml(LANG_LABELS[lang])}</span>
+        </button>
+      `).join("")}
+    </li>
+  `;
+  stageSelectMenu.innerHTML = stageItems + langRow;
   if (stageSelectLabel) stageSelectLabel.textContent = stageLabel(activeStageFilter);
 }
 
@@ -1690,17 +1892,23 @@ document.addEventListener("click", e => {
 stageSelectMenu?.addEventListener("click", e => {
   const btn = e.target.closest("button");
   if (!btn) return;
+  // Language cell? Switch language and re-render the world.
+  if (btn.dataset.setLang) {
+    const lang = btn.dataset.setLang;
+    closeStageDropdown();
+    if (lang === currentLang) return;
+    applyLang(lang);
+    return;
+  }
   const stage = btn.dataset.stage;
+  if (!stage) return;
   closeStageDropdown();
   if (stage === activeStageFilter) {
-    // Same filter — just bring the user up to that hero panel
     try { reel.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) {}
     return;
   }
   activeStageFilter = stage;
   buildStageDropdown();
-  // Slide the hero pager to the chosen stage; the pager's scroll handler
-  // will re-render artists below.
   try { reel.scrollTo({ top: 0, behavior: "smooth" }); } catch (_) {}
   scrollHeroToStage(stage, false);
   rerenderArtistsBelowHero();
@@ -1933,7 +2141,7 @@ function renderSearchResults(query) {
       })
     : SORTED_ARTISTS;
   if (!list.length) {
-    searchResults.innerHTML = `<div class="search-empty">לא נמצא אומן בשם הזה</div>`;
+    searchResults.innerHTML = `<div class="search-empty">${escapeHtml(t("search.empty"))}</div>`;
     return;
   }
   searchResults.innerHTML = list.slice(0, 30).map(a => `
