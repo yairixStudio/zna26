@@ -6,11 +6,56 @@
   <title>ZNA 2026 — Lineup guide</title>
   <meta name="description" content="The unofficial fan guide to ZNA Gathering 2026 lineup — TikTok-style scroll through every artist" />
   <meta name="theme-color" content="#0a0524" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <meta name="color-scheme" content="dark" />
+  <!-- iOS Add-to-Home-Screen treats the app as a standalone PWA, hiding
+       the Safari chrome. Modern browsers also read the W3C manifest below. -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ZNA 2026" />
+  <meta name="format-detection" content="telephone=no" />
+
+  <!-- Critical above-the-fold styles inlined so the first paint never waits
+       on styles.css. Everything else streams via the <link> below. -->
+  <style>
+    html,body{height:100%;margin:0;padding:0;background:#0a0524;color:#f5f0ff;
+      font-family:"Heebo","Segoe UI","Assistant",system-ui,sans-serif;
+      -webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent;
+      overflow:hidden;overscroll-behavior:none}
+    body{direction:ltr}
+    .reel{position:absolute;inset:0;height:100dvh;width:100%;overflow-y:scroll;
+      overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:y mandatory;
+      overscroll-behavior-y:contain;touch-action:pan-y;scrollbar-width:none}
+    .reel::-webkit-scrollbar{display:none}
+    .bg-scene{position:fixed;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 0,rgba(255,126,31,.18) 0,transparent 60%),linear-gradient(180deg,#0a0524 0,#1a0a3a 100%)}
+    .top-bar{position:fixed;top:0;left:0;right:0;z-index:30;
+      padding:max(12px,env(safe-area-inset-top)) 14px 8px;display:flex;
+      align-items:center;justify-content:space-between;pointer-events:none}
+    .top-bar > *{pointer-events:auto}
+    .vertical-progress{position:fixed;right:8px;top:50%;transform:translateY(-50%);
+      z-index:20;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity .25s}
+  </style>
+
+  <!-- Preconnect once to the gstatic font CDN; googleapis is the discovery
+       redirect, so a single warm-up suffices. font-display:swap on the CSS
+       below means the system fallback paints immediately while the
+       webfonts hydrate in the background. -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Orbitron:wght@800&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Orbitron:wght@800&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Orbitron:wght@800&display=swap" /></noscript>
+
+  <!-- Main stylesheet — preload then promote to stylesheet so it doesn't
+       block the critical path. -->
+  <link rel="preload" href="styles.css" as="style" onload="this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="styles.css" /></noscript>
+
+  <!-- DNS-prefetch the YouTube hosts the player will hit on first Play. -->
+  <link rel="dns-prefetch" href="https://www.youtube.com" />
+  <link rel="dns-prefetch" href="https://i.ytimg.com" />
+
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23FEB447'/%3E%3Ccircle cx='32' cy='32' r='18' fill='%23ff5c8a'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png" />
 </head>
 <body>
   <div class="bg-scene" id="bg-scene"></div>
@@ -85,8 +130,11 @@
        can't clip it. JS positions it next to the hovered dot. -->
   <div class="v-dot-tooltip" id="v-dot-tooltip" role="tooltip" aria-hidden="true"></div>
 
-  <script src="data.js"></script>
-  <script src="official-artists.js"></script>
-  <script src="app.js"></script>
+  <!-- defer = parsed in document order, executed after HTML parsing finishes,
+       so they don't block the first paint. data.js MUST load before
+       official-artists.js (which mutates ARTISTS) and both before app.js. -->
+  <script defer src="data.js"></script>
+  <script defer src="official-artists.js"></script>
+  <script defer src="app.js"></script>
 </body>
 </html>

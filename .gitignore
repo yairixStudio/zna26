@@ -1,0 +1,17 @@
+# Build artifacts
+node_modules/
+.lighthouseci/
+.lighthouserc.tmp.json
+
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Local logs
+*.log
+
+# Stamped working copies
+sw.js.bak

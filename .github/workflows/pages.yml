@@ -30,10 +30,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci || npm install
 
       - name: Fetch artist photos from znagathering.com
         run: node build/fetch-photos.mjs
         continue-on-error: true
+
+      # AVIF + WebP + resized JPG variants for every photo, plus the PWA
+      # icon set. Idempotent — skips files whose source hasn't changed.
+      - name: Optimise images (AVIF + WebP + JPG)
+        run: |
+          node build/optimize-images.mjs
+          node build/make-icons.mjs
+
+      - name: Stamp Service Worker cache version
+        run: |
+          stamp="$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
+          sed -i "s/v2026-05-07/${stamp}/" sw.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -46,3 +62,18 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+  lighthouse:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Audit deployed site with Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            ${{ needs.deploy.outputs.page_url || 'https://yairixstudio.github.io/Zna-onboarding-/' }}
+          configPath: ./.lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true
