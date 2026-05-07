@@ -1465,23 +1465,49 @@ function renderArtistSections(list) {
 
 // ===== Render reel =====
 
-// One-touch one-step. mobile Safari occasionally lets a fast flick blow
-// past `scroll-snap-stop: always` and lands two panels away. We watch
-// touchstart/touchend on each scroll container and, if the user ended >1
-// snap-step from where they started, programmatically pull the scroll back
-// to a single-step move. No effect on mouse wheel or programmatic scroll.
-// One-touch one-step iOS safeguard. Only used on the OUTER reel (vertical
-// section snap) and the multi-hero pager (horizontal stage snap) — the
-// per-artist pager is intentionally NOT clamped because the carousel
-// instant-jumps positions during loop wraps. Those wraps look like
-// "delta > 1" to a naive clamp and trigger spurious "correction" scrolls
-// that can fight with the user's gestures and feel like vertical scroll
-// is broken on the section.
-// Container-level "I'm in the middle of a wrap-jump, leave me alone" flag.
-// When the user swipes past the last section we synthesise a smooth scroll
-// back to the hero — without this hint the snap-clamp below would read the
-// big delta as "user jumped > 1 step" and yank us back to the previous
-// section instead of letting the wrap finish.
+// ============================================================================
+// Navigation architecture (read this before touching any scroll handler)
+// ----------------------------------------------------------------------------
+// The reel has TWO scroll axes that interact:
+//
+//   Vertical (the .reel itself):
+//     - Native scroll-snap-type: y mandatory; one section per screen.
+//     - Touch input → native scroll + an iOS-only snap-clamp that reins in
+//       fast flicks that overshoot two snap points (rare).
+//     - Wheel/trackpad input → routed by ONE listener on .reel that
+//       accumulates deltaY and steps via navVertical(±1). See
+//       "Reel-level wheel router" below.
+//     - Keyboard ↑/↓/PgUp/PgDn → navVertical(±1).
+//     - Hitting the bottom edge with a swipe-up wraps to the hero
+//       (touchend handler on .reel + markWrapInProgress hint).
+//
+//   Horizontal (per-section pagers):
+//     - Multi-hero pager (.hero-pager) → native scroll-snap; the pager's
+//       own scroll listener tracks settle and swaps activeStageFilter.
+//     - Per-artist pager (.pager) → native scroll-snap with a 6-panel
+//       infinite-loop carousel ([cloneStart][Hero][Info][Tracks][Disco]
+//       [cloneEnd]); the settle handler instant-jumps clones to twins.
+//     - Wheel input on a per-artist pager → installWheelClamp(p, "x")
+//       which preventDefault + stopPropagation, so the reel router doesn't
+//       see it.
+//     - Keyboard ←/→ → navHorizontal(±1).
+//
+// Snap-clamp rules of thumb:
+//   - Installed on .reel (vertical) and .hero-pager (horizontal).
+//   - NOT installed on per-artist .pager — the carousel's instant-jump
+//     wrap looks like "user jumped >1 step" and would trigger spurious
+//     correction scrolls. native scroll-snap-stop:always covers the
+//     common-case there.
+//   - Only fires when the user ended ≥3 snap steps from where they
+//     started (was 2; that ate fast double-swipes on mobile).
+//   - Resets isCorrecting on every fresh touchstart so an in-flight
+//     correction can't swallow the user's next gesture.
+//
+// markWrapInProgress(reel, 800ms) is set whenever we synthesise a wrap
+// (e.g. swipe past last section → animate to hero). The snap-clamp
+// re-anchors instead of "correcting" while that flag is live.
+// ============================================================================
+
 const wrappingContainers = new WeakSet();
 function markWrapInProgress(container, ms = 800) {
   wrappingContainers.add(container);
@@ -1555,6 +1581,10 @@ function installWheelClamp(container, axis, getEnabled) {
     if (Math.abs(primary) <= Math.abs(secondary)) return; // not the dominant axis
     if (Math.abs(primary) < 4) return;                    // ignore stray microscrolls
     e.preventDefault();
+    // Stop the wheel from bubbling to the reel-level router, so a single
+    // horizontal trackpad swipe on a pager can't also be interpreted as
+    // a vertical gesture by an ancestor handler.
+    e.stopPropagation();
     const now = performance.now();
     if (now < cooldownUntil) return;
     cooldownUntil = now + 480;
@@ -1579,19 +1609,16 @@ function buildReel() {
   wireHeroPager();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
-  // Desktop wheel clamp on the reel — only intervene when the active
-  // section is an artist; the hero stays on native scroll for that nice
-  // peek-and-snap feel the user already likes.
-  installWheelClamp(reel, "y", () => {
-    const active = reel.querySelector(".section.is-active");
-    return !!(active && active.dataset.section === "artist");
-  });
-  // Each artist pager: clamp horizontal wheel so trackpad swipe = 1 panel.
+  // Reel vertical wheel: handled by the single global wheel listener
+  // further down (see "Reel-level wheel router"). It used to also be
+  // wired through installWheelClamp here, which doubled-fired with
+  // the global listener on every wheel tick — causing the trackpad
+  // to occasionally jump two sections in one gesture.
   reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installWheelClamp(p, "x"));
   // NOTE: not snap-clamping per-artist .pager via touch — their carousel
   // logic performs instant-jump wraps that the touch clamp would misread
   // as "user-jumped > 1 step". Native scroll-snap-stop:always handles touch
-  // there, and the wheel clamp above handles desktop.
+  // there, and the per-pager wheel clamp above handles desktop.
   observeArtistInitialScroll();
   observeYTThumbs();
 
@@ -2546,54 +2573,37 @@ document.addEventListener("keydown", e => {
   else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(-1); }
 });
 
-// Mouse-wheel: discrete navigation. One gesture = one section/panel change.
-// Trackpads emit dozens of wheel events per gesture; raw scrollBy was way too
-// sensitive. Throttle + accumulate so we move exactly one step per intent.
+// ===== Reel-level wheel router =====
+// Single source of truth for vertical wheel/trackpad input on the reel.
+// Trackpads fire dozens of events per gesture with momentum; we accumulate
+// deltaY until it crosses a small threshold, then move exactly one section
+// and lock for 500ms so a single fling can't blow past two snap points.
+//
+// Horizontal wheel input is handled CLOSER to the source:
+//   - Hero pager → native scroll-snap (the pager's own scroll listener
+//     updates activeStageFilter on settle). Trying to also navigate here
+//     would page twice and feels chaotic.
+//   - Artist pager → installWheelClamp(pager, "x") on the per-artist
+//     pager itself; that listener stops propagation, so this handler
+//     doesn't see the horizontal input at all.
 let wheelLockUntil = 0;
-let wheelAccumX = 0;
 let wheelAccumY = 0;
 let wheelResetTimer = null;
 
 reel.addEventListener("wheel", e => {
+  // Ignore mostly-horizontal wheels — those are handled per-pager (above).
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
   const now = Date.now();
-  if (now < wheelLockUntil) {
-    e.preventDefault();
-    return;
-  }
-
-  const horiz = Math.abs(e.deltaX) > Math.abs(e.deltaY);
-  if (horiz) {
-    const current = getCurrentSection();
-    if (!current) return;
-    // Hero section: let native scroll-snap handle the swipe so it moves
-    // exactly one panel. The hero-pager's own scroll listener picks up the
-    // resulting position and updates activeStageFilter on settle. Doing JS
-    // navHorizontal here on top of native would page twice.
-    if (current.dataset.section === "hero") return;
-    e.preventDefault();
-    wheelAccumX += e.deltaX;
-    if (Math.abs(wheelAccumX) > 60) {
-      // LTR: positive deltaX (rightward swipe) = move forward.
-      navHorizontal(wheelAccumX > 0 ? 1 : -1);
-      wheelAccumX = 0;
-      wheelLockUntil = now + 450;
-    }
-  } else {
-    // Vertical: also throttle, one section per gesture
-    e.preventDefault();
-    wheelAccumY += e.deltaY;
-    if (Math.abs(wheelAccumY) > 60) {
-      navVertical(wheelAccumY > 0 ? 1 : -1);
-      wheelAccumY = 0;
-      wheelLockUntil = now + 500;
-    }
-  }
-
-  clearTimeout(wheelResetTimer);
-  wheelResetTimer = setTimeout(() => {
-    wheelAccumX = 0;
+  if (now < wheelLockUntil) { e.preventDefault(); return; }
+  e.preventDefault();
+  wheelAccumY += e.deltaY;
+  if (Math.abs(wheelAccumY) > 60) {
+    navVertical(wheelAccumY > 0 ? 1 : -1);
     wheelAccumY = 0;
-  }, 200);
+    wheelLockUntil = now + 500;
+  }
+  clearTimeout(wheelResetTimer);
+  wheelResetTimer = setTimeout(() => { wheelAccumY = 0; }, 200);
 }, { passive: false });
 
 // ===== Stage dropdown: filter the reel to a single stage =====
