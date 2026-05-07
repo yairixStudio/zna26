@@ -843,9 +843,7 @@ const HERO_STAGE_ELEMENTS = {
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
-      <img class="hero-zna-mark" src="images/zna-3d/community-zna-logo.png" alt="ZNA Community" loading="lazy" />
-      <div class="logo-mark">ZNA<br/>2026</div>
-      <div class="hero-subtitle">${escapeHtml(t("hero.subtitle"))}</div>
+      <img class="hero-zna-mark" src="images/zna-3d/community-zna-logo-26-celebration.png" alt="ZNA 26 Community — The Retro Futuristic Celebration" loading="lazy" />
       <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}

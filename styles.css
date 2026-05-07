@@ -311,9 +311,9 @@ body.has-mini-player .hero-dots {
 /* Decorative ZNA "gathering" 3D wordmark on the Main hero only */
 .hero-zna-mark {
   display: block;
-  width: clamp(160px, 42vw, 260px);
+  width: clamp(280px, 84vw, 520px);
   height: auto;
-  margin: 0 auto 6px;
+  margin: 0 auto 10px;
   filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
   animation: zna-mark-float 6s ease-in-out infinite;
   user-select: none;
@@ -2875,7 +2875,7 @@ body.is-on-hero #random-btn { display: inline-flex; }
 /* ---------- Main hero: better composition on tablet/desktop ---------- */
 @media (min-width: 768px) {
   .hero-panel--main .hero-zna-mark {
-    width: clamp(220px, 28vw, 320px);
+    width: clamp(380px, 58vw, 640px);
     margin-bottom: 12px;
   }
   .hero-panel--main .logo-mark {
@@ -2897,7 +2897,7 @@ body.is-on-hero #random-btn { display: inline-flex; }
     padding: 32px 40px 100px;
   }
   .hero-panel--main .hero-zna-mark {
-    width: clamp(260px, 22vw, 360px);
+    width: clamp(460px, 46vw, 720px);
   }
   .hero-panel--main .logo-mark {
     font-size: clamp(120px, 13vw, 220px);
