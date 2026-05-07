@@ -80,6 +80,11 @@
   <!-- UI overlays -->
   <div class="vertical-progress" id="vertical-progress" aria-hidden="true"></div>
 
+  <!-- Floating tooltip used by the vertical dots on desktop hover.
+       Lives outside .vertical-progress so the container's max-height/overflow
+       can't clip it. JS positions it next to the hovered dot. -->
+  <div class="v-dot-tooltip" id="v-dot-tooltip" role="tooltip" aria-hidden="true"></div>
+
   <script src="data.js"></script>
   <script src="official-artists.js"></script>
   <script src="app.js"></script>

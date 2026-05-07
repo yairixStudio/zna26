@@ -183,17 +183,21 @@ a { color: var(--sun-yellow); }
    slides out the other. We animate the PANELS (children) — not the pager
    itself — so the pager's clipping window stays put and the next panel
    actually peeks into view. Animating the pager would have moved everything
-   together with no reveal. */
-@keyframes hero-peek-children-forward {
-  0%, 100% { transform: translateX(0); }
-  45%, 55% { transform: translateX(-18%); }
+   together with no reveal.
+
+   We use CSS transitions (not @keyframes) so that if the user interacts
+   mid-peek and we yank the class off, the transform smoothly interpolates
+   from its current value back to 0 instead of snapping — no shake. */
+.hero-pager > .hero-panel {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
-@keyframes hero-peek-children-backward {
-  0%, 100% { transform: translateX(0); }
-  45%, 55% { transform: translateX(18%); }
+.hero-pager.peek-forward  > .hero-panel { transform: translateX(-16%); }
+.hero-pager.peek-backward > .hero-panel { transform: translateX(16%); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-pager > .hero-panel { transition: none; }
+  .hero-pager.peek-forward  > .hero-panel,
+  .hero-pager.peek-backward > .hero-panel { transform: none; }
 }
-.hero-pager.peek-forward  > .hero-panel { animation: hero-peek-children-forward  1.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
-.hero-pager.peek-backward > .hero-panel { animation: hero-peek-children-backward 1.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
 
 .hero-panel {
   flex: 0 0 100%;
@@ -556,7 +560,12 @@ body.has-mini-player .hero-dots {
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
-  touch-action: pan-x;
+  /* Both axes — Chromium/Android intersects touch-action across ancestors,
+     so restricting to pan-x here secretly blocked vertical pans on the
+     .panel children (where the panel actually scrolls / chains to the
+     reel). Allow pan-y too: the pager only scrolls X, but children get
+     to scroll Y, which is what users expect from a vertical lineup. */
+  touch-action: pan-x pan-y;
   scrollbar-width: none;
 }
 .pager::-webkit-scrollbar { display: none; }
@@ -584,6 +593,75 @@ body.has-mini-player .hero-dots {
      chaining is contained because the .pager handles that axis. */
   overscroll-behavior-x: contain;
   overscroll-behavior-y: auto;
+}
+
+/* While the user is pulling past the panel edge, take control of the touch
+   gesture so iOS/Android don't try to bounce the panel's native scroll
+   underneath our rubber-band transform. preventDefault in JS does the rest. */
+.panel.is-pulling {
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+/* Telegram-style pull-to-navigate indicator: appears at the top edge when
+   the user pulls down past the start, and at the bottom edge when they pull
+   up past the end. Goes from translucent to "ready" colour once the pull
+   exceeds the commit threshold; release at that point fires navVertical. */
+.pull-indicator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(10, 5, 36, 0.92);
+  color: var(--text);
+  border: 1px solid var(--card-border, rgba(255, 255, 255, 0.18));
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  white-space: nowrap;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+.pull-indicator.pull-from-top    { top: 18px; }
+.pull-indicator.pull-from-bottom { bottom: 18px; }
+.pull-indicator.is-ready {
+  background: var(--panel-accent, var(--sun-yellow));
+  color: #0a0524;
+  border-color: transparent;
+}
+.pull-indicator .pull-arrow {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  border: 2px solid currentColor;
+  border-top: 0;
+  border-right: 0;
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+  margin-bottom: 2px;
+}
+.pull-indicator.pull-from-bottom .pull-arrow {
+  transform: rotate(135deg);
+  margin-bottom: 0;
+  margin-top: 2px;
+}
+.pull-indicator.is-ready .pull-arrow {
+  transform: rotate(-45deg) scale(1.15);
+}
+.pull-indicator.pull-from-bottom.is-ready .pull-arrow {
+  transform: rotate(135deg) scale(1.15);
+}
+@media (hover: hover) and (pointer: fine) {
+  /* Pull-to-navigate is a touch gesture; no mouse equivalent. */
+  .pull-indicator { display: none !important; }
 }
 
 /* Hero panel content stays vertically centered */
@@ -641,11 +719,33 @@ body.has-mini-player .hero-dots {
 }
 
 /* ===== Per-panel color identity (ZNA palette) =====
-   --panel-accent feeds eyebrow, card borders, dividers, chips and CTAs. */
-.panel--hero        { --panel-accent: #FEB447; --panel-accent-2: #ff5c8a; }   /* sun yellow → sunset pink */
-.panel--info        { --panel-accent: #ff7e1f; --panel-accent-2: #ff5c8a; }   /* warm orange → pink */
-.panel--tracks      { --panel-accent: #00d4ff; --panel-accent-2: #9b51e0; }   /* neon cyan → purple (media/screens) */
-.panel--discography { --panel-accent: #9b51e0; --panel-accent-2: #ff006e; }   /* deep purple → magenta (vinyl/wax) */
+   --panel-accent feeds eyebrow, card borders, dividers, chips and CTAs.
+   The radial+linear gradient is layered on top of bg-scene so every
+   panel type reads as its own warm/cool surface as you swipe across. */
+.panel--hero {
+  --panel-accent: #FEB447; --panel-accent-2: #ff5c8a;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 126, 31, 0.22) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(255, 126, 31, 0.10), transparent 60%);
+}
+.panel--info {
+  --panel-accent: #b87cff; --panel-accent-2: #ff5c8a;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(155, 81, 224, 0.24) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(155, 81, 224, 0.12), transparent 60%);
+}
+.panel--tracks {
+  --panel-accent: #00d4ff; --panel-accent-2: #4d8eff;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(0, 153, 255, 0.22) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(0, 153, 255, 0.10), transparent 60%);
+}
+.panel--discography {
+  --panel-accent: #5cdb8b; --panel-accent-2: #00d4ff;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(74, 222, 128, 0.20) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(74, 222, 128, 0.09), transparent 60%);
+}
 
 .panel--info .bio-card,
 .panel--tracks .track-card,
@@ -2792,32 +2892,34 @@ body.is-on-hero #random-btn { display: inline-flex; }
     background: rgba(255, 255, 255, 0.4);
   }
 
-  /* Tooltip: artist name (or "ראשי") shown to the right of the dot. */
-  .v-dot::after {
-    content: attr(aria-label);
-    position: absolute;
-    left: calc(100% + 14px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(10, 5, 36, 0.92);
-    color: var(--text);
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--card-border);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.18s ease;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 30;
-    direction: rtl;
-  }
-  .v-dot:hover::after,
-  .v-dot:focus-visible::after {
-    opacity: 1;
-  }
+  /* The CSS ::after tooltip used to live here, but it was clipped by the
+     container's max-height/overflow. Replaced by the floating
+     #v-dot-tooltip element positioned via JS — see app.js. */
+}
+
+/* Floating tooltip for vertical dots (desktop only). Positioned via JS
+   next to the hovered dot, fixed to the viewport so the
+   .vertical-progress container's overflow can't clip it. */
+.v-dot-tooltip {
+  position: fixed;
+  background: rgba(10, 5, 36, 0.95);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  transform: translateY(-50%);
+}
+.v-dot-tooltip.is-visible { opacity: 1; }
+@media (hover: none), (pointer: coarse) {
+  .v-dot-tooltip { display: none !important; }
 }

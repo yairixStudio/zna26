@@ -95,6 +95,12 @@ const STRINGS = {
   "search.placeholder":{ he: "חפש אומן...", en: "Search artist…", pt: "Procurar artista…" },
   "search.empty":      { he: "לא נמצא אומן בשם הזה", en: "No artist matches that name", pt: "Nenhum artista encontrado" },
 
+  // Pull-to-navigate gesture
+  "pull.next":         { he: "המשיכו למטה לאומן הבא", en: "Keep pulling for next artist", pt: "Puxe mais para o próximo artista" },
+  "pull.prev":         { he: "המשיכו למעלה לאומן הקודם", en: "Keep pulling for previous artist", pt: "Puxe mais para o artista anterior" },
+  "pull.releaseNext":  { he: "שחררו לאומן הבא", en: "Release for next artist", pt: "Solte para o próximo artista" },
+  "pull.releasePrev":  { he: "שחררו לאומן הקודם", en: "Release for previous artist", pt: "Solte para o artista anterior" },
+
   // Stream icon hover
   "stream.officialChannel": { he: "ערוץ רשמי", en: "Official channel", pt: "Canal oficial" },
 
@@ -1304,6 +1310,11 @@ function buildReel() {
   reel.querySelectorAll('[data-section="artist"]').forEach(section => {
     // Thumb clicks are handled by the global delegated listener on .reel.
   });
+
+  // Telegram-style pull-to-navigate: if a panel is at its top/bottom edge
+  // and the user keeps pulling, give a rubber-band hint and on release jump
+  // to the previous/next artist. Wired per-panel so it survives rerender.
+  reel.querySelectorAll('[data-section="artist"] .panel').forEach(setupPanelPullToNavigate);
 }
 
 // Live dot tracking: a continuous RAF loop polls scrollLeft on whichever
@@ -1487,6 +1498,47 @@ verticalProgress.addEventListener("click", e => {
   sections[idx]?.scrollIntoView({ behavior: "smooth" });
 });
 
+// Desktop-only floating tooltip for the vertical dots. Lives outside
+// .vertical-progress so the container's overflow can't clip it.
+(function setupVDotTooltip() {
+  const tooltipEl = document.getElementById("v-dot-tooltip");
+  if (!tooltipEl) return;
+  // Skip on touch / coarse-pointer devices entirely.
+  if (!window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+  function show(dot) {
+    const label = dot.getAttribute("aria-label") || "";
+    if (!label) return;
+    const rect = dot.getBoundingClientRect();
+    tooltipEl.textContent = label;
+    tooltipEl.style.left = (rect.right + 14) + "px";
+    tooltipEl.style.top = (rect.top + rect.height / 2) + "px";
+    tooltipEl.classList.add("is-visible");
+    tooltipEl.setAttribute("aria-hidden", "false");
+  }
+  function hide() {
+    tooltipEl.classList.remove("is-visible");
+    tooltipEl.setAttribute("aria-hidden", "true");
+  }
+
+  verticalProgress.addEventListener("mouseover", e => {
+    const dot = e.target.closest(".v-dot");
+    if (dot) show(dot);
+  });
+  verticalProgress.addEventListener("mouseout", e => {
+    const dot = e.target.closest(".v-dot");
+    if (!dot) return;
+    // Hide unless cursor moved to another dot
+    const related = e.relatedTarget?.closest?.(".v-dot");
+    if (!related) hide();
+  });
+  verticalProgress.addEventListener("focusin", e => {
+    const dot = e.target.closest(".v-dot");
+    if (dot) show(dot);
+  });
+  verticalProgress.addEventListener("focusout", hide);
+})();
+
 // ===== Active section tracking =====
 
 function setActiveSection(section) {
@@ -1583,15 +1635,19 @@ function setActiveSection(section) {
 }
 
 // ===== Hero peek hint =====
-// After a few seconds idle on the multi-hero, animate a 22% sideways nudge
-// on the hero pager so the user discovers the horizontal swipe gesture.
-// Driven by a CSS @keyframes (visual transform) — does not actually scroll
-// the pager, so scroll-snap can't fight us back.
+// After a few seconds idle on the multi-hero, nudge the hero panels sideways
+// so the user discovers the horizontal swipe gesture. Driven by a CSS
+// transition on transform — does not actually scroll the pager, so
+// scroll-snap can't fight us back. Transitions (not @keyframes) so any
+// interrupt smoothly slides back to 0 instead of snapping.
 let heroPeekTimer = null;
+let heroPeekHoldTimer = null;
+let heroPeekReleaseTimer = null;
 let isPeeking = false;
 const PEEK_IDLE_MS = 3500;   // first nudge fairly soon
 const PEEK_NEXT_MS = 8000;   // subsequent nudges further apart
-const PEEK_ANIM_MS = 1400;   // matches the CSS @keyframes duration
+const PEEK_HOLD_MS = 550;    // how long to hold at the peeked position
+const PEEK_TRANSITION_MS = 700; // matches CSS transition duration
 
 function schedulePeek(delay = PEEK_IDLE_MS) {
   if (isPeeking) return;
@@ -1601,7 +1657,11 @@ function schedulePeek(delay = PEEK_IDLE_MS) {
 
 function cancelPeek() {
   clearTimeout(heroPeekTimer);
+  clearTimeout(heroPeekHoldTimer);
+  clearTimeout(heroPeekReleaseTimer);
   heroPeekTimer = null;
+  heroPeekHoldTimer = null;
+  heroPeekReleaseTimer = null;
   if (isPeeking) {
     const heroPager = document.getElementById("hero-pager");
     heroPager?.classList.remove("peek-forward", "peek-backward");
@@ -1626,14 +1686,18 @@ function performPeek() {
 
   isPeeking = true;
   heroPager.classList.add(cls);
-  setTimeout(() => {
+  // Hold at the peeked position, then remove the class — the CSS transition
+  // smoothly slides back to translateX(0). Reschedule once the slide back
+  // has finished so the next peek doesn't fight an in-flight transition.
+  heroPeekHoldTimer = setTimeout(() => {
     heroPager.classList.remove(cls);
-    isPeeking = false;
-    // Reschedule next peek if the user is still here.
-    if (getCurrentSection()?.dataset.section === "hero") {
-      schedulePeek(PEEK_NEXT_MS);
-    }
-  }, PEEK_ANIM_MS);
+    heroPeekReleaseTimer = setTimeout(() => {
+      isPeeking = false;
+      if (getCurrentSection()?.dataset.section === "hero") {
+        schedulePeek(PEEK_NEXT_MS);
+      }
+    }, PEEK_TRANSITION_MS);
+  }, PEEK_TRANSITION_MS + PEEK_HOLD_MS);
 }
 
 // Any user activity reschedules the peek (or cancels one mid-flight).
@@ -1693,6 +1757,159 @@ function navVertical(dir) {
   if (next && typeof next.scrollIntoView === "function") {
     next.scrollIntoView({ behavior: "smooth" });
   }
+}
+
+// ===== Telegram-style pull-to-navigate =====
+// When a panel has long content (overflow scroll) and the user reaches the
+// top or bottom, native scroll-chain to the reel is unreliable on iOS/Android
+// — the touch keeps getting eaten by the panel's bounce. So we explicitly
+// detect the edge-pull, paint a rubber-band offset on the panel content, and
+// commit to a vertical section navigation if the user pulls past a threshold.
+// Panels that don't overflow get the same treatment so the gesture is
+// consistent: a deliberate over-pull anywhere flips to the next/prev artist.
+function setupPanelPullToNavigate(panel) {
+  if (!panel || panel.__pullSetup) return;
+  panel.__pullSetup = true;
+
+  const PULL_THRESHOLD = 88;       // px past the rubber-band needed to commit
+  const PULL_MIN_START = 8;        // ignore tiny finger jitters
+  const RUBBER_DAMP = 240;         // higher = stiffer rubber-band
+
+  let startY = null;
+  let startScrollTop = 0;
+  let direction = null;            // 'top' | 'bottom' | null
+  let lastDelta = 0;
+  let intercepting = false;
+  let indicator = null;
+  let indicatorText = null;
+
+  const inner = panel.querySelector(".panel-inner") || panel;
+
+  function rubber(delta) {
+    const sign = Math.sign(delta);
+    const x = Math.abs(delta);
+    return sign * (1 - 1 / (1 + x / RUBBER_DAMP)) * RUBBER_DAMP;
+  }
+
+  function ensureIndicator() {
+    if (indicator) return indicator;
+    indicator = document.createElement("div");
+    indicator.className = "pull-indicator";
+    const arrow = document.createElement("span");
+    arrow.className = "pull-arrow";
+    arrow.setAttribute("aria-hidden", "true");
+    indicatorText = document.createElement("span");
+    indicatorText.className = "pull-text";
+    indicator.appendChild(arrow);
+    indicator.appendChild(indicatorText);
+    panel.appendChild(indicator);
+    return indicator;
+  }
+
+  function setText(dir, ready) {
+    if (!indicatorText) return;
+    if (dir === "bottom") {
+      indicatorText.textContent = ready ? t("pull.releaseNext") : t("pull.next");
+    } else {
+      indicatorText.textContent = ready ? t("pull.releasePrev") : t("pull.prev");
+    }
+  }
+
+  function reset(animate) {
+    inner.style.transition = animate ? "transform 0.32s cubic-bezier(0.22, 1, 0.36, 1)" : "none";
+    inner.style.transform = "";
+    if (indicator) {
+      indicator.style.opacity = "";
+      indicator.classList.remove("is-visible", "is-ready", "pull-from-top", "pull-from-bottom");
+    }
+    panel.classList.remove("is-pulling");
+    if (animate) {
+      // Clear the inline transition once it finishes, so it doesn't fight
+      // future native scrolls.
+      setTimeout(() => { inner.style.transition = ""; }, 360);
+    }
+  }
+
+  function apply(delta, dir) {
+    const r = rubber(delta);
+    inner.style.transition = "none";
+    inner.style.transform = `translate3d(0, ${r}px, 0)`;
+    const ind = ensureIndicator();
+    const progress = Math.min(1, Math.abs(delta) / PULL_THRESHOLD);
+    ind.classList.add("is-visible");
+    ind.classList.toggle("pull-from-top", dir === "top");
+    ind.classList.toggle("pull-from-bottom", dir === "bottom");
+    const ready = Math.abs(delta) >= PULL_THRESHOLD;
+    ind.classList.toggle("is-ready", ready);
+    ind.style.opacity = String(progress);
+    setText(dir, ready);
+  }
+
+  panel.addEventListener("touchstart", (e) => {
+    if (e.touches.length !== 1) return;
+    startY = e.touches[0].clientY;
+    startScrollTop = panel.scrollTop;
+    direction = null;
+    lastDelta = 0;
+    intercepting = false;
+  }, { passive: true });
+
+  panel.addEventListener("touchmove", (e) => {
+    if (startY == null || e.touches.length !== 1) return;
+    const dy = e.touches[0].clientY - startY;
+    const max = Math.max(0, panel.scrollHeight - panel.clientHeight);
+    const atTop = panel.scrollTop <= 0;
+    const atBottom = panel.scrollTop >= max - 1;
+
+    if (!direction) {
+      // Only initiate the gesture if we started AT an edge AND finger is
+      // pulling further past that edge. This way a normal scroll-from-the-
+      // middle gesture is left untouched and feels native.
+      if (dy > PULL_MIN_START && atTop && startScrollTop <= 0) {
+        direction = "top";
+        intercepting = true;
+        panel.classList.add("is-pulling");
+      } else if (dy < -PULL_MIN_START && atBottom && startScrollTop >= max - 1) {
+        direction = "bottom";
+        intercepting = true;
+        panel.classList.add("is-pulling");
+      } else {
+        return;
+      }
+    }
+
+    // If user reverses past zero, abort the gesture and let native scroll
+    // resume on the next move (we don't fight back).
+    if ((direction === "top" && dy <= 0) || (direction === "bottom" && dy >= 0)) {
+      reset(true);
+      direction = null;
+      intercepting = false;
+      lastDelta = 0;
+      return;
+    }
+
+    if (intercepting && e.cancelable) e.preventDefault();
+    lastDelta = dy;
+    apply(dy, direction);
+  }, { passive: false });
+
+  function endTouch() {
+    if (intercepting && Math.abs(lastDelta) >= PULL_THRESHOLD) {
+      const dir = direction === "bottom" ? 1 : -1;
+      // Animate the inner back smoothly while we navigate.
+      reset(true);
+      navVertical(dir);
+    } else {
+      reset(true);
+    }
+    startY = null;
+    direction = null;
+    intercepting = false;
+    lastDelta = 0;
+  }
+
+  panel.addEventListener("touchend", endTouch, { passive: true });
+  panel.addEventListener("touchcancel", endTouch, { passive: true });
 }
 
 // Touch-driven vertical loop: detect a swipe-up that ends with the reel
