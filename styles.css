@@ -2637,10 +2637,12 @@ body.has-mini-player .panel {
    (modifier: mini). The numbers tick every second via a global interval. */
 .countdown-timer {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: stretch;
   justify-content: center;
   gap: 6px;
   margin-top: 4px;
+  max-width: 100%;
   font-family: "Orbitron", "Heebo", system-ui, sans-serif;
   direction: ltr;
   unicode-bidi: isolate;
@@ -2693,10 +2695,11 @@ body.has-mini-player .panel {
   50%, 100% { opacity: 0.25; }
 }
 
-.countdown-timer--hero .countdown-unit { min-width: 38px; padding: 5px 7px 4px; }
-.countdown-timer--hero .countdown-value { font-size: 18px; }
-.countdown-timer--hero .countdown-sep   { font-size: 16px; }
-.countdown-timer--hero .countdown-label { font-size: 9px; }
+.countdown-timer--hero { gap: 4px; }
+.countdown-timer--hero .countdown-unit  { min-width: 0; padding: 3px 6px 2px; border-radius: 6px; flex: 0 1 auto; }
+.countdown-timer--hero .countdown-value { font-size: 15px; letter-spacing: 0.4px; }
+.countdown-timer--hero .countdown-sep   { font-size: 13px; }
+.countdown-timer--hero .countdown-label { font-size: 7.5px; letter-spacing: 0.8px; margin-top: 2px; }
 
 .countdown-timer--mini { gap: 5px; margin-top: 0; }
 .countdown-timer--mini .countdown-unit  { min-width: 44px; padding: 6px 9px 5px; border-radius: 7px; }
