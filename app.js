@@ -853,6 +853,7 @@ function heroPanelMain() {
       <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
+      ${subscribeButton("festival", "artist-subscribe--hero")}
       <p class="hero-disclaimer">${escapeHtml(t("hero.disclaimer"))}</p>
     </div>
   `;
@@ -869,6 +870,7 @@ function heroPanelStage(stage) {
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
       <div class="hero-meta">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard(stage.id)}
+      ${subscribeButton("stage:" + stage.id, "artist-subscribe--hero")}
       <div class="hero-hint"><span>${escapeHtml(t("hero.diveStage").replace(/^[↓\s]+/, ""))}</span><span class="hero-hint-arrow">↓</span></div>
     </div>
   `;
@@ -989,9 +991,6 @@ function panelHero(a) {
   const photo = a.photo
     ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="${loadingAttr}"${fetchAttr} decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
     : "";
-  const subscribed = isArtistSubscribed(a.id);
-  const subLabel = t(subscribed ? "subscribe.subscribed" : "subscribe.label");
-  const subIcon = subscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
   return `
     <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
       <div class="panel-inner">
@@ -1011,7 +1010,7 @@ function panelHero(a) {
             <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
           </div>
           ${artistSetTimeBadge(a)}
-          <button class="artist-subscribe ${subscribed ? "is-subscribed" : ""}" type="button" aria-pressed="${subscribed ? "true" : "false"}"><span class="sub-label">${escapeHtml(subLabel)}</span>${subIcon}</button>
+          ${subscribeButton("artist:" + a.id)}
         </div>
       </div>
     </div>
@@ -1053,35 +1052,52 @@ function rand01(seed) {
   return x - Math.floor(x);
 }
 
-// ===== Subscribe button (per-artist, persisted in localStorage) =====
-// No backend — toggling the button just stores the artist id locally so the
-// state survives a reload. The visual is an Instagram-style transparent
-// pill with a translucent white border. Icons sit to the right of the
-// label: a "+" when not yet subscribed, a "✓" once subscribed.
-const SUBSCRIBE_STORAGE_KEY = "zna-subscribed-artists";
+// ===== Subscribe button (generic key-based state) =====
+// One Instagram-style transparent pill is used for three different
+// subscribe targets, each keyed differently so they're tracked
+// independently in localStorage:
+//   - "festival"           — main hero, "subscribe to all festival news"
+//   - "stage:<stageId>"    — per-stage hero, news for that stage only
+//   - "artist:<artistId>"  — per-artist hero card
+// No backend — toggling just stores the key locally so the state
+// survives a reload. Icons swap between "+" and "✓".
+const SUBSCRIBE_STORAGE_KEY = "zna-subscriptions";
 const SUBSCRIBE_ICON_PLUS  = '<svg class="sub-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg>';
 const SUBSCRIBE_ICON_CHECK = '<svg class="sub-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>';
 
-function getSubscribedArtists() {
+function getSubscriptions() {
   try {
     const raw = localStorage.getItem(SUBSCRIBE_STORAGE_KEY);
     return new Set(raw ? JSON.parse(raw) : []);
   } catch { return new Set(); }
 }
 
-function setSubscribedArtists(set) {
+function setSubscriptions(set) {
   try { localStorage.setItem(SUBSCRIBE_STORAGE_KEY, JSON.stringify([...set])); } catch {}
 }
 
-function isArtistSubscribed(id) {
-  return getSubscribedArtists().has(id);
+function isSubscribed(key) {
+  return getSubscriptions().has(key);
 }
 
-function toggleArtistSubscription(id) {
-  const s = getSubscribedArtists();
-  if (s.has(id)) s.delete(id); else s.add(id);
-  setSubscribedArtists(s);
-  return s.has(id);
+function toggleSubscription(key) {
+  const s = getSubscriptions();
+  if (s.has(key)) s.delete(key); else s.add(key);
+  setSubscriptions(s);
+  return s.has(key);
+}
+
+// Render an "Subscribe +" / "Subscribed ✓" pill for any target. The key
+// is stamped onto the button so the delegated click handler can toggle
+// the right entry without needing to know the surrounding context.
+// `extraClass` lets callers tag the button for size variants (e.g. the
+// hero panels use a slightly more compact version).
+function subscribeButton(key, extraClass = "") {
+  const subscribed = isSubscribed(key);
+  const subLabel = t(subscribed ? "subscribe.subscribed" : "subscribe.label");
+  const subIcon = subscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
+  const cls = `artist-subscribe ${extraClass} ${subscribed ? "is-subscribed" : ""}`.trim();
+  return `<button class="${cls}" type="button" aria-pressed="${subscribed ? "true" : "false"}" data-sub-key="${escapeHtml(key)}"><span class="sub-label">${escapeHtml(subLabel)}</span>${subIcon}</button>`;
 }
 
 function formatAnnouncedDate(yyyymmdd) {
@@ -1790,16 +1806,16 @@ function maybeDisarmFromOutside(e) {
 document.addEventListener("pointerdown", maybeDisarmFromOutside, { passive: true, capture: true });
 document.addEventListener("touchstart", maybeDisarmFromOutside, { passive: true, capture: true });
 
-// Subscribe button — delegated click. Toggles the per-artist subscribed
-// flag in localStorage and re-skins the button (label + icon) in place,
-// so the surrounding panel doesn't flicker.
+// Subscribe button — delegated click. Reads the target key off the
+// button itself (data-sub-key), toggles it in localStorage, and re-skins
+// the button (label + icon) in place so the surrounding panel doesn't
+// flicker. Handles all three targets (festival, stage, artist).
 reel.addEventListener("click", e => {
   const btn = e.target.closest(".artist-subscribe");
   if (!btn) return;
-  const section = btn.closest('[data-section="artist"]');
-  const id = section?.dataset.artistId;
-  if (!id) return;
-  const nowSubscribed = toggleArtistSubscription(id);
+  const key = btn.dataset.subKey;
+  if (!key) return;
+  const nowSubscribed = toggleSubscription(key);
   btn.classList.toggle("is-subscribed", nowSubscribed);
   btn.setAttribute("aria-pressed", nowSubscribed ? "true" : "false");
   const labelEl = btn.querySelector(".sub-label");
