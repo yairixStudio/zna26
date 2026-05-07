@@ -1330,10 +1330,13 @@ function buildReel() {
     // Thumb clicks are handled by the global delegated listener on .reel.
   });
 
-  // Telegram-style pull-to-navigate: if a panel is at its top/bottom edge
-  // and the user keeps pulling, give a rubber-band hint and on release jump
-  // to the previous/next artist. Wired per-panel so it survives rerender.
-  reel.querySelectorAll('[data-section="artist"] .panel').forEach(setupPanelPullToNavigate);
+  // Telegram-style pull-to-navigate: only the panels that actually have
+  // long internal scrolling — Biography (.panel--info) and Tracks/Videos
+  // (.panel--tracks) — get the gesture. Hero and Discography don't need
+  // it (no internal scroll trap to escape from), and arming it there
+  // would just steal vertical pans from the reel for no reason.
+  reel.querySelectorAll('[data-section="artist"] .panel--info, [data-section="artist"] .panel--tracks')
+    .forEach(setupPanelPullToNavigate);
 }
 
 // Live dot tracking: a continuous RAF loop polls scrollLeft on whichever
