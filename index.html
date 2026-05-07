@@ -15,7 +15,10 @@
   <meta name="format-detection" content="telephone=no" />
 
   <!-- Critical above-the-fold styles inlined so the first paint never waits
-       on styles.css. Everything else streams via the <link> below. -->
+       on styles.css. Everything else streams via the <link> below.
+       Includes a body[data-css-loading] hide rule so the unstyled DOM
+       (reel sections / hero panels) never paints before styles.css lands —
+       fixes the half-second of "compressed elements" flash on refresh. -->
   <style>
     html,body{height:100%;margin:0;padding:0;background:#0a0524;color:#f5f0ff;
       font-family:"Heebo","Segoe UI","Assistant",system-ui,sans-serif;
@@ -33,6 +36,10 @@
     .top-bar > *{pointer-events:auto}
     .vertical-progress{position:fixed;right:8px;top:50%;transform:translateY(-50%);
       z-index:20;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity .25s}
+    /* Hide unstyled content until styles.css loads — JS removes the flag. */
+    body[data-css-loading="1"] .reel,
+    body[data-css-loading="1"] .top-bar,
+    body[data-css-loading="1"] .mini-player{visibility:hidden}
   </style>
 
   <!-- Preconnect once to the gstatic font CDN; googleapis is the discovery
@@ -44,20 +51,36 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Orbitron:wght@800&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&family=Orbitron:wght@800&display=swap" /></noscript>
 
-  <!-- Main stylesheet — preload then promote to stylesheet so it doesn't
-       block the critical path. -->
-  <link rel="preload" href="styles.css" as="style" onload="this.rel='stylesheet'" />
+  <!-- Main stylesheet — render-blocking so the first paint isn't unstyled
+       (was preload+onload-swap, but that caused a ~500ms FOUC on cold
+       loads). styles.css is ~85KB raw / ~20KB gzipped — fine to block. -->
+  <link rel="stylesheet" href="styles.css" onload="document.body && document.body.removeAttribute('data-css-loading');" />
   <noscript><link rel="stylesheet" href="styles.css" /></noscript>
 
-  <!-- DNS-prefetch the YouTube hosts the player will hit on first Play. -->
+  <!-- Preconnect to YouTube origins so the first Play (or thumbnail) doesn't
+       eat the TLS handshake cost. dns-prefetch kept as a fallback. -->
+  <link rel="preconnect" href="https://i.ytimg.com" crossorigin />
+  <link rel="preconnect" href="https://www.youtube.com" crossorigin />
   <link rel="dns-prefetch" href="https://www.youtube.com" />
   <link rel="dns-prefetch" href="https://i.ytimg.com" />
+  <link rel="dns-prefetch" href="https://s.ytimg.com" />
+  <link rel="dns-prefetch" href="https://i9.ytimg.com" />
 
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23FEB447'/%3E%3Ccircle cx='32' cy='32' r='18' fill='%23ff5c8a'/%3E%3C/svg%3E" />
   <link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png" />
 </head>
-<body>
+<body data-css-loading="1">
+  <script>
+    // Belt-and-braces: even if the stylesheet's onload doesn't fire (e.g.
+    // when it's already cached and onload is suppressed by some browsers),
+    // clear the flag once DOM is parsed so we never permanently hide the UI.
+    document.addEventListener("DOMContentLoaded", function () {
+      requestAnimationFrame(function () {
+        document.body && document.body.removeAttribute("data-css-loading");
+      });
+    });
+  </script>
   <div class="bg-scene" id="bg-scene"></div>
   <div class="stars"></div>
   <div class="bg-grid"></div>
