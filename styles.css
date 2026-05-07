@@ -826,14 +826,14 @@ body.has-mini-player .hero-dots {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 30px;
 }
 
 .artist-hero-text {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 22px;
   max-width: 100%;
 }
 
@@ -902,7 +902,7 @@ body.has-mini-player .hero-dots {
 .artist-hero-photo {
   position: relative;
   width: min(70vw, 240px);
-  margin: 0 auto 16px;
+  margin: 0 auto 8px;
   overflow: visible;
 }
 
@@ -961,11 +961,15 @@ body.has-mini-player .hero-dots {
 }
 
 /* Instagram-style transparent subscribe pill, sits below the set-time
-   timer. Toggles to a softly filled state once subscribed (state stored
-   per-artist in localStorage). */
+   timer. Label sits left, status icon (+ or ✓) to the right. Toggles to a
+   softly filled state once subscribed (state stored per-artist in
+   localStorage). */
 .artist-subscribe {
   margin-top: 8px;
   align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.55);
   color: rgba(255, 255, 255, 0.95);
@@ -973,10 +977,34 @@ body.has-mini-player .hero-dots {
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  padding: 7px 24px;
+  padding: 7px 22px;
   border-radius: 8px;
   cursor: pointer;
+  direction: ltr;
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.artist-subscribe .sub-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+
+.artist-subscribe.is-subscribed .sub-icon {
+  /* Subtle "click" feedback when the icon swaps to a checkmark. */
+  animation: sub-icon-pop 280ms cubic-bezier(.2, .85, .35, 1.2);
+}
+
+@keyframes sub-icon-pop {
+  0%   { transform: scale(0.4); }
+  60%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
 }
 
 .artist-subscribe:hover {
@@ -1524,10 +1552,20 @@ body.has-mini-player .panel {
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
   z-index: 20;
   max-height: 70vh;
-  overflow: hidden;
+  /* Allow magnified dots to extend horizontally beyond the strip's
+     natural column width without being clipped. The vertical limit
+     (max-height) is still enforced. */
+  overflow-y: hidden;
+  overflow-x: visible;
+  /* Always-on tap-target padding (was previously desktop-only). The
+     negative margin keeps the strip's visual position the same as before
+     so the dots still hug the edge of the screen. */
+  padding: 8px 18px 8px 4px;
+  margin-inline-start: -4px;
   pointer-events: auto;
   opacity: 1;
   transition: opacity 0.4s;
@@ -1546,16 +1584,51 @@ body.has-mini-player .panel {
   height: 12px;
   border-radius: 999px;
   background: rgba(255,255,255,0.25);
-  transition: all 0.3s;
+  transition: width 0.22s ease, height 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
   border: none;
   padding: 0;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .v-dot.active {
   background: var(--sun-yellow);
   height: 22px;
   box-shadow: 0 0 10px var(--sun-yellow);
+}
+
+/* ----- Two-stage tap + dock-style magnification on the vertical strip,
+   mirroring the horizontal panel-dot behaviour. The strip stays compact
+   in idle; the first tap arms it (small visible bump on every dot), and
+   pointer-tracking from app.js sets data-near on the dot under the finger
+   so only that dot + its 1-2 neighbours grow. The arm TTL (2s) then
+   relaxes the strip back. */
+.vertical-progress.is-armed .v-dot {
+  width: 4px;
+  height: 14px;
+  background: rgba(255,255,255,0.45);
+}
+
+.vertical-progress.is-armed .v-dot[data-near="2"] { height: 18px; }
+.vertical-progress.is-armed .v-dot[data-near="1"] { height: 24px; }
+.vertical-progress.is-armed .v-dot[data-near="0"] {
+  width: 5px;
+  height: 32px;
+}
+/* Brighten the focused dot on inactive sections so it reads as the
+   tap target. The active dot keeps its yellow accent untouched. */
+.vertical-progress.is-armed .v-dot[data-near="0"]:not(.active) {
+  background: rgba(255,255,255,0.85);
+}
+
+/* Active dot keeps its yellow accent but follows the same graduated
+   magnification so the user can still see where they are in the lineup. */
+.vertical-progress.is-armed .v-dot.active            { height: 26px; }
+.vertical-progress.is-armed .v-dot.active[data-near="2"] { height: 30px; }
+.vertical-progress.is-armed .v-dot.active[data-near="1"] { height: 34px; }
+.vertical-progress.is-armed .v-dot.active[data-near="0"] {
+  width: 6px;
+  height: 40px;
 }
 
 /* ===== Bottom-anchored mini-player (Spotify-style) ===== */
@@ -2372,7 +2445,7 @@ body.has-mini-player .panel {
     margin: 0;
     border-radius: 24px;
   }
-  .panel-hero .artist-hero-text { gap: 18px; }
+  .panel-hero .artist-hero-text { gap: 26px; }
   .panel-hero .artist-hero-text::before {
     content: "";
     display: block;

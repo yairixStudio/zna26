@@ -991,6 +991,7 @@ function panelHero(a) {
     : "";
   const subscribed = isArtistSubscribed(a.id);
   const subLabel = t(subscribed ? "subscribe.subscribed" : "subscribe.label");
+  const subIcon = subscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
   return `
     <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
       <div class="panel-inner">
@@ -1010,7 +1011,7 @@ function panelHero(a) {
             <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
           </div>
           ${artistSetTimeBadge(a)}
-          <button class="artist-subscribe ${subscribed ? "is-subscribed" : ""}" type="button" aria-pressed="${subscribed ? "true" : "false"}">${escapeHtml(subLabel)}</button>
+          <button class="artist-subscribe ${subscribed ? "is-subscribed" : ""}" type="button" aria-pressed="${subscribed ? "true" : "false"}"><span class="sub-label">${escapeHtml(subLabel)}</span>${subIcon}</button>
         </div>
       </div>
     </div>
@@ -1055,8 +1056,11 @@ function rand01(seed) {
 // ===== Subscribe button (per-artist, persisted in localStorage) =====
 // No backend — toggling the button just stores the artist id locally so the
 // state survives a reload. The visual is an Instagram-style transparent
-// pill with a translucent white border.
+// pill with a translucent white border. Icons sit to the right of the
+// label: a "+" when not yet subscribed, a "✓" once subscribed.
 const SUBSCRIBE_STORAGE_KEY = "zna-subscribed-artists";
+const SUBSCRIBE_ICON_PLUS  = '<svg class="sub-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" /></svg>';
+const SUBSCRIBE_ICON_CHECK = '<svg class="sub-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>';
 
 function getSubscribedArtists() {
   try {
@@ -1612,8 +1616,8 @@ function handlePagerSettle(pager) {
 // specific dot accurately. Only taps while armed actually navigate. After
 // 2 seconds of no further taps — or any tap outside the strip — it relaxes
 // back to its tiny idle state.
-const DOT_STRIP_SELECTOR = ".dots, .hero-dots";
-const DOT_BTN_SELECTOR = ".dot, .hero-dot";
+const DOT_STRIP_SELECTOR = ".dots, .hero-dots, .vertical-progress";
+const DOT_BTN_SELECTOR = ".dot, .hero-dot, .v-dot";
 const DOT_ARMED_TTL = 2000;
 const dotArmTimers = new WeakMap();
 
@@ -1625,6 +1629,11 @@ function armDots(strip) {
   dotArmTimers.set(strip, setTimeout(() => {
     strip.classList.remove("is-armed");
     clearDotMagnify(strip);
+    // The vertical strip auto-hides on idle. Once the arm TTL expires,
+    // hand control back to the idle countdown so it can fade out again.
+    if (strip.classList.contains("vertical-progress") && typeof showVDots === "function") {
+      showVDots();
+    }
   }, DOT_ARMED_TTL));
 }
 
@@ -1652,18 +1661,23 @@ function clearDotMagnify(strip) {
   strip.querySelectorAll("[data-near]").forEach(d => { delete d.dataset.near; });
 }
 
-function updateDotMagnify(strip, clientX) {
+function updateDotMagnify(strip, clientX, clientY) {
   if (!strip || !strip.classList.contains("is-armed")) {
     clearDotMagnify(strip);
     return -1;
   }
   const dots = strip.querySelectorAll(DOT_BTN_SELECTOR);
   if (!dots.length) return -1;
+  // Vertical-progress lays its dots out top-to-bottom, so we compare the
+  // pointer's Y coordinate to each dot's centre on that axis. The two
+  // horizontal strips use X.
+  const isVertical = strip.classList.contains("vertical-progress");
+  const target = isVertical ? clientY : clientX;
   let bestIdx = 0, bestDist = Infinity;
   for (let i = 0; i < dots.length; i++) {
     const r = dots[i].getBoundingClientRect();
-    const cx = r.left + r.width / 2;
-    const dist = Math.abs(cx - clientX);
+    const c = isVertical ? (r.top + r.height / 2) : (r.left + r.width / 2);
+    const dist = Math.abs(c - target);
     if (dist < bestDist) { bestDist = dist; bestIdx = i; }
   }
   dots.forEach((d, i) => {
@@ -1678,12 +1692,19 @@ function updateDotMagnify(strip, clientX) {
 
 // Route a tap on a specific dot (or "near enough" to one) to its target.
 // Hero strip → scroll the hero-pager to that stage; artist strip → scroll
-// the artist's pager to that panel.
+// the artist's pager to that panel; vertical strip → scroll the reel to
+// the matching section.
 function navigateDotTap(strip, dotEl) {
   if (!dotEl) return;
   if (strip.classList.contains("hero-dots")) {
     const stage = dotEl.dataset.stage;
     if (stage && typeof scrollHeroToStage === "function") scrollHeroToStage(stage, false);
+    return;
+  }
+  if (strip.classList.contains("vertical-progress")) {
+    const idx = +dotEl.dataset.vidx;
+    const sections = reel.querySelectorAll(".section");
+    sections[idx]?.scrollIntoView({ behavior: "smooth" });
     return;
   }
   const section = strip.closest('[data-section="artist"]');
@@ -1694,9 +1715,10 @@ function navigateDotTap(strip, dotEl) {
   }
 }
 
-reel.addEventListener("click", e => {
-  // Did the user tap the dots strip at all? (a dot button OR the strip
-  // container itself — the bigger idle padding catches off-target taps).
+// Shared click handler: works for any strip (artist .dots, hero-dots, or
+// .vertical-progress). The vertical strip lives outside the reel so we
+// attach the same handler there separately.
+function handleStripClick(e) {
   const strip = e.target.closest(DOT_STRIP_SELECTOR);
   if (!strip) return;
   const wasArmed = strip.classList.contains("is-armed");
@@ -1705,7 +1727,8 @@ reel.addEventListener("click", e => {
   // Don't navigate yet.
   if (!wasArmed) {
     armDots(strip);
-    updateDotMagnify(strip, e.clientX);
+    updateDotMagnify(strip, e.clientX, e.clientY);
+    if (strip.classList.contains("vertical-progress") && typeof showVDots === "function") showVDots();
     return;
   }
   // Already armed: route a tap on a specific dot to its target; any tap
@@ -1715,13 +1738,16 @@ reel.addEventListener("click", e => {
   // Fallback: if the click landed on whitespace inside the strip but
   // there's a magnified dot under the pointer, treat that as the target.
   if (!dot) {
-    const focusedIdx = updateDotMagnify(strip, e.clientX);
+    const focusedIdx = updateDotMagnify(strip, e.clientX, e.clientY);
     if (focusedIdx >= 0) {
       dot = strip.querySelectorAll(DOT_BTN_SELECTOR)[focusedIdx];
     }
   }
   navigateDotTap(strip, dot);
-});
+}
+
+reel.addEventListener("click", handleStripClick);
+verticalProgress?.addEventListener("click", handleStripClick);
 
 // Live magnification: as the pointer moves over an armed strip, bump the
 // nearest dot. Use document-level delegation so we cover dots strips
@@ -1730,7 +1756,7 @@ document.addEventListener("pointermove", e => {
   const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
   if (!strip) return;
   if (!strip.classList.contains("is-armed")) return;
-  updateDotMagnify(strip, e.clientX);
+  updateDotMagnify(strip, e.clientX, e.clientY);
 }, { passive: true });
 
 // Touchscreen: pointer events fire too, but iOS Safari sometimes drops
@@ -1740,7 +1766,7 @@ document.addEventListener("touchmove", e => {
   const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
   if (!strip || !strip.classList.contains("is-armed")) return;
   const t = e.touches && e.touches[0];
-  if (t) updateDotMagnify(strip, t.clientX);
+  if (t) updateDotMagnify(strip, t.clientX, t.clientY);
 }, { passive: true });
 
 // Pointer leaves a strip (or lifts off): relax the magnification but
@@ -1765,9 +1791,8 @@ document.addEventListener("pointerdown", maybeDisarmFromOutside, { passive: true
 document.addEventListener("touchstart", maybeDisarmFromOutside, { passive: true, capture: true });
 
 // Subscribe button — delegated click. Toggles the per-artist subscribed
-// flag in localStorage and re-skins the button. No re-render needed: we
-// just flip the class and label inline so the surrounding panel doesn't
-// flicker.
+// flag in localStorage and re-skins the button (label + icon) in place,
+// so the surrounding panel doesn't flicker.
 reel.addEventListener("click", e => {
   const btn = e.target.closest(".artist-subscribe");
   if (!btn) return;
@@ -1777,7 +1802,10 @@ reel.addEventListener("click", e => {
   const nowSubscribed = toggleArtistSubscription(id);
   btn.classList.toggle("is-subscribed", nowSubscribed);
   btn.setAttribute("aria-pressed", nowSubscribed ? "true" : "false");
-  btn.textContent = t(nowSubscribed ? "subscribe.subscribed" : "subscribe.label");
+  const labelEl = btn.querySelector(".sub-label");
+  if (labelEl) labelEl.textContent = t(nowSubscribed ? "subscribe.subscribed" : "subscribe.label");
+  const oldIcon = btn.querySelector(".sub-icon");
+  if (oldIcon) oldIcon.outerHTML = nowSubscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
 });
 
 // ===== Vertical progress bar =====
@@ -1799,14 +1827,10 @@ function buildVerticalProgress() {
   verticalProgress.innerHTML = items.join("");
 }
 
-// Single delegated click for vertical dots (registered once)
-verticalProgress.addEventListener("click", e => {
-  const dot = e.target.closest(".v-dot");
-  if (!dot) return;
-  const idx = +dot.dataset.vidx;
-  const sections = reel.querySelectorAll(".section");
-  sections[idx]?.scrollIntoView({ behavior: "smooth" });
-});
+// Vertical-progress click goes through the shared handleStripClick handler
+// below — same two-stage tap + dock-style magnify behaviour as the
+// per-artist and hero strips. The handler is wired further down once it's
+// defined.
 
 // Desktop-only floating tooltip for the vertical dots. Lives outside
 // .vertical-progress so the container's overflow can't clip it.
@@ -2887,6 +2911,10 @@ function showVDots() {
   verticalProgress.classList.remove("is-idle");
   clearTimeout(dotsIdleTimer);
   dotsIdleTimer = setTimeout(() => {
+    // While the strip is armed (user is actively picking a section), the
+    // idle hide is suppressed — disarmAllDots / armDots TTL takes over and
+    // restarts this countdown when the user steps away.
+    if (verticalProgress.classList.contains("is-armed")) return;
     verticalProgress.classList.add("is-idle");
   }, 1500);
 }
