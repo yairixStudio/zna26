@@ -862,6 +862,13 @@ body.has-mini-player .hero-dots {
   border-style: dashed;
 }
 
+.artist-set-time.is-countdown {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
 .artist-tags-row {
   display: flex;
   flex-wrap: wrap;
@@ -1903,11 +1910,6 @@ body.has-mini-player .panel {
   opacity: 1;
 }
 
-.stage-select-menu .lang-cell-name {
-  font-size: 11px;
-  letter-spacing: 0.2px;
-}
-
 .stage-select-menu .count {
   opacity: 0.7;
   font-size: 11px;
@@ -2376,12 +2378,78 @@ body.has-mini-player .panel {
   line-height: 1.2 !important;
 }
 
-.live-status-countdown {
-  font-size: 12px;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.3px;
+/* ===== Boxed digital countdown timer =====
+   Used both in the hero "festival starts in" card (modifier: hero) and in
+   each artist's set-time badge while the per-set schedule is still TBA
+   (modifier: mini). The numbers tick every second via a global interval. */
+.countdown-timer {
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-family: "Orbitron", "Heebo", system-ui, sans-serif;
+  direction: ltr;
+  unicode-bidi: isolate;
 }
+
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 6px 8px 5px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.62), rgba(10, 5, 36, 0.7));
+  border: 1px solid rgba(254, 180, 71, 0.55);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 10px rgba(255, 200, 80, 0.18),
+    0 0 12px rgba(255, 180, 71, 0.18);
+}
+
+.countdown-value {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: var(--sun-yellow);
+  text-shadow: 0 0 8px rgba(255, 180, 71, 0.7);
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+  margin-top: 4px;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.countdown-sep {
+  align-self: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--sun-yellow);
+  text-shadow: 0 0 8px rgba(255, 180, 71, 0.7);
+  animation: countdown-sep-blink 1s steps(2, end) infinite;
+}
+
+@keyframes countdown-sep-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
+}
+
+.countdown-timer--hero .countdown-unit { min-width: 56px; padding: 8px 10px 6px; }
+.countdown-timer--hero .countdown-value { font-size: 28px; }
+.countdown-timer--hero .countdown-sep   { font-size: 26px; }
+.countdown-timer--hero .countdown-label { font-size: 10px; }
+
+.countdown-timer--mini { gap: 4px; margin-top: 0; }
+.countdown-timer--mini .countdown-unit  { min-width: 34px; padding: 4px 6px 3px; border-radius: 6px; }
+.countdown-timer--mini .countdown-value { font-size: 15px; }
+.countdown-timer--mini .countdown-sep   { font-size: 14px; }
+.countdown-timer--mini .countdown-label { font-size: 8px; letter-spacing: 1px; margin-top: 2px; }
 
 .live-status-meta {
   font-size: 12px;
