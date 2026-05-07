@@ -78,6 +78,12 @@ const STRINGS = {
   "live.hoursHHMM":    { he: "עוד {hm} שעות", en: "in {hm}", pt: "em {hm}" },
   "live.minutesM":     { he: "עוד {m} דקות", en: "in {m} min", pt: "dentro de {m} min" },
 
+  // Countdown timer unit labels (boxed digital ticker).
+  "timer.days":        { he: "ימים", en: "Days",  pt: "Dias" },
+  "timer.hours":       { he: "שעות", en: "Hours", pt: "Horas" },
+  "timer.minutes":     { he: "דקות", en: "Min",   pt: "Min" },
+  "timer.seconds":     { he: "שניות", en: "Sec",  pt: "Seg" },
+
   // Set time badge
   "setTime.tba":       { he: "שעת הופעה: T.B.A.", en: "Set time: T.B.A.", pt: "Horário do set: T.B.A." },
 
@@ -732,6 +738,47 @@ function formatCountdown(targetDate) {
   return t("live.minutesM", { m: minutes });
 }
 
+// Boxed digital countdown widget. Returns a 4-cell DD/HH/MM/SS ticker that
+// the global 1s interval below keeps current. `modifier` lets callers ask
+// for size variants (e.g. "hero" for the festival countdown card).
+function buildCountdownTimer(targetDate, modifier = "") {
+  if (!targetDate) return "";
+  const iso = targetDate.toISOString();
+  const cls = modifier ? `countdown-timer countdown-timer--${modifier}` : "countdown-timer";
+  const parts = computeCountdownParts(targetDate);
+  const cell = (key, value) => `
+    <div class="countdown-unit">
+      <span class="countdown-value" data-unit="${key}">${value}</span>
+      <span class="countdown-label">${escapeHtml(t(`timer.${key}`))}</span>
+    </div>`;
+  return `
+    <div class="${cls}" data-countdown-timer="${escapeHtml(iso)}" role="timer" aria-live="polite">
+      ${cell("days",    parts.days)}
+      <span class="countdown-sep" aria-hidden="true">:</span>
+      ${cell("hours",   parts.hours)}
+      <span class="countdown-sep" aria-hidden="true">:</span>
+      ${cell("minutes", parts.minutes)}
+      <span class="countdown-sep" aria-hidden="true">:</span>
+      ${cell("seconds", parts.seconds)}
+    </div>
+  `;
+}
+
+function computeCountdownParts(targetDate) {
+  const ms = Math.max(0, targetDate.getTime() - Date.now());
+  const days    = Math.floor(ms / 86_400_000);
+  const hours   = Math.floor((ms % 86_400_000) / 3_600_000);
+  const minutes = Math.floor((ms % 3_600_000) / 60_000);
+  const seconds = Math.floor((ms % 60_000) / 1000);
+  const pad = (n, w = 2) => String(n).padStart(w, "0");
+  return {
+    days:    pad(days, days >= 100 ? 3 : 2),
+    hours:   pad(hours),
+    minutes: pad(minutes),
+    seconds: pad(seconds),
+  };
+}
+
 function liveStatusCard(stageId = "all") {
   const status = getScheduleStatus(stageId);
   const startsAt = parseScheduleTime(FESTIVAL.startsAt);
@@ -746,28 +793,37 @@ function liveStatusCard(stageId = "all") {
     `;
   }
 
-  const countdownText = startsAt ? formatCountdown(startsAt) : "";
-  const countdownAttr = startsAt ? startsAt.toISOString() : "";
   return `
     <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
       <div class="live-now-track"><span class="live-now-dot"></span></div>
       <strong class="live-status-title">${escapeHtml(t("live.notStarted"))}</strong>
-      ${countdownAttr ? `<span class="live-status-countdown" data-countdown="${escapeHtml(countdownAttr)}">${escapeHtml(countdownText)}</span>` : ""}
+      ${buildCountdownTimer(startsAt, "hero")}
     </div>
   `;
 }
 
 setInterval(() => {
-  document.querySelectorAll("[data-countdown]").forEach(el => {
-    const target = parseScheduleTime(el.dataset.countdown);
-    if (target) el.textContent = formatCountdown(target);
+  document.querySelectorAll("[data-countdown-timer]").forEach(el => {
+    const target = parseScheduleTime(el.dataset.countdownTimer);
+    if (!target) return;
+    const parts = computeCountdownParts(target);
+    el.querySelectorAll("[data-unit]").forEach(span => {
+      const next = parts[span.dataset.unit];
+      if (next != null && span.textContent !== next) span.textContent = next;
+    });
   });
-}, 30_000);
+}, 1000);
 
 function artistSetTimeBadge(a) {
   const schedule = completeSchedule(a);
-  const text = schedule ? formatScheduleRange(schedule) : t("setTime.tba");
-  return `<div class="artist-set-time ${schedule ? "has-time" : "is-tba"}">${escapeHtml(text)}</div>`;
+  if (schedule) {
+    return `<div class="artist-set-time has-time">${escapeHtml(formatScheduleRange(schedule))}</div>`;
+  }
+  const startsAt = parseScheduleTime(FESTIVAL.startsAt);
+  if (startsAt && Date.now() < startsAt.getTime()) {
+    return `<div class="artist-set-time is-countdown">${buildCountdownTimer(startsAt, "mini")}</div>`;
+  }
+  return `<div class="artist-set-time is-tba">${escapeHtml(t("setTime.tba"))}</div>`;
 }
 
 // ===== Build sections =====
