@@ -87,6 +87,10 @@ const STRINGS = {
   // Set time badge
   "setTime.tba":       { he: "שעת הופעה: T.B.A.", en: "Set time: T.B.A.", pt: "Horário do set: T.B.A." },
 
+  // Per-artist subscribe button (Instagram-style transparent pill).
+  "subscribe.label":      { he: "Subscribe", en: "Subscribe", pt: "Subscribe" },
+  "subscribe.subscribed": { he: "Subscribed", en: "Subscribed", pt: "Subscribed" },
+
   // Announcement
   "announced.prefix":  { he: "📣 הוכרז ב-", en: "📣 Announced on ", pt: "📣 Anunciado em " },
 
@@ -975,7 +979,8 @@ function multiHeroSection() {
 
 function panelHero(a) {
   const initials = getInitials(a.name);
-  const tagItems = (a.tags || []).slice(0, 4).map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("");
+  const tags = (a.tags || []).slice(0, 4);
+  const photoTags = buildPhotoTags(a.id, tags);
   // If the user came in on a deep-link to this artist, load their photo
   // eagerly with high priority so the first paint isn't waiting on it.
   const isDeepLinkTarget = (typeof _initialRoute !== "undefined") && _initialRoute && _initialRoute.a === a.id;
@@ -984,13 +989,18 @@ function panelHero(a) {
   const photo = a.photo
     ? `<img class="artist-photo" src="${escapeHtml(a.photo)}" alt="${escapeHtml(a.name)}" loading="${loadingAttr}"${fetchAttr} decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('photo-failed'); this.remove();" />`
     : "";
+  const subscribed = isArtistSubscribed(a.id);
+  const subLabel = t(subscribed ? "subscribe.subscribed" : "subscribe.label");
   return `
     <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
       <div class="panel-inner">
-        <figure class="artist-hero-art ${a.photo ? "has-photo" : ""}">
-          ${photo}
-          <span class="artist-initials" aria-hidden="true">${initials}</span>
-        </figure>
+        <div class="artist-hero-photo">
+          <figure class="artist-hero-art ${a.photo ? "has-photo" : ""}">
+            ${photo}
+            <span class="artist-initials" aria-hidden="true">${initials}</span>
+          </figure>
+          ${photoTags}
+        </div>
         <div class="artist-hero-text">
           <h1 class="artist-name">${escapeHtml(a.name)}</h1>
           ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
@@ -1000,11 +1010,74 @@ function panelHero(a) {
             <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
           </div>
           ${artistSetTimeBadge(a)}
-          ${tagItems ? `<div class="artist-tags-row">${tagItems}</div>` : ""}
+          <button class="artist-subscribe ${subscribed ? "is-subscribed" : ""}" type="button" aria-pressed="${subscribed ? "true" : "false"}">${escapeHtml(subLabel)}</button>
         </div>
       </div>
     </div>
   `;
+}
+
+// Stable seeded layout for the small "scattered" tags around the artist's
+// photo. Each tag is anchored at one of four corner-ish slots around the
+// photo and given a small jitter, a random rotation (clamped to ±25° so
+// the text stays readable), and a staggered animation delay so the tags
+// pop in one after another when the artist section becomes active.
+function buildPhotoTags(artistId, tags) {
+  if (!tags || !tags.length) return "";
+  const slots = [
+    { x: 12, y: 14 },   // top-left
+    { x: 88, y: 12 },   // top-right
+    { x: 8,  y: 86 },   // bottom-left
+    { x: 92, y: 88 },   // bottom-right
+  ];
+  return tags.map((tag, i) => {
+    const seed = hashStr(artistId + "::" + i + "::" + tag);
+    const slot = slots[i % slots.length];
+    const jx = (rand01(seed * 11) - 0.5) * 8;     // ±4%
+    const jy = (rand01(seed * 17) - 0.5) * 8;     // ±4%
+    const rot = (rand01(seed * 7)  - 0.5) * 50;   // ±25°
+    const delay = 140 + i * 90 + Math.floor(rand01(seed * 3) * 50);
+    return `<span class="photo-tag" style="--x: ${(slot.x + jx).toFixed(1)}%; --y: ${(slot.y + jy).toFixed(1)}%; --rot: ${rot.toFixed(1)}deg; --delay: ${delay}ms;">${escapeHtml(tag)}</span>`;
+  }).join("");
+}
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(h) || 1;
+}
+
+function rand01(seed) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+// ===== Subscribe button (per-artist, persisted in localStorage) =====
+// No backend — toggling the button just stores the artist id locally so the
+// state survives a reload. The visual is an Instagram-style transparent
+// pill with a translucent white border.
+const SUBSCRIBE_STORAGE_KEY = "zna-subscribed-artists";
+
+function getSubscribedArtists() {
+  try {
+    const raw = localStorage.getItem(SUBSCRIBE_STORAGE_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch { return new Set(); }
+}
+
+function setSubscribedArtists(set) {
+  try { localStorage.setItem(SUBSCRIBE_STORAGE_KEY, JSON.stringify([...set])); } catch {}
+}
+
+function isArtistSubscribed(id) {
+  return getSubscribedArtists().has(id);
+}
+
+function toggleArtistSubscription(id) {
+  const s = getSubscribedArtists();
+  if (s.has(id)) s.delete(id); else s.add(id);
+  setSubscribedArtists(s);
+  return s.has(id);
 }
 
 function formatAnnouncedDate(yyyymmdd) {
@@ -1690,6 +1763,22 @@ function maybeDisarmFromOutside(e) {
 }
 document.addEventListener("pointerdown", maybeDisarmFromOutside, { passive: true, capture: true });
 document.addEventListener("touchstart", maybeDisarmFromOutside, { passive: true, capture: true });
+
+// Subscribe button — delegated click. Toggles the per-artist subscribed
+// flag in localStorage and re-skins the button. No re-render needed: we
+// just flip the class and label inline so the surrounding panel doesn't
+// flicker.
+reel.addEventListener("click", e => {
+  const btn = e.target.closest(".artist-subscribe");
+  if (!btn) return;
+  const section = btn.closest('[data-section="artist"]');
+  const id = section?.dataset.artistId;
+  if (!id) return;
+  const nowSubscribed = toggleArtistSubscription(id);
+  btn.classList.toggle("is-subscribed", nowSubscribed);
+  btn.setAttribute("aria-pressed", nowSubscribed ? "true" : "false");
+  btn.textContent = t(nowSubscribed ? "subscribe.subscribed" : "subscribe.label");
+});
 
 // ===== Vertical progress bar =====
 

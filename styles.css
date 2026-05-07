@@ -894,6 +894,106 @@ body.has-mini-player .hero-dots {
   gap: 6px;
 }
 
+/* Wrapper around the artist photo. Holds the photo figure plus the small
+   "scattered" tags that are absolutely positioned around the photo's
+   perimeter. The wrapper itself doesn't clip — the figure inside still
+   does, so the photo keeps its rounded corners while the tags can peek
+   out beyond the edges. */
+.artist-hero-photo {
+  position: relative;
+  width: min(70vw, 240px);
+  margin: 0 auto 16px;
+  overflow: visible;
+}
+
+.artist-hero-photo .artist-hero-art {
+  width: 100%;
+  margin: 0;
+}
+
+/* Small "scattered" tag chips that float around the artist photo. Each
+   tag's CSS variables (--x, --y, --rot, --delay) come from buildPhotoTags
+   in app.js — the JS picks a slot near a photo corner, jitters it, picks
+   a random rotation clamped to ±25° so the text stays readable, and
+   schedules a staggered pop-in. */
+.photo-tag {
+  position: absolute;
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.4);
+  font-family: "Heebo", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 4;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+}
+
+/* Pop the tags in once the artist section is on-screen so the user
+   actually sees the stagger. They stay in their final state afterwards. */
+.section.is-active .photo-tag {
+  animation: photo-tag-pop 600ms cubic-bezier(.18, .85, .35, 1.18) var(--delay, 0s) forwards;
+}
+
+@keyframes photo-tag-pop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.4); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.08); }
+  100% { opacity: 1; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-tag,
+  .section.is-active .photo-tag {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+  }
+}
+
+/* Instagram-style transparent subscribe pill, sits below the set-time
+   timer. Toggles to a softly filled state once subscribed (state stored
+   per-artist in localStorage). */
+.artist-subscribe {
+  margin-top: 8px;
+  align-self: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.95);
+  font-family: "Heebo", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 7px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.artist-subscribe:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.artist-subscribe:active {
+  transform: scale(0.97);
+}
+
+.artist-subscribe.is-subscribed {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .artist-hero-art {
   width: min(70vw, 240px);
   aspect-ratio: 1 / 1;
@@ -2209,6 +2309,7 @@ body.has-mini-player .panel {
 
 @media (max-width: 380px) {
   .panel { padding: 70px 14px 70px; }
+  .artist-hero-photo,
   .artist-hero-art { width: min(64vw, 200px); }
   .hud-hint { display: none; }
   .vertical-progress { inset-inline-start: 4px; }
@@ -2217,6 +2318,7 @@ body.has-mini-player .panel {
 @media (min-width: 768px) {
   .panel { padding: 100px 32px 120px; }
   .panel-inner { max-width: 720px; }
+  .artist-hero-photo,
   .artist-hero-art { width: min(36vw, 320px); }
   .artist-name { font-size: clamp(40px, 5.5vw, 64px); }
   .bio-text { font-size: 18px; line-height: 1.85; }
@@ -2251,11 +2353,18 @@ body.has-mini-player .panel {
     text-align: left;
     direction: ltr;
   }
+  .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { grid-column: 1; }
   .panel-hero .artist-hero-text { grid-column: 2; text-align: left; align-items: flex-start; }
   .panel-hero .artist-hero-text > * { text-align: left; }
   .panel-hero .artist-meta-line { justify-content: flex-start; }
   .panel-hero .artist-tags-row { justify-content: flex-start; }
+  .panel-hero .artist-subscribe { align-self: flex-start; }
+  .panel-hero .artist-hero-photo {
+    width: 100%;
+    max-width: 420px;
+    margin: 0;
+  }
   .panel-hero .artist-hero-art {
     width: 100%;
     max-width: 420px;
@@ -2310,6 +2419,7 @@ body.has-mini-player .panel {
     grid-template-columns: minmax(360px, 480px) 1fr;
     gap: 80px;
   }
+  .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { max-width: 480px; }
   .panel-hero .artist-name { font-size: clamp(72px, 6vw, 120px); }
   .tracks-stack { grid-template-columns: repeat(3, 1fr); }
@@ -2569,6 +2679,12 @@ body.has-mini-player .panel {
     direction: ltr;
     max-width: 720px;
   }
+  .panel-hero .artist-hero-photo {
+    width: 100%;
+    max-width: 200px;
+    margin: 0;
+    grid-column: 1;
+  }
   .panel-hero .artist-hero-art {
     width: 100%;
     max-width: 200px;
@@ -2619,6 +2735,7 @@ body.has-mini-player .panel {
 @media (orientation: landscape) and (max-height: 380px) {
   .hero-panel .logo-mark { font-size: clamp(28px, 10vh, 48px); }
   .panel-hero .artist-name { font-size: clamp(22px, 6vh, 34px); }
+  .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { max-width: 150px; }
   .panel { padding: 48px 16px 60px; }
   .panel-hero { padding: 40px 20px 60px; }
