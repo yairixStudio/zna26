@@ -1903,11 +1903,6 @@ body.has-mini-player .panel {
   opacity: 1;
 }
 
-.stage-select-menu .lang-cell-name {
-  font-size: 11px;
-  letter-spacing: 0.2px;
-}
-
 .stage-select-menu .count {
   opacity: 0.7;
   font-size: 11px;

@@ -2162,14 +2162,13 @@ function buildStageDropdown() {
     `<li><button data-stage="${escapeHtml(o.id)}" class="${activeStageFilter === o.id ? "active" : ""}" role="option">${escapeHtml(o.name)}<span class="count">${o.count}</span></button></li>`
   ).join("");
   // Language picker — last row, three columns. Per festival principle (no
-  // national flags), each cell shows a 2-letter code (IL / EN / PT) above
-  // the language name. Tapping switches the whole UI + bios/notable text.
+  // national flags), each cell shows the 2-letter code (IL / EN / PT) only.
+  // The full language name lives on aria-label for screen readers.
   const langRow = `
     <li class="lang-row" aria-label="${escapeHtml(t("nav.language"))}">
       ${["en", "he", "pt"].map(lang => `
         <button class="lang-cell ${currentLang === lang ? "active" : ""}" data-set-lang="${lang}" type="button" aria-label="${escapeHtml(LANG_LABELS[lang])}">
           <span class="lang-cell-code">${LANG_CODES[lang]}</span>
-          <span class="lang-cell-name">${escapeHtml(LANG_LABELS[lang])}</span>
         </button>
       `).join("")}
     </li>
