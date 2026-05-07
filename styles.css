@@ -244,32 +244,50 @@ a { color: var(--sun-yellow); }
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
   z-index: 12;
-  padding: 8px 14px;
-  background: rgba(10, 5, 36, 0.85);
-  border: 1px solid var(--card-border);
+  /* Idle: transparent strip with generous padding for the tap target — same
+     two-stage tap behavior as the per-artist .dots strip. The first tap arms
+     the strip (pill chrome appears), the second tap navigates. */
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 18px 24px;
   border-radius: 999px;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  transition: bottom 0.25s ease, background 0.25s ease, border-color 0.25s ease, padding 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-dots.is-armed {
+  background: rgba(10, 5, 36, 0.92);
+  border-color: var(--card-border);
+  padding: 12px 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   border: none;
   padding: 0;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.3);
-  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.55);
+  transition: width 0.18s ease, height 0.18s ease, background 0.25s ease;
+  box-sizing: content-box;
+  outline: 8px solid transparent;
+  outline-offset: -8px;
 }
 
 .hero-dot.active {
   background: var(--sun-yellow);
-  width: 24px;
+  width: 18px;
   border-radius: 999px;
-  box-shadow: 0 0 12px var(--sun-yellow);
+  box-shadow: 0 0 10px var(--sun-yellow);
 }
 
 body.has-mini-player .hero-dots {
@@ -311,9 +329,9 @@ body.has-mini-player .hero-dots {
 /* Decorative ZNA "gathering" 3D wordmark on the Main hero only */
 .hero-zna-mark {
   display: block;
-  width: clamp(160px, 42vw, 260px);
+  width: clamp(280px, 84vw, 520px);
   height: auto;
-  margin: 0 auto 6px;
+  margin: 0 auto 10px;
   filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
   animation: zna-mark-float 6s ease-in-out infinite;
   user-select: none;
@@ -876,6 +894,106 @@ body.has-mini-player .hero-dots {
   gap: 6px;
 }
 
+/* Wrapper around the artist photo. Holds the photo figure plus the small
+   "scattered" tags that are absolutely positioned around the photo's
+   perimeter. The wrapper itself doesn't clip — the figure inside still
+   does, so the photo keeps its rounded corners while the tags can peek
+   out beyond the edges. */
+.artist-hero-photo {
+  position: relative;
+  width: min(70vw, 240px);
+  margin: 0 auto 16px;
+  overflow: visible;
+}
+
+.artist-hero-photo .artist-hero-art {
+  width: 100%;
+  margin: 0;
+}
+
+/* Small "scattered" tag chips that float around the artist photo. Each
+   tag's CSS variables (--x, --y, --rot, --delay) come from buildPhotoTags
+   in app.js — the JS picks a slot near a photo corner, jitters it, picks
+   a random rotation clamped to ±25° so the text stays readable, and
+   schedules a staggered pop-in. */
+.photo-tag {
+  position: absolute;
+  left: var(--x, 50%);
+  top: var(--y, 50%);
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.4);
+  font-family: "Heebo", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 4;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+}
+
+/* Pop the tags in once the artist section is on-screen so the user
+   actually sees the stagger. They stay in their final state afterwards. */
+.section.is-active .photo-tag {
+  animation: photo-tag-pop 600ms cubic-bezier(.18, .85, .35, 1.18) var(--delay, 0s) forwards;
+}
+
+@keyframes photo-tag-pop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.4); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1.08); }
+  100% { opacity: 1; transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-tag,
+  .section.is-active .photo-tag {
+    animation: none;
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+  }
+}
+
+/* Instagram-style transparent subscribe pill, sits below the set-time
+   timer. Toggles to a softly filled state once subscribed (state stored
+   per-artist in localStorage). */
+.artist-subscribe {
+  margin-top: 8px;
+  align-self: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.95);
+  font-family: "Heebo", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 7px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.artist-subscribe:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.artist-subscribe:active {
+  transform: scale(0.97);
+}
+
+.artist-subscribe.is-subscribed {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
 .artist-hero-art {
   width: min(70vw, 240px);
   aspect-ratio: 1 / 1;
@@ -1316,13 +1434,51 @@ body.has-mini-player .hero-dots {
   outline-offset: -8px;
 }
 
-/* Armed state: dots grow to ~3x for accurate tapping. */
-.dots.is-armed .dot {
-  width: 14px;
-  height: 14px;
+/* Armed state: a mild base bump so dots are visible, plus the dock-style
+   graduated magnification driven by [data-near] (set by JS pointer
+   tracking). Only the touched dot + its 1-2 neighbours grow; the rest stay
+   compact so the strip never sprawls off-screen even with many panels. */
+.dots.is-armed .dot,
+.hero-dots.is-armed .hero-dot {
+  width: 9px;
+  height: 9px;
 }
-.dots.is-armed .dot.active {
-  width: 32px;
+.dots.is-armed .dot.active,
+.hero-dots.is-armed .hero-dot.active {
+  width: 22px;
+}
+
+/* Graduated magnification: data-near goes 0 (focused) → 2 (further). The
+   focused dot is comfortably tappable; neighbours are softly enlarged so
+   the bump feels smooth rather than punchy. */
+.dots.is-armed .dot[data-near="2"],
+.hero-dots.is-armed .hero-dot[data-near="2"] {
+  width: 12px;
+  height: 12px;
+}
+.dots.is-armed .dot[data-near="1"],
+.hero-dots.is-armed .hero-dot[data-near="1"] {
+  width: 16px;
+  height: 16px;
+}
+.dots.is-armed .dot[data-near="0"],
+.hero-dots.is-armed .hero-dot[data-near="0"] {
+  width: 22px;
+  height: 22px;
+}
+
+/* Active dot stays pill-shaped; magnification stretches its width too. */
+.dots.is-armed .dot.active[data-near="2"],
+.hero-dots.is-armed .hero-dot.active[data-near="2"] {
+  width: 28px;
+}
+.dots.is-armed .dot.active[data-near="1"],
+.hero-dots.is-armed .hero-dot.active[data-near="1"] {
+  width: 36px;
+}
+.dots.is-armed .dot.active[data-near="0"],
+.hero-dots.is-armed .hero-dot.active[data-near="0"] {
+  width: 44px;
 }
 
 /* Soft fade over the bottom of the panel so scrolled content doesn't visually
@@ -2153,6 +2309,7 @@ body.has-mini-player .panel {
 
 @media (max-width: 380px) {
   .panel { padding: 70px 14px 70px; }
+  .artist-hero-photo,
   .artist-hero-art { width: min(64vw, 200px); }
   .hud-hint { display: none; }
   .vertical-progress { inset-inline-start: 4px; }
@@ -2161,6 +2318,7 @@ body.has-mini-player .panel {
 @media (min-width: 768px) {
   .panel { padding: 100px 32px 120px; }
   .panel-inner { max-width: 720px; }
+  .artist-hero-photo,
   .artist-hero-art { width: min(36vw, 320px); }
   .artist-name { font-size: clamp(40px, 5.5vw, 64px); }
   .bio-text { font-size: 18px; line-height: 1.85; }
@@ -2195,11 +2353,18 @@ body.has-mini-player .panel {
     text-align: left;
     direction: ltr;
   }
+  .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { grid-column: 1; }
   .panel-hero .artist-hero-text { grid-column: 2; text-align: left; align-items: flex-start; }
   .panel-hero .artist-hero-text > * { text-align: left; }
   .panel-hero .artist-meta-line { justify-content: flex-start; }
   .panel-hero .artist-tags-row { justify-content: flex-start; }
+  .panel-hero .artist-subscribe { align-self: flex-start; }
+  .panel-hero .artist-hero-photo {
+    width: 100%;
+    max-width: 420px;
+    margin: 0;
+  }
   .panel-hero .artist-hero-art {
     width: 100%;
     max-width: 420px;
@@ -2254,6 +2419,7 @@ body.has-mini-player .panel {
     grid-template-columns: minmax(360px, 480px) 1fr;
     gap: 80px;
   }
+  .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { max-width: 480px; }
   .panel-hero .artist-name { font-size: clamp(72px, 6vw, 120px); }
   .tracks-stack { grid-template-columns: repeat(3, 1fr); }
@@ -2494,7 +2660,8 @@ body.has-mini-player .panel {
   }
   .hero-hint { font-size: 10px; margin-top: 6px; }
   .hero-stage-tag { font-size: 10px; letter-spacing: 4px; margin-bottom: 6px; }
-  .hero-dots { bottom: 10px; padding: 5px 10px; }
+  .hero-dots { bottom: 10px; padding: 14px 18px; }
+  .hero-dots.is-armed { padding: 8px 12px; }
   .hero-stage-element { display: none; } /* save the GPU + room */
 
   /* Artist sections: tighter padding so dots and content don't fight. */
@@ -2511,6 +2678,12 @@ body.has-mini-player .panel {
     text-align: left;
     direction: ltr;
     max-width: 720px;
+  }
+  .panel-hero .artist-hero-photo {
+    width: 100%;
+    max-width: 200px;
+    margin: 0;
+    grid-column: 1;
   }
   .panel-hero .artist-hero-art {
     width: 100%;
@@ -2562,6 +2735,7 @@ body.has-mini-player .panel {
 @media (orientation: landscape) and (max-height: 380px) {
   .hero-panel .logo-mark { font-size: clamp(28px, 10vh, 48px); }
   .panel-hero .artist-name { font-size: clamp(22px, 6vh, 34px); }
+  .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { max-width: 150px; }
   .panel { padding: 48px 16px 60px; }
   .panel-hero { padding: 40px 20px 60px; }
@@ -2875,7 +3049,7 @@ body.is-on-hero #random-btn { display: inline-flex; }
 /* ---------- Main hero: better composition on tablet/desktop ---------- */
 @media (min-width: 768px) {
   .hero-panel--main .hero-zna-mark {
-    width: clamp(220px, 28vw, 320px);
+    width: clamp(380px, 58vw, 640px);
     margin-bottom: 12px;
   }
   .hero-panel--main .logo-mark {
@@ -2897,7 +3071,7 @@ body.is-on-hero #random-btn { display: inline-flex; }
     padding: 32px 40px 100px;
   }
   .hero-panel--main .hero-zna-mark {
-    width: clamp(260px, 22vw, 360px);
+    width: clamp(460px, 46vw, 720px);
   }
   .hero-panel--main .logo-mark {
     font-size: clamp(120px, 13vw, 220px);

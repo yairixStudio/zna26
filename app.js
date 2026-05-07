@@ -87,6 +87,10 @@ const STRINGS = {
   // Set time badge
   "setTime.tba":       { he: "שעת הופעה: T.B.A.", en: "Set time: T.B.A.", pt: "Horário do set: T.B.A." },
 
+  // Per-artist subscribe button (Instagram-style transparent pill).
+  "subscribe.label":      { he: "Subscribe", en: "Subscribe", pt: "Subscribe" },
+  "subscribe.subscribed": { he: "Subscribed", en: "Subscribed", pt: "Subscribed" },
+
   // Announcement
   "announced.prefix":  { he: "📣 הוכרז ב-", en: "📣 Announced on ", pt: "📣 Anunciado em " },
 
@@ -929,9 +933,7 @@ const HERO_STAGE_ELEMENTS = {
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
-      ${pictureTagStatic("images/zna-3d/community-zna-logo", { className: "hero-zna-mark", alt: "ZNA Community", width: 800, height: 800, loading: "eager", fetchpriority: "high" })}
-      <div class="logo-mark">ZNA<br/>2026</div>
-      <div class="hero-subtitle">${escapeHtml(t("hero.subtitle"))}</div>
+      ${pictureTagStatic("images/zna-3d/community-zna-logo-26-celebration", { className: "hero-zna-mark", alt: "ZNA 26 Community — The Retro Futuristic Celebration", width: 800, height: 800, loading: "eager", fetchpriority: "high" })}
       <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
@@ -995,13 +997,10 @@ function wireHeroPager() {
     }, 160);
   }, { passive: true });
 
-  if (dots) {
-    dots.addEventListener("click", e => {
-      const btn = e.target.closest(".hero-dot");
-      if (!btn) return;
-      scrollHeroToStage(btn.dataset.stage, false);
-    });
-  }
+  // The hero-dots strip uses the same delegated two-stage tap handler as
+  // the per-artist .dots strip (see armDots/global click handler below) —
+  // first tap arms it, second tap navigates. We only need the dedicated
+  // listener to stay quiet here.
 }
 
 function scrollHeroToStage(stageId, instant) {
@@ -1073,7 +1072,8 @@ function multiHeroSection() {
 
 function panelHero(a) {
   const initials = getInitials(a.name);
-  const tagItems = (a.tags || []).slice(0, 4).map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("");
+  const tags = (a.tags || []).slice(0, 4);
+  const photoTags = buildPhotoTags(a.id, tags);
   // If the user came in on a deep-link to this artist, load their photo
   // eagerly with high priority so the first paint isn't waiting on it.
   const isDeepLinkTarget = (typeof _initialRoute !== "undefined") && _initialRoute && _initialRoute.a === a.id;
@@ -1084,13 +1084,18 @@ function panelHero(a) {
     fetchpriority: isDeepLinkTarget ? "high" : "",
     sizes: "(max-width: 480px) 100vw, 480px",
   });
+  const subscribed = isArtistSubscribed(a.id);
+  const subLabel = t(subscribed ? "subscribe.subscribed" : "subscribe.label");
   return `
     <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
       <div class="panel-inner">
-        <figure class="artist-hero-art ${a.photo ? "has-photo" : ""}">
-          ${photo}
-          <span class="artist-initials" aria-hidden="true">${initials}</span>
-        </figure>
+        <div class="artist-hero-photo">
+          <figure class="artist-hero-art ${a.photo ? "has-photo" : ""}">
+            ${photo}
+            <span class="artist-initials" aria-hidden="true">${initials}</span>
+          </figure>
+          ${photoTags}
+        </div>
         <div class="artist-hero-text">
           <h1 class="artist-name">${escapeHtml(a.name)}</h1>
           ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
@@ -1100,11 +1105,74 @@ function panelHero(a) {
             <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
           </div>
           ${artistSetTimeBadge(a)}
-          ${tagItems ? `<div class="artist-tags-row">${tagItems}</div>` : ""}
+          <button class="artist-subscribe ${subscribed ? "is-subscribed" : ""}" type="button" aria-pressed="${subscribed ? "true" : "false"}">${escapeHtml(subLabel)}</button>
         </div>
       </div>
     </div>
   `;
+}
+
+// Stable seeded layout for the small "scattered" tags around the artist's
+// photo. Each tag is anchored at one of four corner-ish slots around the
+// photo and given a small jitter, a random rotation (clamped to ±25° so
+// the text stays readable), and a staggered animation delay so the tags
+// pop in one after another when the artist section becomes active.
+function buildPhotoTags(artistId, tags) {
+  if (!tags || !tags.length) return "";
+  const slots = [
+    { x: 12, y: 14 },   // top-left
+    { x: 88, y: 12 },   // top-right
+    { x: 8,  y: 86 },   // bottom-left
+    { x: 92, y: 88 },   // bottom-right
+  ];
+  return tags.map((tag, i) => {
+    const seed = hashStr(artistId + "::" + i + "::" + tag);
+    const slot = slots[i % slots.length];
+    const jx = (rand01(seed * 11) - 0.5) * 8;     // ±4%
+    const jy = (rand01(seed * 17) - 0.5) * 8;     // ±4%
+    const rot = (rand01(seed * 7)  - 0.5) * 50;   // ±25°
+    const delay = 140 + i * 90 + Math.floor(rand01(seed * 3) * 50);
+    return `<span class="photo-tag" style="--x: ${(slot.x + jx).toFixed(1)}%; --y: ${(slot.y + jy).toFixed(1)}%; --rot: ${rot.toFixed(1)}deg; --delay: ${delay}ms;">${escapeHtml(tag)}</span>`;
+  }).join("");
+}
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(h) || 1;
+}
+
+function rand01(seed) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+// ===== Subscribe button (per-artist, persisted in localStorage) =====
+// No backend — toggling the button just stores the artist id locally so the
+// state survives a reload. The visual is an Instagram-style transparent
+// pill with a translucent white border.
+const SUBSCRIBE_STORAGE_KEY = "zna-subscribed-artists";
+
+function getSubscribedArtists() {
+  try {
+    const raw = localStorage.getItem(SUBSCRIBE_STORAGE_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch { return new Set(); }
+}
+
+function setSubscribedArtists(set) {
+  try { localStorage.setItem(SUBSCRIBE_STORAGE_KEY, JSON.stringify([...set])); } catch {}
+}
+
+function isArtistSubscribed(id) {
+  return getSubscribedArtists().has(id);
+}
+
+function toggleArtistSubscription(id) {
+  const s = getSubscribedArtists();
+  if (s.has(id)) s.delete(id); else s.add(id);
+  setSubscribedArtists(s);
+  return s.has(id);
 }
 
 function formatAnnouncedDate(yyyymmdd) {
@@ -1632,12 +1700,15 @@ function handlePagerSettle(pager) {
   setTimeout(() => pagersBeingWrapped.delete(pager), 250);
 }
 
-// Global delegated click for the per-artist horizontal panel dots.
-// Two-stage tap: the FIRST tap on the dots strip just "arms" it (the strip
-// grows ~3x, the pill chrome appears) so the user can hit a specific dot
-// accurately. Only taps while armed actually navigate. After 2 seconds of
-// no further taps — or any tap outside the strip — it relaxes back to its
-// tiny idle state.
+// Global delegated click for the horizontal dots strips — both the
+// per-artist panel dots (.dots / .dot) AND the hero stage dots (.hero-dots
+// / .hero-dot). Two-stage tap: the FIRST tap on the strip just "arms" it
+// (the pill chrome appears, dots get visible) so the user can hit a
+// specific dot accurately. Only taps while armed actually navigate. After
+// 2 seconds of no further taps — or any tap outside the strip — it relaxes
+// back to its tiny idle state.
+const DOT_STRIP_SELECTOR = ".dots, .hero-dots";
+const DOT_BTN_SELECTOR = ".dot, .hero-dot";
 const DOT_ARMED_TTL = 2000;
 const dotArmTimers = new WeakMap();
 
@@ -1646,51 +1717,163 @@ function armDots(strip) {
   strip.classList.add("is-armed");
   const old = dotArmTimers.get(strip);
   if (old) clearTimeout(old);
-  dotArmTimers.set(strip, setTimeout(() => strip.classList.remove("is-armed"), DOT_ARMED_TTL));
+  dotArmTimers.set(strip, setTimeout(() => {
+    strip.classList.remove("is-armed");
+    clearDotMagnify(strip);
+  }, DOT_ARMED_TTL));
 }
 
 function disarmAllDots(except) {
-  document.querySelectorAll(".dots.is-armed").forEach(strip => {
+  document.querySelectorAll(".dots.is-armed, .hero-dots.is-armed").forEach(strip => {
     if (strip === except) return;
     strip.classList.remove("is-armed");
+    clearDotMagnify(strip);
     const t = dotArmTimers.get(strip);
     if (t) { clearTimeout(t); dotArmTimers.delete(strip); }
   });
 }
 
-reel.addEventListener("click", e => {
-  // Did the user tap the dots strip at all? (a .dot element OR the .dots
-  // container itself — the bigger idle padding catches off-target taps).
-  const strip = e.target.closest(".dots");
+// ===== Smart dock-style magnification for the dots strip =====
+// When the strip is armed, we track the pointer's X position over the
+// strip and tag the closest dot with data-near="0", its immediate
+// neighbours with data-near="1", and the next ring out with data-near="2".
+// CSS turns those tags into graduated width/height bumps, so only the
+// area under the finger enlarges — the rest of the dots stay compact.
+// This keeps the strip from sprawling off-screen when there are many
+// panels and lets the user place their tap precisely.
+
+function clearDotMagnify(strip) {
   if (!strip) return;
-  const wasArmed = strip.classList.contains("is-armed");
-  // First tap on a relaxed strip: just arm it. Don't navigate yet.
-  if (!wasArmed) {
-    armDots(strip);
+  strip.querySelectorAll("[data-near]").forEach(d => { delete d.dataset.near; });
+}
+
+function updateDotMagnify(strip, clientX) {
+  if (!strip || !strip.classList.contains("is-armed")) {
+    clearDotMagnify(strip);
+    return -1;
+  }
+  const dots = strip.querySelectorAll(DOT_BTN_SELECTOR);
+  if (!dots.length) return -1;
+  let bestIdx = 0, bestDist = Infinity;
+  for (let i = 0; i < dots.length; i++) {
+    const r = dots[i].getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const dist = Math.abs(cx - clientX);
+    if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+  }
+  dots.forEach((d, i) => {
+    const dd = Math.abs(i - bestIdx);
+    if (dd === 0) d.dataset.near = "0";
+    else if (dd === 1) d.dataset.near = "1";
+    else if (dd === 2) d.dataset.near = "2";
+    else if (d.dataset.near != null) delete d.dataset.near;
+  });
+  return bestIdx;
+}
+
+// Route a tap on a specific dot (or "near enough" to one) to its target.
+// Hero strip → scroll the hero-pager to that stage; artist strip → scroll
+// the artist's pager to that panel.
+function navigateDotTap(strip, dotEl) {
+  if (!dotEl) return;
+  if (strip.classList.contains("hero-dots")) {
+    const stage = dotEl.dataset.stage;
+    if (stage && typeof scrollHeroToStage === "function") scrollHeroToStage(stage, false);
     return;
   }
-  // Already armed: route a tap on a specific dot to its panel; any tap on
-  // the strip resets the 2s timer.
-  armDots(strip); // refresh the TTL
-  const dot = e.target.closest(".dot");
-  if (!dot) return;
   const section = strip.closest('[data-section="artist"]');
   const pager = section?.querySelector(".pager");
-  const realIdx = +dot.dataset.panel;
+  const realIdx = +dotEl.dataset.panel;
   if (pager && pager.children[realIdx + 1]) {
     pager.children[realIdx + 1].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
   }
+}
+
+reel.addEventListener("click", e => {
+  // Did the user tap the dots strip at all? (a dot button OR the strip
+  // container itself — the bigger idle padding catches off-target taps).
+  const strip = e.target.closest(DOT_STRIP_SELECTOR);
+  if (!strip) return;
+  const wasArmed = strip.classList.contains("is-armed");
+  // First tap on a relaxed strip: arm it AND seed the magnification under
+  // the tap so the user can immediately see which dot they're aiming at.
+  // Don't navigate yet.
+  if (!wasArmed) {
+    armDots(strip);
+    updateDotMagnify(strip, e.clientX);
+    return;
+  }
+  // Already armed: route a tap on a specific dot to its target; any tap
+  // on the strip resets the 2s timer.
+  armDots(strip);
+  let dot = e.target.closest(DOT_BTN_SELECTOR);
+  // Fallback: if the click landed on whitespace inside the strip but
+  // there's a magnified dot under the pointer, treat that as the target.
+  if (!dot) {
+    const focusedIdx = updateDotMagnify(strip, e.clientX);
+    if (focusedIdx >= 0) {
+      dot = strip.querySelectorAll(DOT_BTN_SELECTOR)[focusedIdx];
+    }
+  }
+  navigateDotTap(strip, dot);
 });
+
+// Live magnification: as the pointer moves over an armed strip, bump the
+// nearest dot. Use document-level delegation so we cover dots strips
+// rendered later too.
+document.addEventListener("pointermove", e => {
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
+  if (!strip) return;
+  if (!strip.classList.contains("is-armed")) return;
+  updateDotMagnify(strip, e.clientX);
+}, { passive: true });
+
+// Touchscreen: pointer events fire too, but iOS Safari sometimes drops
+// pointermove during scroll-snap. Mirror with touchmove on the strips for
+// a reliable update.
+document.addEventListener("touchmove", e => {
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
+  if (!strip || !strip.classList.contains("is-armed")) return;
+  const t = e.touches && e.touches[0];
+  if (t) updateDotMagnify(strip, t.clientX);
+}, { passive: true });
+
+// Pointer leaves a strip (or lifts off): relax the magnification but
+// leave the strip armed — the 2s TTL still runs.
+document.addEventListener("pointerout", e => {
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
+  if (!strip) return;
+  // Only clear when the pointer truly left the strip, not just moved to a
+  // descendant (e.g. from padding into a dot button).
+  if (e.relatedTarget && strip.contains(e.relatedTarget)) return;
+  clearDotMagnify(strip);
+}, { passive: true });
 
 // Any tap (or touch) outside an armed dots strip is a strong "you don't
 // need this thing big anymore" signal — collapse the strip immediately
 // instead of waiting out the 2s TTL.
 function maybeDisarmFromOutside(e) {
-  const strip = e.target.closest?.(".dots");
+  const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
   disarmAllDots(strip || null);
 }
 document.addEventListener("pointerdown", maybeDisarmFromOutside, { passive: true, capture: true });
 document.addEventListener("touchstart", maybeDisarmFromOutside, { passive: true, capture: true });
+
+// Subscribe button — delegated click. Toggles the per-artist subscribed
+// flag in localStorage and re-skins the button. No re-render needed: we
+// just flip the class and label inline so the surrounding panel doesn't
+// flicker.
+reel.addEventListener("click", e => {
+  const btn = e.target.closest(".artist-subscribe");
+  if (!btn) return;
+  const section = btn.closest('[data-section="artist"]');
+  const id = section?.dataset.artistId;
+  if (!id) return;
+  const nowSubscribed = toggleArtistSubscription(id);
+  btn.classList.toggle("is-subscribed", nowSubscribed);
+  btn.setAttribute("aria-pressed", nowSubscribed ? "true" : "false");
+  btn.textContent = t(nowSubscribed ? "subscribe.subscribed" : "subscribe.label");
+});
 
 // ===== Vertical progress bar =====
 
