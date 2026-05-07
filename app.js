@@ -1087,8 +1087,6 @@ function panelHero(a) {
     fetchpriority: isDeepLinkTarget ? "high" : "",
     sizes: "(max-width: 480px) 100vw, 480px",
   });
-  const subscribed = isArtistSubscribed(a.id);
-  const subLabel = t(subscribed ? "subscribe.subscribed" : "subscribe.label");
   return `
     <div class="panel panel-hero panel--hero" style="--accent: ${a.color || "#FEB447"};">
       <div class="panel-inner">
