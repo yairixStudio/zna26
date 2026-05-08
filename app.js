@@ -24,12 +24,51 @@ const searchResults = document.getElementById("search-results");
 // the flag-row at the bottom of the stage dropdown menu.
 const LANG_CODES  = { he: "IL", en: "EN", pt: "PT" };
 const LANG_LABELS = { he: "עברית", en: "English", pt: "Português" };
+
+// Has the user ever explicitly picked a language? Tracked separately
+// from currentLang because the first-visit modal needs to show for any
+// session where no choice was ever stored.
+function hasStoredLang() {
+  try { return !!localStorage.getItem("zna-lang"); } catch { return false; }
+}
+
+// Smart suggestion for the first-visit picker. Hebrew browser language
+// or an Israeli timezone → IL. Spanish/Portuguese language or Iberian
+// timezone → PT. Anything else → EN. Pure-client detection: no network
+// call, works offline, and "iw" (the legacy Hebrew code Safari still
+// emits on older iOS) is treated as "he".
+function detectDefaultLang() {
+  let langs = [];
+  try {
+    if (Array.isArray(navigator.languages) && navigator.languages.length) {
+      langs = navigator.languages.slice();
+    } else if (navigator.language) {
+      langs = [navigator.language];
+    }
+  } catch (_) { langs = []; }
+  langs = langs.map(l => (l || "").toLowerCase());
+
+  let tz = "";
+  try { tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "").toLowerCase(); }
+  catch (_) { tz = ""; }
+
+  const isHebrewLang = langs.some(l => l.startsWith("he") || l.startsWith("iw"));
+  const isIsraelTZ   = /jerusalem|tel_aviv|israel/.test(tz);
+  if (isHebrewLang || isIsraelTZ) return "he";
+
+  const isIberianLang = langs.some(l => l.startsWith("pt") || l.startsWith("es") || l.startsWith("gl") || l.startsWith("ca"));
+  const isIberianTZ   = /lisbon|madeira|azores|madrid|canary|ceuta/.test(tz);
+  if (isIberianLang || isIberianTZ) return "pt";
+
+  return "en";
+}
+
 let currentLang = (function() {
   try {
     const stored = localStorage.getItem("zna-lang");
     if (stored && LANG_CODES[stored]) return stored;
   } catch (_) {}
-  return "en"; // default English per product spec
+  return "en"; // default English until the user picks one in the welcome modal
 })();
 
 // All UI strings keyed by short id, with HE/EN/PT values. Missing translations
@@ -90,6 +129,20 @@ const STRINGS = {
   // Per-artist subscribe button (Instagram-style transparent pill).
   "subscribe.label":      { he: "Subscribe", en: "Subscribe", pt: "Subscribe" },
   "subscribe.subscribed": { he: "Subscribed", en: "Subscribed", pt: "Subscribed" },
+
+  // Favorites (heart) button + overlay.
+  "favorite.add":         { he: "הוסף למועדפים", en: "Add to favorites", pt: "Adicionar aos favoritos" },
+  "favorite.remove":      { he: "הסר מהמועדפים", en: "Remove from favorites", pt: "Remover dos favoritos" },
+  "favorites.title":      { he: "המועדפים שלי", en: "My favorites", pt: "Meus favoritos" },
+  "favorites.empty":      { he: "עוד לא סימנת אומנים בלב", en: "You haven't favorited any artists yet", pt: "Ainda não marcaste artistas" },
+  "favorites.open":       { he: "פתח מועדפים", en: "Open favorites", pt: "Abrir favoritos" },
+  "favorites.close":      { he: "סגור", en: "Close", pt: "Fechar" },
+
+  // First-visit language picker. The modal shows the title in all three
+  // languages stacked, so these keys are mostly used for accessible labels
+  // applied dynamically once a default is chosen.
+  "welcome.title":        { he: "בחרו שפה", en: "Choose your language", pt: "Escolha o seu idioma" },
+  "welcome.suggested":    { he: "נבחר אוטומטית — אפשר לשנות", en: "Auto-selected — feel free to change", pt: "Selecionado automaticamente — podes alterar" },
 
   // Announcement
   "announced.prefix":  { he: "📣 הוכרז ב-", en: "📣 Announced on ", pt: "📣 Anunciado em " },
@@ -184,6 +237,8 @@ function applyLang(lang) {
     if (typeof buildStageDropdown === "function") buildStageDropdown();
     if (typeof observeSections === "function") observeSections();
   }
+  // Top-bar favorites label/title moves with the language switch.
+  if (typeof refreshFavoritesCounter === "function") refreshFavoritesCounter();
 }
 
 document.documentElement.lang = currentLang;
@@ -941,7 +996,7 @@ const HERO_STAGE_ELEMENTS = {
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
-      ${pictureTagStatic("images/zna-3d/community-zna-logo-26-celebration", { className: "hero-zna-mark", alt: "ZNA 26 Community — The Retro Futuristic Celebration", width: 800, height: 800, loading: "eager", fetchpriority: "high" })}
+      ${pictureTagStatic("images/zna-3d/community-zna-logo-26-celebration", { className: "hero-zna-mark", alt: "ZNA 26 Community — The Retro Futuristic Celebration", width: 600, height: 400, loading: "eager", fetchpriority: "high" })}
       <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
@@ -957,8 +1012,8 @@ function heroPanelStage(stage) {
     ? pictureTagStatic(elementBase, {
         className: `hero-stage-element hero-stage-element--${stage.id}`,
         alt: "",
-        width: 800,
-        height: 800,
+        width: 600,
+        height: 1066,
         loading: "lazy",
       })
     : "";
@@ -1113,7 +1168,7 @@ function panelHero(a) {
             <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
           </div>
           ${artistSetTimeBadge(a)}
-          ${subscribeButton("artist:" + a.id)}
+          ${favoriteButton(a.id)}
         </div>
       </div>
     </div>
@@ -1208,6 +1263,45 @@ function subscribeButton(key, extraClass = "") {
   const subIcon = subscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
   const cls = `artist-subscribe ${extraClass} ${subscribed ? "is-subscribed" : ""}`.trim();
   return `<button class="${cls}" type="button" aria-pressed="${subscribed ? "true" : "false"}" data-sub-key="${escapeHtml(key)}"><span class="sub-label">${escapeHtml(subLabel)}</span>${subIcon}</button>`;
+}
+
+// ===== Favorites (heart) — separate from subscribe =====
+// Per-artist heart, stored in localStorage as a Set of artist ids. The
+// top-bar shows a counter that opens an overlay listing all favorited
+// artists with their set times.
+const FAVORITES_STORAGE_KEY = "zna-favorites";
+const HEART_ICON_OUTLINE = '<svg class="fav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+const HEART_ICON_FILLED  = '<svg class="fav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+
+function getFavorites() {
+  try {
+    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch { return new Set(); }
+}
+
+function setFavorites(set) {
+  try { localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...set])); } catch {}
+}
+
+function isFavorite(artistId) {
+  return getFavorites().has(artistId);
+}
+
+function toggleFavorite(artistId) {
+  const s = getFavorites();
+  if (s.has(artistId)) s.delete(artistId); else s.add(artistId);
+  setFavorites(s);
+  return s.has(artistId);
+}
+
+// Heart-only favorite button for the artist hero. No text, just the
+// heart icon — outline when un-favorited, filled red when favorited.
+function favoriteButton(artistId) {
+  const fav = isFavorite(artistId);
+  const label = t(fav ? "favorite.remove" : "favorite.add");
+  const icon = fav ? HEART_ICON_FILLED : HEART_ICON_OUTLINE;
+  return `<button class="artist-favorite ${fav ? "is-favorite" : ""}" type="button" aria-pressed="${fav ? "true" : "false"}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}" data-fav-id="${escapeHtml(artistId)}">${icon}</button>`;
 }
 
 function formatAnnouncedDate(yyyymmdd) {
@@ -1977,6 +2071,30 @@ reel.addEventListener("click", e => {
   if (labelEl) labelEl.textContent = t(nowSubscribed ? "subscribe.subscribed" : "subscribe.label");
   const oldIcon = btn.querySelector(".sub-icon");
   if (oldIcon) oldIcon.outerHTML = nowSubscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
+});
+
+// Heart (favorite) button — delegated click. Toggles localStorage,
+// flips the icon between outline/filled, and refreshes the top-bar
+// counter so it shows up the moment the first artist is favorited.
+reel.addEventListener("click", e => {
+  const btn = e.target.closest(".artist-favorite");
+  if (!btn) return;
+  e.stopPropagation();
+  const id = btn.dataset.favId;
+  if (!id) return;
+  const nowFav = toggleFavorite(id);
+  btn.classList.toggle("is-favorite", nowFav);
+  btn.setAttribute("aria-pressed", nowFav ? "true" : "false");
+  const label = t(nowFav ? "favorite.remove" : "favorite.add");
+  btn.setAttribute("aria-label", label);
+  btn.setAttribute("title", label);
+  const oldIcon = btn.querySelector(".fav-icon");
+  if (oldIcon) oldIcon.outerHTML = nowFav ? HEART_ICON_FILLED : HEART_ICON_OUTLINE;
+  // Replay the pop animation each toggle so the click feels tactile.
+  btn.classList.remove("is-popping");
+  void btn.offsetWidth;
+  btn.classList.add("is-popping");
+  refreshFavoritesCounter();
 });
 
 // ===== Vertical progress bar =====
@@ -2928,6 +3046,135 @@ function renderSearchResults(query) {
 
 searchBtn?.addEventListener("click", openSearch);
 
+// ===== Favorites overlay =====
+// Top-bar heart counter — only visible when at least one artist has been
+// favorited. Tapping it opens an overlay listing every favorited artist
+// with their set time (or just their name when no schedule is set).
+const favoritesBtn      = document.getElementById("favorites-btn");
+const favoritesCountEl  = document.getElementById("favorites-count");
+const favoritesOverlay  = document.getElementById("favorites-overlay");
+const favoritesListEl   = document.getElementById("favorites-list");
+const favoritesTitleEl  = document.getElementById("favorites-title");
+const favoritesCloseBtn = document.getElementById("favorites-close");
+
+function refreshFavoritesCounter() {
+  if (!favoritesBtn) return;
+  const count = getFavorites().size;
+  if (favoritesCountEl) favoritesCountEl.textContent = count;
+  favoritesBtn.hidden = count === 0;
+  const label = t("favorites.open");
+  favoritesBtn.title = label;
+  favoritesBtn.setAttribute("aria-label", label);
+  if (favoritesTitleEl) favoritesTitleEl.textContent = t("favorites.title");
+  if (favoritesCloseBtn) favoritesCloseBtn.setAttribute("aria-label", t("favorites.close"));
+}
+
+function renderFavoritesList() {
+  if (!favoritesListEl) return;
+  const favs = getFavorites();
+  const items = ARTISTS.filter(a => favs.has(a.id));
+  if (!items.length) {
+    favoritesListEl.innerHTML = `<div class="favorites-empty">${escapeHtml(t("favorites.empty"))}</div>`;
+    return;
+  }
+  // Sort by set time when available, otherwise name. Artists without a
+  // scheduled time fall to the bottom in name order.
+  items.sort((a, b) => {
+    const sa = completeSchedule(a);
+    const sb = completeSchedule(b);
+    if (sa && sb) return sa.start - sb.start;
+    if (sa && !sb) return -1;
+    if (!sa && sb) return 1;
+    return a.name.localeCompare(b.name);
+  });
+  favoritesListEl.innerHTML = items.map(a => {
+    const sched = completeSchedule(a);
+    const dateLine = sched ? `<span class="favorites-row-date">${escapeHtml(formatScheduleRange(sched))}</span>` : "";
+    return `
+      <button class="favorites-row" type="button" data-artist-id="${escapeHtml(a.id)}">
+        <span class="favorites-row-name">${escapeHtml(a.name)}</span>
+        ${dateLine}
+      </button>
+    `;
+  }).join("");
+}
+
+function openFavorites() {
+  if (!favoritesOverlay) return;
+  if (favoritesTitleEl) favoritesTitleEl.textContent = t("favorites.title");
+  renderFavoritesList();
+  favoritesOverlay.hidden = false;
+}
+
+function closeFavorites() {
+  if (!favoritesOverlay) return;
+  favoritesOverlay.hidden = true;
+}
+
+favoritesBtn?.addEventListener("click", openFavorites);
+favoritesCloseBtn?.addEventListener("click", closeFavorites);
+favoritesOverlay?.addEventListener("click", e => {
+  if (e.target === favoritesOverlay) closeFavorites();
+});
+favoritesListEl?.addEventListener("click", e => {
+  const row = e.target.closest(".favorites-row");
+  if (!row) return;
+  const id = row.dataset.artistId;
+  closeFavorites();
+  if (activeStageFilter !== "all") {
+    activeStageFilter = "all";
+    buildReel();
+    buildVerticalProgress();
+    buildStageDropdown();
+    observeSections();
+  }
+  setTimeout(() => {
+    const sec = reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`);
+    sec?.scrollIntoView({ behavior: "smooth" });
+  }, 30);
+});
+
+// Initial counter sync — runs after DOM ready since it lives below the
+// data-loading section.
+refreshFavoritesCounter();
+
+// ===== First-visit language picker =====
+// Shown only when the user has never explicitly picked a language. The
+// suggested tile is highlighted based on detectDefaultLang(); the user
+// always has the final say (any of the three tiles commits + closes).
+const welcomeOverlay = document.getElementById("welcome-overlay");
+const welcomeLangsEl = document.getElementById("welcome-langs");
+
+function showWelcomeModal() {
+  if (!welcomeOverlay || !welcomeLangsEl) return;
+  const suggested = detectDefaultLang();
+  welcomeLangsEl.querySelectorAll(".welcome-lang").forEach(btn => {
+    btn.classList.toggle("is-default", btn.dataset.setLang === suggested);
+  });
+  welcomeOverlay.hidden = false;
+}
+
+function closeWelcomeModal() {
+  if (welcomeOverlay) welcomeOverlay.hidden = true;
+}
+
+welcomeLangsEl?.addEventListener("click", e => {
+  const btn = e.target.closest(".welcome-lang");
+  if (!btn) return;
+  const lang = btn.dataset.setLang;
+  if (!LANG_CODES[lang]) return;
+  applyLang(lang);
+  closeWelcomeModal();
+});
+
+if (!hasStoredLang()) {
+  // Pre-apply the detected default so the reel underneath the modal
+  // is already rendered in the right language when the user dismisses.
+  const suggested = detectDefaultLang();
+  if (suggested !== currentLang) applyLang(suggested);
+  showWelcomeModal();
+}
+
 // Random-artist button: pick a random artist from whatever's currently
 // visible on the hero (Main → all artists; a stage hero → that stage only).
 const randomBtn = document.getElementById("random-btn");
@@ -2972,8 +3219,14 @@ searchResults?.addEventListener("click", e => {
   }, 30);
 });
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape" && searchOverlay && !searchOverlay.hidden) {
-    closeSearch();
+  if (e.key === "Escape") {
+    if (favoritesOverlay && !favoritesOverlay.hidden) {
+      closeFavorites();
+      return;
+    }
+    if (searchOverlay && !searchOverlay.hidden) {
+      closeSearch();
+    }
   }
 });
 
