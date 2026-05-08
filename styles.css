@@ -241,6 +241,11 @@ a { color: var(--sun-yellow); }
   display: block;
   width: 100%;
   height: auto;
+  /* Force the image's natural aspect ratio to drive layout — the W/H
+     attributes on <img> get translated to an aspect-ratio presentational
+     hint that can stretch portrait artwork into a square box. */
+  aspect-ratio: auto;
+  object-fit: contain;
   -webkit-user-drag: none;
 }
 
@@ -347,6 +352,8 @@ body.has-mini-player .hero-dots {
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
   -webkit-user-drag: none;
 }
 
@@ -987,6 +994,8 @@ body.has-mini-player .hero-dots {
      hero stack, especially next to the slim countdown pill above. */
   display: inline-flex;
   align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   gap: 7px;
   width: fit-content;
   line-height: 1;
@@ -1002,6 +1011,12 @@ body.has-mini-player .hero-dots {
   cursor: pointer;
   direction: ltr;
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.artist-subscribe .sub-label {
+  display: inline-block;
+  white-space: nowrap;
+  line-height: 1;
 }
 
 .artist-subscribe .sub-icon {
@@ -1036,6 +1051,63 @@ body.has-mini-player .hero-dots {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.3);
   color: rgba(255, 255, 255, 0.85);
+}
+
+/* Heart-only "favorite" button on the artist hero. Replaces the old
+   per-artist Subscribe pill — outline heart by default, fills red and
+   pops once tapped. State stored in localStorage as a Set of artist ids. */
+.artist-favorite {
+  margin-top: 4px;
+  align-self: center;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, color 0.2s ease;
+}
+
+.artist-favorite .fav-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.artist-favorite:hover {
+  background: rgba(255, 92, 138, 0.12);
+  border-color: rgba(255, 92, 138, 0.6);
+  color: #ff5c8a;
+}
+
+.artist-favorite:active {
+  transform: scale(0.92);
+}
+
+.artist-favorite.is-favorite {
+  border-color: rgba(255, 92, 138, 0.85);
+  background: rgba(255, 92, 138, 0.16);
+  color: #ff5c8a;
+}
+
+.artist-favorite.is-popping .fav-icon {
+  animation: fav-pop 360ms cubic-bezier(.2, .85, .35, 1.3);
+}
+
+@keyframes fav-pop {
+  0%   { transform: scale(0.6); }
+  55%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .artist-favorite.is-popping .fav-icon { animation: none; }
 }
 
 /* More compact pill for the festival hero + per-stage heroes — same look,
@@ -1966,6 +2038,36 @@ body.has-mini-player .panel {
     0 0 24px rgba(254, 180, 71, 0.35);
 }
 
+/* Top-bar favorites pill — heart icon + counter badge. Hidden by default
+   (the [hidden] attr is removed by JS once at least one artist is
+   favorited). Counter sits inside the same pill so the number is always
+   visually attached to the heart. */
+.favorites-btn {
+  position: relative;
+  color: #ff5c8a;
+}
+
+.favorites-btn[hidden] { display: none; }
+
+.favorites-btn .favorites-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff5c8a;
+  color: #1a0a3a;
+  font-family: "Heebo", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(255, 92, 138, 0.55);
+  pointer-events: none;
+}
+
 .logo-mini {
   font-family: "Orbitron", sans-serif;
   font-size: 12px;
@@ -2257,6 +2359,107 @@ body.has-mini-player .panel {
 .search-result-meta { font-size: 11px; color: var(--text-muted); }
 .search-empty { text-align: center; padding: 22px; color: var(--text-muted); font-size: 14px; }
 
+/* ===== Favorites overlay ===== */
+.favorites-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(5, 2, 18, 0.85);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+  animation: fade-in 0.2s ease-out both;
+}
+.favorites-overlay[hidden] { display: none; }
+
+.favorites-panel {
+  width: min(560px, calc(100vw - 28px));
+  max-height: 70vh;
+  border-radius: 22px;
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: glass-pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.favorites-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.favorites-title {
+  margin: 0;
+  font-family: "Heebo", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.favorites-close {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.favorites-close:hover {
+  background: rgba(255, 92, 138, 0.18);
+  border-color: rgba(255, 92, 138, 0.5);
+  color: #ff5c8a;
+}
+
+.favorites-list {
+  overflow-y: auto;
+  display: grid;
+  gap: 6px;
+  padding-inline-end: 4px;
+}
+
+.favorites-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  color: var(--text);
+  transition: background 0.15s, border-color 0.15s;
+}
+.favorites-row:hover {
+  background: rgba(255, 92, 138, 0.14);
+  border-color: rgba(255, 92, 138, 0.4);
+}
+.favorites-row-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+.favorites-row-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.favorites-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
 /* ===== HUD ===== */
 .hud {
   position: fixed;
@@ -2466,7 +2669,8 @@ body.has-mini-player .panel {
   .panel-hero .artist-hero-text > * { text-align: left; }
   .panel-hero .artist-meta-line { justify-content: flex-start; }
   .panel-hero .artist-tags-row { justify-content: flex-start; }
-  .panel-hero .artist-subscribe { align-self: flex-start; }
+  .panel-hero .artist-subscribe,
+  .panel-hero .artist-favorite { align-self: flex-start; }
   .panel-hero .artist-hero-photo {
     width: 100%;
     max-width: 420px;
