@@ -2460,6 +2460,127 @@ body.has-mini-player .panel {
   font-size: 14px;
 }
 
+/* ===== First-visit language picker ===== */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(5, 2, 18, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fade-in 0.25s ease-out both;
+}
+.welcome-overlay[hidden] { display: none; }
+
+.welcome-panel {
+  width: min(440px, calc(100vw - 28px));
+  border-radius: 24px;
+  padding: 28px 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  text-align: center;
+  animation: glass-pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.welcome-header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.welcome-brand {
+  font-family: "Orbitron", sans-serif;
+  font-size: 14px;
+  letter-spacing: 4px;
+  background: linear-gradient(180deg, var(--sun-yellow), var(--sun-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.welcome-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.welcome-title-line {
+  font-family: "Heebo", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.welcome-title-line + .welcome-title-line {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.welcome-langs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.welcome-lang {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 10px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s, border-color 0.18s, transform 0.15s, box-shadow 0.2s;
+}
+
+.welcome-lang:hover {
+  background: rgba(254, 180, 71, 0.10);
+  border-color: rgba(254, 180, 71, 0.45);
+}
+
+.welcome-lang:active {
+  transform: scale(0.97);
+}
+
+.welcome-lang.is-default {
+  background: linear-gradient(160deg, rgba(254, 180, 71, 0.18), rgba(255, 92, 138, 0.16));
+  border-color: rgba(254, 180, 71, 0.7);
+  box-shadow: 0 8px 30px rgba(254, 180, 71, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.welcome-lang-code {
+  font-family: "Orbitron", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(180deg, var(--sun-yellow), var(--sun-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.welcome-lang-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+}
+
+.welcome-lang.is-default .welcome-lang-name {
+  color: var(--text);
+}
+
 /* ===== HUD ===== */
 .hud {
   position: fixed;

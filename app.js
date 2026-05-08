@@ -24,12 +24,51 @@ const searchResults = document.getElementById("search-results");
 // the flag-row at the bottom of the stage dropdown menu.
 const LANG_CODES  = { he: "IL", en: "EN", pt: "PT" };
 const LANG_LABELS = { he: "עברית", en: "English", pt: "Português" };
+
+// Has the user ever explicitly picked a language? Tracked separately
+// from currentLang because the first-visit modal needs to show for any
+// session where no choice was ever stored.
+function hasStoredLang() {
+  try { return !!localStorage.getItem("zna-lang"); } catch { return false; }
+}
+
+// Smart suggestion for the first-visit picker. Hebrew browser language
+// or an Israeli timezone → IL. Spanish/Portuguese language or Iberian
+// timezone → PT. Anything else → EN. Pure-client detection: no network
+// call, works offline, and "iw" (the legacy Hebrew code Safari still
+// emits on older iOS) is treated as "he".
+function detectDefaultLang() {
+  let langs = [];
+  try {
+    if (Array.isArray(navigator.languages) && navigator.languages.length) {
+      langs = navigator.languages.slice();
+    } else if (navigator.language) {
+      langs = [navigator.language];
+    }
+  } catch (_) { langs = []; }
+  langs = langs.map(l => (l || "").toLowerCase());
+
+  let tz = "";
+  try { tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "").toLowerCase(); }
+  catch (_) { tz = ""; }
+
+  const isHebrewLang = langs.some(l => l.startsWith("he") || l.startsWith("iw"));
+  const isIsraelTZ   = /jerusalem|tel_aviv|israel/.test(tz);
+  if (isHebrewLang || isIsraelTZ) return "he";
+
+  const isIberianLang = langs.some(l => l.startsWith("pt") || l.startsWith("es") || l.startsWith("gl") || l.startsWith("ca"));
+  const isIberianTZ   = /lisbon|madeira|azores|madrid|canary|ceuta/.test(tz);
+  if (isIberianLang || isIberianTZ) return "pt";
+
+  return "en";
+}
+
 let currentLang = (function() {
   try {
     const stored = localStorage.getItem("zna-lang");
     if (stored && LANG_CODES[stored]) return stored;
   } catch (_) {}
-  return "en"; // default English per product spec
+  return "en"; // default English until the user picks one in the welcome modal
 })();
 
 // All UI strings keyed by short id, with HE/EN/PT values. Missing translations
@@ -98,6 +137,12 @@ const STRINGS = {
   "favorites.empty":      { he: "עוד לא סימנת אומנים בלב", en: "You haven't favorited any artists yet", pt: "Ainda não marcaste artistas" },
   "favorites.open":       { he: "פתח מועדפים", en: "Open favorites", pt: "Abrir favoritos" },
   "favorites.close":      { he: "סגור", en: "Close", pt: "Fechar" },
+
+  // First-visit language picker. The modal shows the title in all three
+  // languages stacked, so these keys are mostly used for accessible labels
+  // applied dynamically once a default is chosen.
+  "welcome.title":        { he: "בחרו שפה", en: "Choose your language", pt: "Escolha o seu idioma" },
+  "welcome.suggested":    { he: "נבחר אוטומטית — אפשר לשנות", en: "Auto-selected — feel free to change", pt: "Selecionado automaticamente — podes alterar" },
 
   // Announcement
   "announced.prefix":  { he: "📣 הוכרז ב-", en: "📣 Announced on ", pt: "📣 Anunciado em " },
@@ -3092,6 +3137,43 @@ favoritesListEl?.addEventListener("click", e => {
 // Initial counter sync — runs after DOM ready since it lives below the
 // data-loading section.
 refreshFavoritesCounter();
+
+// ===== First-visit language picker =====
+// Shown only when the user has never explicitly picked a language. The
+// suggested tile is highlighted based on detectDefaultLang(); the user
+// always has the final say (any of the three tiles commits + closes).
+const welcomeOverlay = document.getElementById("welcome-overlay");
+const welcomeLangsEl = document.getElementById("welcome-langs");
+
+function showWelcomeModal() {
+  if (!welcomeOverlay || !welcomeLangsEl) return;
+  const suggested = detectDefaultLang();
+  welcomeLangsEl.querySelectorAll(".welcome-lang").forEach(btn => {
+    btn.classList.toggle("is-default", btn.dataset.setLang === suggested);
+  });
+  welcomeOverlay.hidden = false;
+}
+
+function closeWelcomeModal() {
+  if (welcomeOverlay) welcomeOverlay.hidden = true;
+}
+
+welcomeLangsEl?.addEventListener("click", e => {
+  const btn = e.target.closest(".welcome-lang");
+  if (!btn) return;
+  const lang = btn.dataset.setLang;
+  if (!LANG_CODES[lang]) return;
+  applyLang(lang);
+  closeWelcomeModal();
+});
+
+if (!hasStoredLang()) {
+  // Pre-apply the detected default so the reel underneath the modal
+  // is already rendered in the right language when the user dismisses.
+  const suggested = detectDefaultLang();
+  if (suggested !== currentLang) applyLang(suggested);
+  showWelcomeModal();
+}
 
 // Random-artist button: pick a random artist from whatever's currently
 // visible on the hero (Main → all artists; a stage hero → that stage only).

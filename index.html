@@ -144,6 +144,37 @@
     </div>
   </div>
 
+  <!-- First-visit language picker. JS picks a default tile based on
+       navigator.languages + timezone (Hebrew/Israel → IL, Spanish/Portuguese
+       or Iberian timezones → PT, otherwise EN) and shows the modal until
+       the user makes an explicit choice. -->
+  <div class="welcome-overlay" id="welcome-overlay" hidden>
+    <div class="welcome-panel glass-card" role="dialog" aria-modal="true" aria-labelledby="welcome-title-en">
+      <div class="welcome-header">
+        <div class="welcome-brand">ZNA 2026</div>
+        <div class="welcome-titles">
+          <div class="welcome-title-line" id="welcome-title-en" lang="en">Choose your language</div>
+          <div class="welcome-title-line" lang="he" dir="rtl">בחרו שפה</div>
+          <div class="welcome-title-line" lang="pt">Escolha o seu idioma</div>
+        </div>
+      </div>
+      <div class="welcome-langs" id="welcome-langs">
+        <button class="welcome-lang" data-set-lang="en" type="button" aria-label="English">
+          <span class="welcome-lang-code">EN</span>
+          <span class="welcome-lang-name">English</span>
+        </button>
+        <button class="welcome-lang" data-set-lang="he" type="button" aria-label="עברית">
+          <span class="welcome-lang-code">IL</span>
+          <span class="welcome-lang-name">עברית</span>
+        </button>
+        <button class="welcome-lang" data-set-lang="pt" type="button" aria-label="Português">
+          <span class="welcome-lang-code">PT</span>
+          <span class="welcome-lang-name">Português</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- UI overlays -->
   <div class="vertical-progress" id="vertical-progress" aria-hidden="true"></div>
 
