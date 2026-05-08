@@ -80,6 +80,12 @@ const STRINGS = {
   "nav.backHome":      { he: "חזרה לדף הראשי", en: "Back to home", pt: "Voltar ao início" },
   "nav.language":      { he: "שפה", en: "Language", pt: "Idioma" },
   "nav.stage":         { he: "במה", en: "Stage", pt: "Palco" },
+  "nav.navigate":      { he: "ניווט לאירוע", en: "Navigate to event", pt: "Navegar até ao evento" },
+  "nav.festivalMap":   { he: "מפת הפסטיבל", en: "Festival map", pt: "Mapa do festival" },
+  "nav.openInWaze":    { he: "פתיחה ב-Waze", en: "Open in Waze", pt: "Abrir no Waze" },
+  "nav.openInGmaps":   { he: "פתיחה ב-Google Maps", en: "Open in Google Maps", pt: "Abrir no Google Maps" },
+  "nav.cancel":        { he: "ביטול", en: "Cancel", pt: "Cancelar" },
+  "hero.actions":      { he: "פעולות", en: "Quick actions", pt: "Ações rápidas" },
 
   // Artist panels
   "panel.about":       { he: "אודות", en: "About", pt: "Sobre" },
@@ -116,6 +122,9 @@ const STRINGS = {
   "live.daysHHMM":     { he: "עוד {d} ימים · {hm}", en: "{d} days · {hm}", pt: "{d} dias · {hm}" },
   "live.hoursHHMM":    { he: "עוד {hm} שעות", en: "in {hm}", pt: "em {hm}" },
   "live.minutesM":     { he: "עוד {m} דקות", en: "in {m} min", pt: "dentro de {m} min" },
+  "live.prevLabel":    { he: "לפני", en: "Before", pt: "Antes" },
+  "live.nextLabel":    { he: "הבא בתור", en: "Next up", pt: "A seguir" },
+  "live.demoBadge":    { he: "הדגמה", en: "Demo", pt: "Demo" },
 
   // Countdown timer unit labels (boxed digital ticker).
   "timer.days":        { he: "ימים", en: "Days",  pt: "Dias" },
@@ -126,10 +135,6 @@ const STRINGS = {
   // Set time badge
   "setTime.tba":       { he: "שעת הופעה: T.B.A.", en: "Set time: T.B.A.", pt: "Horário do set: T.B.A." },
 
-  // Per-artist subscribe button (Instagram-style transparent pill).
-  "subscribe.label":      { he: "Subscribe", en: "Subscribe", pt: "Subscribe" },
-  "subscribe.subscribed": { he: "Subscribed", en: "Subscribed", pt: "Subscribed" },
-
   // Favorites (heart) button + overlay.
   "favorite.add":         { he: "הוסף למועדפים", en: "Add to favorites", pt: "Adicionar aos favoritos" },
   "favorite.remove":      { he: "הסר מהמועדפים", en: "Remove from favorites", pt: "Remover dos favoritos" },
@@ -137,6 +142,11 @@ const STRINGS = {
   "favorites.empty":      { he: "עוד לא סימנת אומנים בלב", en: "You haven't favorited any artists yet", pt: "Ainda não marcaste artistas" },
   "favorites.open":       { he: "פתח מועדפים", en: "Open favorites", pt: "Abrir favoritos" },
   "favorites.close":      { he: "סגור", en: "Close", pt: "Fechar" },
+  "favorites.notifyDesc": { he: "קבלו התראה כשהאומנים האהובים עליכם עולים לבמה.", en: "Get notified when your favorite artists go on stage.", pt: "Recebe uma notificação quando os teus artistas favoritos sobem ao palco." },
+  "favorites.notifyCta":  { he: "קבל התראות", en: "Get notifications", pt: "Receber notificações" },
+  "favorites.notifyOn":   { he: "התראות פעילות", en: "Notifications on", pt: "Notificações ativadas" },
+  "favorites.notifyDenied": { he: "ההתראות חסומות בדפדפן", en: "Notifications blocked in your browser", pt: "Notificações bloqueadas no navegador" },
+  "favorites.notifyUnsupported": { he: "הדפדפן לא תומך בהתראות", en: "Notifications aren't supported here", pt: "Notificações não suportadas neste navegador" },
 
   // First-visit language picker. The modal shows the title in all three
   // languages stacked, so these keys are mostly used for accessible labels
@@ -218,6 +228,54 @@ function tStage(stageId, field = "name") {
   return field === "desc" ? (stage?.desc || "") : (stage?.name || stageId);
 }
 
+// Snapshot which section + horizontal panel the user is looking at, so
+// we can restore them after a full reel rebuild. The reel is just one
+// long scroll container, so the visible section is whichever one
+// contains the mid-viewport line. For a section, panelIdx is the raw
+// child index in its pager (0..N) — clone slots included — so the
+// rebuilt DOM (which clones the same way) lands on the same panel.
+function captureScrollState() {
+  if (!reel) return null;
+  const sections = reel.querySelectorAll(".section");
+  if (!sections.length) return null;
+  const mid = reel.scrollTop + reel.clientHeight / 2;
+  let active = null, bestDist = Infinity;
+  for (const s of sections) {
+    const top = s.offsetTop;
+    const bot = top + s.offsetHeight;
+    if (mid >= top && mid <= bot) { active = s; break; }
+    const d = Math.min(Math.abs(mid - top), Math.abs(mid - bot));
+    if (d < bestDist) { bestDist = d; active = s; }
+  }
+  if (!active) return null;
+  const sectionKey = active.dataset.section === "artist"
+    ? `artist:${active.dataset.artistId}`
+    : "hero";
+  const pager = active.querySelector(".pager") || active.querySelector(".hero-pager");
+  let panelIdx = 0;
+  if (pager) {
+    const w = pager.clientWidth || 1;
+    panelIdx = Math.round(Math.abs(pager.scrollLeft) / w);
+  }
+  return { sectionKey, panelIdx };
+}
+
+function restoreScrollState(state) {
+  if (!state || !reel) return;
+  let target = null;
+  if (state.sectionKey === "hero") {
+    target = reel.querySelector('[data-section="hero"]');
+  } else if (typeof state.sectionKey === "string" && state.sectionKey.startsWith("artist:")) {
+    const id = state.sectionKey.slice("artist:".length);
+    target = reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`);
+  }
+  if (!target) return;
+  target.scrollIntoView({ behavior: "auto", block: "start" });
+  const pager = target.querySelector(".pager") || target.querySelector(".hero-pager");
+  const child = pager?.children[state.panelIdx || 0];
+  if (child) child.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
+}
+
 function applyLang(lang) {
   if (!LANG_CODES[lang]) return;
   currentLang = lang;
@@ -230,15 +288,24 @@ function applyLang(lang) {
   if (searchBtn) { searchBtn.title = t("nav.searchArtist"); searchBtn.setAttribute("aria-label", t("nav.searchArtist")); }
   if (logoBtn) { logoBtn.title = t("nav.backHome"); logoBtn.setAttribute("aria-label", t("nav.backHome")); }
   if (searchInput) searchInput.placeholder = t("search.placeholder");
-  // Re-render the entire reel so every translated string refreshes.
+  // Re-render the entire reel so every translated string refreshes —
+  // but capture where the user currently is first, so we can put them
+  // back on the same section + panel after the rebuild.
   if (typeof rerenderArtistsBelowHero === "function" && typeof buildReel === "function") {
+    const snap = captureScrollState();
     buildReel();
     if (typeof buildVerticalProgress === "function") buildVerticalProgress();
     if (typeof buildStageDropdown === "function") buildStageDropdown();
     if (typeof observeSections === "function") observeSections();
+    // Layout reads happen one frame after innerHTML swap; defer the
+    // restore so children[i].scrollIntoView lands on the new layout.
+    requestAnimationFrame(() => restoreScrollState(snap));
   }
   // Top-bar favorites label/title moves with the language switch.
   if (typeof refreshFavoritesCounter === "function") refreshFavoritesCounter();
+  // Nav-sheet copy + festival map caption follow the language switch.
+  if (typeof refreshNavSheetCopy === "function") refreshNavSheetCopy();
+  if (mapCaptionEl && mapOverlay && !mapOverlay.hidden) mapCaptionEl.textContent = t("nav.festivalMap");
 }
 
 document.documentElement.lang = currentLang;
@@ -952,6 +1019,55 @@ function liveStatusCard(stageId = "all") {
   `;
 }
 
+// Market hero demo: pretend an artist is mid-set right now and show the
+// full "live now" treatment with a progress bar + previous/next set
+// hand-offs. The 1-second interval below ticks the progress bar so it
+// visibly creeps forward while the user is on the page. This is purely
+// illustrative until the real schedule lands.
+function marketLiveDemoCard() {
+  const marketArtists = ARTISTS.filter(a => a.stage === "market");
+  if (marketArtists.length < 3) return liveStatusCard("market");
+  const pick = id => marketArtists.find(a => a.id === id);
+  const prev    = pick("alien-rain")   || marketArtists[0];
+  const current = pick("anais-lin")    || marketArtists[1];
+  const next    = pick("extra-cheers") || marketArtists[2];
+  const now = Date.now();
+  const start = now - 35 * 60 * 1000; // 35 min into the set
+  const end   = now + 25 * 60 * 1000; // 25 min remaining
+  const startISO = new Date(start).toISOString();
+  const endISO   = new Date(end).toISOString();
+  const localeMap = { he: "he-IL", en: "en-GB", pt: "pt-PT" };
+  const tz = FESTIVAL.timezone || "Europe/Lisbon";
+  const fmt = ms => new Intl.DateTimeFormat(localeMap[currentLang] || "en-GB", {
+    timeZone: tz, hour: "2-digit", minute: "2-digit"
+  }).format(new Date(ms));
+  const pct = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+  return `
+    <div class="live-status live-status--live live-status--demo" aria-live="polite"
+         data-demo-progress data-demo-start="${escapeHtml(startISO)}" data-demo-end="${escapeHtml(endISO)}">
+      <div class="live-status-topline">
+        <div class="live-now-track is-live"><span class="live-now-dot"></span><span class="live-now-label">${escapeHtml(t("live.now"))}</span></div>
+        <span class="live-demo-badge">${escapeHtml(t("live.demoBadge"))}</span>
+      </div>
+      <strong class="live-status-title">${escapeHtml(current.name)}</strong>
+      <span class="live-status-meta">${escapeHtml(stageLabel("market"))} · ${escapeHtml(fmt(start))}–${escapeHtml(fmt(end))}</span>
+      <div class="live-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(0)}">
+        <div class="live-progress-track">
+          <div class="live-progress-fill" data-progress-fill style="width:${pct.toFixed(1)}%"></div>
+        </div>
+        <div class="live-progress-times">
+          <span>${escapeHtml(fmt(start))}</span>
+          <span>${escapeHtml(fmt(end))}</span>
+        </div>
+      </div>
+      <div class="live-prev-next">
+        <div class="live-pn-line live-pn-prev"><span class="live-pn-label">${escapeHtml(t("live.prevLabel"))}</span><span class="live-pn-name">${escapeHtml(prev.name)}</span></div>
+        <div class="live-pn-line live-pn-next"><span class="live-pn-label">${escapeHtml(t("live.nextLabel"))}</span><span class="live-pn-name">${escapeHtml(next.name)}</span></div>
+      </div>
+    </div>
+  `;
+}
+
 setInterval(() => {
   document.querySelectorAll("[data-countdown-timer]").forEach(el => {
     const target = parseScheduleTime(el.dataset.countdownTimer);
@@ -961,6 +1077,18 @@ setInterval(() => {
       const next = parts[span.dataset.unit];
       if (next != null && span.textContent !== next) span.textContent = next;
     });
+  });
+  // Tick any live-now progress bars (Market hero demo today, but the
+  // hook is generic so it will keep working when real schedules land).
+  document.querySelectorAll("[data-demo-progress]").forEach(el => {
+    const start = new Date(el.dataset.demoStart || "").getTime();
+    const end   = new Date(el.dataset.demoEnd   || "").getTime();
+    if (!start || !end || end <= start) return;
+    const now = Date.now();
+    const pct = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+    const fill = el.querySelector("[data-progress-fill]");
+    if (fill) fill.style.width = pct.toFixed(1) + "%";
+    el.setAttribute("aria-valuenow", pct.toFixed(0));
   });
 }, 1000);
 
@@ -1000,6 +1128,16 @@ function heroPanelMain() {
       <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
+      <div class="hero-actions" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
+        <button class="hero-action glass-btn" id="hero-nav-btn" type="button" title="${escapeHtml(t("nav.navigate"))}" aria-label="${escapeHtml(t("nav.navigate"))}">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M21.71 11.29 12.71 2.29a1 1 0 0 0-1.42 0l-9 9a1 1 0 0 0 0 1.42l9 9a1 1 0 0 0 1.42 0l9-9a1 1 0 0 0 0-1.42zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5z"/></svg>
+          <span class="hero-action-label">${escapeHtml(t("nav.navigate"))}</span>
+        </button>
+        <button class="hero-action glass-btn" id="hero-map-btn" type="button" title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
+          <span class="hero-action-label">${escapeHtml(t("nav.festivalMap"))}</span>
+        </button>
+      </div>
       <p class="hero-disclaimer">${escapeHtml(t("hero.disclaimer"))}</p>
     </div>
   `;
@@ -1024,8 +1162,7 @@ function heroPanelStage(stage) {
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
       <div class="hero-meta">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
-      ${liveStatusCard(stage.id)}
-      ${subscribeButton("stage:" + stage.id, "artist-subscribe--hero")}
+      ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
       <div class="hero-hint"><span>${escapeHtml(t("hero.diveStage").replace(/^[↓\s]+/, ""))}</span><span class="hero-hint-arrow">↓</span></div>
     </div>
   `;
@@ -1160,12 +1297,14 @@ function panelHero(a) {
           ${photoTags}
         </div>
         <div class="artist-hero-text">
-          <h1 class="artist-name">${escapeHtml(a.name)}</h1>
-          ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
-          <div class="artist-meta-line">
-            <span class="meta-item">📍 ${escapeHtml(tArtist(a, "country"))}</span>
-            ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
-            <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
+          <div class="artist-hero-headline">
+            <h1 class="artist-name">${escapeHtml(a.name)}</h1>
+            ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
+            <div class="artist-meta-line">
+              <span class="meta-item">📍 ${escapeHtml(tArtist(a, "country"))}</span>
+              ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
+              <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
+            </div>
           </div>
           ${artistSetTimeBadge(a)}
           ${favoriteButton(a.id)}
@@ -1214,58 +1353,7 @@ function rand01(seed) {
   return x - Math.floor(x);
 }
 
-// ===== Subscribe button (generic key-based state) =====
-// One Instagram-style transparent pill is used for three different
-// subscribe targets, each keyed differently so they're tracked
-// independently in localStorage:
-//   - "festival"           — main hero, "subscribe to all festival news"
-//   - "stage:<stageId>"    — per-stage hero, news for that stage only
-//   - "artist:<artistId>"  — per-artist hero card
-// No backend — toggling just stores the key locally so the state
-// survives a reload. Icons swap between "+" and "✓".
-const SUBSCRIBE_STORAGE_KEY = "zna-subscriptions";
-// Heroicons (solid, mini @ 20×20) — filled glyphs render crisper than
-// the 2-pixel-stroked version we shipped before, especially at the
-// 12px size used inside the small subscribe pill on phones.
-const SUBSCRIBE_ICON_PLUS  = '<svg class="sub-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>';
-const SUBSCRIBE_ICON_CHECK = '<svg class="sub-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>';
-
-function getSubscriptions() {
-  try {
-    const raw = localStorage.getItem(SUBSCRIBE_STORAGE_KEY);
-    return new Set(raw ? JSON.parse(raw) : []);
-  } catch { return new Set(); }
-}
-
-function setSubscriptions(set) {
-  try { localStorage.setItem(SUBSCRIBE_STORAGE_KEY, JSON.stringify([...set])); } catch {}
-}
-
-function isSubscribed(key) {
-  return getSubscriptions().has(key);
-}
-
-function toggleSubscription(key) {
-  const s = getSubscriptions();
-  if (s.has(key)) s.delete(key); else s.add(key);
-  setSubscriptions(s);
-  return s.has(key);
-}
-
-// Render an "Subscribe +" / "Subscribed ✓" pill for any target. The key
-// is stamped onto the button so the delegated click handler can toggle
-// the right entry without needing to know the surrounding context.
-// `extraClass` lets callers tag the button for size variants (e.g. the
-// hero panels use a slightly more compact version).
-function subscribeButton(key, extraClass = "") {
-  const subscribed = isSubscribed(key);
-  const subLabel = t(subscribed ? "subscribe.subscribed" : "subscribe.label");
-  const subIcon = subscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
-  const cls = `artist-subscribe ${extraClass} ${subscribed ? "is-subscribed" : ""}`.trim();
-  return `<button class="${cls}" type="button" aria-pressed="${subscribed ? "true" : "false"}" data-sub-key="${escapeHtml(key)}"><span class="sub-label">${escapeHtml(subLabel)}</span>${subIcon}</button>`;
-}
-
-// ===== Favorites (heart) — separate from subscribe =====
+// ===== Favorites (heart) =====
 // Per-artist heart, stored in localStorage as a Set of artist ids. The
 // top-bar shows a counter that opens an overlay listing all favorited
 // artists with their set times.
@@ -2054,24 +2142,6 @@ function maybeDisarmFromOutside(e) {
 }
 document.addEventListener("pointerdown", maybeDisarmFromOutside, { passive: true, capture: true });
 document.addEventListener("touchstart", maybeDisarmFromOutside, { passive: true, capture: true });
-
-// Subscribe button — delegated click. Reads the target key off the
-// button itself (data-sub-key), toggles it in localStorage, and re-skins
-// the button (label + icon) in place so the surrounding panel doesn't
-// flicker. Handles all three targets (festival, stage, artist).
-reel.addEventListener("click", e => {
-  const btn = e.target.closest(".artist-subscribe");
-  if (!btn) return;
-  const key = btn.dataset.subKey;
-  if (!key) return;
-  const nowSubscribed = toggleSubscription(key);
-  btn.classList.toggle("is-subscribed", nowSubscribed);
-  btn.setAttribute("aria-pressed", nowSubscribed ? "true" : "false");
-  const labelEl = btn.querySelector(".sub-label");
-  if (labelEl) labelEl.textContent = t(nowSubscribed ? "subscribe.subscribed" : "subscribe.label");
-  const oldIcon = btn.querySelector(".sub-icon");
-  if (oldIcon) oldIcon.outerHTML = nowSubscribed ? SUBSCRIBE_ICON_CHECK : SUBSCRIBE_ICON_PLUS;
-});
 
 // Heart (favorite) button — delegated click. Toggles localStorage,
 // flips the icon between outline/filled, and refreshes the top-bar
@@ -3067,7 +3137,51 @@ function refreshFavoritesCounter() {
   favoritesBtn.setAttribute("aria-label", label);
   if (favoritesTitleEl) favoritesTitleEl.textContent = t("favorites.title");
   if (favoritesCloseBtn) favoritesCloseBtn.setAttribute("aria-label", t("favorites.close"));
+  refreshFavoritesNotifyCopy();
 }
+
+// "Get notifications" CTA at the bottom of the favorites panel. Clicking
+// requests browser-level Notification permission and remembers the
+// granted state in localStorage. The actual scheduling of "your artist
+// is on" pings will hook into the festival schedule once it lands; the
+// permission grant unblocks all future delivery.
+const favoritesNotifyEl     = document.getElementById("favorites-notify");
+const favoritesNotifyBtnEl  = document.getElementById("favorites-notify-btn");
+const favoritesNotifyDescEl = document.getElementById("favorites-notify-desc");
+const favoritesNotifyLabelEl = document.getElementById("favorites-notify-label");
+
+function notifySupported() {
+  return typeof window !== "undefined" && "Notification" in window;
+}
+
+function refreshFavoritesNotifyCopy() {
+  if (!favoritesNotifyEl) return;
+  if (favoritesNotifyDescEl) favoritesNotifyDescEl.textContent = t("favorites.notifyDesc");
+  if (!favoritesNotifyLabelEl || !favoritesNotifyBtnEl) return;
+  if (!notifySupported()) {
+    favoritesNotifyLabelEl.textContent = t("favorites.notifyUnsupported");
+    favoritesNotifyBtnEl.disabled = true;
+    favoritesNotifyBtnEl.classList.add("is-disabled");
+    return;
+  }
+  const perm = Notification.permission;
+  favoritesNotifyBtnEl.disabled = perm === "denied" || perm === "granted";
+  favoritesNotifyBtnEl.classList.toggle("is-on",      perm === "granted");
+  favoritesNotifyBtnEl.classList.toggle("is-disabled", perm === "denied");
+  if (perm === "granted")      favoritesNotifyLabelEl.textContent = t("favorites.notifyOn");
+  else if (perm === "denied")  favoritesNotifyLabelEl.textContent = t("favorites.notifyDenied");
+  else                         favoritesNotifyLabelEl.textContent = t("favorites.notifyCta");
+}
+
+favoritesNotifyBtnEl?.addEventListener("click", async () => {
+  if (!notifySupported()) return;
+  if (Notification.permission !== "default") { refreshFavoritesNotifyCopy(); return; }
+  try {
+    const result = await Notification.requestPermission();
+    try { localStorage.setItem("zna-notify", result); } catch (_) {}
+  } catch (_) { /* user closed the prompt; nothing to do */ }
+  refreshFavoritesNotifyCopy();
+});
 
 function renderFavoritesList() {
   if (!favoritesListEl) return;
@@ -3137,6 +3251,110 @@ favoritesListEl?.addEventListener("click", e => {
 // Initial counter sync — runs after DOM ready since it lives below the
 // data-loading section.
 refreshFavoritesCounter();
+
+// ===== Hero quick-actions: navigate to event + festival map =====
+// Both buttons live on the main festival hero only. Navigate opens a
+// bottom-sheet chooser with Waze + Google Maps deep links pointing at
+// the festival's stated location (FESTIVAL.location). Festival map is
+// a lightweight image lightbox — uses an inline SVG placeholder until
+// the official site map ships, swap MAP_IMAGE_SRC to drop in the real
+// asset later. */
+const FESTIVAL_QUERY = encodeURIComponent("Lake Montargil, Portugal");
+const NAV_LINKS = {
+  waze:  `https://waze.com/ul?q=${FESTIVAL_QUERY}&navigate=yes`,
+  gmaps: `https://www.google.com/maps/search/?api=1&query=${FESTIVAL_QUERY}`
+};
+// Inline SVG placeholder: dashed pin on a stylised map grid. Until the
+// official festival map exists, this gives the lightbox something
+// recognisable. Drop in a real URL/path here to replace.
+const MAP_IMAGE_SRC =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(`
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800' role='img' aria-label='Festival map placeholder'>
+      <defs>
+        <linearGradient id='bg' x1='0' x2='1' y1='0' y2='1'>
+          <stop offset='0' stop-color='#1a0a3a'/>
+          <stop offset='1' stop-color='#0a0524'/>
+        </linearGradient>
+        <pattern id='grid' width='60' height='60' patternUnits='userSpaceOnUse'>
+          <path d='M60 0H0V60' fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'/>
+        </pattern>
+      </defs>
+      <rect width='1200' height='800' fill='url(#bg)'/>
+      <rect width='1200' height='800' fill='url(#grid)'/>
+      <path d='M0 520 Q300 470 600 510 T1200 480' stroke='rgba(0,212,255,0.45)' stroke-width='3' fill='none'/>
+      <path d='M0 360 Q280 320 580 340 T1200 320' stroke='rgba(254,180,71,0.45)' stroke-width='3' fill='none'/>
+      <circle cx='600' cy='400' r='10' fill='#FEB447'/>
+      <circle cx='600' cy='400' r='28' fill='none' stroke='#FEB447' stroke-width='2' stroke-dasharray='4 4' opacity='0.7'/>
+      <text x='600' y='460' fill='#f5f0ff' font-family='Heebo, sans-serif' font-size='28' font-weight='800' text-anchor='middle' letter-spacing='2'>ZNA 2026</text>
+      <text x='600' y='495' fill='rgba(245,240,255,0.6)' font-family='Heebo, sans-serif' font-size='14' text-anchor='middle' letter-spacing='3'>FESTIVAL MAP · SAMPLE</text>
+    </svg>
+  `);
+
+const heroNavBtn      = () => document.getElementById("hero-nav-btn");
+const heroMapBtn      = () => document.getElementById("hero-map-btn");
+const navOverlay      = document.getElementById("nav-overlay");
+const navSheetTitle   = document.getElementById("nav-sheet-title");
+const navWazeLink     = document.getElementById("nav-waze");
+const navWazeLabel    = document.getElementById("nav-waze-label");
+const navGmapsLink    = document.getElementById("nav-gmaps");
+const navGmapsLabel   = document.getElementById("nav-gmaps-label");
+const navCancelBtn    = document.getElementById("nav-cancel");
+const mapOverlay      = document.getElementById("map-overlay");
+const mapImageEl      = document.getElementById("map-image");
+const mapCloseBtn     = document.getElementById("map-close");
+const mapCaptionEl    = document.getElementById("map-caption");
+
+function refreshNavSheetCopy() {
+  if (navSheetTitle) navSheetTitle.textContent = t("nav.navigate");
+  if (navWazeLabel)  navWazeLabel.textContent  = t("nav.openInWaze");
+  if (navGmapsLabel) navGmapsLabel.textContent = t("nav.openInGmaps");
+  if (navCancelBtn)  navCancelBtn.textContent  = t("nav.cancel");
+  if (navWazeLink)   navWazeLink.setAttribute("href", NAV_LINKS.waze);
+  if (navGmapsLink)  navGmapsLink.setAttribute("href", NAV_LINKS.gmaps);
+}
+
+function openNavSheet() {
+  if (!navOverlay) return;
+  refreshNavSheetCopy();
+  navOverlay.hidden = false;
+}
+
+function closeNavSheet() {
+  if (navOverlay) navOverlay.hidden = true;
+}
+
+function openMap() {
+  if (!mapOverlay) return;
+  if (mapImageEl) mapImageEl.src = MAP_IMAGE_SRC;
+  if (mapCaptionEl) mapCaptionEl.textContent = t("nav.festivalMap");
+  mapOverlay.hidden = false;
+}
+
+function closeMap() {
+  if (mapOverlay) mapOverlay.hidden = true;
+}
+
+document.addEventListener("click", e => {
+  const navBtn = e.target.closest("#hero-nav-btn");
+  if (navBtn) { openNavSheet(); return; }
+  const mapBtn = e.target.closest("#hero-map-btn");
+  if (mapBtn)  { openMap();     return; }
+});
+
+navOverlay?.addEventListener("click", e => {
+  if (e.target === navOverlay) closeNavSheet();
+});
+navCancelBtn?.addEventListener("click", closeNavSheet);
+// Close the nav sheet after the user picks a destination — the link
+// itself opens in a new tab via target="_blank".
+navWazeLink?.addEventListener("click", () => setTimeout(closeNavSheet, 0));
+navGmapsLink?.addEventListener("click", () => setTimeout(closeNavSheet, 0));
+
+mapOverlay?.addEventListener("click", e => {
+  if (e.target === mapOverlay) closeMap();
+});
+mapCloseBtn?.addEventListener("click", closeMap);
 
 // ===== First-visit language picker =====
 // Shown only when the user has never explicitly picked a language. The
@@ -3219,15 +3437,11 @@ searchResults?.addEventListener("click", e => {
   }, 30);
 });
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") {
-    if (favoritesOverlay && !favoritesOverlay.hidden) {
-      closeFavorites();
-      return;
-    }
-    if (searchOverlay && !searchOverlay.hidden) {
-      closeSearch();
-    }
-  }
+  if (e.key !== "Escape") return;
+  if (mapOverlay && !mapOverlay.hidden)             { closeMap();        return; }
+  if (navOverlay && !navOverlay.hidden)             { closeNavSheet();   return; }
+  if (favoritesOverlay && !favoritesOverlay.hidden) { closeFavorites();  return; }
+  if (searchOverlay && !searchOverlay.hidden)       { closeSearch();     return; }
 });
 
 // ===== URL routing =====
