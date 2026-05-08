@@ -143,10 +143,12 @@ const STRINGS = {
   "favorites.open":       { he: "פתח מועדפים", en: "Open favorites", pt: "Abrir favoritos" },
   "favorites.close":      { he: "סגור", en: "Close", pt: "Fechar" },
   "favorites.notifyDesc": { he: "קבלו התראה כשהאומנים האהובים עליכם עולים לבמה.", en: "Get notified when your favorite artists go on stage.", pt: "Recebe uma notificação quando os teus artistas favoritos sobem ao palco." },
-  "favorites.notifyCta":  { he: "קבל התראות", en: "Get notifications", pt: "Receber notificações" },
-  "favorites.notifyOn":   { he: "התראות פעילות", en: "Notifications on", pt: "Notificações ativadas" },
-  "favorites.notifyDenied": { he: "ההתראות חסומות בדפדפן", en: "Notifications blocked in your browser", pt: "Notificações bloqueadas no navegador" },
-  "favorites.notifyUnsupported": { he: "הדפדפן לא תומך בהתראות", en: "Notifications aren't supported here", pt: "Notificações não suportadas neste navegador" },
+  "favorites.notifyCta":  { he: "דפדפן", en: "Browser", pt: "Navegador" },
+  "favorites.notifyOn":   { he: "פעיל", en: "On", pt: "Ativado" },
+  "favorites.notifyDenied": { he: "חסום", en: "Blocked", pt: "Bloqueado" },
+  "favorites.notifyUnsupported": { he: "לא נתמך", en: "Unsupported", pt: "Não suportado" },
+  "favorites.notifyTelegram": { he: "Telegram", en: "Telegram", pt: "Telegram" },
+  "favorites.removeOne":  { he: "הסר מהמועדפים", en: "Remove from favorites", pt: "Remover dos favoritos" },
 
   // First-visit language picker. The modal shows the title in all three
   // languages stacked, so these keys are mostly used for accessible labels
@@ -3140,15 +3142,21 @@ function refreshFavoritesCounter() {
   refreshFavoritesNotifyCopy();
 }
 
-// "Get notifications" CTA at the bottom of the favorites panel. Clicking
-// requests browser-level Notification permission and remembers the
-// granted state in localStorage. The actual scheduling of "your artist
-// is on" pings will hook into the festival schedule once it lands; the
-// permission grant unblocks all future delivery.
-const favoritesNotifyEl     = document.getElementById("favorites-notify");
-const favoritesNotifyBtnEl  = document.getElementById("favorites-notify-btn");
-const favoritesNotifyDescEl = document.getElementById("favorites-notify-desc");
-const favoritesNotifyLabelEl = document.getElementById("favorites-notify-label");
+// "Get notifications" CTA at the bottom of the favorites panel.
+// Two channels offered side-by-side:
+//   • Browser — requests Notification permission, persists the result.
+//     iOS Safari (non-PWA) doesn't expose `Notification`, so the
+//     button auto-disables with an "Unsupported" pill — the Telegram
+//     option is always available alongside it as a fallback.
+//   • Telegram — opens the festival's Telegram bot in a new tab. Set
+//     TELEGRAM_BOT_URL once the real bot is live.
+const TELEGRAM_BOT_URL = "https://t.me/zna_gathering";
+const favoritesNotifyEl       = document.getElementById("favorites-notify");
+const favoritesNotifyBtnEl    = document.getElementById("favorites-notify-btn");
+const favoritesNotifyDescEl   = document.getElementById("favorites-notify-desc");
+const favoritesNotifyLabelEl  = document.getElementById("favorites-notify-label");
+const favoritesNotifyTgEl     = document.getElementById("favorites-notify-telegram");
+const favoritesNotifyTgLabelEl = document.getElementById("favorites-notify-telegram-label");
 
 function notifySupported() {
   return typeof window !== "undefined" && "Notification" in window;
@@ -3157,6 +3165,10 @@ function notifySupported() {
 function refreshFavoritesNotifyCopy() {
   if (!favoritesNotifyEl) return;
   if (favoritesNotifyDescEl) favoritesNotifyDescEl.textContent = t("favorites.notifyDesc");
+  // Telegram channel — always available, just point the link at the bot.
+  if (favoritesNotifyTgEl)      favoritesNotifyTgEl.setAttribute("href", TELEGRAM_BOT_URL);
+  if (favoritesNotifyTgLabelEl) favoritesNotifyTgLabelEl.textContent = t("favorites.notifyTelegram");
+  // Browser channel — depends on the Notification API.
   if (!favoritesNotifyLabelEl || !favoritesNotifyBtnEl) return;
   if (!notifySupported()) {
     favoritesNotifyLabelEl.textContent = t("favorites.notifyUnsupported");
@@ -3164,6 +3176,7 @@ function refreshFavoritesNotifyCopy() {
     favoritesNotifyBtnEl.classList.add("is-disabled");
     return;
   }
+  favoritesNotifyBtnEl.classList.remove("is-disabled");
   const perm = Notification.permission;
   favoritesNotifyBtnEl.disabled = perm === "denied" || perm === "granted";
   favoritesNotifyBtnEl.classList.toggle("is-on",      perm === "granted");
@@ -3201,14 +3214,20 @@ function renderFavoritesList() {
     if (!sa && sb) return 1;
     return a.name.localeCompare(b.name);
   });
+  const removeLabel = t("favorites.removeOne");
   favoritesListEl.innerHTML = items.map(a => {
     const sched = completeSchedule(a);
     const dateLine = sched ? `<span class="favorites-row-date">${escapeHtml(formatScheduleRange(sched))}</span>` : "";
     return `
-      <button class="favorites-row" type="button" data-artist-id="${escapeHtml(a.id)}">
-        <span class="favorites-row-name">${escapeHtml(a.name)}</span>
-        ${dateLine}
-      </button>
+      <div class="favorites-row" data-artist-id="${escapeHtml(a.id)}">
+        <button class="favorites-row-main" type="button" data-artist-id="${escapeHtml(a.id)}">
+          <span class="favorites-row-name">${escapeHtml(a.name)}</span>
+          ${dateLine}
+        </button>
+        <button class="favorites-row-remove" type="button" data-remove-fav="${escapeHtml(a.id)}" aria-label="${escapeHtml(removeLabel)}" title="${escapeHtml(removeLabel)}">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </button>
+      </div>
     `;
   }).join("");
 }
@@ -3231,9 +3250,36 @@ favoritesOverlay?.addEventListener("click", e => {
   if (e.target === favoritesOverlay) closeFavorites();
 });
 favoritesListEl?.addEventListener("click", e => {
-  const row = e.target.closest(".favorites-row");
+  // Remove (heart) button on a row — un-favorite that artist, refresh
+  // the list in place, and sync the heart on the artist's hero panel
+  // if it's currently rendered. Don't close the overlay.
+  const removeBtn = e.target.closest("[data-remove-fav]");
+  if (removeBtn) {
+    e.stopPropagation();
+    const id = removeBtn.dataset.removeFav;
+    if (!id) return;
+    if (isFavorite(id)) toggleFavorite(id);
+    // Sync the heart button on the artist's hero panel (if rendered).
+    const heroBtn = reel?.querySelector(`.artist-favorite[data-fav-id="${CSS.escape(id)}"]`);
+    if (heroBtn) {
+      heroBtn.classList.remove("is-favorite");
+      heroBtn.setAttribute("aria-pressed", "false");
+      const label = t("favorite.add");
+      heroBtn.setAttribute("aria-label", label);
+      heroBtn.setAttribute("title", label);
+      const oldIcon = heroBtn.querySelector(".fav-icon");
+      if (oldIcon) oldIcon.outerHTML = HEART_ICON_OUTLINE;
+    }
+    refreshFavoritesCounter();
+    renderFavoritesList();
+    // If the user just emptied the list, close the overlay automatically.
+    if (getFavorites().size === 0) closeFavorites();
+    return;
+  }
+  const row = e.target.closest(".favorites-row-main, .favorites-row");
   if (!row) return;
   const id = row.dataset.artistId;
+  if (!id) return;
   closeFavorites();
   if (activeStageFilter !== "all") {
     activeStageFilter = "all";

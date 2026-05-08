@@ -2443,34 +2443,73 @@ body.has-mini-player .panel {
   padding-inline-end: 4px;
 }
 
+/* Each favorites row now has two clickable areas: the main button
+   navigates to the artist, the heart button on the right removes them
+   from favorites. Pure-CSS no-op for the old <button class="favorites-row">
+   selector (we rebuild the DOM as <div> + child buttons). */
 .favorites-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  align-items: stretch;
+  gap: 6px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  text-align: start;
-  font-family: inherit;
-  color: var(--text);
+  overflow: hidden;
   transition: background 0.15s, border-color 0.15s;
 }
 .favorites-row:hover {
   background: rgba(255, 92, 138, 0.14);
   border-color: rgba(255, 92, 138, 0.4);
 }
+
+.favorites-row-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: transparent;
+  border: 0;
+  text-align: start;
+  font-family: inherit;
+  color: var(--text);
+  cursor: pointer;
+}
+
 .favorites-row-name {
   font-weight: 700;
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .favorites-row-date {
   font-size: 12px;
   color: var(--text-muted);
   white-space: nowrap;
+  flex-shrink: 0;
 }
+
+.favorites-row-remove {
+  flex: 0 0 auto;
+  width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-inline-start: 1px solid rgba(255, 255, 255, 0.06);
+  color: #ff5c8a;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.favorites-row-remove:hover {
+  background: rgba(255, 92, 138, 0.18);
+  color: #ff5c8a;
+}
+.favorites-row-remove:active { transform: scale(0.92); }
 .favorites-empty {
   text-align: center;
   padding: 32px 16px;
@@ -2502,7 +2541,18 @@ body.has-mini-player .panel {
   max-width: 360px;
 }
 
-.favorites-notify-btn {
+/* Two channel pills sit side-by-side: browser (yellow→pink gradient,
+   reflects Notification.permission) and Telegram (blue, always
+   available so iOS users without the Notification API still have a
+   real opt-in path). */
+.favorites-notify-channels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.favorites-notify-channel {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -2513,34 +2563,58 @@ body.has-mini-player .panel {
   font-weight: 800;
   letter-spacing: 0.4px;
   cursor: pointer;
-  border: 1px solid rgba(254, 180, 71, 0.55);
-  background: linear-gradient(135deg, rgba(254, 180, 71, 0.18), rgba(255, 92, 138, 0.16));
-  color: var(--sun-yellow);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  text-decoration: none;
   transition: background 0.18s, border-color 0.18s, transform 0.15s, color 0.18s;
 }
 
-.favorites-notify-btn:hover {
+.favorites-notify-channel:active { transform: scale(0.97); }
+.favorites-notify-channel svg { flex-shrink: 0; }
+
+.favorites-notify-channel.is-browser {
+  border-color: rgba(254, 180, 71, 0.55);
+  background: linear-gradient(135deg, rgba(254, 180, 71, 0.18), rgba(255, 92, 138, 0.16));
+  color: var(--sun-yellow);
+}
+
+.favorites-notify-channel.is-browser:hover {
   background: linear-gradient(135deg, rgba(254, 180, 71, 0.3), rgba(255, 92, 138, 0.25));
   border-color: rgba(254, 180, 71, 0.85);
 }
 
-.favorites-notify-btn:active { transform: scale(0.97); }
-
-.favorites-notify-btn.is-on {
+.favorites-notify-channel.is-on {
   border-color: rgba(57, 255, 20, 0.7);
   background: rgba(57, 255, 20, 0.12);
   color: #39ff14;
   cursor: default;
 }
 
-.favorites-notify-btn.is-disabled {
+.favorites-notify-channel.is-disabled {
   border-color: rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-muted);
   cursor: not-allowed;
 }
 
-.favorites-notify-btn svg { flex-shrink: 0; }
+.favorites-notify-channel.is-telegram {
+  border-color: rgba(56, 175, 226, 0.55);
+  background: linear-gradient(135deg, rgba(56, 175, 226, 0.18), rgba(0, 153, 255, 0.16));
+  color: #5ec3ee;
+}
+
+.favorites-notify-channel.is-telegram:hover {
+  background: linear-gradient(135deg, rgba(56, 175, 226, 0.3), rgba(0, 153, 255, 0.25));
+  border-color: rgba(56, 175, 226, 0.85);
+  color: #38afe2;
+}
+
+.favorites-notify-channel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* ===== First-visit language picker ===== */
 .welcome-overlay {
