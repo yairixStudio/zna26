@@ -209,16 +209,19 @@ let ARTISTS = [
     tags: ["Process", "Satori", "Beast"],
     color: "#ff006e",
     bio: "הכוח היצירתי מאחורי הפרויקטים האהובים Process ו-Satori. מאבות גואה טראנס שעיצב את התפתחות הז'אנר עם נופי קול חדשניים. עבד בסטודיו עם James Monro, סיימון פוסקסורד (Hallucinogen), Tristan וצויושי סוזוקי. חבר גם בפרויקט Beast עם Hallucinogen.",
-    notable: "Satori יחד עם Pete Martin - מהפרויקטים האייקוניים של גואה",
+    notable: "Satori יחד עם Pete Martin - מהפרויקטים האייקוניים של גואה. אלבום 'One Drop Or Two' (Process) - מהקלאסיקות של Flying Rhino",
     albums: [
+      { name: "One Drop Or Two", year: 2000, project: "Process / Creamcrop" },
+      { name: "Superior Technology", year: null, project: "Process Productions" },
       { name: "Tales of the Inexpressible-era tracks", year: "1996-2000", project: "Process" },
-      { name: "Various Satori releases", year: "1996-1999", project: "Satori" }
+      { name: "Various Satori releases", year: "1996-1999", project: "Satori (with Pete Martin)" }
     ],
     links: [
       { type: "Discogs", url: "https://www.discogs.com/artist/66276-Sean-Williams" },
       { type: "Last.fm", url: "https://www.last.fm/music/Process" }
     ],
     tracks: [
+      { id: "bTkD1hZlMko", title: "Process - One Drop Or Two (Full Album)", year: 2000 },
       { id: "jSqrnWIRvl4", title: "Satori - Entropy", year: 1997 }
     ]
   },
@@ -1458,6 +1461,38 @@ let ARTISTS = [
     tracks: [
       { id: "u1dhFojIdwU", title: "Celephaïs (Full Album, 2019)", year: 2019 }
     ]
+  },
+  {
+    id: "mark-allen",
+    realName: "Mark Allen (Quirk / Phantasm)",
+    bio: "DJ ומפיק בריטי - מחלוצי גואה טראנס. נכנס לסצנה ב-1991 בביקור ראשון בגואה. שותף ב-Quirk עם Tim Healey, חבר ב-Mindfield, בעל החותמת Phantasm. ארגן את מסיבות 'Return to the Source' בלונדון מ-1994 שהפכו לגלובליות (UK / US / Europe / Japan / Israel) עד 2001.",
+    notable: "Phantasm Records (founder) + Return to the Source parties - מהמכוננים של גואה בריטית",
+    albums: [
+      { name: "Deck Wizards 1 - Goa Trance Mix", year: 1996, project: "Phantasm Records" },
+      { name: "Quirk releases", year: null, project: "with Tim Healey" }
+    ],
+    links: [
+      { type: "Wikipedia", url: "https://en.wikipedia.org/wiki/Mark_Allen_(DJ)" },
+      { type: "Discogs", url: "https://www.discogs.com/artist/74240-Mark-Allen" },
+      { type: "SoundCloud", url: "https://soundcloud.com/phantasmrecords" }
+    ],
+    tracks: [
+      { id: "HYHZTWTdJN4", title: "A Pinch Of Psychedelic mix (Chaos Unlimited, 1995)", year: 1995 },
+      { id: "kq5IgRSYac0", title: "Brainforest Mix (Chaos Unlimited, 1995)", year: 1995 }
+    ]
+  },
+  {
+    id: "silicon-sound",
+    realName: "Silicon Sound",
+    bio: "פרויקט גואה טראנס - חלוץ צרפתי שהופיע במופעים כמו 'Genesis of Psytrance' (Bologna, 2009). ידוע ברמיקס שלו ל-'Mai Mai' של Jaïa.",
+    notable: "Silicon Sound 90's Remix של Jaïa - 'Mai Mai'",
+    albums: [],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/57781-Silicon-Sound" },
+      { type: "Beatport", url: "https://www.beatport.com/artist/silicon-sound/12014" },
+      { type: "Bandcamp", url: "https://jaia.bandcamp.com/track/mai-mai-silicon-sound-90s-remix" }
+    ],
+    tracks: []
   }
 ];
 
