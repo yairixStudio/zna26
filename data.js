@@ -418,8 +418,18 @@ let ARTISTS = [
     color: "#06d6a0",
     bio: "אחד הקולות החזקים של גואה הקרואטי. התאחד מחדש עם Goran Stetic ב-ZNA 2026 - חוזרים אל המוזיקה שיצרו בשנות ה-90 ומחדדים אותה למערכת הסאונד המתקדמת של מקדש זמבו.",
     notable: "B2B עם Goran Stetic - איחוד מחדש מהאגדה הקרואטית",
-    albums: [],
-    links: []
+    albums: [
+      { name: "Land of Utopia", year: 1997, project: "Dogma 3000 (with Goran Stetic)" },
+      { name: "Land of Utopia (Expanded Remaster)", year: 2020, project: "Dogma 3000 (with Goran Stetic)" }
+    ],
+    links: [
+      { type: "Resident Advisor", url: "https://ra.co/dj/damirludvig/biography" },
+      { type: "Website", url: "http://www.dogma3000.com/" }
+    ],
+    tracks: [
+      { id: "tV_HLfvs4_4", title: "Dogma - Land Of Utopia", year: 1997 },
+      { id: "G_hdbVqSYA4", title: "Dogma - Land Of Utopia (Expanded Remaster)", year: 2020 }
+    ]
   },
   {
     id: "goran-stetic",
@@ -435,8 +445,18 @@ let ARTISTS = [
     color: "#26c485",
     bio: "מאיקוני גואה טראנס בקרואטיה. מתאחד מחדש עם Damir Ludvig לסט מיוחד ב-ZNA - מסע אל אוצרות שלא נשמעו זה זמן רב.",
     notable: "B2B עם Damir Ludvig - מפגש היסטורי",
-    albums: [],
-    links: []
+    albums: [
+      { name: "Land of Utopia", year: 1997, project: "Dogma 3000 (with Damir Ludvig)" },
+      { name: "Land of Utopia (Expanded Remaster)", year: 2020, project: "Dogma 3000 (with Damir Ludvig)" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/855007-Goran-%C5%A0teti%C4%87" },
+      { type: "Website", url: "http://www.dogma3000.com/" }
+    ],
+    tracks: [
+      { id: "tV_HLfvs4_4", title: "Dogma - Land Of Utopia", year: 1997 },
+      { id: "G_hdbVqSYA4", title: "Dogma - Land Of Utopia (Expanded Remaster)", year: 2020 }
+    ]
   },
   {
     id: "dogma",
@@ -810,10 +830,19 @@ let ARTISTS = [
     bio: "אגדה של גואה טראנס - חלק מ-The Infinity Project וממייסדי TIP Records הבריטית האגדית. הפיק את התקליטונים שעיצבו את הסאונד של גואה הקלאסי. ב-ZNA 2026 משחרר את מלוא המאסטריות שלו ב-Retro Universe.",
     notable: "The Infinity Project / TIP Records - מהחותמות המעצבות של גואה",
     albums: [
-      { name: "Mystical Experiences", year: 1995, project: "The Infinity Project" }
+      { name: "Mystical Experiences", year: 1995, project: "The Infinity Project" },
+      { name: "Feeling Weird", year: 1995, project: "The Infinity Project" }
     ],
     links: [
-      { type: "Discogs", url: "https://www.discogs.com/artist/16456-The-Infinity-Project" }
+      { type: "Discogs", url: "https://www.discogs.com/artist/16456-The-Infinity-Project" },
+      { type: "Bandcamp", url: "https://tiprecords.bandcamp.com/" }
+    ],
+    tracks: [
+      { id: "IEe22M6Prts", title: "Mystical Experiences (1995) - Full Album", year: 1995 },
+      { id: "R9E8DPXHkuI", title: "Feeling Weird (1995) - Full Album", year: 1995 },
+      { id: "Mq4Ob423S9s", title: "Hyperspaced", year: 1995 },
+      { id: "vT58pwe0wSo", title: "Stimuli", year: 1994 },
+      { id: "VjI_ERtkB2c", title: "Yellow Energy (Graham Wood / The Infinity Project)", year: null }
     ]
   },
   {
@@ -830,8 +859,20 @@ let ARTISTS = [
     color: "#9d4edd",
     bio: "DJ ויוצר ותיק שאינטואיציה מוזיקלית עזרה להגדיר תקופה. חוזר ל-ZNA 2026 לסט מיוחד.",
     notable: "סט VS אקסקלוסיבי בויניל עם Orion ב-ZNA 2026",
-    albums: [],
-    links: []
+    albums: [
+      { name: "Trance - Phantasm & Psychic Deli", year: 1999, project: "Mixed CD" },
+      { name: "Deck Wizards 3 - Aural Sect", year: 1996, project: "Goa Trance Mix" },
+      { name: "Journeys Into Trance - Classic Soundscapes 1995-1997", year: 1997, project: "Mixed CD" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/180461-Sid-Shanti" }
+    ],
+    tracks: [
+      { id: "msWKsfC0RnQ", title: "Phantasm & Psychic Deli - Trance exclusive mix", year: 1999 },
+      { id: "n_PDJuOZcB8", title: "Psychedelic Goa Trance mix 1999", year: 1999 },
+      { id: "xMyLxlvsNAM", title: "Techno Party Magazine mix 1999", year: 1999 },
+      { id: "hpRftjpp9Ck", title: "Phantasm & Psychic Deli Mix HD", year: 1999 }
+    ]
   },
   {
     id: "orion-borelli",
@@ -868,11 +909,21 @@ let ARTISTS = [
     bio: "מפיק ניסיוני יפני שפעיל מאמצע שנות ה-90. ידוע יותר תחת הכינוי Ubar Tmar עם אלבום 'Fusion' (1997, Boom!) ו-'True' (1998, Matsuri). הופעות חיות שלו הופכות ל'מבוכי מוזיקה' פסיכדליים.",
     notable: "Ubar Tmar - אלבומי 'Fusion' ו-'True' של גואה יפני קלאסי",
     albums: [
-      { name: "Fusion", year: 1997, project: "Ubar Tmar / Boom!" },
-      { name: "True", year: 1998, project: "Ubar Tmar / Matsuri" }
+      { name: "Fusion", year: 1997, project: "Ubar Tmar / Boom! Records" },
+      { name: "True", year: 1998, project: "Ubar Tmar / Matsuri Productions" },
+      { name: "Live At Autumnal Equinox", year: 1999, project: "Ubar Tmar / Equinox Productions" },
+      { name: "Eigou Kaiki", year: 2002, project: "Ubar Tmar / Panorama Records" },
+      { name: "Macrometasomakosmos", year: 2003, project: "Ubar Tmar / Panorama Records" }
     ],
     links: [
-      { type: "Discogs", url: "https://www.discogs.com/artist/228673-Takeshi-Isogai" }
+      { type: "Discogs", url: "https://www.discogs.com/artist/228673-Takeshi-Isogai" },
+      { type: "Bandcamp", url: "https://ubartmar.bandcamp.com/" },
+      { type: "Website", url: "https://matsuri-digital.com/en/artist/ubar-tmar/" }
+    ],
+    tracks: [
+      { id: "h4QP2_Nszh4", title: "Fusion - Full Album Mix (1997)", year: 1997 },
+      { id: "6ARniuNgx3A", title: "Macrometasomakosmos - Full Album (2003)", year: 2003 },
+      { id: "ghib8Dx1rDA", title: "The Tale Of Taketori (Fusion)", year: 1997 }
     ]
   },
   {
