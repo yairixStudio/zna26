@@ -1573,6 +1573,20 @@ let ARTISTS = [
       { id: "pHL7QOh9Yu4", title: "Soulbinder", year: 2023 },
       { id: "c69lcDiMvPc", title: "From Dawn To Dusk", year: 2025 }
     ]
+  },
+  {
+    id: "andrew-till",
+    realName: "Andrew Till (Psy-Harmonics co-founder)",
+    bio: "אנדרו טיל - שותף-מייסד של Psy-Harmonics האוסטרלי יחד עם Ollie Olsen ב-1993. הלייבל התמקד בקצוות הניסיוניים, ברייקביט וגואה מעוקף שיצאו מאוסטרליה, יפן וניו זילנד. אנדרו ממשיך את הלייבל עד היום ומופיע ב-ZNA במעבר משלל לאור.",
+    notable: "Psy-Harmonics (1993) - הלייבל האוסטרלי האייקוני שהפיק את Zen Paradox, Mystic Force, Shaolin Wooden Men ועוד",
+    albums: [
+      { name: "Psy-Harmonics catalog (curator)", year: "1993-present", project: "Co-founder & curator" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://psy-harmonics.bandcamp.com/" },
+      { type: "Discogs", url: "https://www.discogs.com/label/5557-Psy-Harmonics" }
+    ],
+    tracks: []
   }
 ];
 
