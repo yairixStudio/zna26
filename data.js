@@ -499,8 +499,13 @@ let ARTISTS = [
     color: "#7209b7",
     bio: "מייסד ומנהל Boshke Beats Records (פעיל מאז 2001). אגדה במחשבה החופשית של הסצנה - דרך כפלטיניית רוק, דיסקו, טכנו, אלקטרו וטראנס בזרימה אחת. בשנים האחרונות מופיע גם תחת הפרויקט Triple Distilled Disco Squad - 'Slow disco-techno from beyond'.",
     notable: "מייסד Boshke Beats Records - חותמת קאלט של פסיטראנס",
-    albums: [],
-    links: [],
+    albums: [
+      { name: "Lysergic Disco @ ZNA Gathering 2024", year: 2024, project: "as Triple Distilled Disco Squad" },
+      { name: "Avocado Farm Adventures (Boshke Beats Series Ep. 68)", year: 2024, project: "as Triple Distilled Disco Squad" }
+    ],
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/boshkebeatsrecords/sets/triple-distilled-disco-squad" }
+    ],
     tracks: [
       { id: "n2WhZmg2Oog", title: "The Outlaws Vol II Mix", year: null },
       { id: "d4cAunDBl7Q", title: "Live @ Boom Festival 2012", year: 2012 }
@@ -680,10 +685,19 @@ let ARTISTS = [
     role: "DJ Set",
     tags: ["Arctic Dub", "Post-Dub Techno", "Portugal"],
     color: "#7b2cbf",
-    bio: "DJ ומפיק פורטוגזי שעובד מסטודיו Arctic Dub - מתמחה באמביינט, פוסט-דאב טכנו ואלקטרוניקה ניסיונית בהשראת דאב. אוצר ומקפיל מרכזי של חותמת Arctic Dub (Sursumcorda), פעיל בקהילת הדאב והבאס הפורטוגזית התת-קרקעית.",
+    bio: "DJ ומפיק פורטוגזי שעובד מסטודיו Arctic Dub - מתמחה באמביינט, פוסט-דאב טכנו ואלקטרוניקה ניסיונית בהשראת דאב. אוצר ומקפיל מרכזי של חותמת Arctic Dub (Sursumcorda), פעיל בקהילת הדאב והבאס הפורטוגזית התת-קרקעית. ידוע גם תחת השם Augen.",
     notable: "סדרת ה-compilations 'Arctic Dub Sursumcorda' - אבן יסוד של דאב פורטוגזי",
-    albums: [],
-    links: []
+    albums: [
+      { name: "Arctic Dub (Sursumcorda) - Compilation v3", year: null, project: "Compiled by Gabi Von Dub" },
+      { name: "Arctic Dub (Sursumcorda) - Compilation v4", year: null, project: "Compiled with Dave Wesley" },
+      { name: "Arctic Dub (Sursumcorda) - Compilation v6", year: null, project: "Compiled by Gabi Von Dub" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://arcticdub.bandcamp.com/" },
+      { type: "Website", url: "https://arcticdub.com/" },
+      { type: "Mixcloud", url: "https://www.mixcloud.com/portalradio/gabi-von-dub-presents-arctic-dub/" },
+      { type: "Last.fm", url: "https://www.last.fm/music/Gabi+Von+Dub" }
+    ]
   },
   {
     id: "ree-k",
@@ -701,12 +715,18 @@ let ARTISTS = [
     notable: "אלבום 'Yammataikoku' (1996, Psy-Harmonics) - אבן יסוד של גואה יפני",
     albums: [
       { name: "Yammataikoku", year: 1996, project: "Psy-Harmonics" },
-      { name: "Early Tracks 1", year: 2010, project: "Hypnodisk" }
+      { name: "Early Tracks 1 (1995-1998)", year: 2010, project: "Hypnodisk" },
+      { name: "Nu Goa from Japan Vol.4", year: 2017, project: "with YUTA & Shimodi / Matsuri Digital" }
     ],
     links: [
-      { type: "Discogs", url: "https://www.discogs.com/artist/45548-ReeK" }
+      { type: "Discogs", url: "https://www.discogs.com/artist/45548-ReeK" },
+      { type: "Bandcamp", url: "https://psy-harmonics.bandcamp.com/album/yammataikoku" },
+      { type: "Mixcloud", url: "https://www.mixcloud.com/reek2013/" }
     ],
-    tracks: []
+    tracks: [
+      { id: "TPIUjK_4aXA", title: "Live @ Unite - Psytrance Sessions", year: null },
+      { id: "zTo54BuRgms", title: "Ree.K @ Tokyo ghoul / Japan Trance", year: null }
+    ]
   },
   {
     id: "klil-co",
@@ -776,10 +796,17 @@ let ARTISTS = [
     role: "DJ Collective",
     tags: ["Boshke Beats", "Slow Disco", "Eclectic"],
     color: "#ffd60a",
-    bio: "פרויקט DJ בסגנון פריסטייל של אלכס 'Boshke' טולסטיי, מייסד Boshke Beats Records (פעיל מ-2001). הסט אינו מתוכנן ואקלקטי - רוק, דיסקו, טכנו, אלקטרו וטראנס מתמזגים לזרימה אחת מאולתרת. 'Slow disco-techno from beyond' - היפר-קלף בפסטיבלים כמו Daad Gathering.",
-    notable: "Daad Gathering 2022 - הופעה אגדית של מיני-מקס דיסקו וטכנו",
-    albums: [],
-    links: []
+    bio: "פרויקט DJ בסגנון פריסטייל של אלכס 'Boshke' טולסטיי, מייסד Boshke Beats Records (פעיל מ-2001). הסט אינו מתוכנן ואקלקטי - רוק, דיסקו, טכנו, אלקטרו וטראנס מתמזגים לזרימה אחת מאולתרת. 'Slow disco-techno from beyond' - הופיע כבר ב-Market של ZNA Gathering 2024 בסט של 4.5 שעות בשם 'Lysergic Disco'.",
+    notable: "Boshke Beats Records (פעיל מ-2001) — Triple Distilled Disco Squad הוא ה-alias הניסיוני של Alex Tolstey",
+    albums: [
+      { name: "Lysergic Disco @ ZNA Gathering 2024", year: 2024, project: "Live set, 4.5h" },
+      { name: "Avocado Farm Adventures (Boshke Beats Series Ep. 68)", year: 2024, project: "radiOzora" },
+      { name: "@ Daad Gathering 2022 (Boshke Beats Series Ep. 47)", year: 2022, project: "radiOzora" }
+    ],
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/boshkebeatsrecords/sets/triple-distilled-disco-squad" },
+      { type: "radiOzora", url: "https://radiozora.fm/boshke-beats-series/ep-68-tripple-distilled-disco-squad-avocado-farm-adventures/" }
+    ]
   },
   {
     id: "bill-robin-maya",
@@ -1050,13 +1077,17 @@ let ARTISTS = [
     tags: ["Modern Goa", "Suntrip", "Global Sect"],
     color: "#ff5c8a",
     bio: "בריס פרויט - חלוץ של גואה מודרני מצרפת. מפיק מאז תחילת שנות ה-2000 עם שחרורים על Suntrip ו-Global Sect. אלבום 'Odysseus' (2019, Global Sect) הוא מהמסעות המוכרים שלו.",
-    notable: "אלבום 'Odysseus' (2019, Global Sect)",
+    notable: "Born Underwater (2009, Suntrip) - אלבום הביכורים. גם 'Odysseus' (2019, Global Sect)",
     albums: [
-      { name: "Odysseus", year: 2019, project: "Global Sect" }
+      { name: "Born Underwater", year: 2009, project: "Suntrip Records" },
+      { name: "Hybridization", year: 2018, project: "Merr0w (self-released)" },
+      { name: "Odysseus", year: 2019, project: "Global Sect" },
+      { name: "Friends Transmission Vol. 1", year: 2021, project: "Merr0w (self-released)" }
     ],
     links: [
       { type: "Discogs", url: "https://www.discogs.com/artist/737661-Merr0w" },
-      { type: "Bandcamp", url: "https://globalsect.bandcamp.com/album/merrow-odysseus" }
+      { type: "Bandcamp", url: "https://merr0w.bandcamp.com/" },
+      { type: "SoundCloud", url: "https://soundcloud.com/merr0w" }
     ]
   },
   // ===== Additional verified ZNA 2026 artists =====
@@ -1222,18 +1253,23 @@ let ARTISTS = [
     id: "sjamadan",
     announcedAt: "2026-03-04",
     name: "Sjamadan",
-    realName: "Sjamadan",
-    country: "🇩🇰 דנמרק",
+    realName: "Daniel De Keulenaer",
+    country: "🇧🇪 בלגיה",
     age: null,
-    born: "פעיל בסצנה",
+    born: "1984",
     stage: "guardians",
     role: "Vinyl Set",
-    tags: ["Vinyl", "Goa Curator"],
+    tags: ["Vinyl", "Goa Curator", "Amanita Muscaria"],
     color: "#ef476f",
-    bio: "סלקטור גואה ויניל סקנדינבי - חלק מ-Goa Guardians ב-ZNA 2026.",
-    notable: "אומן Goa Guardians - שומר המורשת",
+    bio: "דניאל דה קולנארה - סלקטור ויניל גואה בלגי, מייסד הפסטיבל Amanita Muscaria שהחל ב-2005. DJ פעיל מ-2003, מתמחה בסטים אולד-סקול גואה על ויניל. הופיע ב-OHM Spirit Festival בצרפת בין היתר.",
+    notable: "Amanita Muscaria parties (founder, since 2005) - Belgium goa scene",
     albums: [],
-    links: []
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/daniel-de-keulenaer" }
+    ],
+    tracks: [
+      { id: "VMhRsVtW-gc", title: "Sjama'dan @ Goa trance outdoor gathering", year: null }
+    ]
   }
 ];
 
