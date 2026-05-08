@@ -732,18 +732,37 @@ let ARTISTS = [
     id: "mathew-tecnica",
     announcedAt: "2026-03-25",
     name: "Tecnica",
-    realName: "Tecnica",
-    country: "🌍 בינלאומי",
+    realName: "Max Lanfranconi & Maurizio Begotti (Etnica / Pleiadians)",
+    country: "🇮🇹 איטליה",
     age: null,
-    born: "פעיל בסצנה",
+    born: "פעילים מ-1994",
     stage: "market",
-    role: "Live",
-    tags: ["Goa Live"],
+    role: "DJ Set / Live",
+    tags: ["Etnica", "Pleiadians", "Italian Goa", "IbogaTech"],
     color: "#0096c7",
-    bio: "פרויקט גואה חי - חלק מליין-אפ Retro Universe ב-ZNA 2026.",
-    notable: "Retro Universe",
-    albums: [],
-    links: []
+    bio: "פרויקט הטכנו של הדואו האיטלקי האגדי Etnica/Pleiadians - מקס לנפרנקוני ומאוריציו בגוטי. מקסום של המכניקה, הגרוב והאטמוספרה של עשרים שנות גואה, רק בקצב יותר איטי וטכנואי. ב-ZNA 2026 פותחים את ה-Market Stage ב-sunset DJ set.",
+    notable: "Etnica / Pleiadians - דואו אגדי. Tecnica = פרויקט הטכנו שלהם",
+    albums: [
+      { name: "The Juggling Alchemists Under The Black Light", year: 1995, project: "Etnica" },
+      { name: "Alien Protein", year: 1996, project: "Etnica" },
+      { name: "Identified Flying Object", year: 1996, project: "Pleiadians" },
+      { name: "Family of Light", year: 1999, project: "Pleiadians" },
+      { name: "Nitrox", year: 2001, project: "Etnica" },
+      { name: "Seven Sisters", year: 2006, project: "Pleiadians" },
+      { name: "Blockchain EP", year: 2020, project: "Tecnica / IbogaTech" }
+    ],
+    links: [
+      { type: "Website", url: "https://www.etnicanet.net/" },
+      { type: "Bandcamp", url: "https://etnicanet.bandcamp.com/" },
+      { type: "SoundCloud", url: "https://soundcloud.com/etnica" },
+      { type: "Spotify", url: "https://open.spotify.com/artist/2uY6n7zcOlm2yugy9ItRW7" }
+    ],
+    tracks: [
+      { id: "HNT2mjDf18g", title: "Alien Protein (Full Album, 1996)", year: 1996 },
+      { id: "UEkeptXz63A", title: "Trip Tonite", year: 1996 },
+      { id: "KGqwz6zegIk", title: "Mystical Appearance In Goa (The Juggling Alchemists LP, 1995)", year: 1995 },
+      { id: "W-eK2RzLGuA", title: "Alien Protein (title track)", year: 1996 }
+    ]
   },
   {
     id: "triple-distilled",
