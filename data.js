@@ -1493,6 +1493,86 @@ let ARTISTS = [
       { type: "Bandcamp", url: "https://jaia.bandcamp.com/track/mai-mai-silicon-sound-90s-remix" }
     ],
     tracks: []
+  },
+  {
+    id: "sun-project",
+    realName: "S.U.N. Project - Marco Menichelli + Matthias Rumoeller + McCoy",
+    bio: "S.U.N. Project - קולקטיב גואה טראנס מהמבורג, גרמניה. שלושה מוזיקאים שהושפעו ממסיבות גואה המקוריות בהודו ושילבו את שורשי הרוק שלהם בסאונד הפסיכדלי. EP ראשון 'Crazy Stories' (1996, Spirit Zone), אלבום ביכורים 'Drosophila' (1997).",
+    notable: "'Drosophila' (1997, Spirit Zone) - מהאלבומים הקלאסיים של גואה גרמני",
+    albums: [
+      { name: "Crazy Stories EP", year: 1996, project: "Spirit Zone Records" },
+      { name: "Drosophila", year: 1997, project: "Spirit Zone Records" },
+      { name: "A Voyage", year: 2014, project: "as Marco & Matt / Stereo Society" },
+      { name: "Secret Original Mixes 1996-2000", year: 2021, project: "Classic Goa Trax" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/22666-SUN-Project" },
+      { type: "SoundCloud", url: "https://soundcloud.com/sun-project" },
+      { type: "Bandcamp", url: "https://classicgoatrax.bandcamp.com/album/secret-original-mixes-1996-2000" }
+    ],
+    tracks: [
+      { id: "nIi_6PMUjDg", title: "Drosophila (Full Album, 1997)", year: 1997 },
+      { id: "zWWIiXrV1eE", title: "Drosophila (Full Album Mix)", year: 1997 }
+    ]
+  },
+  {
+    id: "reefer-decree",
+    realName: "Reefer Decree",
+    bio: "פרויקט פסיטראנס מתקדם שהיה השם הראשון ששוחרר על Iboga Records של דנמרק ב-1999. אלבום הביכורים 'Soundframes' עדיין נחשב לשחרור הויניל הנמכר ביותר אי פעם של Iboga. טראקים מוכרים: Nightvision, Curved Air.",
+    notable: "'Soundframes' (Iboga Records) - שחרור הויניל הנמכר ביותר של החותמת",
+    albums: [
+      { name: "Soundframes", year: 2020, project: "Iboga Records (orig. 1999)" },
+      { name: "Point Of You", year: null, project: "Iboga Records" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/27650-Reefer-Decree" },
+      { type: "Bandcamp", url: "https://iboga-beatspace.bandcamp.com/album/reefer-decree-sound-frames-iboga-records" }
+    ],
+    tracks: [
+      { id: "1tuV4BwyUC0", title: "Soundframed", year: 2020 },
+      { id: "1Ebe4EiV0pw", title: "O.tonin", year: null }
+    ]
+  },
+  {
+    id: "mini-spacer",
+    realName: "Mini Spacer",
+    bio: "פרויקט גואה טראנס המופיע על Timewarp Records - חותמת שמתמקדת בסגנון קלאסי עם הפקה מודרנית. EP ביכורים 'The Spirit Of Trance' (2021).",
+    notable: "'The Spirit Of Trance' EP (2021, Timewarp Records) - אלבום ביכורים גואה",
+    albums: [
+      { name: "The Spirit Of Trance EP", year: 2021, project: "Timewarp Records" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://timewarprecords.bandcamp.com/album/mini-spacer-the-spirit-of-trance-timewarp168-timewarp" }
+    ],
+    tracks: []
+  },
+  {
+    id: "moon-beasts",
+    realName: "Moon Beasts - Ephedra (Alexandre Cohen) + Proxeeus (Jerome Lesterps)",
+    bio: "פרויקט שיתופי בין Ephedra (אלכסנדר כהן, בלגיה) ו-Proxeeus (ז'רום לסטרפס, צרפת). התחילו ב-2019 עם הופעה משולבת בפורטוגל - מאז, פרויקט מלא. מתערבב הצד המלודי-מרחף של Ephedra עם הצליל האגרסיבי של Proxeeus. חתום על Goa Madness Records.",
+    notable: "Collab בין Ephedra ל-Proxeeus - שני שמות מובילים בגואה החדש",
+    albums: [],
+    links: [
+      { type: "Goa Madness Records", url: "https://goamadnessrecordsofficial.bandcamp.com/" }
+    ],
+    tracks: []
+  },
+  {
+    id: "antidot-and-dica",
+    realName: "Antidot & DICA",
+    bio: "שיתוף פעולה בין שני אומנים צרפתיים מסצנת ה-Acid/Goa - DICA (ידוע בסצנת Acid) ו-Antidot. חוצים אסיד-טכנו עם גואה בסט גבה-אנרגיה.",
+    notable: "EP 'From Dawn To Dusk' (2025, Suntrip Records) + 'Soulbinder' באוסף 'Acidum Influxum'",
+    albums: [
+      { name: "From Dawn To Dusk EP", year: 2025, project: "Suntrip Records" },
+      { name: "Acidum Influxum (compilation, with 'Soulbinder')", year: 2023, project: "Suntrip Records" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://suntriprecords.bandcamp.com/album/from-dawn-to-dusk-digital-12" }
+    ],
+    tracks: [
+      { id: "pHL7QOh9Yu4", title: "Soulbinder", year: 2023 },
+      { id: "c69lcDiMvPc", title: "From Dawn To Dusk", year: 2025 }
+    ]
   }
 ];
 
