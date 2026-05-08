@@ -2052,32 +2052,36 @@ body.has-mini-player .panel {
 
 /* Top-bar favorites pill — heart icon + counter badge. Hidden by default
    (the [hidden] attr is removed by JS once at least one artist is
-   favorited). Counter sits inside the same pill so the number is always
-   visually attached to the heart. */
+   favorited). Counter sits OUTSIDE the circle, top-right, so .glass-btn's
+   overflow: hidden would clip it — override to overflow: visible here.
+   The ::before specular highlight keeps its rounded shape via its own
+   border-radius: inherit. */
 .favorites-btn {
   position: relative;
   color: #ff5c8a;
+  overflow: visible;
 }
 
 .favorites-btn[hidden] { display: none; }
 
 .favorites-btn .favorites-count {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
+  top: -5px;
+  right: -5px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
   border-radius: 999px;
   background: #ff5c8a;
   color: #1a0a3a;
   font-family: "Heebo", sans-serif;
   font-size: 11px;
   font-weight: 800;
-  line-height: 18px;
+  line-height: 20px;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(255, 92, 138, 0.55);
+  box-shadow: 0 2px 8px rgba(255, 92, 138, 0.55), 0 0 0 2px rgba(10, 5, 36, 0.85);
   pointer-events: none;
+  z-index: 2;
 }
 
 .logo-mini {
@@ -2472,6 +2476,69 @@ body.has-mini-player .panel {
   font-size: 14px;
 }
 
+/* "Get notifications" CTA at the bottom of the favorites panel.
+   Sits below the list with a divider, then a description line and a
+   bell-icon button. Toggles to a "Notifications on" green pill once the
+   user grants permission. */
+.favorites-notify {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.14);
+}
+
+.favorites-notify-desc {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.4;
+  max-width: 360px;
+}
+
+.favorites-notify-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-family: "Heebo", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  border: 1px solid rgba(254, 180, 71, 0.55);
+  background: linear-gradient(135deg, rgba(254, 180, 71, 0.18), rgba(255, 92, 138, 0.16));
+  color: var(--sun-yellow);
+  transition: background 0.18s, border-color 0.18s, transform 0.15s, color 0.18s;
+}
+
+.favorites-notify-btn:hover {
+  background: linear-gradient(135deg, rgba(254, 180, 71, 0.3), rgba(255, 92, 138, 0.25));
+  border-color: rgba(254, 180, 71, 0.85);
+}
+
+.favorites-notify-btn:active { transform: scale(0.97); }
+
+.favorites-notify-btn.is-on {
+  border-color: rgba(57, 255, 20, 0.7);
+  background: rgba(57, 255, 20, 0.12);
+  color: #39ff14;
+  cursor: default;
+}
+
+.favorites-notify-btn.is-disabled {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.favorites-notify-btn svg { flex-shrink: 0; }
+
 /* ===== First-visit language picker ===== */
 .welcome-overlay {
   position: fixed;
@@ -2802,7 +2869,6 @@ body.has-mini-player .panel {
   .panel-hero .artist-hero-text > * { text-align: left; }
   .panel-hero .artist-meta-line { justify-content: flex-start; }
   .panel-hero .artist-tags-row { justify-content: flex-start; }
-  .panel-hero .artist-subscribe,
   .panel-hero .artist-favorite { align-self: flex-start; }
   .panel-hero .artist-hero-photo {
     width: 100%;
@@ -3093,6 +3159,346 @@ body.has-mini-player .panel {
   background: #39ff14;
   box-shadow: 0 0 8px #39ff14, 0 0 14px rgba(57, 255, 20, 0.55);
 }
+
+/* ===== "Live now" demo card on the Market hero =====
+   Adds a top-line with a LIVE / Demo strip, a thin progress bar that
+   ticks every second, and a previous/next set hand-off line so the
+   user can see at a glance who just played and who's coming up.
+   The double-class selector (.hero-panel .live-status.live-status--demo)
+   wins specificity over the generic .hero-panel .live-status block above
+   so the wider/taller demo layout is respected. */
+.hero-panel .live-status.live-status--demo,
+.live-status--demo {
+  width: min(94%, 520px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: rgba(10, 5, 36, 0.7);
+  border: 1px solid rgba(57, 255, 20, 0.34);
+  text-align: center;
+  overflow: visible;
+}
+
+.live-status--demo .live-status-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.live-status--demo .live-now-track {
+  width: auto;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+}
+
+.live-status--demo .live-now-label {
+  font-family: "Heebo", sans-serif;
+  font-size: 10px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #39ff14;
+}
+
+.live-demo-badge {
+  font-family: "Heebo", sans-serif;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+}
+
+.live-status--demo .live-status-title {
+  font-family: "Orbitron", "Heebo", sans-serif;
+  font-size: clamp(22px, 5.4vw, 30px);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  margin: 2px 0 0;
+}
+
+.live-status--demo .live-status-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.live-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.live-progress-track {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.live-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, #39ff14, #00d4ff);
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.55);
+  transition: width 0.6s linear;
+}
+
+.live-progress-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.live-prev-next {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  padding-top: 8px;
+}
+
+.live-pn-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  font-family: "Heebo", sans-serif;
+}
+
+.live-pn-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.live-pn-name {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.live-pn-prev .live-pn-name { color: var(--text-muted); }
+.live-pn-next .live-pn-name { color: var(--sun-yellow); }
+
+/* ===== Main hero quick actions (navigate + festival map) ===== */
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.hero-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: "Heebo", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--text);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.hero-action:hover {
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 18px rgba(254, 180, 71, 0.3);
+}
+
+.hero-action:active {
+  transform: scale(0.97);
+}
+
+.hero-action svg {
+  flex-shrink: 0;
+  color: var(--sun-yellow);
+}
+
+.hero-action-label {
+  white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+  .hero-actions { gap: 8px; }
+  .hero-action { padding: 8px 12px; font-size: 11px; gap: 6px; }
+  .hero-action svg { width: 18px; height: 18px; }
+}
+
+/* ===== Navigation chooser sheet ===== */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(5, 2, 18, 0.85);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 20px 14px max(28px, env(safe-area-inset-bottom, 14px));
+  animation: fade-in 0.2s ease-out both;
+}
+.nav-overlay[hidden] { display: none; }
+
+.nav-sheet {
+  width: min(440px, calc(100vw - 28px));
+  border-radius: 22px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+  animation: glass-pop 0.25s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.nav-sheet-title {
+  margin: 0;
+  font-family: "Heebo", sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.nav-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-sheet-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: start;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.nav-sheet-action:hover {
+  background: rgba(254, 180, 71, 0.15);
+  border-color: rgba(254, 180, 71, 0.4);
+}
+
+.nav-sheet-action:active { transform: scale(0.98); }
+
+.nav-sheet-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+#nav-waze .nav-sheet-icon  { background: rgba(0, 153, 255, 0.18); color: #00b3ff; }
+#nav-gmaps .nav-sheet-icon { background: rgba(74, 222, 128, 0.18); color: #4ade80; }
+
+.nav-sheet-cancel {
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.nav-sheet-cancel:hover { background: rgba(255, 255, 255, 0.05); color: var(--text); }
+
+/* ===== Festival map lightbox ===== */
+.map-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(5, 2, 18, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  animation: fade-in 0.2s ease-out both;
+}
+.map-overlay[hidden] { display: none; }
+
+.map-panel {
+  position: relative;
+  width: min(960px, 100%);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.map-image {
+  display: block;
+  width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.map-caption {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+}
+
+.map-close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(10, 5, 36, 0.85);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.map-close:hover { background: rgba(255, 92, 138, 0.25); border-color: rgba(255, 92, 138, 0.5); }
 
 /* ===== Landscape phones (short viewport, wide-ish screen) =====
    When users rotate their phone to landscape, height becomes the constraint.
