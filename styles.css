@@ -2435,6 +2435,8 @@ body.has-mini-player .panel {
 }
 
 .favorites-list {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   display: grid;
   gap: 6px;
@@ -2481,6 +2483,7 @@ body.has-mini-player .panel {
    bell-icon button. Toggles to a "Notifications on" green pill once the
    user grants permission. */
 .favorites-notify {
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -3192,10 +3195,22 @@ body.has-mini-player .panel {
 .live-status--demo .live-now-track {
   width: auto;
   background: transparent;
+  height: auto;
+  margin: 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 0;
+}
+
+/* Demo card uses an inline-flex layout instead of the legacy absolute
+   positioning, so the dot needs to flow normally next to the label. */
+.live-status--demo .live-now-track .live-now-dot {
+  position: static;
+  transform: none;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
 }
 
 .live-status--demo .live-now-label {
@@ -3205,6 +3220,7 @@ body.has-mini-player .panel {
   text-transform: uppercase;
   font-weight: 800;
   color: #39ff14;
+  line-height: 1;
 }
 
 .live-demo-badge {
@@ -3464,14 +3480,88 @@ body.has-mini-player .panel {
   gap: 10px;
 }
 
-.map-image {
-  display: block;
+/* The viewport clips the transformed image so it can't wander outside
+   its own rounded frame. touch-action: none disables the browser's
+   built-in pinch/pan so our pointer handlers own the gestures.
+   user-select: none stops a long-press from selecting the image. */
+.map-viewport {
+  position: relative;
   width: 100%;
-  max-height: 80vh;
-  object-fit: contain;
+  height: min(75vh, 720px);
   border-radius: 16px;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
   background: rgba(0, 0, 0, 0.35);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.map-viewport.is-panning { cursor: grabbing; }
+
+.map-image {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: 0 0;
+  /* Default identity; JS overrides --map-tx / --map-ty / --map-scale
+     / --map-rotation as the user pans / zooms / rotates. */
+  transform: translate(var(--map-tx, 0px), var(--map-ty, 0px))
+             scale(var(--map-scale, 1))
+             rotate(var(--map-rotation, 0deg));
+  transition: transform 0.18s cubic-bezier(0.2, 0.85, 0.35, 1.05);
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.map-viewport.is-gesturing .map-image {
+  /* Drop the smoothing while a gesture is active so motion tracks the
+     user's fingers 1:1 — the transition would otherwise lag behind. */
+  transition: none;
+}
+
+/* Zoom / rotate / reset controls. Sits under the viewport on a row so
+   they're always reachable on phones (the iPhone safe-area bottom is
+   already accounted for by the overlay padding). */
+.map-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(10, 5, 36, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.map-control {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.15s;
+}
+.map-control:hover {
+  background: rgba(254, 180, 71, 0.18);
+  color: var(--sun-yellow);
+}
+.map-control:active { transform: scale(0.93); }
+.map-control:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: transparent;
+  color: var(--text-muted);
 }
 
 .map-caption {
