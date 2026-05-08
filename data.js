@@ -1366,6 +1366,98 @@ let ARTISTS = [
       { id: "fkbgMy9C-ZQ", title: "The History of Goatrance - 1995", year: null },
       { id: "Jj7cVp70u34", title: "The Resurgence of Goa Trance with Dj Anoebis (Suntrip)", year: null }
     ]
+  },
+  {
+    id: "cyan",
+    realName: "CYAN - Mike Dee & Nikos Chrisoulakis",
+    bio: "פרויקט גואה טראנס מרומם מיוון - הדואו של מייק די וניקוס כריסולקיס. החלו את המסע המוזיקלי בסוף שנות ה-90 תחת חותמת Discobole Recordings, ואלבום הביכורים 'Beast From The East' (1998) הגדיר את הסאונד המלודי-רגשי שלהם.",
+    notable: "'Beast From The East' (1998, Discobole) - מהמכוננים של גואה יווני",
+    albums: [
+      { name: "Beast From The East", year: 1998, project: "Discobole Recordings" },
+      { name: "Medieval Tales EP (2026 Remastered)", year: 2026, project: "CYAN" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://cyan-ofc.bandcamp.com/" },
+      { type: "Discogs", url: "https://www.discogs.com/artist/186482-Cyan-4" },
+      { type: "YouTube", url: "https://www.youtube.com/channel/UCYe4MO3x1TLBq-7IJCfxskA" }
+    ],
+    tracks: [
+      { id: "hmGE0sz4gcQ", title: "Aizen Myoo (Official Audio HD)", year: 1998 },
+      { id: "Zg3bS5pg8js", title: "Tripulation (Official Audio HD)", year: 1998 },
+      { id: "Ps2s-RjNZIw", title: "The Beast Comes Out (Official Audio HD)", year: 1998 }
+    ]
+  },
+  {
+    id: "spiralkinder",
+    realName: "Spiralkinder - Arne Schaffhausen & Marco Schmedding",
+    bio: "פרויקט גואה/אמביינט גרמני שהחל ב-1991-1992. ארנה שאפהאוזן (לימים Extrawelt, Spirallianz, Midimiliz) ומרקו שמדינג. שיתפו פעולה עם X-Dream (Marcus Maichel & Jan Müller), Planet B.E.N., Morphem ואחרים. מהמרכיבים של הסצנה הגרמנית האפלה והניסיונית של תחילת שנות ה-90.",
+    notable: "פרויקט אגדי ונדיר - מעט הופעות חיות. ZNA 2026 = הזדמנות חד-פעמית",
+    albums: [
+      { name: "Various collaborations with X-Dream / Planet B.E.N. / Morphem", year: null, project: "Spiralkinder" }
+    ],
+    links: [
+      { type: "Last.fm", url: "https://www.last.fm/music/Spiralkinder" },
+      { type: "Spotify", url: "https://open.spotify.com/artist/4Ld7CBJuKaVcmpBKmX6nOR" }
+    ],
+    tracks: [
+      { id: "p-VYV57uHuU", title: "Planet B.E.N. & Spiralkinder - Parakusis", year: null }
+    ]
+  },
+  {
+    id: "hypnoxock",
+    realName: "Victor Solsona (Hypnoxock)",
+    bio: "ויקטור סולסונה מברצלונה - 15+ שנות הפקה מוזיקה פסיכדלית. בעשור האחרון מתמקד בגואה טראנס. אלבומים על Suntrip Records, Goa Madness, Matsuri Digital. הופיע בפסטיבלים גדולים: Ozora, ZNA Gathering, Sun Festival ועוד.",
+    notable: "'Beyond The Wormhole' (2020, Suntrip) - האלבום הששי שלו",
+    albums: [
+      { name: "Beyond The Wormhole", year: 2020, project: "Suntrip Records" },
+      { name: "Magma EP", year: 2025, project: "Suntrip Records" }
+    ],
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/hypnoxock" },
+      { type: "YouTube", url: "https://www.youtube.com/@hypnoxock" },
+      { type: "Bandcamp", url: "https://suntriprecords.bandcamp.com/album/beyond-the-wormhole" }
+    ],
+    tracks: [
+      { id: "dIgr4olBSbs", title: "Beyond The Wormhole (Full Album HD, 2020)", year: 2020 },
+      { id: "HWE_myksDho", title: "Wormhole", year: 2020 }
+    ]
+  },
+  {
+    id: "artifact303",
+    realName: "Artifact303",
+    bio: "אומן הונגרי-רומני - אחד הכוכבים העולים הבולטים של גואה מלודי. אלבום הביכורים 'Back To Space' (2011, Suntrip) קיבע את שמו ב-genre. עשור אחרי - 'From The Stars' (Global Sect).",
+    notable: "'Back To Space' (2011, Suntrip) - מהאלבומים החשובים של גואה החדש",
+    albums: [
+      { name: "Back To Space", year: 2011, project: "Suntrip Records" },
+      { name: "From The Stars", year: 2021, project: "Global Sect" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://suntriprecords.bandcamp.com/album/artifact303-back-to-space" },
+      { type: "Discogs", url: "https://www.discogs.com/release/2882358-Artifact303-Back-To-Space" }
+    ],
+    tracks: [
+      { id: "g-3dV0086cs", title: "Back To Space (Full Album, 2011)", year: 2011 },
+      { id: "ubyu2Z2UzzY", title: "They Will Communicate", year: 2011 },
+      { id: "HJfp2sDdiqM", title: "Beyond Lightspeed", year: null }
+    ]
+  },
+  {
+    id: "proxeeus",
+    realName: "Jerome Lesterps (Proxeeus)",
+    bio: "ז'רום לסטרפס - מפיק צרפתי-בלגי, ממובילי הגואה החדש. מוזיקתו מושפעת עמוקות מ-H.P. Lovecraft (Dream Cycle, Cthulhu Mythos). ארבעה אלבומי סטודיו ב-Neogoa Records, שיתופי פעולה עם Suntrip.",
+    notable: "'Celephaïs' (2019, Neogoa) - מסע מלודי בעקבות Lovecraft. גם 'Weep From Within' (2023, Goa Madness)",
+    albums: [
+      { name: "Celephaïs", year: 2019, project: "Neogoa Records" },
+      { name: "At The Mountains Of Madness", year: null, project: "Neogoa Records" },
+      { name: "Weep From Within", year: 2023, project: "Goa Madness Records" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://neogoarecords.bandcamp.com/album/celepha-s" },
+      { type: "Booking", url: "https://olibookings.com/artists/proxeeus/" }
+    ],
+    tracks: [
+      { id: "u1dhFojIdwU", title: "Celephaïs (Full Album, 2019)", year: 2019 }
+    ]
   }
 ];
 
