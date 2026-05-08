@@ -543,9 +543,14 @@ let ARTISTS = [
     tags: ["Selector", "Trance"],
     color: "#ff70a6",
     bio: "סלקטורית בעלת אוזן יוצאת דופן - גואה, פרוגרסיב וטראנס באלגנטיות צרפתית.",
-    notable: "אומנית Retro Universe",
-    albums: [],
-    links: []
+    notable: "Padang Records family - psytech & progressive selector",
+    albums: [
+      { name: "Technomad II", year: 2025, project: "Curated for Padang Records" }
+    ],
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/anaislin" },
+      { type: "Bandcamp", url: "https://padang.bandcamp.com/album/technomad-ii" }
+    ]
   },
   {
     id: "extra-cheers",
@@ -562,7 +567,9 @@ let ARTISTS = [
     bio: "אומן/נית של Retro Universe - חלק ממסע הגואה הרטרו של ZNA 2026.",
     notable: "Retro Universe",
     albums: [],
-    links: []
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/djcheers303" }
+    ]
   },
   {
     id: "marc-van-der-vlugt",
@@ -641,10 +648,25 @@ let ARTISTS = [
     role: "Live",
     tags: ["Goa", "Live Act"],
     color: "#ff9e00",
-    bio: "אמן גואה רטרו עם הופעה חיה ב-ZNA 2026.",
-    notable: "Retro Universe",
-    albums: [],
-    links: []
+    bio: "פרויקט פסיכדלי-מינימל-טכנו פעיל מ-2013. סאונד תעשייתי, אטמוספרי ופסיכדלי שמתנגש בין טכנו דארק לסביבה אמביינטית.",
+    notable: "Techgnosis Records / Digital Structures / DMT Records artist",
+    albums: [
+      { name: "Burning Soil EP", year: 2016 },
+      { name: "Incidental Colors", year: null, project: "Digital Structures" },
+      { name: "Asylum EP", year: null, project: "with Sandokan / Techgnosis Records" },
+      { name: "Cherry Blossom", year: 2025, project: "Techgnosis Records" }
+    ],
+    links: [
+      { type: "Website", url: "https://www.isoquant-music.com/" },
+      { type: "Bandcamp", url: "https://isoquant.bandcamp.com/" },
+      { type: "SoundCloud", url: "https://soundcloud.com/isoquant-1" },
+      { type: "Beatport", url: "https://www.beatport.com/artist/isoquant/359519" }
+    ],
+    tracks: [
+      { id: "wNotc8jcFys", title: "Pink Sky (Original Mix)", year: null },
+      { id: "5XBYwra3jz8", title: "Asylum", year: null },
+      { id: "qGnGgwtXTbw", title: "Asylum EP (with Sandokan) - Preview", year: null }
+    ]
   },
   {
     id: "gabi-von-dub",
@@ -698,10 +720,13 @@ let ARTISTS = [
     role: "DJ Set",
     tags: ["Retro Selector"],
     color: "#a663cc",
-    bio: "סלקטור Retro Universe - חלק ממשפחת ZNA 2026.",
-    notable: "Retro Universe",
+    bio: "DJ ואספן ויניל ישראלי - טכנו, אסיד, גואה ואספן מוזיקה אלקטרונית של שנות ה-80 וה-90.",
+    notable: "DJ Israeli מומחה בגואה / אסיד / טכנו רטרו",
     albums: [],
-    links: []
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/klil-cohen-38185142" },
+      { type: "Instagram", url: "https://www.instagram.com/dj.klil.co/" }
+    ]
   },
   {
     id: "mathew-tecnica",
