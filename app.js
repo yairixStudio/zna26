@@ -1160,12 +1160,14 @@ function panelHero(a) {
           ${photoTags}
         </div>
         <div class="artist-hero-text">
-          <h1 class="artist-name">${escapeHtml(a.name)}</h1>
-          ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
-          <div class="artist-meta-line">
-            <span class="meta-item">📍 ${escapeHtml(tArtist(a, "country"))}</span>
-            ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
-            <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
+          <div class="artist-hero-headline">
+            <h1 class="artist-name">${escapeHtml(a.name)}</h1>
+            ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
+            <div class="artist-meta-line">
+              <span class="meta-item">📍 ${escapeHtml(tArtist(a, "country"))}</span>
+              ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
+              <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
+            </div>
           </div>
           ${artistSetTimeBadge(a)}
           ${favoriteButton(a.id)}

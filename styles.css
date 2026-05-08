@@ -852,7 +852,19 @@ body.has-mini-player .hero-dots {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 26px;
+  gap: 14px;
+  max-width: 100%;
+}
+
+/* Tight headline group — artist name + real name + meta-line sit close
+   together so the timer beneath them reads as part of the same block.
+   Inherits align-items from .artist-hero-text so it stays centered on
+   mobile and left-aligned on desktop without extra rules. */
+.artist-hero-headline {
+  display: flex;
+  flex-direction: column;
+  align-items: inherit;
+  gap: 4px;
   max-width: 100%;
 }
 
@@ -864,6 +876,7 @@ body.has-mini-player .hero-dots {
   font-size: 13px;
   color: var(--text-muted);
   letter-spacing: 0.2px;
+  margin-top: 4px;
 }
 
 .artist-meta-line .meta-item {
@@ -884,18 +897,17 @@ body.has-mini-player .hero-dots {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 7px 14px;
+  padding: 5px 11px;
   border-radius: 999px;
   background: rgba(10, 5, 36, 0.7);
   border: 1px solid rgba(254, 180, 71, 0.34);
   color: var(--sun-yellow);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.2px;
-  /* Extra breathing room above + below the timer; the artist hero
-     stack uses gap, but a per-element margin lets us nudge just the
-     timer (not every sibling) without expanding the rest of the card. */
-  margin: 8px 0 6px;
+  /* Sits right below the headline group; gap on the parent already
+     gives breathing room, no per-element margin needed. */
+  margin: 0;
 }
 
 .artist-set-time.is-tba {
@@ -1191,14 +1203,14 @@ body.has-mini-player .hero-dots {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  margin-bottom: 4px;
+  margin: 0;
   line-height: 1.05;
 }
 
 .artist-real {
   font-size: 14px;
   color: var(--text-muted);
-  margin-bottom: 12px;
+  margin: 0;
 }
 
 .artist-quick {
@@ -2804,7 +2816,7 @@ body.has-mini-player .panel {
     margin: 0;
     border-radius: 24px;
   }
-  .panel-hero .artist-hero-text { gap: 26px; }
+  .panel-hero .artist-hero-text { gap: 16px; }
   .panel-hero .artist-hero-text::before {
     content: "";
     display: block;
