@@ -3301,9 +3301,14 @@ const navGmapsLink    = document.getElementById("nav-gmaps");
 const navGmapsLabel   = document.getElementById("nav-gmaps-label");
 const navCancelBtn    = document.getElementById("nav-cancel");
 const mapOverlay      = document.getElementById("map-overlay");
+const mapViewportEl   = document.getElementById("map-viewport");
 const mapImageEl      = document.getElementById("map-image");
 const mapCloseBtn     = document.getElementById("map-close");
 const mapCaptionEl    = document.getElementById("map-caption");
+const mapZoomInBtn    = document.getElementById("map-zoom-in");
+const mapZoomOutBtn   = document.getElementById("map-zoom-out");
+const mapRotateBtn    = document.getElementById("map-rotate");
+const mapResetBtn     = document.getElementById("map-reset");
 
 function refreshNavSheetCopy() {
   if (navSheetTitle) navSheetTitle.textContent = t("nav.navigate");
@@ -3324,16 +3329,169 @@ function closeNavSheet() {
   if (navOverlay) navOverlay.hidden = true;
 }
 
+// ===== Festival map viewer: pinch-zoom + pan + rotate =====
+// Transform state mirrors what the CSS reads: scale/rotation/x/y are
+// stored on the viewport as CSS variables and re-applied each frame.
+// Pointer events are captured on the viewport so two fingers pinch-zoom
+// (with rotation), one finger pans, double-tap toggles 1× ↔ 2×, and a
+// wheel zooms toward the cursor on desktop.
+const MAP_MIN_SCALE = 1;
+const MAP_MAX_SCALE = 6;
+const mapTx = { scale: 1, rotation: 0, x: 0, y: 0 };
+const mapPointers = new Map();
+let mapPinchStart = null;
+let mapPanStart   = null;
+let mapLastTap    = 0;
+
+function clampScale(s) { return Math.max(MAP_MIN_SCALE, Math.min(MAP_MAX_SCALE, s)); }
+
+function applyMapTransform() {
+  if (!mapImageEl) return;
+  // Clamp pan when the image is at 1× so it can't drift off-centre.
+  if (mapTx.scale <= 1.001) { mapTx.x = 0; mapTx.y = 0; }
+  mapImageEl.style.setProperty("--map-tx",       mapTx.x + "px");
+  mapImageEl.style.setProperty("--map-ty",       mapTx.y + "px");
+  mapImageEl.style.setProperty("--map-scale",    mapTx.scale);
+  mapImageEl.style.setProperty("--map-rotation", mapTx.rotation + "deg");
+  if (mapZoomOutBtn) mapZoomOutBtn.disabled = mapTx.scale <= MAP_MIN_SCALE + 0.001;
+  if (mapZoomInBtn)  mapZoomInBtn.disabled  = mapTx.scale >= MAP_MAX_SCALE - 0.001;
+}
+
+function resetMapTransform() {
+  mapTx.scale = 1;
+  mapTx.rotation = 0;
+  mapTx.x = 0;
+  mapTx.y = 0;
+  applyMapTransform();
+}
+
+// Zoom toward a focal point (cx,cy) inside the viewport so the spot
+// under the cursor / pinch midpoint stays put as we scale.
+function zoomMapAt(nextScale, cx, cy) {
+  const target = clampScale(nextScale);
+  if (!mapViewportEl) { mapTx.scale = target; applyMapTransform(); return; }
+  const rect = mapViewportEl.getBoundingClientRect();
+  // viewport-local coords of the focal point
+  const fx = (cx ?? rect.width  / 2) - rect.left;
+  const fy = (cy ?? rect.height / 2) - rect.top;
+  // Pre-zoom, the image content under (fx,fy) sits at:
+  //   cx_img = (fx - tx) / scale
+  // Keep that point fixed by adjusting tx so cx_img stays the same.
+  const ratio = target / mapTx.scale;
+  mapTx.x = fx - ratio * (fx - mapTx.x);
+  mapTx.y = fy - ratio * (fy - mapTx.y);
+  mapTx.scale = target;
+  applyMapTransform();
+}
+
+function pointerMidpoint(p1, p2) {
+  return {
+    x: (p1.x + p2.x) / 2,
+    y: (p1.y + p2.y) / 2,
+    dist: Math.hypot(p1.x - p2.x, p1.y - p2.y),
+    angle: Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI,
+  };
+}
+
+function onMapPointerDown(e) {
+  if (!mapViewportEl) return;
+  mapViewportEl.setPointerCapture?.(e.pointerId);
+  mapPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  mapViewportEl.classList.add("is-gesturing");
+  if (mapPointers.size === 2) {
+    const [p1, p2] = [...mapPointers.values()];
+    mapPinchStart = {
+      ...pointerMidpoint(p1, p2),
+      scale:    mapTx.scale,
+      rotation: mapTx.rotation,
+      tx:       mapTx.x,
+      ty:       mapTx.y,
+    };
+    mapPanStart = null;
+  } else if (mapPointers.size === 1) {
+    mapPanStart = { x: e.clientX, y: e.clientY, tx: mapTx.x, ty: mapTx.y };
+    // Double-tap to toggle 1× ↔ 2× (same finger landing twice within 300ms).
+    const now = Date.now();
+    if (now - mapLastTap < 300) {
+      const next = mapTx.scale > 1.05 ? 1 : 2;
+      if (next === 1) resetMapTransform();
+      else zoomMapAt(next, e.clientX, e.clientY);
+      mapLastTap = 0;
+    } else {
+      mapLastTap = now;
+    }
+  }
+}
+
+function onMapPointerMove(e) {
+  if (!mapPointers.has(e.pointerId)) return;
+  mapPointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (mapPointers.size >= 2 && mapPinchStart) {
+    const pts = [...mapPointers.values()].slice(0, 2);
+    const cur = pointerMidpoint(pts[0], pts[1]);
+    const ratio = cur.dist / Math.max(1, mapPinchStart.dist);
+    const nextScale = clampScale(mapPinchStart.scale * ratio);
+    // Anchor zoom on the viewport-local midpoint at gesture start so
+    // the content under the user's fingers tracks them precisely.
+    if (!mapViewportEl) return;
+    const rect = mapViewportEl.getBoundingClientRect();
+    const fx = mapPinchStart.x - rect.left;
+    const fy = mapPinchStart.y - rect.top;
+    const r = nextScale / mapPinchStart.scale;
+    mapTx.x = fx - r * (fx - mapPinchStart.tx) + (cur.x - mapPinchStart.x);
+    mapTx.y = fy - r * (fy - mapPinchStart.ty) + (cur.y - mapPinchStart.y);
+    mapTx.scale = nextScale;
+    mapTx.rotation = mapPinchStart.rotation + (cur.angle - mapPinchStart.angle);
+    applyMapTransform();
+  } else if (mapPointers.size === 1 && mapPanStart && mapTx.scale > 1.001) {
+    mapTx.x = mapPanStart.tx + (e.clientX - mapPanStart.x);
+    mapTx.y = mapPanStart.ty + (e.clientY - mapPanStart.y);
+    applyMapTransform();
+  }
+}
+
+function onMapPointerUp(e) {
+  if (mapPointers.has(e.pointerId)) mapPointers.delete(e.pointerId);
+  if (mapPointers.size < 2) mapPinchStart = null;
+  if (mapPointers.size === 0) { mapPanStart = null; mapViewportEl?.classList.remove("is-gesturing"); }
+}
+
+function onMapWheel(e) {
+  if (!mapOverlay || mapOverlay.hidden) return;
+  e.preventDefault();
+  // Trackpad pinch sends ctrlKey + small deltaY; mouse wheel sends
+  // larger deltas. Same formula handles both — sign of deltaY decides
+  // direction, magnitude decides step size (capped so a single tick
+  // doesn't fly past max scale).
+  const step = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015));
+  zoomMapAt(mapTx.scale * step, e.clientX, e.clientY);
+}
+
 function openMap() {
   if (!mapOverlay) return;
   if (mapImageEl) mapImageEl.src = MAP_IMAGE_SRC;
   if (mapCaptionEl) mapCaptionEl.textContent = t("nav.festivalMap");
+  resetMapTransform();
   mapOverlay.hidden = false;
 }
 
 function closeMap() {
   if (mapOverlay) mapOverlay.hidden = true;
 }
+
+// Wire the gesture handlers once at module init.
+mapViewportEl?.addEventListener("pointerdown",   onMapPointerDown);
+mapViewportEl?.addEventListener("pointermove",   onMapPointerMove);
+mapViewportEl?.addEventListener("pointerup",     onMapPointerUp);
+mapViewportEl?.addEventListener("pointercancel", onMapPointerUp);
+mapViewportEl?.addEventListener("pointerleave",  onMapPointerUp);
+mapViewportEl?.addEventListener("wheel",         onMapWheel, { passive: false });
+
+// A11y / desktop fallback: explicit zoom / rotate / reset buttons.
+mapZoomInBtn?.addEventListener("click",  () => zoomMapAt(mapTx.scale * 1.4));
+mapZoomOutBtn?.addEventListener("click", () => zoomMapAt(mapTx.scale / 1.4));
+mapRotateBtn?.addEventListener("click",  () => { mapTx.rotation += 90; applyMapTransform(); });
+mapResetBtn?.addEventListener("click",   resetMapTransform);
 
 document.addEventListener("click", e => {
   const navBtn = e.target.closest("#hero-nav-btn");
