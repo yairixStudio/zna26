@@ -1270,6 +1270,102 @@ let ARTISTS = [
     tracks: [
       { id: "VMhRsVtW-gc", title: "Sjama'dan @ Goa trance outdoor gathering", year: null }
     ]
+  },
+
+  // ===== Curated enrichment for official-only entries (merged by ID) =====
+  // Each block below pairs an existing official-artists.js entry with
+  // verified discography + YouTube videos so the merge in
+  // official-artists.js picks up the curated arrays. No country / stage /
+  // bio overrides — the official record stays authoritative for those.
+  {
+    id: "doof",
+    realName: "Nick Barber (Doof)",
+    bio: "ניק ברבר, מפיק וגיטריסט בריטי לונדוני. אלבום הביכורים 'Let's Turn On' (TIP Records, 1996) נחשב לקלאסיקה מכוננת של גואה טראנס. שיתף פעולה בקרבה עם סיימון פוסטפורד (Hallucinogen) על שירים כמו Born Again ו-Angelic Particles.",
+    notable: "'Let's Turn On' (1996, TIP) - אבן יסוד של גואה. רימסטר 2015 ב-DAT Records",
+    albums: [
+      { name: "Let's Turn On", year: 1996, project: "TIP Records" },
+      { name: "Let's Turn On - Remixed & Remastered", year: 2015, project: "DAT Records (2CD)" },
+      { name: "It's About Time", year: null, project: "Doof / self-released" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/11431-Doof" },
+      { type: "Bandcamp", url: "https://doof.bandcamp.com/" },
+      { type: "Website", url: "https://nickbarbermusic.uk/about" }
+    ],
+    tracks: [
+      { id: "wugRMCnGGY8", title: "Let's Turn On (Full Album Mix, 1996)", year: 1996 },
+      { id: "WN3SYRhVXow", title: "Let's Turn On (1996)", year: 1996 },
+      { id: "B4u2P3eNut0", title: "Let's Turn On (Tuned In Mix)", year: 1996 }
+    ]
+  },
+  {
+    id: "prometheus",
+    realName: "Benji Vaughan (Prometheus)",
+    bio: "בני וון - יוצר טראנס פסיכדלי בריטי. סולו מאחורי הפרויקט Prometheus, חתום על Twisted Records (סיימון פוסטפורד / Hallucinogen). ידוע בקווי באס מובחנים ובאפרוח אינטנסיבי שמשלב מלודיה דיאטונית עם תבניות פרקוסיה גליצ'יות.",
+    notable: "אלבומי Twisted Records: Robot.O.Chan (2004), Corridor Of Mirrors (2007), Spike (2010)",
+    albums: [
+      { name: "Robot.O.Chan", year: 2004, project: "Twisted Records" },
+      { name: "Corridor Of Mirrors", year: 2007, project: "Twisted Records" },
+      { name: "Spike", year: 2010, project: "Twisted Records" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/19870-Prometheus" },
+      { type: "Bandcamp", url: "https://prometheusmusicuk.bandcamp.com/" }
+    ],
+    tracks: [
+      { id: "mOHU4co1iYo", title: "Corridor Of Mirrors (Full Album)", year: 2007 },
+      { id: "NGZw1YUahaM", title: "O.K Computer", year: null }
+    ]
+  },
+  {
+    id: "growling-mad-scientists",
+    realName: "GMS - Riktam (Avi Algranati) & Bansi (Yoad Nevo)",
+    bio: "Growling Mad Scientists - הדואו הישראלי-לונדוני של ריקטם ובאנסי. אחד הפרויקטים המגדירים של פסיטראנס הקלאסי. הוקמו בלונדון של אמצע שנות ה-90.",
+    notable: "אלבום הביכורים 'Chaos Laboratory' (1997) - מהמכוננים של פסיטראנס מודרני",
+    albums: [
+      { name: "Chaos Laboratory", year: 1997, project: "Hadshot Haheizar / Avatar" },
+      { name: "Live Experiments Vol. 1", year: 1998, project: "Avatar" },
+      { name: "Reactivate", year: 2002, project: "Spun Records" }
+    ],
+    links: [
+      { type: "Website", url: "https://gms-records.com/growling-mad-scientists/" },
+      { type: "YouTube", url: "https://www.youtube.com/@Gms-music" }
+    ],
+    tracks: [
+      { id: "A8fogsOQ5jE", title: "Chaos Laboratory (Full Album, 1997)", year: 1997 },
+      { id: "U9LV5cHdX8c", title: "Juno Reactor - Zombie (GMS Remix)", year: null },
+      { id: "WdcabEUNz7E", title: "Juno Reactor & Undercover - Dakota (GMS Remix)", year: null }
+    ]
+  },
+  {
+    id: "doctor-vagator",
+    realName: "Doctor Vagator",
+    bio: "DJ ותיק של גואה טראנס - דמות מפעם הסצנה הגואית של שנות ה-90. נראה רוקד על הדאי-מפלצת מעל Spaghetti Beach בגואה ב-1997, הקלאסיקה של תרבות הגואה.",
+    notable: "DJ של D.A.T sets - מעמודי התווך של הסצנה החיה הקלאסית",
+    albums: [],
+    links: [],
+    tracks: [
+      { id: "LshhJJWJoMw", title: "Trance goa D.A.T set by Doctor Vagator", year: null }
+    ]
+  },
+  {
+    id: "anoebis",
+    realName: "Joske Vranken (Anoebis)",
+    bio: "DJ בלגי גואה אדיקטיבי, מנהל החותמת ומייסד-שותף של Suntrip Records (2004) יחד עם פאביאן 'מרס' מרסו. הקים את החותמת כי סצנת הגואה המלודי-אקיד שאהב התמעטה - והפך אותה לאחת החשובות בז'אנר.",
+    notable: "מייסד-שותף של Suntrip Records - חותמת המפתח של הגואה החדש",
+    albums: [],
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/anoebis" },
+      { type: "Discogs", url: "https://www.discogs.com/user/anoebis" },
+      { type: "Website", url: "https://www.suntriprecords.com/" }
+    ],
+    tracks: [
+      { id: "ehAGi_wPAEg", title: "20 Years Suntrip Morning Story (Goa Trance Mix)", year: null },
+      { id: "f-b68TVnc5U", title: "History of Goa Trance - 2001", year: null },
+      { id: "jt94xMN-neM", title: "The History of Goa Trance - 2000", year: null },
+      { id: "fkbgMy9C-ZQ", title: "The History of Goatrance - 1995", year: null },
+      { id: "Jj7cVp70u34", title: "The Resurgence of Goa Trance with Dj Anoebis (Suntrip)", year: null }
+    ]
   }
 ];
 
