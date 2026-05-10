@@ -1664,6 +1664,74 @@ let ARTISTS = [
     tracks: [
       { id: "tBKc9AnCY3M", title: "The Wave Inside (Nirhtak EP, 1997)", year: 1997 }
     ]
+  },
+  {
+    id: "encens-vs-ominus",
+    realName: "Encens (Cello Bonifacii) vs Ominus (Cello + Miranda + Dara Lee)",
+    bio: "מפגש מחדש של 29 שנה: Marcello Bonifacii (Encens) ו-Dara Lee (Koyote Records founder) על במת Zambu Temple. Encens עם 'Spiritual Transgression' ו-'Psychedelic Sun' מ-Koyote. Ominus היה supergroup: Cello + Dara Lee + Miranda, ויצא ב-1997 על Koyote.",
+    notable: "Reunion של 29 שנה - Encens ו-Ominus חוזרים לבמה",
+    albums: [
+      { name: "Psychedelic Sun / Infinite Image", year: 1996, project: "Encens / Koyote Records" },
+      { name: "Spiritual Transgression / Energy Gate", year: 1996, project: "Encens / Koyote Records" },
+      { name: "Venus Zen / Morphic Resonance", year: null, project: "Encens / Koyote Records" },
+      { name: "Ominus", year: 1997, project: "Ominus = Encens + Miranda + Dara Lee" }
+    ],
+    links: [
+      { type: "Discogs (Encens)", url: "https://www.discogs.com/artist/12449-Encens" },
+      { type: "Discogs (Ominus)", url: "https://www.discogs.com/master/15044-Ominus-Ominus" }
+    ],
+    tracks: [
+      { id: "ifVeU6dDESU", title: "Encens - Spiritual Transgression (1996)", year: 1996 },
+      { id: "yvxuXoWSeQw", title: "Ominus - Ominus (Full Album, 1997)", year: 1997 }
+    ]
+  },
+  {
+    id: "gangguru-vs-cop",
+    realName: "Gangguru (Pierre Branet + Phil Weiss + Willy Boutron) vs COP (with Jan Müller / X-Dream)",
+    bio: "Gangguru - טריו צרפתי שהוקם ב-1994 ע\"י פייר בראנה, פיל וייס וויי בוטרון. השם 'Be Your Own Guru' בא מהחוויה שלהם בפסטיבל Vuuv 1993 עם DJ Antaro. COP (Children Of Paradise) הוא פרויקט שיתופי שלהם עם יאן מולר מ-X-Dream.",
+    notable: "'Be Your Own Guru' (DAT Records, 2018) - 33 טראקים שנשמרו על DATs ושוחזרו",
+    albums: [
+      { name: "Be Your Own Guru", year: 2018, project: "Gangguru / DAT Records (33 tracks)" },
+      { name: "Dreamtime / X-3 EP", year: 1999, project: "Gangguru / 3rd Mind Records" },
+      { name: "Alternate Realities", year: null, project: "Gangguru / Unreleased Goa Records" },
+      { name: "94/96 EP", year: null, project: "GangGuru Mad Stof / newom records" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://datrecords.bandcamp.com/album/be-your-own-guru" },
+      { type: "Discogs", url: "https://www.discogs.com/master/29121-COP-Urban-Alien" }
+    ],
+    tracks: [
+      { id: "nMgczwijrRE", title: "Gangguru - Be Your Own Guru (Full Album)", year: 2018 },
+      { id: "aFagZLMTPZw", title: "Gangguru - X-3", year: 1999 }
+    ]
+  },
+  {
+    id: "drop-dash-vs-germinator",
+    realName: "Germinator - Frederik Möller + Jan Richter + Steve Lavell (Australo-Swedish trio)",
+    bio: "Germinator - טריו אוסטרלו-שבדי מ-90's עם 2 אלבומים בלתי נשכחים. אחרי שנים של שתיקה, חשפו את ה-Single Collection של ה-12\" שלהם ושל פסים שלא יצאו על אוספים. סאונד עמוק ופאנקי של גואה אוסטרלית קלאסית.",
+    notable: "Single Collection (Classic Goa Trax / Suntrip) - אוצרות של גואה 90's",
+    albums: [
+      { name: "Single Collection (vinyl 12\" + comp tracks)", year: null, project: "Germinator / Classic Goa Trax" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://classicgoatrax.bandcamp.com/album/single-collection-14" }
+    ],
+    tracks: []
+  },
+  {
+    id: "psyko-disko-vs-spies",
+    realName: "Psyko Disko - Fred Disko & Ollie Olsen (Psy-Harmonics)",
+    bio: "Psyko Disko - שיתוף פעולה אוסטרלי-בינלאומי בין Fred Disko (אחד מ-DJs המוקדמים של גואה גיל ב-Goa Trance) ל-Ollie Olsen (Shaolin Wooden Men, מייסד Psy-Harmonics). אלבום 'Psycho Disco' על Psy-Harmonics.",
+    notable: "Fred Disko - מהדמויות המוקדמות שהפכו את גואה לטראנס אלקטרוני (יחד עם Laurent ו-Goa Gil ב-1983)",
+    albums: [
+      { name: "Psycho Disco", year: null, project: "Psyko Disko / Psy-Harmonics" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://psy-harmonics.bandcamp.com/album/psycho-disco" }
+    ],
+    tracks: [
+      { id: "2QKgRfMOKt0", title: "Nobody (Ace Ventura & Skizologic Remix)", year: null }
+    ]
   }
 ];
 
