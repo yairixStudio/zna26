@@ -1816,6 +1816,26 @@ let ARTISTS = [
     tracks: []
   },
   {
+    id: "dara-lee",
+    realName: "Dara Lee (Koyote Records founder)",
+    bio: "מייסדת Koyote Records — חותמת גואה/פסיכדלי טראנס מ-Brighton (UK) שהושקה בנובמבר 1995. ה-DJ והמפיקה Dara-Lee ניהלה את Koyote/Peyote Records ואת ה-distribution. שותפה ב-Ominus (1997) יחד עם Encens (Marcello Bonifacii) ו-Miranda — גם זה collab שמופיע ב-ZNA 2026.",
+    notable: "מייסדת Koyote Records (1995, Brighton) — אחת הדמויות המרכזיות של גואה בריטי קלאסי",
+    albums: [
+      { name: "Virtual Transgression", year: 1995, project: "Dara Lee solo cassette" },
+      { name: "Koyote Records catalog (curator)", year: "1995-1998", project: "Founder & label head" },
+      { name: "Ominus", year: 1997, project: "Ominus = Dara Lee + Encens + Miranda" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/77381-Dara-Lee" },
+      { type: "Mixcloud", url: "https://www.mixcloud.com/AstralFairyMarga/dj-dara-lee-psychedelic-trance-tape/" }
+    ],
+    tracks: [
+      { id: "8FjSRkW4SEk", title: "A Taste Of Koyote Records 1995-1998", year: null },
+      { id: "aAIzM7J5BSQ", title: "Ominus - Psychic Race", year: 1997 },
+      { id: "oeYEk_jwvJs", title: "Ominus - Acid Tester (Mirrors Of Sense Mix)", year: 1997 }
+    ]
+  },
+  {
     id: "dado-vs-dino-psaras",
     realName: "Dado (Frédéric Holyszewski / Deedrah / Transwave) vs Dino Psaras",
     bio: "Dado - פרדריק הוליצ'בסקי הצרפתי, ידוע גם כ-Deedrah, חצי מ-Transwave (יחד עם Christof Drouillet / Absolum, 1994), ו-Synthetic. אלבום סולו ראשון 'Self Oscillation' (1997) פרץ את הסאונד הגואה הקלאסי. Dino Psaras - מאבות הפסיטראנס העולמי, פעיל מ-1988, חבר ב-Ayahuasca עם Steve Ronan ו-Joti Sidhu.",
