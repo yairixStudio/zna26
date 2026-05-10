@@ -1587,6 +1587,83 @@ let ARTISTS = [
       { type: "Discogs", url: "https://www.discogs.com/label/5557-Psy-Harmonics" }
     ],
     tracks: []
+  },
+  {
+    id: "cosmosis-vs-laughing-buddha",
+    realName: "Cosmosis vs Laughing Buddha (Bill Halsey + Jez 'Buddha')",
+    bio: "מפגש מחדש של שני שמות אגדיים: Bill Halsey (Cosmosis) ו-Jez 'Buddha' (Laughing Buddha) ייחד הפיקו את 'Cosmology' (1996, Transient) - מהאלבומים המכוננים של גואה הקלאסי. אחרי שלושים שנה הם מתאחדים ל-B2B מיוחד ב-ZNA 2026.",
+    notable: "co-producers על אלבום הביכורים 'Cosmology' (1996, Transient) - איחוד היסטורי",
+    albums: [
+      { name: "Cosmology", year: 1996, project: "Cosmosis + Laughing Buddha (Transient)" },
+      { name: "Sacred Technology", year: 2010, project: "Laughing Buddha (Nano Records) - solo" },
+      { name: "Illusions & Collusions", year: 2014, project: "Laughing Buddha - collaborations album" }
+    ],
+    links: [
+      { type: "Discogs (Laughing Buddha)", url: "https://www.discogs.com/artist/11425-Laughing-Buddha" },
+      { type: "Bandcamp (Laughing Buddha)", url: "https://laughingbuddha.bandcamp.com/" },
+      { type: "Discogs (Cosmosis)", url: "https://www.discogs.com/artist/11439-Cosmosis" }
+    ],
+    tracks: [
+      { id: "p9yPtqdVQxI", title: "Laughing Buddha - Sacred Technology (Full Album, 2010)", year: 2010 },
+      { id: "EIrJVemIMBI", title: "Laughing Buddha - Illusions & Collusions (Full Album, 2014)", year: 2014 }
+    ]
+  },
+  {
+    id: "domino-vs-ree-k",
+    realName: "Domino vs Ree.K (B2B)",
+    bio: "מפגש שתי דמויות מהדור הראשון של גואה: Domino - ה-DJ הראשונה שמוכרת בסצנת גואה הקלאסית, מנגנת מ-DATs (digital audio tape) - וריקיי היפנית. ב-ZNA 2026 הן חוצות בין הקלאסי לחדש.",
+    notable: "B2B אגדי בין שתי דמויות מובילות מהדור הראשון של גואה",
+    albums: [
+      { name: "Goa", year: 2000, project: "Domino (Avatar Records)" },
+      { name: "Stardrops Over The Ocean", year: null, project: "Domino - life story mix" },
+      { name: "Journey Through Time", year: 2022, project: "Domino curation (SpaceWarp)" }
+    ],
+    links: [
+      { type: "Discogs (Domino)", url: "https://www.discogs.com/artist/215255-Domino-6" },
+      { type: "Bandcamp (Domino)", url: "https://avatarmusic.bandcamp.com/album/goa" },
+      { type: "Bandcamp (Ree.K)", url: "https://psy-harmonics.bandcamp.com/album/yammataikoku" }
+    ],
+    tracks: [
+      { id: "TsugnBwlreY", title: "Domino - Goa Mix (2000)", year: 2000 },
+      { id: "7U8D4brQo5c", title: "Domino - Moon Mix", year: null },
+      { id: "TPIUjK_4aXA", title: "Ree.K Live @ Unite - Psytrance Sessions", year: null }
+    ]
+  },
+  {
+    id: "skizologic-vs-filteria",
+    realName: "Skizologic vs Filteria (Maor Hasbani vs Jannis Tzikas)",
+    bio: "מפגש בין Skizologic (מאור הסבני, ישראל) - אומן Goa-Psytrance עם פיוז'ן רטרו-עתידני - ו-Filteria (יאניס ציקאס, יוון/שטוקהולם), ממנהיגי תחיית הגואה. שניהם רעיונות מובילים בגואה החדש.",
+    notable: "מפגש בין שני שמות מובילים בגואה החדש - ישראל × שבדיה",
+    albums: [
+      { name: "Stimulation", year: null, project: "Skizologic - solo" },
+      { name: "Hallucinated 002", year: 2024, project: "Skizologic (Future Music Records)" }
+    ],
+    links: [
+      { type: "Discogs (Skizologic)", url: "https://www.discogs.com/artist/3140564-Skizologic" },
+      { type: "Bandcamp (Skizologic)", url: "https://skizologicmusic.bandcamp.com/" },
+      { type: "Bandcamp (Filteria)", url: "https://filteria.bandcamp.com/album/sky-input" }
+    ],
+    tracks: [
+      { id: "aSyfsyIGdaE", title: "Skizologic Set @ Unite - Psytrance Sessions", year: null }
+    ]
+  },
+  {
+    id: "mittelstandskinder-ohne-strom",
+    realName: "M.O.S. - Christian Bruckhaus & Andi 'N.D.M.' Muller",
+    bio: "פרויקט פסיטראנס/גואה גרמני שהוקם ב-1995. השם בגרמנית = 'ילדי המעמד הבינוני ללא חשמל'. ידועים ברמיקס הקיצוני שלהם ל-'We Are The Mammoth Hunters' של Ticon. אלבומים: Доклад о революции, Drive, Bug.",
+    notable: "M.O.S. - שם מפתח של הסצנה הגרמנית הקלאסית (פעיל מ-1995)",
+    albums: [
+      { name: "Single Collection (pre-2000 tracks)", year: 2020, project: "Classic Goa Trax" },
+      { name: "Drive", year: null, project: "M.O.S." },
+      { name: "Bug", year: null, project: "M.O.S." }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://classicgoatrax.bandcamp.com/album/single-collection" },
+      { type: "Last.fm", url: "https://www.last.fm/music/Mittelstandskinder%20Ohne%20Strom" }
+    ],
+    tracks: [
+      { id: "tBKc9AnCY3M", title: "The Wave Inside (Nirhtak EP, 1997)", year: 1997 }
+    ]
   }
 ];
 
