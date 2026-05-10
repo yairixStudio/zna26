@@ -1770,6 +1770,52 @@ let ARTISTS = [
     tracks: []
   },
   {
+    id: "sancho-meiso",
+    realName: "Sancho Meiso Chaya - Shin Sasama",
+    bio: "Shin Sasama מטוקיו - הקריירה התחילה בשנות ה-90 כסקסופוניסט בלהקת הדאב Cultivator ובהפקות רגאיי יפני. בתחילת שנות ה-2000 פתח את הפרויקט הסולו Sancho Meiso Chaya עם אמביינט וניסיון אלקטרוני. הסאונד שלו משלב אטמוספרות עמוקות עם קצבים מאולתרים. הופעות חיות ב-Ozora, Mo:Dem, ו-ZNA Gathering.",
+    notable: "פרויקט דאב/ניסיוני יפני - 3 אלבומים + EPs (b.p.f.records 2008-2009)",
+    albums: [
+      { name: "EP1", year: 2008, project: "Sancho Meiso Chaya / b.p.f.Records" },
+      { name: "EP2", year: 2008, project: "Sancho Meiso Chaya / b.p.f.Records" },
+      { name: "EP3", year: 2009, project: "Sancho Meiso Chaya / b.p.f.records" },
+      { name: "Misukumi EP", year: null, project: "Sancho Meiso Chaya / Bandcamp" },
+      { name: "April Dub (with Koyas)", year: null, project: "psymatics" }
+    ],
+    links: [
+      { type: "Linktree", url: "https://linktr.ee/sanchomeisochaya" },
+      { type: "SoundCloud", url: "https://soundcloud.com/sanchomeisochaya" },
+      { type: "Bandcamp", url: "https://sanchomeisochaya.bandcamp.com/" },
+      { type: "Resident Advisor", url: "https://ra.co/dj/sanchomeisochaya" }
+    ],
+    tracks: [
+      { id: "YiUYBzI1jg0", title: "Live Session / Sancho Meiso Chaya", year: null }
+    ]
+  },
+  {
+    id: "goaacen",
+    realName: "Goaacen (Tiago Lopes)",
+    bio: "מהמובילים של DJs פורטוגזים בגואה טראנס. DJ של Suntrip Records וחלק מ-604 Productions. אוהב לחקור טריטוריות אפלות יותר של גואה. ב-ZNA הוא מראה איך מסע של שעתיים יכול לטוס במהירות.",
+    notable: "DJ של Suntrip Records + 604 Freaks Productions (Portugal)",
+    albums: [],
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/tiago-lopes-646831806" },
+      { type: "Facebook", url: "https://www.facebook.com/Gooaacen/" }
+    ],
+    tracks: []
+  },
+  {
+    id: "bill-robin-maya",
+    realName: "Bill Robin & Maya Wada",
+    bio: "Bill Robin & Maya Wada - דואו DJs ב-Market Stage של ZNA 2026. Maya Wada יפנית עם נוכחות ב-SoundCloud ו-Discogs. הופעה חיה במשפט הדאב/אקספרימנטל בסצנה היפנית.",
+    notable: "Market Stage duo - Japan",
+    albums: [],
+    links: [
+      { type: "SoundCloud (Maya Wada)", url: "https://soundcloud.com/maya-wada-983351163" },
+      { type: "Discogs (Maya Wada)", url: "https://www.discogs.com/artist/2823275-Maya-Wada" }
+    ],
+    tracks: []
+  },
+  {
     id: "dado-vs-dino-psaras",
     realName: "Dado (Frédéric Holyszewski / Deedrah / Transwave) vs Dino Psaras",
     bio: "Dado - פרדריק הוליצ'בסקי הצרפתי, ידוע גם כ-Deedrah, חצי מ-Transwave (יחד עם Christof Drouillet / Absolum, 1994), ו-Synthetic. אלבום סולו ראשון 'Self Oscillation' (1997) פרץ את הסאונד הגואה הקלאסי. Dino Psaras - מאבות הפסיטראנס העולמי, פעיל מ-1988, חבר ב-Ayahuasca עם Steve Ronan ו-Joti Sidhu.",
