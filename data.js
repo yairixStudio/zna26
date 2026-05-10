@@ -1732,6 +1732,64 @@ let ARTISTS = [
     tracks: [
       { id: "2QKgRfMOKt0", title: "Nobody (Ace Ventura & Skizologic Remix)", year: null }
     ]
+  },
+  {
+    id: "jordan",
+    realName: "Jordan Bonyo (Disco Hooligans / Outer World Elements)",
+    bio: "DJ יווני - היסטוריה ארוכה במחתרת המוזיקלית: היפ-הופ ואסיד האוס של שנות ה-80, אל סצנת גואה בלונדון מ-1995. שותף-מייסד של Disco Hooligans (יחד עם Nectarios Meidanis) - דואו פסיטראנס אופטימי, ואחרי 2012 גם של Outer World Elements (יחד עם John Petsopoulos מאתונה). מיוצג ע\"י DAT Universe.",
+    notable: "Disco Hooligans - 'Clear Skies' (אלבום ביכורים) ו-'Darjeeling Express'. גם Outer World Elements (פעיל מ-2013)",
+    albums: [
+      { name: "Clear Skies", year: null, project: "Disco Hooligans (with Nectarios Meidanis)" },
+      { name: "Darjeeling Express", year: null, project: "Disco Hooligans (with Nectarios Meidanis)" }
+    ],
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/dj-jordan1" },
+      { type: "Outer World Elements SC", url: "https://soundcloud.com/outer-world-elements" }
+    ],
+    tracks: []
+  },
+  {
+    id: "larsik",
+    realName: "Larsik",
+    bio: "DJ ב-'Goa Guardians' - מהדמויות הקבועות שמשמרות את המורשת הגואית הקלאסית. שומרים, אוצרים ומספרי סיפורים של הסצנה - חלק מהם מחזיקים אוצרים נדירים של edits ושחרורים שלא יצאו, שאפילו המפיקים המקוריים כבר לא מחזיקים אצלם.",
+    notable: "Goa Guardians (pre-party for ZNA Gathering) - שומר המורשת",
+    albums: [],
+    links: [],
+    tracks: []
+  },
+  {
+    id: "dj-eden",
+    realName: "DJ Eden",
+    bio: "DJ פסיטראנס/גואה - חלק מקהילת ה-DJs הבינלאומית. נוכחות ב-Spotify ו-YouTube.",
+    notable: "Goa Guardians DJ",
+    albums: [],
+    links: [
+      { type: "Spotify", url: "https://open.spotify.com/artist/3cITmfgifFLopotKbfBbli" },
+      { type: "YouTube", url: "https://www.youtube.com/channel/UCEqXr6nICnt82N-ngb_dscg" }
+    ],
+    tracks: []
+  },
+  {
+    id: "dado-vs-dino-psaras",
+    realName: "Dado (Frédéric Holyszewski / Deedrah / Transwave) vs Dino Psaras",
+    bio: "Dado - פרדריק הוליצ'בסקי הצרפתי, ידוע גם כ-Deedrah, חצי מ-Transwave (יחד עם Christof Drouillet / Absolum, 1994), ו-Synthetic. אלבום סולו ראשון 'Self Oscillation' (1997) פרץ את הסאונד הגואה הקלאסי. Dino Psaras - מאבות הפסיטראנס העולמי, פעיל מ-1988, חבר ב-Ayahuasca עם Steve Ronan ו-Joti Sidhu.",
+    notable: "מפגש בין שני אבות הסצנה - Transwave/Deedrah pgs Ayahuasca/Lick It (Oktava 2003)",
+    albums: [
+      { name: "Self Oscillation", year: 1997, project: "Deedrah - solo debut" },
+      { name: "Lick It", year: 2003, project: "Dino Psaras / Oktava Records" },
+      { name: "Transwave releases", year: null, project: "Dado as half of Transwave (with Absolum)" }
+    ],
+    links: [
+      { type: "Wikipedia (Transwave)", url: "https://en.wikipedia.org/wiki/Transwave" },
+      { type: "PsyDB (Dino Psaras)", url: "https://www.psydb.net/artist/dino-psaras/3597" },
+      { type: "SoundCloud (Deedrah)", url: "https://soundcloud.com/syntheticdado" }
+    ],
+    tracks: [
+      { id: "7psOFbVonWM", title: "Dino Psaras - Lick It (Full Album, 2003)", year: 2003 },
+      { id: "yOKcpB5UNvs", title: "Dino Psaras - Lick It [Full Album HQ]", year: 2003 },
+      { id: "GF4Ve5hgRIk", title: "Deedrah - Singles & EP's 2014-2018", year: null },
+      { id: "XMZzXkNWc-M", title: "Dino Psaras - White Lights Psy", year: null }
+    ]
   }
 ];
 
