@@ -1836,6 +1836,108 @@ let ARTISTS = [
     ]
   },
   {
+    id: "ultravibe",
+    realName: "Ultravibe = Cosmosis + Filteria",
+    bio: "פרויקט שיתופי בין Bill Halsey (Cosmosis) ל-Jannis Tzikas (Filteria) — שני ותיקים מובילים של גואה. Cosmosis הוא חלוץ הז'אנר משחרור 'Cosmology' (1996), ו-Filteria החזיר את הסאונד הקלאסי לחיים ב-2004. Ultravibe מערבב את הסאונד הגואה הקלאסי עם הפקה מודרנית.",
+    notable: "EP 'Electrosurge' (אוקטובר 2024) ואלבום 'Transmitter' (דצמבר 2024) על Future Music Records",
+    albums: [
+      { name: "Electrosurge EP", year: 2024, project: "Ultravibe = Cosmosis + Filteria / Future Music Records" },
+      { name: "Transmitter", year: 2024, project: "Ultravibe = Cosmosis + Filteria / Future Music Records" }
+    ],
+    links: [
+      { type: "Bandcamp (Cosmosis)", url: "https://cosmosis.bandcamp.com/album/transmitter" },
+      { type: "Bandcamp (Future Music)", url: "https://beatspace-futuremusic.bandcamp.com/album/transmitter" }
+    ],
+    tracks: [
+      { id: "WvM8lxA6R4I", title: "Transmitter", year: 2024 },
+      { id: "GoMFvO_jYCg", title: "Squelch", year: 2024 },
+      { id: "3GyVXcvN0E8", title: "Electrosurge (Psychedelic Visuals)", year: 2024 },
+      { id: "MXm8WFKDjHo", title: "The One Thing", year: 2024 },
+      { id: "oQzgA77S8eY", title: "Liquid Love", year: 2024 }
+    ]
+  },
+  {
+    id: "ephedra",
+    realName: "Ephedra (Alexandre Cohen)",
+    bio: "מפיק/DJ בלגי מבריסל. אומן Goatrance מובהק - 5 אלבומים על Goa Madness Records (לייבל בלגי שהוא מנהל יחד עם Kuririn). חלק גם מהפרויקט המשותף Moon Beasts יחד עם Proxeeus.",
+    notable: "5 אלבומי גואה על Goa Madness Records: Journey Through My Head (2014), Flying Over The Universe (2016), What The Future Brings (2018), Another Place On Earth (2021), Resilient Horizon (2024)",
+    albums: [
+      { name: "Journey Through My Head", year: 2014, project: "Goa Madness Records (debut)" },
+      { name: "Flying Over The Universe", year: 2016, project: "Goa Madness Records" },
+      { name: "What The Future Brings", year: 2018, project: "Goa Madness Records" },
+      { name: "Another Place On Earth", year: 2021, project: "Goa Madness Records" },
+      { name: "Resilient Horizon", year: 2024, project: "Goa Madness Records" },
+      { name: "Moon Beasts (project with Proxeeus)", year: null, project: "with Proxeeus / Goa Madness" }
+    ],
+    links: [
+      { type: "Bandcamp", url: "https://goamadnessrecordsofficial.bandcamp.com/album/ephedra-journey-through-my-head" },
+      { type: "MusicBrainz", url: "https://musicbrainz.org/artist/eb866c5e-2a32-44a0-aefc-e303d1179c9b" }
+    ],
+    tracks: [
+      { id: "KrAaFohbcvc", title: "Enter Eternity 2015 (Goa Trance Set)", year: 2015 },
+      { id: "n0yasoYvfcA", title: "Beyond Spaces (Official)", year: null },
+      { id: "LqLCRclq1jY", title: "Crispy Biscuits (Official)", year: null }
+    ]
+  },
+  {
+    id: "space-cat-vs-talamasca",
+    realName: "Space Cat (Avi Algranati / Israel) vs Talamasca (Cédric Dassule / France)",
+    bio: "מפגש שני אבות הפסיטראנס: Space Cat - אבי אלגרנטי מבת ים, ישראל - אלבום הביכורים 'Beam Me Up' (1999, HOMmega) הוא אחד החשובים ביותר בהיסטוריה של גואה טראנס, עם שיתופי פעולה עם Hallucinogen, Transwave, Infected Mushroom, Oforia ו-Elysium. Talamasca - Cédric Dassule הצרפתי (גם DJ Lestat) - אלבום 'Musica Divinorum' (2001, Spiral Trax) קיבע את שמו.",
+    notable: "Space Cat - 'Beam Me Up' (1999, HOMmega) אבן יסוד של פסיטראנס. Talamasca - 'Musica Divinorum' (2001, Spiral Trax)",
+    albums: [
+      { name: "Beam Me Up", year: 1999, project: "Space Cat / HOMmega Productions" },
+      { name: "Musica Divinorum", year: 2001, project: "Talamasca / Spiral Trax" },
+      { name: "Psychedelic Trance", year: 2013, project: "Talamasca / Dacru Records" }
+    ],
+    links: [
+      { type: "Discogs (Space Cat)", url: "https://www.discogs.com/artist/904-Space-Cat" },
+      { type: "Discogs (Talamasca)", url: "https://www.discogs.com/artist/27716-Talamasca" },
+      { type: "Bandcamp (Space Cat)", url: "https://hommega.bandcamp.com/album/beam-me-up" },
+      { type: "Website (Talamasca)", url: "https://www.talamasca.fr/discography-albums/" }
+    ],
+    tracks: [
+      { id: "F6KyTuR-III", title: "Space Cat - Beam Me Up [Full Album]", year: 1999 },
+      { id: "xUDRtZ4ndew", title: "Space Cat - Beam Me Up [Full Album HQ]", year: 1999 },
+      { id: "EJPlfvava7A", title: "Space Cat - Space Cats (Remaster 2025)", year: 2025 },
+      { id: "NWKv2l-c9TU", title: "Space Cat - Kreak (psytrance)", year: 1999 },
+      { id: "xnItH9mJzWs", title: "Talamasca - Psy Trance (Full Album)", year: 2013 },
+      { id: "hbzWBmKNtnQ", title: "Talamasca - Musica Divinorum (2001)", year: 2001 }
+    ]
+  },
+  {
+    id: "infinity-project-vs-excess-head",
+    realName: "The Infinity Project vs Excess Head (Graham Wood — same artist, two aliases)",
+    bio: "סט מיוחד של Graham Wood — שני האליאסים שלו ב-ZNA 2026: The Infinity Project (יחד עם Raja Ram, מקימי TIP Records ב-1994 — סולו אחרי 1998) ו-Excess Head (האליאס הסולו שלו עם חומר ענק שלא יצא לאור). שני מסעות משלימים: הנוסטלגיה של TIP הקלאסי + ההתרגשות מסאונד שלא נשמע מאי פעם.",
+    notable: "Graham Wood - אליאסים סולו: TIP (Mystical Experiences 1995, Feeling Weird 1995) + Excess Head (חומר נדיר)",
+    albums: [
+      { name: "Mystical Experiences", year: 1995, project: "The Infinity Project / TIP Records" },
+      { name: "Feeling Weird", year: 1995, project: "The Infinity Project / TIP Records" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/4512-The-Infinity-Project" },
+      { type: "Bandcamp", url: "https://tiprecords.bandcamp.com/" }
+    ],
+    tracks: [
+      { id: "IEe22M6Prts", title: "Mystical Experiences (1995) - Full Album", year: 1995 },
+      { id: "R9E8DPXHkuI", title: "Feeling Weird (1995) - Full Album", year: 1995 },
+      { id: "VjI_ERtkB2c", title: "Yellow Energy (Graham Wood)", year: null }
+    ]
+  },
+  {
+    id: "jean-borelli-vs-sid-shanti",
+    realName: "Jean Borelli (Orion) vs Sid Shanti — vinyl B2B exclusive",
+    bio: "סט VS אקסקלוסיבי בויניל בין Jean Borelli (Orion) לבין Sid Shanti — מפגש בין שני אבות הסצנה הקלאסית. Orion דמות מפתח של פסיטראנס מתחילת שנות ה-90, Sid Shanti אומן Phantasm Records ידוע ב-mixed CDs מ-1996-1999.",
+    notable: "B2B אקסקלוסיבי בויניל - מפגש בין שני אספני הקלאסי",
+    albums: [],
+    links: [
+      { type: "Discogs (Jean Borelli)", url: "https://www.discogs.com/artist/77371-Jean-Borelli" },
+      { type: "Discogs (Sid Shanti)", url: "https://www.discogs.com/artist/180461-Sid-Shanti" }
+    ],
+    tracks: [
+      { id: "msWKsfC0RnQ", title: "Sid Shanti - Phantasm & Psychic Deli mix", year: 1999 }
+    ]
+  },
+  {
     id: "dado-vs-dino-psaras",
     realName: "Dado (Frédéric Holyszewski / Deedrah / Transwave) vs Dino Psaras",
     bio: "Dado - פרדריק הוליצ'בסקי הצרפתי, ידוע גם כ-Deedrah, חצי מ-Transwave (יחד עם Christof Drouillet / Absolum, 1994), ו-Synthetic. אלבום סולו ראשון 'Self Oscillation' (1997) פרץ את הסאונד הגואה הקלאסי. Dino Psaras - מאבות הפסיטראנס העולמי, פעיל מ-1988, חבר ב-Ayahuasca עם Steve Ronan ו-Joti Sidhu.",
