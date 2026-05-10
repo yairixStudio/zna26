@@ -1312,6 +1312,24 @@ body.has-mini-player .hero-dots {
 .album-name { font-weight: 700; color: var(--text); font-size: 14px; }
 .album-meta { font-size: 11px; color: var(--text-muted); }
 
+/* Cross-link to a collaborator artist embedded in an album's project
+   string. Underline + accent color so it's obviously tappable but
+   doesn't break the muted look of the surrounding meta line. */
+.album-meta .collab-link,
+a.collab-link {
+  color: var(--panel-accent, var(--sun-yellow));
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--panel-accent, var(--sun-yellow)) 55%, transparent);
+  text-underline-offset: 2px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+a.collab-link:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
 /* === Panel 4: Tracks === */
 .tracks-stack { display: grid; gap: 12px; }
 

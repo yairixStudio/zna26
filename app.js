@@ -391,6 +391,28 @@ reel.addEventListener("click", e => {
   prepareInlineFrameAndPlay(thumb);
 });
 
+// Collab link in a discography "project" string — scroll to the
+// referenced artist's section. Same delegated pattern so it survives
+// reel rebuilds (language switch, filter change, etc.).
+reel.addEventListener("click", e => {
+  const link = e.target.closest("a.collab-link");
+  if (!link) return;
+  e.preventDefault();
+  const id = link.dataset.collab;
+  if (!id) return;
+  if (activeStageFilter !== "all") {
+    activeStageFilter = "all";
+    if (typeof buildReel === "function") buildReel();
+    if (typeof buildVerticalProgress === "function") buildVerticalProgress();
+    if (typeof buildStageDropdown === "function") buildStageDropdown();
+    if (typeof observeSections === "function") observeSections();
+  }
+  setTimeout(() => {
+    const sec = reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`);
+    sec?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 30);
+});
+
 function prepareInlineFrameAndPlay(thumb) {
   const card = thumb.closest(".track-card");
   if (!card) return;
@@ -1514,6 +1536,57 @@ function panelInfo(a) {
   `;
 }
 
+// Detect collaborator names inside an album's `project` string and turn
+// them into clickable links if those collaborators have their own
+// section in the lineup. Recognised forms:
+//   "(with X)"            → link X
+//   "with X"              → link X
+//   "vs X"                → link X
+//   "as X"                → link X (alias attribution)
+//   "feat. X" / "feat X"  → link X
+//   "X & Y"               → link both names if found
+// `selfId` is the artist whose discography we're rendering — we never
+// link a project string back to the same artist.
+function linkifyCollaborators(projectStr, selfId) {
+  if (!projectStr) return "";
+  // Normalise to a working copy we'll surgically wrap, then escape the
+  // remainder. We do the matching on the raw text and do all HTML
+  // escaping ourselves so the wrapped <a> isn't double-escaped.
+  const NAME_RE = /(?:\(\s*with\s+|with\s+|vs\.?\s+|as\s+|feat\.?\s+|&\s+|\+\s+|b2b\s+)([A-Z][\p{L}\p{M}\d.\-' ]{2,40}?)(?=\s*[\),/&+]|\s+\(|\s*$)/giu;
+  const matches = [];
+  let m;
+  while ((m = NAME_RE.exec(projectStr)) !== null) {
+    const candidate = m[1].trim().replace(/\s+/g, " ");
+    if (!candidate) continue;
+    const target = (typeof ARTISTS !== "undefined") ? ARTISTS.find(other => {
+      if (!other || other.id === selfId) return false;
+      const a1 = (other.name || "").toLowerCase();
+      const a2 = (other.officialName || "").toLowerCase();
+      const c  = candidate.toLowerCase();
+      return a1 === c || a2 === c || a1.startsWith(c + " ") || a2.startsWith(c + " ");
+    }) : null;
+    if (target) {
+      const start = m.index + m[0].lastIndexOf(candidate);
+      matches.push({ start, length: candidate.length, name: candidate, id: target.id });
+    }
+  }
+  if (!matches.length) return escapeHtml(projectStr);
+  // Walk the source string left-to-right, escaping the gaps and wrapping
+  // matched names in <a data-collab="...">. Matches don't overlap because
+  // the regex uses lookaheads; sort defensively just in case.
+  matches.sort((x, y) => x.start - y.start);
+  let out = "";
+  let i = 0;
+  for (const mt of matches) {
+    if (mt.start < i) continue; // overlap guard
+    out += escapeHtml(projectStr.slice(i, mt.start));
+    out += `<a class="collab-link" href="#" data-collab="${escapeHtml(mt.id)}">${escapeHtml(mt.name)}</a>`;
+    i = mt.start + mt.length;
+  }
+  out += escapeHtml(projectStr.slice(i));
+  return out;
+}
+
 function panelAlbums(a) {
   const eyebrow = (label) => `
     <div class="panel-eyebrow has-artist">
@@ -1534,7 +1607,7 @@ function panelAlbums(a) {
   const items = a.albums.map(al => `
     <li>
       <span class="album-name">${escapeHtml(al.name)}</span>
-      <span class="album-meta">${al.project ? escapeHtml(al.project) + " · " : ""}${escapeHtml(String(al.year))}</span>
+      <span class="album-meta">${al.project ? linkifyCollaborators(al.project, a.id) + " · " : ""}${escapeHtml(String(al.year))}</span>
     </li>
   `).join("");
   return `
