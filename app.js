@@ -207,9 +207,13 @@ const STRINGS = {
   },
   // Tiny desktop hint that the keyboard arrow keys can navigate the reel.
   "kbHint.label": { he: "ניווט עם החיצים", en: "Arrow keys to navigate", pt: "Setas para navegar" },
-  // "Surprise me" pill under the hero tagline — jumps to a random artist.
-  "hero.random": { he: "🎲 קפיצה לאומן אקראי", en: "🎲 Surprise me — random artist", pt: "🎲 Surpreende-me — artista aleatório" },
+  // "Random artist" button (now lives inside #artists-overlay, not the hero).
+  "hero.random": { he: "🎲 קפיצה לאומן אקראי", en: "🎲 Random", pt: "🎲 Aleatório" },
   "hero.randomLabel": { he: "קפיצה לאומן אקראי", en: "Jump to a random artist", pt: "Saltar para um artista aleatório" },
+  // Avatar-stack pill on each hero panel: tooltip + modal title.
+  "hero.viewArtists": { he: "ראו את רשימת האומנים", en: "See the artist list", pt: "Ver a lista de artistas" },
+  "artists.title": { he: "אומנים", en: "Artists", pt: "Artistas" },
+  "artists.titleAll": { he: "כל האומנים", en: "All artists", pt: "Todos os artistas" },
 
   // Stage names + descriptions
   "stage.retro":           { he: "Retro Universe", en: "Retro Universe", pt: "Retro Universe" },
@@ -1269,10 +1273,8 @@ function heroPanelMain() {
     <div class="hero-panel hero-panel--main" data-stage="all">
       ${pictureTagStatic("images/zna-3d/community-zna-logo-26-celebration", { className: "hero-zna-mark", alt: "ZNA 26 Community — The Retro Futuristic Celebration", width: 600, height: 400, loading: "eager", fetchpriority: "high" })}
       <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
-      <button class="hero-random-btn" id="hero-random-btn" type="button" title="${escapeHtml(t("hero.randomLabel"))}" aria-label="${escapeHtml(t("hero.randomLabel"))}">
-        <span class="hero-random-text">${escapeHtml(t("hero.random"))}</span>
-      </button>
-      <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
+      ${heroArtistsPill("all")}
+      <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
       ${liveStatusCard("all")}
       <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
         <a class="hero-icon-action" id="hero-yt-btn" href="https://youtube.com/playlist?list=PLueV5lFNV9_R1F0dNCtgNSbT2zvdFwGQf&amp;si=4kMxSvtOHUMI40hZ" target="_blank" rel="noopener" title="${escapeHtml(t("nav.ytPlaylist"))}" aria-label="${escapeHtml(t("nav.ytPlaylist"))}">
@@ -1299,15 +1301,79 @@ function heroPanelStage(stage) {
   return `
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementMarkup}
-      <button class="hero-icon-action hero-icon-action--top" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="15,9 11,11 9,15 13,13" fill="currentColor" stroke="none"/></svg>
+      <button class="hero-icon-action hero-icon-action--top hero-nav-diamond" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
+        <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+          <defs>
+            <linearGradient id="nav-grad-${escapeHtml(stage.id)}" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%"  stop-color="var(--hero-text-1)"/>
+              <stop offset="55%" stop-color="var(--hero-text-2)"/>
+              <stop offset="100%" stop-color="var(--hero-text-3)"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 2 30 16 16 30 2 16Z" fill="url(#nav-grad-${escapeHtml(stage.id)})" opacity="0.18"/>
+          <path d="M16 2 30 16 16 30 2 16Z" fill="none" stroke="url(#nav-grad-${escapeHtml(stage.id)})" stroke-width="2"/>
+          <path d="M11 22 16 9l5 13-5-2.5z" fill="url(#nav-grad-${escapeHtml(stage.id)})"/>
+        </svg>
       </button>
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
-      <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
+      ${heroArtistsPill(stage.id)}
       ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
     </div>
   `;
+}
+
+// "+N" artists pill — three overlapping photo avatars followed by a
+// total-count badge. Clicking it opens #artists-overlay with the
+// scoped artist list + random button. The avatars sample the first
+// three artists in the relevant pool (Main → all artists; stage hero
+// → that stage only) that have a usable photo.
+function heroArtistsPill(stageId) {
+  const pool = stageId === "all"
+    ? ARTISTS
+    : ARTISTS.filter(a => a.stage === stageId);
+  const total = pool.length;
+  if (!total) return "";
+  const withPhotos = pool.filter(a => a.photo).slice(0, 3);
+  // Pad with non-photo artists if there aren't 3 photo'd ones, just so
+  // the stack always shows three circles (the placeholder ones render
+  // as a coloured initial via .hero-artists-avatar-fallback).
+  const sample = [...withPhotos];
+  let i = 0;
+  while (sample.length < 3 && i < pool.length) {
+    if (!sample.includes(pool[i])) sample.push(pool[i]);
+    i++;
+  }
+  const remaining = Math.max(0, total - sample.length);
+  const avatars = sample.map((a, idx) => {
+    const src = pickThumbSrc(a.photo);
+    const initials = getInitials(a.name);
+    return src
+      ? `<span class="hero-artists-avatar" style="--accent: ${escapeHtml(a.color || "#FEB447")}; --z: ${3 - idx};"><img loading="lazy" decoding="async" src="${escapeHtml(src)}" alt=""/></span>`
+      : `<span class="hero-artists-avatar hero-artists-avatar--fallback" style="--accent: ${escapeHtml(a.color || "#FEB447")}; --z: ${3 - idx};">${escapeHtml(initials)}</span>`;
+  }).join("");
+  const counterLabel = remaining > 0
+    ? `+${remaining} ${t("hero.artistsCount")}`
+    : `${total} ${t("hero.artistsCount")}`;
+  return `
+    <button class="hero-artists-pill" type="button" data-artists-pool="${escapeHtml(stageId)}"
+            aria-label="${escapeHtml(t("hero.viewArtists"))}" title="${escapeHtml(t("hero.viewArtists"))}">
+      <span class="hero-artists-stack" aria-hidden="true">${avatars}</span>
+      <span class="hero-artists-count">${escapeHtml(counterLabel)}</span>
+    </button>
+  `;
+}
+
+// Cheap helper: pick the smallest variant from the multi-format photo
+// manifest, falling back to a plain string src when official-artists.js
+// hasn't been upgraded yet.
+function pickThumbSrc(photo) {
+  if (!photo) return "";
+  if (typeof photo === "string") return photo;
+  if (typeof photo === "object") {
+    return photo.jpg || photo.webp || photo.avif || photo.src || "";
+  }
+  return "";
 }
 
 let heroScrollTimer = null;
@@ -3648,6 +3714,118 @@ function closeFavorites() {
   favoritesOverlay.hidden = true;
 }
 
+// ===== Artist-list overlay =====
+// Opened by the avatar-stack pill on the hero panels. Lists every artist
+// scoped to the active hero (all artists on Main, that stage's artists
+// on stage heroes). Each row is a button that scrolls to the artist's
+// section; the modal header carries a "Random" button that picks one at
+// random from the same pool.
+const artistsOverlay      = document.getElementById("artists-overlay");
+const artistsListEl       = document.getElementById("artists-list");
+const artistsTitleEl      = document.getElementById("artists-title");
+const artistsCloseBtn     = document.getElementById("artists-close");
+const artistsRandomBtn    = document.getElementById("artists-random");
+const artistsRandomLabel  = document.getElementById("artists-random-label");
+let _artistsCurrentPool   = "all"; // last opened scope — used by the Random button.
+
+function getArtistPool(stageId) {
+  return stageId === "all" ? ARTISTS : ARTISTS.filter(a => a.stage === stageId);
+}
+
+function renderArtistsList(stageId) {
+  if (!artistsListEl) return;
+  const pool = getArtistPool(stageId);
+  if (!pool.length) {
+    artistsListEl.innerHTML = "";
+    return;
+  }
+  artistsListEl.innerHTML = pool.map(a => {
+    const src = pickThumbSrc(a.photo);
+    const initials = getInitials(a.name);
+    const avatar = src
+      ? `<span class="artists-row-avatar"><img loading="lazy" decoding="async" src="${escapeHtml(src)}" alt=""/></span>`
+      : `<span class="artists-row-avatar artists-row-avatar--fallback" style="--accent: ${escapeHtml(a.color || "#FEB447")};">${escapeHtml(initials)}</span>`;
+    return `
+      <button class="artists-row" type="button" data-artist-id="${escapeHtml(a.id)}">
+        ${avatar}
+        <span class="artists-row-text">
+          <span class="artists-row-name">${escapeHtml(a.name)}</span>
+          <span class="artists-row-meta">${escapeHtml(stageLabel(a.stage))}</span>
+        </span>
+      </button>
+    `;
+  }).join("");
+}
+
+function openArtistsOverlay(stageId) {
+  if (!artistsOverlay) return;
+  _artistsCurrentPool = stageId;
+  if (artistsTitleEl) {
+    artistsTitleEl.textContent = stageId === "all"
+      ? t("artists.titleAll")
+      : `${tStage(stageId)} · ${t("artists.title")}`;
+  }
+  if (artistsRandomLabel) artistsRandomLabel.textContent = t("hero.random");
+  if (artistsRandomBtn)  artistsRandomBtn.setAttribute("aria-label", t("hero.randomLabel"));
+  renderArtistsList(stageId);
+  artistsOverlay.hidden = false;
+}
+
+function closeArtistsOverlay() {
+  if (!artistsOverlay) return;
+  artistsOverlay.hidden = true;
+}
+
+function jumpToArtist(id) {
+  closeArtistsOverlay();
+  // If the current filter would hide this artist (e.g. user is on a stage
+  // hero but the modal was rendering "all"), reset to "all" before
+  // scrolling so the section actually exists in the DOM.
+  if (!reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`)) {
+    activeStageFilter = "all";
+    rerenderArtistsBelowHero();
+  }
+  // The smooth-scroll occasionally fights observers that fire during the
+  // overlay close; a single RAF settles things first.
+  requestAnimationFrame(() => {
+    const sec = reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`);
+    sec?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+artistsCloseBtn?.addEventListener("click", closeArtistsOverlay);
+artistsOverlay?.addEventListener("click", e => {
+  if (e.target === artistsOverlay) closeArtistsOverlay();
+});
+artistsListEl?.addEventListener("click", e => {
+  const row = e.target.closest(".artists-row");
+  if (!row) return;
+  const id = row.dataset.artistId;
+  if (id) jumpToArtist(id);
+});
+artistsRandomBtn?.addEventListener("click", () => {
+  const pool = getArtistPool(_artistsCurrentPool);
+  if (!pool.length) return;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  jumpToArtist(pick.id);
+});
+
+// Opening the overlay from the avatar pill — delegated through the reel
+// so the listener survives buildReel() rebuilds.
+reel.addEventListener("click", (e) => {
+  const pill = e.target.closest?.(".hero-artists-pill");
+  if (!pill) return;
+  const pool = pill.dataset.artistsPool || "all";
+  openArtistsOverlay(pool);
+});
+
+// Escape key closes the overlay.
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && artistsOverlay && !artistsOverlay.hidden) {
+    closeArtistsOverlay();
+  }
+});
+
 favoritesBtn?.addEventListener("click", openFavorites);
 favoritesCloseBtn?.addEventListener("click", closeFavorites);
 favoritesOverlay?.addEventListener("click", e => {
@@ -4001,29 +4179,8 @@ if (!hasStoredLang()) {
   showWelcomeModal();
 }
 
-// Random-artist button — used to live in the top bar, now sits as a
-// pill under the hero tagline on the Main hero. Delegated through the
-// reel so the listener survives buildReel() rerenders.
-reel.addEventListener("click", (e) => {
-  const btn = e.target.closest?.("#hero-random-btn");
-  if (!btn) return;
-  const stage = activeStageFilter;
-  const pool = stage === "all" ? ARTISTS : ARTISTS.filter(a => a.stage === stage);
-  if (!pool.length) return;
-  const pick = pool[Math.floor(Math.random() * pool.length)];
-  // Make sure the artist is actually rendered (filter may exclude it). If
-  // the current filter wouldn't include the pick, switch to "all" first.
-  if (!reel.querySelector(`[data-artist-id="${pick.id}"]`)) {
-    activeStageFilter = "all";
-    rerenderArtistsBelowHero();
-  }
-  const sec = reel.querySelector(`[data-artist-id="${pick.id}"]`);
-  if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
-  // Tiny tactile spin so the click feels playful
-  btn.classList.remove("is-spinning");
-  void btn.offsetWidth;
-  btn.classList.add("is-spinning");
-});
+// Random-artist trigger now lives inside the #artists-overlay header
+// (see artistsRandomBtn handler above) — no separate hero pill any more.
 searchOverlay?.addEventListener("click", e => {
   if (e.target === searchOverlay) closeSearch();
 });

@@ -155,6 +155,27 @@
     </div>
   </div>
 
+  <!-- Artist list overlay (opened by the avatar stack on the hero panels).
+       Lists every artist relevant to the active hero (all artists on Main,
+       only this stage's artists on a stage hero). Each row jumps to that
+       artist's section. Includes a "Random" button as the modal's
+       primary action. -->
+  <div class="artists-overlay" id="artists-overlay" hidden>
+    <div class="artists-panel glass-card" role="dialog" aria-modal="true" aria-label="Artist list">
+      <div class="artists-header">
+        <h2 class="artists-title" id="artists-title">Artists</h2>
+        <button class="artists-random" id="artists-random" type="button" aria-label="Random artist" title="Random artist">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+          <span class="artists-random-label" id="artists-random-label">Random</span>
+        </button>
+        <button class="artists-close" id="artists-close" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M6.4 5L5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z"/></svg>
+        </button>
+      </div>
+      <div class="artists-list" id="artists-list"></div>
+    </div>
+  </div>
+
   <!-- Favorites overlay -->
   <div class="favorites-overlay" id="favorites-overlay" hidden>
     <div class="favorites-panel glass-card" role="dialog" aria-label="Favorites">

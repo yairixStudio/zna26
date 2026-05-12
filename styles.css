@@ -788,6 +788,11 @@ body.has-mini-player .hero-dots {
   letter-spacing: normal;
   text-transform: none;
   opacity: 1;
+  /* Generous top-margin so the artist name doesn't crowd the top-bar
+     logo on the discography / tracks / about panels. The hero panel
+     uses a different eyebrow layout so this only applies to the
+     two-line stack. */
+  margin-top: 24px;
 }
 
 .panel-eyebrow.has-artist .eyebrow-artist {
@@ -1442,11 +1447,19 @@ body.has-mini-player .hero-dots {
   display: none;
 }
 
-/* === Panel 3: Discography === */
+/* === Panel 3: Discography ===
+   Each album card stacks its title on top and the green meta line
+   (label/year/collaborator) UNDER it — used to sit beside the title
+   on a flex row, which made long titles overlap the meta. The card
+   is also narrower than the panel-inner so a row of albums doesn't
+   span the full width on tablet/desktop. */
 .albums-list {
   list-style: none;
   display: grid;
   gap: 8px;
+  max-width: 520px;
+  margin-inline: auto;
+  width: 100%;
 }
 
 .albums-list li {
@@ -1455,15 +1468,14 @@ body.has-mini-player .hero-dots {
   border-radius: 12px;
   border: 1px solid var(--card-border);
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 
-.album-name { font-weight: 700; color: var(--text); font-size: 14px; }
-.album-meta { font-size: 11px; color: var(--text-muted); }
+.album-name { font-weight: 700; color: var(--text); font-size: 14px; line-height: 1.3; }
+.album-meta { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
 
 /* Cross-link to a collaborator artist embedded in an album's project
    string. Underline + accent color so it's obviously tappable but
@@ -4157,23 +4169,23 @@ body.has-mini-player .panel {
   .panel-hero { padding: 40px 20px 60px; }
 }
 
-/* ===== Random-artist pill (under the hero tagline on Main) =====
-   Used to live as a circular button in the top bar; now sits inline
-   under the hero tagline as a small glass pill labelled "Surprise me".
-   Spins briefly on click via the .is-spinning class. */
-.hero-random-btn {
+/* ===== Avatar-stack "+N artists" pill (on each hero panel) =====
+   Three overlapping circular avatars followed by a total/+N counter.
+   Tapping it opens the #artists-overlay scoped to the relevant pool
+   (all artists on Main, the stage's artists on stage heroes). */
+.hero-artists-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin: 4px auto 8px;
-  padding: 8px 18px;
+  gap: 10px;
+  margin: 4px auto 4px;
+  padding: 6px 14px 6px 8px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.2px;
   color: var(--text);
   background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
   cursor: pointer;
   backdrop-filter: blur(8px);
@@ -4181,17 +4193,212 @@ body.has-mini-player .panel {
   transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
 @media (hover: hover) and (pointer: fine) {
-  .hero-random-btn:hover {
-    background: rgba(254, 180, 71, 0.16);
-    border-color: rgba(254, 180, 71, 0.5);
+  .hero-artists-pill:hover {
+    background: rgba(254, 180, 71, 0.14);
+    border-color: rgba(254, 180, 71, 0.45);
   }
 }
-.hero-random-btn:active { transform: scale(0.96); }
-.hero-random-btn.is-spinning { animation: random-spin 0.55s ease-out; }
-@keyframes random-spin {
-  0%   { transform: rotate(0deg)   scale(1); }
-  60%  { transform: rotate(360deg) scale(1.05); }
-  100% { transform: rotate(360deg) scale(1); }
+.hero-artists-pill:active { transform: scale(0.97); }
+
+.hero-artists-stack {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+.hero-artists-stack > .hero-artists-avatar + .hero-artists-avatar {
+  margin-inline-start: -10px;
+}
+.hero-artists-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(20, 10, 50, 0.85);
+  border: 2px solid rgba(10, 5, 36, 0.95);
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent, var(--sun-yellow));
+  z-index: var(--z, 1);
+  position: relative;
+}
+.hero-artists-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.hero-artists-count {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ===== Artist-list overlay =====
+   Same visual language as the favorites overlay (glass panel, big
+   typography, full-screen on mobile). Lists every artist scoped to the
+   hero panel that opened it; tapping a row jumps to that artist's
+   section. Header carries a "Random" button as the primary action. */
+.artists-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(5, 2, 18, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 14px;
+  animation: fade-in 0.18s ease-out both;
+}
+.artists-overlay[hidden] { display: none; }
+
+.artists-panel {
+  width: min(560px, 100%);
+  max-height: min(82vh, 720px);
+  border-radius: 22px;
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.artists-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.artists-title {
+  flex: 1 1 auto;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  color: var(--text);
+  margin: 0;
+}
+.artists-random {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bg-deep);
+  background: linear-gradient(135deg, var(--sun-yellow), var(--sun-pink));
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.artists-random:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) {
+  .artists-random:hover {
+    box-shadow: 0 8px 20px rgba(254, 180, 71, 0.45);
+  }
+}
+.artists-close {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .artists-close:hover {
+    background: rgba(255, 92, 138, 0.18);
+    border-color: rgba(255, 92, 138, 0.5);
+    color: var(--sun-pink);
+  }
+}
+
+.artists-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: grid;
+  gap: 6px;
+  padding: 2px 4px 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+}
+.artists-list::-webkit-scrollbar { width: 6px; }
+.artists-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+}
+
+.artists-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  cursor: pointer;
+  text-align: start;
+  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  width: 100%;
+}
+@media (hover: hover) and (pointer: fine) {
+  .artists-row:hover {
+    background: rgba(254, 180, 71, 0.14);
+    border-color: rgba(254, 180, 71, 0.4);
+  }
+}
+.artists-row:active { transform: scale(0.99); }
+
+.artists-row-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(20, 10, 50, 0.7);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent, var(--sun-yellow));
+}
+.artists-row-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.artists-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.artists-row-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.artists-row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 /* ===== About / Info panel — minimal, no pills ===== */
