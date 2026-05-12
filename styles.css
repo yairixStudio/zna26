@@ -27,6 +27,10 @@ html, body {
   padding: 0;
   background: var(--bg-deep);
   -webkit-text-size-adjust: 100%;
+  /* Stop iOS Safari + Chrome Android from synthesising the 300ms tap
+     delay everywhere — combined with the per-button overrides below this
+     makes every interactive surface feel instant. */
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -35,6 +39,16 @@ body {
   direction: ltr;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+}
+
+/* Cross-browser interactive-surface defaults. Single rule covers every
+   button / link / role=button across the app: skip the tap-highlight
+   flash, and tell the browser this is a tap target (not a double-tap-
+   to-zoom hint), so iOS doesn't sit on the gesture for 300ms before
+   firing the click. */
+button, a, [role="button"], summary, label[for] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 /* Hebrew (and any other strong-direction) text inside an LTR layout reads
@@ -311,10 +325,16 @@ a { color: var(--sun-yellow); }
 }
 
 .hero-dot.active {
+  /* Mirror .dot.active exactly so the orange "you are here" pill looks
+     identical on the hero strip and the artist-card strip. The previous
+     scaleX(2) transform on a 9px circle rendered as a stretched ellipse
+     in Safari (border-radius:50% on the unscaled box scales with the
+     transform), which is why the hero pill looked smeared. Going back
+     to a real width-based pill renders consistently in every browser. */
   background: var(--sun-yellow);
+  width: 18px;
   border-radius: 999px;
   box-shadow: 0 0 10px var(--sun-yellow);
-  transform: scaleX(2) scaleY(1);
 }
 
 body.has-mini-player .hero-dots {
@@ -807,32 +827,16 @@ body.has-mini-player .hero-dots {
     0 0 0 1px color-mix(in oklab, var(--panel-accent) 30%, transparent);
 }
 
-.panel--info .info-section-title,
-.panel--info .info-meta {
+.panel--info .info-section-title {
   color: var(--panel-accent);
   border-color: color-mix(in oklab, var(--panel-accent) 35%, transparent);
 }
-
-.panel--info .info-meta {
-  background: color-mix(in oklab, var(--panel-accent) 12%, transparent);
-}
-
-.panel--info .notable {
-  border-right-color: var(--panel-accent);
-  background: linear-gradient(135deg,
-    color-mix(in oklab, var(--panel-accent) 22%, transparent),
-    color-mix(in oklab, var(--panel-accent-2) 12%, transparent));
+.panel--info .info-meta-row,
+.panel--info .info-meta-text,
+.panel--info .info-rep-text { color: var(--panel-accent); }
+.panel--info .link-text {
   color: var(--panel-accent);
-}
-
-.panel--info .link-btn {
-  color: var(--panel-accent);
-  border-color: color-mix(in oklab, var(--panel-accent) 40%, transparent);
-}
-.panel--info .link-btn:hover {
-  background: var(--panel-accent);
-  color: var(--bg-deep);
-  box-shadow: 0 8px 24px color-mix(in oklab, var(--panel-accent) 40%, transparent);
+  text-decoration-color: color-mix(in oklab, var(--panel-accent) 55%, transparent);
 }
 
 .panel--tracks .track-card.is-zna {
@@ -1066,9 +1070,11 @@ body.has-mini-player .hero-dots {
   100% { transform: scale(1); }
 }
 
-.artist-subscribe:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.75);
+@media (hover: hover) and (pointer: fine) {
+  .artist-subscribe:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.75);
+  }
 }
 
 .artist-subscribe:active {
@@ -1289,16 +1295,34 @@ body.has-mini-player .hero-dots {
   gap: 22px;
 }
 
-.info-meta {
-  font-size: 12px;
+/* Plain-text replacement for the old .info-meta / .info-rep chips. The
+   row holds the two single-line facts (announced / representative) on
+   one flex line — anchored to opposite ends on desktop, stacked on
+   mobile (CSS-driven via flex-wrap). No chip chrome — these are just
+   muted captions so they don't dominate the card. */
+.info-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 18px;
+  font-size: 12.5px;
+  letter-spacing: 0.2px;
   color: var(--sun-yellow);
-  letter-spacing: 0.3px;
-  padding: 8px 14px;
-  background: rgba(254, 180, 71, 0.10);
-  border: 1px solid rgba(254, 180, 71, 0.25);
-  border-radius: 999px;
-  align-self: center;
-  text-align: center;
+  opacity: 0.85;
+  margin: -2px 0 6px;
+}
+.info-meta-text { text-align: start; }
+.info-rep-text  { text-align: end; }
+@media (max-width: 520px) {
+  /* Mobile: stack one above the other, each anchored to the start so
+     they read as a small captions list. */
+  .info-meta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .info-rep-text { text-align: start; }
 }
 
 .info-section { display: flex; flex-direction: column; gap: 10px; }
@@ -1320,16 +1344,51 @@ body.has-mini-player .hero-dots {
   line-height: 1.8;
   color: var(--text);
   margin: 0;
+  /* Cap the bio at ~7 lines and let the rest scroll INSIDE the box, so
+     a long bio doesn't push the streaming row + links off the panel
+     (and doesn't trigger the panel's outer scroll). The internal scroll
+     is silent on desktop and uses iOS momentum on touch. */
+  max-height: calc(1.8em * 7);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
+  -webkit-overflow-scrolling: touch;
+  padding-inline-end: 4px;
+}
+.bio-text::-webkit-scrollbar { width: 4px; }
+.bio-text::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+.bio-text::-webkit-scrollbar-track { background: transparent; }
+
+/* Legacy `.notable` chip used to live inside the bio card. It's been
+   moved to the artist hero (see .hero-notable below). The selector is
+   kept neutral here in case any other surface still emits one. */
+.notable {
+  font-size: 12.5px;
+  color: var(--sun-yellow);
+  opacity: 0.85;
 }
 
-.notable {
-  padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(254, 180, 71, 0.18), rgba(255, 92, 138, 0.1));
-  border-right: 4px solid var(--sun-yellow);
-  border-radius: 12px;
-  color: var(--sun-yellow);
+/* Subtle "notable" pill on the artist hero panel (replaces the big
+   chip that used to live in the bio card). Sits under the
+   artist-meta-line as a small italic note. */
+.hero-notable {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
   font-style: italic;
-  font-size: 13px;
+  letter-spacing: 0.2px;
+  color: color-mix(in oklab, var(--accent, var(--sun-yellow)) 90%, white 10%);
+  background: color-mix(in oklab, var(--accent, var(--sun-yellow)) 14%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent, var(--sun-yellow)) 32%, transparent);
+  border-radius: 999px;
+  align-self: center;
+  max-width: 100%;
 }
 
 /* === Panel 3: Discography === */
@@ -1499,30 +1558,57 @@ a.collab-link:hover {
   box-shadow: 0 6px 20px rgba(255, 0, 0, 0.4);
 }
 
-/* === Panel 5: Links === */
-.links-grid {
+/* === Panel 5: Links =====
+   Plain in-line text links separated by a centered dot. The old
+   pill-button look was visually heavy and ate vertical space; dotted
+   underlines are enough to read as "click me" and keep the bio card
+   compact. */
+.links-inline {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
+  gap: 4px 10px;
+  align-items: baseline;
+  font-size: 13.5px;
+  line-height: 1.6;
 }
-
-.link-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(20, 10, 50, 0.65);
-  border: 1.5px solid var(--card-border);
+.link-text {
   color: var(--neon-cyan);
-  padding: 10px 18px;
-  border-radius: 999px;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 13px;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklab, var(--neon-cyan) 55%, transparent);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .link-text:hover {
+    color: var(--text);
+    text-decoration-color: currentColor;
+  }
+}
+.links-sep {
+  color: var(--text-muted);
+  opacity: 0.55;
+  user-select: none;
 }
 
-.link-btn:active { transform: translateY(1px); }
+/* Backward-compat shim: any leftover `.link-btn` (e.g. from an older
+   bundle in browser cache before this refactor lands) renders as the
+   same plain text link instead of a stray pill. */
+.link-btn {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--neon-cyan);
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
 
 /* ===== Streaming icons row =====
    YouTube / Spotify / SoundCloud / Apple Music. Icon-only buttons; verified
@@ -1549,15 +1635,16 @@ a.collab-link:hover {
   transition: transform 0.15s, background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
-.stream-icon:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+@media (hover: hover) and (pointer: fine) {
+  .stream-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  }
+  .stream-icon--youtube:hover    { background: #FF0000; color: #fff; }
+  .stream-icon--spotify:hover    { background: #1DB954; color: #fff; }
+  .stream-icon--soundcloud:hover { background: #FF5500; color: #fff; }
+  .stream-icon--applemusic:hover { background: linear-gradient(135deg, #FA233B, #FB5C74); color: #fff; }
 }
-
-.stream-icon--youtube:hover    { background: #FF0000; color: #fff; }
-.stream-icon--spotify:hover    { background: #1DB954; color: #fff; }
-.stream-icon--soundcloud:hover { background: #FF5500; color: #fff; }
-.stream-icon--applemusic:hover { background: linear-gradient(135deg, #FA233B, #FB5C74); color: #fff; }
 
 .stream-verified {
   position: absolute;
@@ -1575,20 +1662,19 @@ a.collab-link:hover {
   box-shadow: 0 2px 6px rgba(29, 155, 240, 0.6);
 }
 
-/* Representatives line (label / booking / management). */
+/* Backward-compat shim for the old .info-rep chip (now rendered as
+   plain text via .info-meta-row → .info-rep-text). Strips the chip
+   chrome in case any cached bundle still emits the old class. */
 .info-rep {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  align-self: flex-start;
-  padding: 8px 14px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--panel-accent, var(--sun-yellow));
-  background: color-mix(in oklab, var(--panel-accent, var(--sun-yellow)) 10%, transparent);
-  border: 1px solid color-mix(in oklab, var(--panel-accent, var(--sun-yellow)) 28%, transparent);
-  border-radius: 999px;
-  letter-spacing: 0.2px;
+  display: inline;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sun-yellow);
+  opacity: 0.85;
 }
 
 /* ===== Pager dots (horizontal) ===== */
@@ -1991,15 +2077,16 @@ body.has-mini-player .panel {
   transition: all 0.2s;
 }
 
-.mini-player-btn:hover {
-  background: var(--sun-pink);
-  color: var(--bg-deep);
-  transform: scale(1.05);
-}
-
-#mini-player-close:hover {
-  background: var(--neon-magenta);
-  color: white;
+@media (hover: hover) and (pointer: fine) {
+  .mini-player-btn:hover {
+    background: var(--sun-pink);
+    color: var(--bg-deep);
+    transform: scale(1.05);
+  }
+  #mini-player-close:hover {
+    background: var(--neon-magenta);
+    color: white;
+  }
 }
 
 /* Expanded view: large 16:9 player on top, info below, controls at the
@@ -2159,11 +2246,13 @@ body.has-mini-player .panel {
   transition: transform 0.15s, box-shadow 0.2s;
 }
 
-.round-btn:hover {
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 0 24px rgba(254, 180, 71, 0.35);
+@media (hover: hover) and (pointer: fine) {
+  .round-btn:hover {
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      0 0 24px rgba(254, 180, 71, 0.35);
+  }
 }
 
 /* Top-bar favorites pill — heart icon + counter badge. Hidden by default
@@ -2344,8 +2433,10 @@ body.has-mini-player .panel {
   transition: background 0.15s;
 }
 
-.stage-select-menu button:hover {
-  background: rgba(255, 255, 255, 0.08);
+@media (hover: hover) and (pointer: fine) {
+  .stage-select-menu button:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
 
 .stage-select-menu button.active {
@@ -2381,9 +2472,11 @@ body.has-mini-player .panel {
   transition: background 0.15s, border-color 0.15s, transform 0.15s;
 }
 
-.stage-select-menu .lang-cell:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+@media (hover: hover) and (pointer: fine) {
+  .stage-select-menu .lang-cell:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
 }
 
 .stage-select-menu .lang-cell.active {
@@ -2494,9 +2587,11 @@ body.has-mini-player .panel {
   text-align: left;
 }
 
-.search-result:hover {
-  background: rgba(254, 180, 71, 0.15);
-  border-color: rgba(254, 180, 71, 0.4);
+@media (hover: hover) and (pointer: fine) {
+  .search-result:hover {
+    background: rgba(254, 180, 71, 0.15);
+    border-color: rgba(254, 180, 71, 0.4);
+  }
 }
 
 .search-result-name { font-weight: 700; color: var(--text); font-size: 14px; text-align: left; }
@@ -2556,10 +2651,12 @@ body.has-mini-player .panel {
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
-.favorites-close:hover {
-  background: rgba(255, 92, 138, 0.18);
-  border-color: rgba(255, 92, 138, 0.5);
-  color: #ff5c8a;
+@media (hover: hover) and (pointer: fine) {
+  .favorites-close:hover {
+    background: rgba(255, 92, 138, 0.18);
+    border-color: rgba(255, 92, 138, 0.5);
+    color: #ff5c8a;
+  }
 }
 
 .favorites-list {
@@ -2585,9 +2682,11 @@ body.has-mini-player .panel {
   overflow: hidden;
   transition: background 0.15s, border-color 0.15s;
 }
-.favorites-row:hover {
-  background: rgba(255, 92, 138, 0.14);
-  border-color: rgba(255, 92, 138, 0.4);
+@media (hover: hover) and (pointer: fine) {
+  .favorites-row:hover {
+    background: rgba(255, 92, 138, 0.14);
+    border-color: rgba(255, 92, 138, 0.4);
+  }
 }
 
 .favorites-row-main {
@@ -2633,9 +2732,11 @@ body.has-mini-player .panel {
   cursor: pointer;
   transition: background 0.15s, color 0.15s, transform 0.15s;
 }
-.favorites-row-remove:hover {
-  background: rgba(255, 92, 138, 0.18);
-  color: #ff5c8a;
+@media (hover: hover) and (pointer: fine) {
+  .favorites-row-remove:hover {
+    background: rgba(255, 92, 138, 0.18);
+    color: #ff5c8a;
+  }
 }
 .favorites-row-remove:active { transform: scale(0.92); }
 .favorites-empty {
@@ -2707,9 +2808,11 @@ body.has-mini-player .panel {
   color: var(--sun-yellow);
 }
 
-.favorites-notify-channel.is-browser:hover {
-  background: linear-gradient(135deg, rgba(254, 180, 71, 0.3), rgba(255, 92, 138, 0.25));
-  border-color: rgba(254, 180, 71, 0.85);
+@media (hover: hover) and (pointer: fine) {
+  .favorites-notify-channel.is-browser:hover {
+    background: linear-gradient(135deg, rgba(254, 180, 71, 0.3), rgba(255, 92, 138, 0.25));
+    border-color: rgba(254, 180, 71, 0.85);
+  }
 }
 
 .favorites-notify-channel.is-on {
@@ -2732,10 +2835,12 @@ body.has-mini-player .panel {
   color: #5ec3ee;
 }
 
-.favorites-notify-channel.is-telegram:hover {
-  background: linear-gradient(135deg, rgba(56, 175, 226, 0.3), rgba(0, 153, 255, 0.25));
-  border-color: rgba(56, 175, 226, 0.85);
-  color: #38afe2;
+@media (hover: hover) and (pointer: fine) {
+  .favorites-notify-channel.is-telegram:hover {
+    background: linear-gradient(135deg, rgba(56, 175, 226, 0.3), rgba(0, 153, 255, 0.25));
+    border-color: rgba(56, 175, 226, 0.85);
+    color: #38afe2;
+  }
 }
 
 .favorites-notify-channel-icon {
@@ -2828,9 +2933,11 @@ body.has-mini-player .panel {
   transition: background 0.18s, border-color 0.18s, transform 0.15s, box-shadow 0.2s;
 }
 
-.welcome-lang:hover {
-  background: rgba(254, 180, 71, 0.10);
-  border-color: rgba(254, 180, 71, 0.45);
+@media (hover: hover) and (pointer: fine) {
+  .welcome-lang:hover {
+    background: rgba(254, 180, 71, 0.10);
+    border-color: rgba(254, 180, 71, 0.45);
+  }
 }
 
 .welcome-lang:active {
@@ -3549,11 +3656,13 @@ body.has-mini-player .panel {
   transition: transform 0.15s, box-shadow 0.2s;
 }
 
-.hero-action:hover {
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    0 0 18px rgba(254, 180, 71, 0.3);
+@media (hover: hover) and (pointer: fine) {
+  .hero-action:hover {
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      0 0 18px rgba(254, 180, 71, 0.3);
+  }
 }
 
 .hero-action:active {
@@ -3693,9 +3802,11 @@ body.has-mini-player .panel {
   transition: background 0.15s, border-color 0.15s, transform 0.15s;
 }
 
-.nav-sheet-action:hover {
-  background: rgba(254, 180, 71, 0.15);
-  border-color: rgba(254, 180, 71, 0.4);
+@media (hover: hover) and (pointer: fine) {
+  .nav-sheet-action:hover {
+    background: rgba(254, 180, 71, 0.15);
+    border-color: rgba(254, 180, 71, 0.4);
+  }
 }
 
 .nav-sheet-action:active { transform: scale(0.98); }
@@ -3823,9 +3934,11 @@ body.has-mini-player .panel {
   cursor: pointer;
   transition: background 0.15s, color 0.15s, transform 0.15s;
 }
-.map-control:hover {
-  background: rgba(254, 180, 71, 0.18);
-  color: var(--sun-yellow);
+@media (hover: hover) and (pointer: fine) {
+  .map-control:hover {
+    background: rgba(254, 180, 71, 0.18);
+    color: var(--sun-yellow);
+  }
 }
 .map-control:active { transform: scale(0.93); }
 .map-control:disabled {

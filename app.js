@@ -1383,6 +1383,7 @@ function panelHero(a) {
               ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
               <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
             </div>
+            ${tArtist(a, "notable") ? `<div class="hero-notable">★ ${escapeHtml(tArtist(a, "notable"))}</div>` : ""}
           </div>
           ${artistSetTimeBadge(a)}
           ${favoriteButton(a.id)}
@@ -1543,31 +1544,44 @@ function panelInfo(a) {
     </div>
   `;
   // Other links (Discogs / Bandcamp / Resident Advisor / Website / Wikipedia / etc).
+  // Rendered as plain dotted-underline text links — no buttons, no chrome —
+  // separated by a soft middle dot. Inline with the section title.
   const linksHtml = links.length
     ? `
-      <div class="info-section">
+      <div class="info-section info-links-section">
         <h3 class="info-section-title">${escapeHtml(t("panel.moreLinks"))}</h3>
-        <div class="links-grid">
-          ${links.map(l => `<a class="link-btn" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)} ↗</a>`).join("")}
+        <div class="links-inline">
+          ${links.map(l => `<a class="link-text" href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.type)}</a>`).join('<span class="links-sep" aria-hidden="true">·</span>')}
         </div>
       </div>
     `
     : "";
-  // Representatives — label / management / agency.
-  const repHtml = a.representedBy
-    ? `<div class="info-rep">🎧 ${escapeHtml(a.representedBy)}</div>`
+  // Announced + representative — plain text on a single flex row. Side by
+  // side on desktop (one anchored to each end of the row), stacked on
+  // mobile. Old chip styling (`.info-meta` / `.info-rep` boxes) is gone —
+  // these are now just lightweight one-liners that don't dominate the card.
+  const repText = a.representedBy ? `🎧 ${escapeHtml(a.representedBy)}` : "";
+  const announcedText = a.announcedAt
+    ? `${escapeHtml(t("announced.prefix"))}${escapeHtml(formatAnnouncedDate(a.announcedAt))}`
     : "";
-  const announcedHtml = a.announcedAt
-    ? `<div class="info-meta">${escapeHtml(t("announced.prefix"))}${escapeHtml(formatAnnouncedDate(a.announcedAt))}</div>`
+  const metaRowHtml = (announcedText || repText)
+    ? `
+      <div class="info-meta-row">
+        ${announcedText ? `<span class="info-meta-text">${announcedText}</span>` : ""}
+        ${repText ? `<span class="info-rep-text">${repText}</span>` : ""}
+      </div>
+    `
     : "";
   const bioText = tArtist(a, "bio");
-  const notableText = tArtist(a, "notable");
+  // The "notable" badge moved to the artist hero panel (see panelHero) so
+  // it sits as a subtle pill under the name there. Only the bio text
+  // itself stays here; long bios scroll INSIDE the bio-text box rather
+  // than expanding the card vertically (cap ~7 lines).
   const bioHtml = bioText
     ? `
       <div class="info-section">
         <h3 class="info-section-title">${escapeHtml(t("panel.bio"))}</h3>
         <p class="bio-text">${escapeHtml(bioText)}</p>
-        ${notableText ? `<div class="notable">★ ${escapeHtml(notableText)}</div>` : ""}
       </div>
     `
     : "";
@@ -1579,8 +1593,7 @@ function panelInfo(a) {
           <span class="eyebrow-section">${escapeHtml(t("panel.about"))}</span>
         </div>
         <div class="bio-card">
-          ${announcedHtml}
-          ${repHtml}
+          ${metaRowHtml}
           ${bioHtml}
           ${streamingHtml}
           ${linksHtml}
