@@ -1326,8 +1326,8 @@ function heroLogoScene() {
         alt: "ZNA 26",
         loading: "eager",
         fetchpriority: "high",
-        width: 1128,
-        height: 370
+        width: 1325,
+        height: 410
       })}
       ${pictureTagStatic("images/zna-3d/generated-logo/community-word", {
         className: "hero-logo-community",
