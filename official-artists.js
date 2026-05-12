@@ -3266,9 +3266,22 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
 
   ARTISTS = OFFICIAL_ZNA_2026_ARTISTS.map(official => {
     const curated = existingById.get(official.curatedFrom || official.id) || existingById.get(official.id) || {};
+    // Stash the curated Hebrew bio/notable BEFORE the spread overwrites
+    // them with the English scrape from the official program page.
+    // The translations merge in app.js reads these into
+    // translations.he so Hebrew users still see the original Hebrew
+    // copy instead of falling through to the English source field.
+    const bio_he = curated.bio || "";
+    const notable_he = curated.notable || "";
+    const country_he = curated.country || "";
+    const born_he = curated.born || "";
     return {
       ...curated,
       ...official,
+      bio_he,
+      notable_he,
+      country_he,
+      born_he,
       realName: official.realName || curated.realName || '',
       age: curated.age || official.age || null,
       born: curated.born || official.born || '',

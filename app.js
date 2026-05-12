@@ -247,17 +247,14 @@ function t(key, vars) {
 function tArtist(a, field) {
   const tr = a.translations || {};
   // Explicit translation in the user's language always wins when present.
+  // For Hebrew, tr.he was populated from the curated source (or the
+  // *_he stash captured before official-artists.js's English scrape
+  // overwrote the main field) — so the user sees the original Hebrew
+  // copy and never falls through to the scraped English `a.bio`.
   const own = tr[currentLang]?.[field];
   if (own) return own;
-  // Hebrew is the source-of-truth language: the raw `a[field]` was
-  // originally written in Hebrew, so for Hebrew users we prefer it over
-  // foreign-language translations. Without this fall-back order, an
-  // artist whose translations table has only { en, pt } (the common
-  // case after the bulk translate pass) was leaking EN text to Hebrew
-  // users because tr.en?.[field] resolved before a[field].
-  if (currentLang === "he" && a[field]) return a[field];
-  // EN / PT users: try the other foreign translation, then the raw
-  // Hebrew (better than nothing) as a last resort.
+  // Fall back order: the OTHER foreign translation, then the raw
+  // `a[field]` (whatever's there) so we never render an empty card.
   return tr.en?.[field] || tr.pt?.[field] || a[field] || "";
 }
 
@@ -845,16 +842,26 @@ if (typeof ARTIST_EXTRAS !== "undefined") {
 }
 
 // Merge per-artist translations (en/pt for bio, notable, country, born) onto
-// each artist record. The HE values stay where they are; tArtist() reads
+// each artist record. The HE values come from the curated Hebrew copy that
+// official-artists.js stashed in `*_he` fields BEFORE the English scrape
+// from the official program page overwrote the main `bio`/`notable` —
+// without this, Hebrew users were getting the English scraped bio because
+// a.bio had already been replaced by the time we got here. tArtist() reads
 // from a.translations[currentLang] first, falls back to en, then he.
 if (typeof ARTIST_TRANSLATIONS !== "undefined") {
   ARTISTS.forEach(a => {
     const tr = ARTIST_TRANSLATIONS[a.id];
-    if (!tr) return;
     a.translations = a.translations || {};
+    // Always build a Hebrew block — even when there's no entry in
+    // ARTIST_TRANSLATIONS for this artist — so the curated Hebrew bio
+    // survives the official-artists English overwrite.
     a.translations.he = a.translations.he || {
-      bio: a.bio, notable: a.notable, country: a.country, born: a.born
+      bio: a.bio_he || a.bio,
+      notable: a.notable_he || a.notable,
+      country: a.country_he || a.country,
+      born: a.born_he || a.born
     };
+    if (!tr) return;
     if (tr.en) a.translations.en = tr.en;
     if (tr.pt) a.translations.pt = tr.pt;
   });
