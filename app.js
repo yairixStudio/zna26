@@ -1160,7 +1160,6 @@ function liveStatusCard(stageId = "all") {
   return `
     <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
       ${buildCountdownTimer(startsAt, "hero")}
-      <strong class="live-status-title">${escapeHtml(t("live.notStarted"))}</strong>
       <div class="live-now-track"><span class="live-now-dot"></span></div>
     </div>
   `;
@@ -1276,11 +1275,6 @@ function heroPanelMain() {
       ${heroArtistsPill("all")}
       <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
       ${liveStatusCard("all")}
-      <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
-        <a class="hero-icon-action" id="hero-yt-btn" href="https://youtube.com/playlist?list=PLueV5lFNV9_R1F0dNCtgNSbT2zvdFwGQf&amp;si=4kMxSvtOHUMI40hZ" target="_blank" rel="noopener" title="${escapeHtml(t("nav.ytPlaylist"))}" aria-label="${escapeHtml(t("nav.ytPlaylist"))}">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5z" fill="currentColor" stroke="none"/></svg>
-        </a>
-      </div>
       <p class="hero-disclaimer">${t("hero.disclaimer")}</p>
     </div>
   `;
