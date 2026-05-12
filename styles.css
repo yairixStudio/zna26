@@ -248,7 +248,7 @@ a { color: var(--sun-yellow); }
 
 .hero-dots {
   position: absolute;
-  bottom: 22px;
+  bottom: 90px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -341,6 +341,32 @@ body.has-mini-player .hero-dots {
   letter-spacing: 1px;
   opacity: 0.8;
   animation: hint-bounce 2.4s ease-in-out infinite;
+}
+
+/* Section-level dive-hint that lives BELOW the hero-dots strip, pinned
+   to the bottom of the multi-hero section with generous breathing room
+   between the dots and this text. Same arrow-bob animation, but always
+   centered below the dots regardless of which hero panel is active. */
+.section--multi-hero > .hero-hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: max(16px, env(safe-area-inset-bottom, 0));
+  margin-top: 0;
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  pointer-events: none;
+  animation: hint-bounce 2.4s ease-in-out infinite;
+}
+.section--multi-hero > .hero-hint .hero-hint-arrow {
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.9;
+  animation: hero-hint-arrow-bob 1.6s ease-in-out infinite;
 }
 
 @keyframes hint-bounce {
@@ -3351,25 +3377,25 @@ body.has-mini-player .panel {
   font-style: italic;
 }
 
-/* Compact live status / countdown card with Apple-Calendar-style "now" line. */
+/* Compact live status / countdown stack. The chrome (background, border,
+   blur, padding) is gone — the timer + title + progress dot now sit
+   directly on the hero gradient with no pill behind them, per the
+   "no container" brief. Markup order also flips so the countdown
+   reads first, the "event hasn't started" caption sits below it, and
+   the progress dot line lives at the bottom of the stack. */
 .hero-panel .live-status {
   width: min(340px, calc(100% - 36px));
-  /* border-box so the padding doesn't push our 340px-wide pill past
-     the visual width — fixes the countdown digits and progress bar
-     spilling outside the pill on phones. overflow:hidden caps any
-     stray child (e.g. the absolute-positioned live-now-dot) at the
-     pill's rounded edge. */
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
   display: grid;
-  gap: 4px;
-  padding: 10px 16px 12px;
-  margin: 4px auto 6px;
-  background: rgba(10, 5, 36, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 14px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  gap: 8px;
+  padding: 0;
+  margin: 6px auto 6px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   color: var(--text);
   text-align: center !important;
   box-shadow: none;
@@ -3757,6 +3783,17 @@ body.has-mini-player .panel {
   transition: filter 0.18s ease;
 }
 
+/* Top-anchored variant — sits ABOVE the stage name on the stage hero
+   panels. The flex parent (.hero-panel) is column-centered, so a tiny
+   negative-leaning margin nudges it up close to the stage artwork
+   without floating loose. */
+.hero-icon-action--top {
+  margin: 0 auto 6px;
+  width: 44px;
+  height: 44px;
+}
+.hero-icon-action--top svg { width: 28px; height: 28px; }
+
 /* "Official site" link is now rendered INLINE inside the disclaimer
    paragraph (see STRINGS["hero.disclaimer"]). Keeps the disclaimer to
    one short line — no separate floating link below. */
@@ -4034,7 +4071,8 @@ body.has-mini-player .panel {
   }
   .hero-hint { font-size: 10px; margin-top: 6px; }
   .hero-stage-tag { font-size: 10px; letter-spacing: 4px; margin-bottom: 6px; }
-  .hero-dots { bottom: 10px; padding: 14px 18px; }
+  .hero-dots { bottom: 64px; padding: 14px 18px; }
+  .section--multi-hero > .hero-hint { bottom: max(10px, env(safe-area-inset-bottom, 0)); font-size: 11px; }
   .hero-dots.is-armed { padding: 8px 12px; }
   .hero-stage-element { display: none; } /* save the GPU + room */
 

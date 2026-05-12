@@ -191,7 +191,7 @@ const STRINGS = {
 
   // ZNA festival meta (kept consistent across languages where natural)
   "festival.dates":    { he: "15-22 ביולי 2026", en: "15-22 July 2026", pt: "15-22 julho 2026" },
-  "festival.location": { he: "ים מונטרגיל, פורטוגל", en: "Lake Montargil, Portugal", pt: "Lago de Montargil, Portugal" },
+  "festival.location": { he: "אגם מונטרגיל, פורטוגל", en: "Lake Montargil, Portugal", pt: "Lago de Montargil, Portugal" },
   "festival.description": {
     he: "המקדש העולמי של גואה טראנס בסגנון הישן. פסטיבל דו-שנתי עם כ-5,000 משתתפים בלבד שחוגג את רוח אנג'ונה של שנות ה-90.",
     en: "The world headquarters of old-school Goa Trance. A biennial gathering of just 5,000 attendees celebrating the spirit of '90s Anjuna.",
@@ -1155,9 +1155,9 @@ function liveStatusCard(stageId = "all") {
 
   return `
     <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
-      <div class="live-now-track"><span class="live-now-dot"></span></div>
-      <strong class="live-status-title">${escapeHtml(t("live.notStarted"))}</strong>
       ${buildCountdownTimer(startsAt, "hero")}
+      <strong class="live-status-title">${escapeHtml(t("live.notStarted"))}</strong>
+      <div class="live-now-track"><span class="live-now-dot"></span></div>
     </div>
   `;
 }
@@ -1299,16 +1299,13 @@ function heroPanelStage(stage) {
   return `
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementMarkup}
+      <button class="hero-icon-action hero-icon-action--top" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="15,9 11,11 9,15 13,13" fill="currentColor" stroke="none"/></svg>
+      </button>
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
       <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
-      <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
-        <button class="hero-icon-action" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>
-        </button>
-      </div>
-      <div class="hero-hint"><span>${escapeHtml(t("hero.diveStage").replace(/^[↓\s]+/, ""))}</span><span class="hero-hint-arrow">↓</span></div>
     </div>
   `;
 }
@@ -1420,6 +1417,7 @@ function multiHeroSection() {
     <section class="section section--multi-hero" data-section="hero" data-stage="${escapeHtml(activeStage)}">
       <div class="hero-pager" id="hero-pager">${panels}</div>
       <div class="hero-dots" id="hero-dots">${dots}</div>
+      <div class="hero-hint" id="hero-hint"><span>${escapeHtml(t("hero.diveStage").replace(/^[↓\s]+/, ""))}</span><span class="hero-hint-arrow">↓</span></div>
     </section>
   `;
 }
