@@ -1409,7 +1409,6 @@ function panelHero(a) {
               ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
               <span class="meta-item">${escapeHtml(a.role)}</span>
             </div>
-            ${tArtist(a, "notable") ? `<div class="hero-notable">★ ${escapeHtml(tArtist(a, "notable"))}</div>` : ""}
           </div>
           ${artistSetTimeBadge(a)}
           ${favoriteButton(a.id)}
@@ -1599,14 +1598,15 @@ function panelInfo(a) {
     `
     : "";
   const bioText = tArtist(a, "bio");
-  // The "notable" badge moved to the artist hero panel (see panelHero) so
-  // it sits as a subtle pill under the name there. Only the bio text
-  // itself stays here; long bios scroll INSIDE the bio-text box rather
-  // than expanding the card vertically (cap ~7 lines).
+  const notableText = tArtist(a, "notable");
+  // "Notable" sits as a small bold lede ABOVE the bio paragraph — not a
+  // chip, just a one-line summary so the user sees the headline-fact for
+  // this artist before reading the full bio.
   const bioHtml = bioText
     ? `
       <div class="info-section">
         <h3 class="info-section-title">${escapeHtml(t("panel.bio"))}</h3>
+        ${notableText ? `<p class="bio-notable-lede">★ ${escapeHtml(notableText)}</p>` : ""}
         <p class="bio-text">${escapeHtml(bioText)}</p>
       </div>
     `
@@ -1738,8 +1738,9 @@ function panelTracks(a) {
     if (!!x.zna !== !!y.zna) return x.zna ? -1 : 1;
     return (y.year || 0) - (x.year || 0);
   });
-  const cards = sortedTracks.map((t, i) => {
-    const vid = escapeHtml(t.id);
+  const playLabel = t("tracks.play");
+  const cards = sortedTracks.map((track, i) => {
+    const vid = escapeHtml(track.id);
     // Defer the i.ytimg.com fetch until the artist section enters
     // viewport proximity. The site has 89 artists × ~5 tracks each, so
     // an eager <img> fires hundreds of requests at once on first paint
@@ -1747,8 +1748,8 @@ function panelTracks(a) {
     // missing for a long while. upgradeYTThumbs() (below) swaps
     // data-yt-thumb → src as each section gets close to view.
     return `
-    <div class="track-card ${t.zna ? "is-zna" : ""}">
-      <button class="track-thumb" data-vid="${vid}" data-title="${escapeHtml(t.title)}" data-artist="${escapeHtml(a.name)}" aria-label="נגן ${escapeHtml(t.title)}">
+    <div class="track-card ${track.zna ? "is-zna" : ""}">
+      <button class="track-thumb" data-vid="${vid}" data-title="${escapeHtml(track.title)}" data-artist="${escapeHtml(a.name)}" aria-label="${escapeHtml(playLabel)} ${escapeHtml(track.title)}">
         <img class="track-thumb-img" loading="lazy" decoding="async" fetchpriority="low" alt=""
              data-yt-thumb="${vid}"
              onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='https://i.ytimg.com/vi/${vid}/default.jpg';}else{this.style.display='none';}" />
@@ -1757,8 +1758,8 @@ function panelTracks(a) {
         </span>
       </button>
       <div class="track-meta">
-        <span class="track-title">${escapeHtml(t.title)}</span>
-        <span class="track-year">${escapeHtml(String(t.year || ""))}</span>
+        <span class="track-title">${escapeHtml(track.title)}</span>
+        <span class="track-year">${escapeHtml(String(track.year || ""))}</span>
       </div>
     </div>
   `;
@@ -1791,7 +1792,8 @@ function artistSection(a, idx, isFirstOfStage = false) {
   const cloneStart = injectPanelAttrs(real[realCount - 1], `data-real-idx="${realCount - 1}" data-clone="start" aria-hidden="true"`);
   const cloneEnd = injectPanelAttrs(real[0], `data-real-idx="0" data-clone="end" aria-hidden="true"`);
   const allPanels = [cloneStart, ...realTagged, cloneEnd].join("");
-  const dots = real.map((_, i) => `<button class="dot ${i === 0 ? "active" : ""}" data-panel="${i}" aria-label="פאנל ${i + 1}"></button>`).join("");
+  const panelAriaLabel = t("panel.ariaPanelN");
+  const dots = real.map((_, i) => `<button class="dot ${i === 0 ? "active" : ""}" data-panel="${i}" aria-label="${escapeHtml(panelAriaLabel)} ${i + 1}"></button>`).join("");
   const cls = `section artist-section${isFirstOfStage ? " is-first-of-stage" : ""}`;
   return `
     <section class="${cls}"
@@ -2417,7 +2419,7 @@ function buildVerticalProgress() {
   const items = Array.from(sections).map((s, i) => {
     let label;
     if (s.dataset.section === "hero") {
-      label = "ראשי";
+      label = t("nav.backHome");
     } else {
       const id = s.dataset.artistId;
       const artist = id ? ARTISTS.find(a => a.id === id) : null;

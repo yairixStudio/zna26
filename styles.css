@@ -1395,23 +1395,25 @@ body.has-mini-player .hero-dots {
   opacity: 0.85;
 }
 
-/* Subtle "notable" pill on the artist hero panel (replaces the big
-   chip that used to live in the bio card). Sits under the
-   artist-meta-line as a small italic note. */
-.hero-notable {
-  display: inline-block;
-  margin-top: 6px;
-  padding: 3px 10px;
-  font-size: 11px;
-  font-weight: 600;
-  font-style: italic;
+/* "Notable" sits as a small bold lede ABOVE the bio paragraph in the
+   info panel — no chip / pill chrome, just a tiny accent-coloured
+   one-liner so the reader sees the headline-fact about the artist
+   before the full bio. (Used to live as a pill on the artist hero
+   panel and as a big chip inside the bio card; both retired.) */
+.bio-notable-lede {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 700;
   letter-spacing: 0.2px;
-  color: color-mix(in oklab, var(--accent, var(--sun-yellow)) 90%, white 10%);
-  background: color-mix(in oklab, var(--accent, var(--sun-yellow)) 14%, transparent);
-  border: 1px solid color-mix(in oklab, var(--accent, var(--sun-yellow)) 32%, transparent);
-  border-radius: 999px;
-  align-self: center;
-  max-width: 100%;
+  line-height: 1.4;
+  color: var(--accent, var(--sun-yellow));
+  opacity: 0.95;
+}
+
+/* Backward-compat shim — strips the old hero-notable pill in case a
+   cached bundle still emits it. */
+.hero-notable {
+  display: none;
 }
 
 /* === Panel 3: Discography === */
