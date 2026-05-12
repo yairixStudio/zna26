@@ -1302,9 +1302,49 @@ const HERO_STAGE_ELEMENTS = {
   market:    "images/zna-3d/custom-market-shrine-element"
 };
 
+const HERO_LOGO_ASSETS = [
+  { key: "ufo-top-left", base: "images/zna-3d/generated-logo/ufo-dome-left", width: 310, height: 251 },
+  { key: "ufo-top-right", base: "images/zna-3d/generated-logo/ufo-orb-right", width: 339, height: 261 },
+  { key: "ufo-bottom-left", base: "images/zna-3d/generated-logo/ufo-wide-left", width: 367, height: 247 },
+  { key: "ufo-bottom-right", base: "images/zna-3d/generated-logo/ufo-wide-right", width: 387, height: 226 },
+  { key: "orb-center", base: "images/zna-3d/generated-logo/orb-center", width: 154, height: 138 },
+];
+
+function heroLogoScene() {
+  const decorations = HERO_LOGO_ASSETS.map(asset => pictureTagStatic(asset.base, {
+    className: `hero-logo-decor hero-logo-decor--${asset.key}`,
+    alt: "",
+    width: asset.width,
+    height: asset.height
+  })).join("");
+
+  return `
+    <div class="hero-logo-scene" aria-label="ZNA 26">
+      ${decorations}
+      ${pictureTagStatic("images/zna-3d/generated-logo/zna26-logo", {
+        className: "hero-logo-main",
+        alt: "ZNA 26",
+        loading: "eager",
+        fetchpriority: "high",
+        width: 1128,
+        height: 370
+      })}
+      ${pictureTagStatic("images/zna-3d/generated-logo/community-word", {
+        className: "hero-logo-community",
+        alt: "community",
+        loading: "eager",
+        fetchpriority: "high",
+        width: 729,
+        height: 237
+      })}
+    </div>
+  `;
+}
+
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
+      ${heroLogoScene()}
       <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
       <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
       <div class="hero-stats-group">

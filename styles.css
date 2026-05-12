@@ -392,18 +392,46 @@ body.has-mini-player .hero-dots {
   --hero-text-3: var(--neon-purple);
 }
 
-/* Decorative ZNA "gathering" 3D wordmark on the Main hero only */
-.hero-zna-mark {
+.hero-logo-scene {
+  position: relative;
+  width: min(92vw, 680px);
+  aspect-ratio: 1536 / 980;
+  margin: 8px auto 4px;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.hero-logo-main,
+.hero-logo-community,
+.hero-logo-decor {
+  position: absolute;
   display: block;
-  width: clamp(280px, 84vw, 520px);
-  height: auto;
-  margin: 0 auto 10px;
-  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.55));
-  animation: zna-mark-float 6s ease-in-out infinite;
   user-select: none;
   -webkit-user-drag: none;
 }
-.hero-zna-mark > img {
+
+.hero-logo-main {
+  left: 13%;
+  top: 28%;
+  width: 74%;
+  z-index: 2;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.55));
+  animation: zna-float-main 7.2s ease-in-out infinite;
+}
+
+.hero-logo-community {
+  left: 27%;
+  top: 63%;
+  width: 46%;
+  z-index: 3;
+  filter: drop-shadow(0 9px 18px rgba(0, 0, 0, 0.48));
+  animation: zna-float-community 6.6s ease-in-out infinite;
+  animation-delay: -1.7s;
+}
+
+.hero-logo-main > img,
+.hero-logo-community > img,
+.hero-logo-decor > img {
   display: block;
   width: 100%;
   height: auto;
@@ -412,9 +440,67 @@ body.has-mini-player .hero-dots {
   -webkit-user-drag: none;
 }
 
-@keyframes zna-mark-float {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-4px); }
+.hero-logo-decor {
+  z-index: 1;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.42));
+  opacity: 0.96;
+  animation: zna-float-decor var(--float-duration, 6.8s) ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+.hero-logo-decor--ufo-top-left {
+  left: 4%;
+  top: 8%;
+  width: 21%;
+  --float-duration: 7.8s;
+  --float-delay: -1.4s;
+}
+
+.hero-logo-decor--ufo-top-right {
+  right: 5%;
+  top: 9%;
+  width: 21%;
+  --float-duration: 8s;
+  --float-delay: -1s;
+}
+
+.hero-logo-decor--ufo-bottom-left {
+  left: 3%;
+  bottom: 7%;
+  width: 24%;
+  --float-duration: 8.4s;
+  --float-delay: -3s;
+}
+
+.hero-logo-decor--ufo-bottom-right {
+  right: 2%;
+  bottom: 9%;
+  width: 25%;
+  --float-duration: 7.6s;
+  --float-delay: -2.7s;
+}
+
+.hero-logo-decor--orb-center {
+  left: 45%;
+  bottom: 0;
+  width: 10%;
+  --float-duration: 6.9s;
+  --float-delay: -3.5s;
+}
+
+@keyframes zna-float-main {
+  0%, 100% { transform: translateY(0) rotate(-0.25deg); }
+  50%      { transform: translateY(-5px) rotate(0.2deg); }
+}
+
+@keyframes zna-float-community {
+  0%, 100% { transform: translateY(0) rotate(0.2deg); }
+  50%      { transform: translateY(4px) rotate(-0.15deg); }
+}
+
+@keyframes zna-float-decor {
+  0%, 100% { transform: translateY(0) rotate(var(--float-rotate, 0deg)); }
+  50%      { transform: translateY(-8px) rotate(calc(var(--float-rotate, 0deg) * -1)); }
 }
 
 /* Per-stage hero color identity */
@@ -2417,12 +2503,9 @@ body.has-mini-player .panel {
   filter: none; /* the parent already drop-shadows */
 }
 
-/* ===== Top-bar logo (replaces the old ZNA round-btn) =====
-   Uses the same 3D community-zna-logo image as the hero used to. In
-   the header it's small (~ 40px tall) and tucked into the centre slot.
-   When the user is on the Main hero panel (body.is-on-hero) we morph
-   it bigger and nudge it down a touch so it reads as the hero brand
-   mark, not a top-bar logo. Smooth transition between the two states. */
+/* ===== Top-bar logo =====
+   Clean ZNA26 mark for navigation. The full animated composition now
+   lives inside the Main hero instead of being stretched from the header. */
 .top-bar-logo {
   display: inline-flex;
   align-items: center;
@@ -2452,30 +2535,22 @@ body.has-mini-player .panel {
   }
 }
 
-/* Hero state: bigger logo + slight downward shift so it overlaps the
-   top of the Main hero panel rather than living inside the top bar. */
-/* On any hero panel (Main / Retro / Zambu / Guardians / Market) push
-   the logo a bit below the top bar so it reads as part of the hero
-   composition rather than top-bar chrome. */
 body.is-on-hero .top-bar-logo {
-  transform: translateY(40px);
+  transform: none;
 }
 body.is-on-hero .top-bar-logo-img {
-  height: 80px;
+  height: 38px;
 }
-/* Main hero panel only — the "landing" — gets the full-size logo. */
 body.is-on-main-hero .top-bar-logo {
-  transform: translateY(70px);
+  transform: none;
 }
 body.is-on-main-hero .top-bar-logo-img {
-  height: 170px;
+  height: 38px;
 }
 
-/* On smaller phones the "hero state" growth would otherwise crowd the
-   hero tagline — keep it readable but still clearly larger. */
 @media (max-width: 480px) {
-  body.is-on-hero .top-bar-logo-img { height: 130px; }
-  body.is-on-hero .top-bar-logo { transform: translateY(54px); }
+  body.is-on-hero .top-bar-logo-img,
+  body.is-on-main-hero .top-bar-logo-img { height: 32px; }
   .top-bar-logo-img { height: 32px; }
 }
 

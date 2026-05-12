@@ -45,7 +45,10 @@ const WEBP_OPTS_TRANS = { quality: 65, effort: 6, alphaQuality: 80 };
 
 async function listJpgs(dir) {
   const all = await fs.readdir(dir);
-  return all.filter(f => /\.(jpe?g)$/i.test(f)).sort();
+  return all
+    .filter(f => /\.(jpe?g)$/i.test(f))
+    .filter(f => !/@320(?:@320)*\.jpe?g$/i.test(f))
+    .sort();
 }
 
 async function isStale(srcPath, outPath) {
