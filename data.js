@@ -2866,5 +2866,551 @@ const ARTIST_TRANSLATIONS = {
       "country": "🇩🇰 Dinamarca",
       "born": "ativo na cena"
     }
+  },
+  "doof": {
+    "en": {
+      "bio": "Nick Barber, a London-based British producer and guitarist. His debut album 'Let's Turn On' (TIP Records, 1996) is considered a foundational Goa Trance classic. He worked closely with Simon Posford (Hallucinogen) on tracks like Born Again and Angelic Particles.",
+      "notable": "'Let's Turn On' (1996, TIP) — a cornerstone of Goa. Remastered in 2015 on DAT Records",
+      "country": "🇬🇧 UK",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Nick Barber, produtor e guitarrista britânico de Londres. O seu álbum de estreia 'Let's Turn On' (TIP Records, 1996) é considerado um clássico fundador do Goa Trance. Colaborou de perto com Simon Posford (Hallucinogen) em temas como Born Again e Angelic Particles.",
+      "notable": "'Let's Turn On' (1996, TIP) — uma pedra angular do Goa. Remasterizado em 2015 na DAT Records",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "prometheus": {
+    "en": {
+      "bio": "Benji Vaughan — a British psychedelic trance producer. The solo project Prometheus is signed to Twisted Records (Simon Posford / Hallucinogen). Known for distinctive bass lines and intense arrangements that blend diatonic melody with glitchy percussion patterns.",
+      "notable": "Twisted Records albums: Robot.O.Chan (2004), Corridor Of Mirrors (2007), Spike (2010)",
+      "country": "🇬🇧 UK",
+      "born": "active since the 2000s"
+    },
+    "pt": {
+      "bio": "Benji Vaughan — produtor britânico de trance psicadélico. O projecto solo Prometheus está assinado pela Twisted Records (Simon Posford / Hallucinogen). Conhecido pelas suas linhas de baixo distintas e arranjos intensos que misturam melodia diatónica com padrões de percussão glitchy.",
+      "notable": "Álbuns na Twisted Records: Robot.O.Chan (2004), Corridor Of Mirrors (2007), Spike (2010)",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde os anos 2000"
+    }
+  },
+  "growling-mad-scientists": {
+    "en": {
+      "bio": "Growling Mad Scientists — the Israeli-London duo of Riktam (Avi Algranati) and Bansi (Yoad Nevo). One of the defining projects of classic psytrance, formed in mid-90s London.",
+      "notable": "Debut album 'Chaos Laboratory' (1997) — a foundational record of modern psytrance",
+      "country": "🇮🇱 Israel / 🇬🇧 UK",
+      "born": "active since the mid-90s"
+    },
+    "pt": {
+      "bio": "Growling Mad Scientists — o duo israelita-londrino de Riktam (Avi Algranati) e Bansi (Yoad Nevo). Um dos projectos definidores do psytrance clássico, formado em Londres em meados dos anos 90.",
+      "notable": "Álbum de estreia 'Chaos Laboratory' (1997) — uma obra fundadora do psytrance moderno",
+      "country": "🇮🇱 Israel / 🇬🇧 Reino Unido",
+      "born": "ativo desde meados dos anos 90"
+    }
+  },
+  "doctor-vagator": {
+    "en": {
+      "bio": "A veteran Goa Trance DJ — a figure from the original Goa scene of the 90s. Famously seen dancing on the dragon-monster above Spaghetti Beach in Goa in 1997, an iconic moment of Goa culture.",
+      "notable": "DJ of D.A.T sets — one of the pillars of the classic live scene",
+      "country": "🇫🇷 France",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um DJ veterano do Goa Trance — uma figura da cena original de Goa dos anos 90. Foi visto a dançar sobre o monstro-dragão acima da Spaghetti Beach em Goa em 1997, um momento icónico da cultura Goa.",
+      "notable": "DJ de sets em D.A.T — um dos pilares da cena ao vivo clássica",
+      "country": "🇫🇷 França",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "anoebis": {
+    "en": {
+      "bio": "A devoted Belgian Goa DJ, label manager and co-founder of Suntrip Records (2004) together with Fabien 'Mars' Marsaud. He started the label because the melodic-acid Goa scene he loved was fading — and turned it into one of the most important labels of the genre.",
+      "notable": "Co-founder of Suntrip Records — the key label of the new Goa wave",
+      "country": "🇧🇪 Belgium",
+      "born": "active since the 2000s"
+    },
+    "pt": {
+      "bio": "Um DJ belga dedicado ao Goa, gestor de editora e co-fundador da Suntrip Records (2004) juntamente com Fabien 'Mars' Marsaud. Fundou a editora porque a cena Goa melódica-acid que adorava estava a desaparecer — e transformou-a numa das mais importantes do género.",
+      "notable": "Co-fundador da Suntrip Records — a editora chave do novo Goa",
+      "country": "🇧🇪 Bélgica",
+      "born": "ativo desde os anos 2000"
+    }
+  },
+  "cyan": {
+    "en": {
+      "bio": "An uplifting Goa Trance project from Greece — the duo of Mike Dee and Nikos Chrisoulakis. They began their musical journey in the late 90s under Discobole Recordings, and the debut album 'Beast From The East' (1998) defined their melodic, emotional sound.",
+      "notable": "'Beast From The East' (1998, Discobole) — a foundational Greek Goa album",
+      "country": "🇬🇷 Greece",
+      "born": "active since the late 90s"
+    },
+    "pt": {
+      "bio": "Um projecto de Goa Trance elevado da Grécia — o duo de Mike Dee e Nikos Chrisoulakis. Começaram o seu percurso musical no final dos anos 90 pela Discobole Recordings, e o álbum de estreia 'Beast From The East' (1998) definiu o seu som melódico e emocional.",
+      "notable": "'Beast From The East' (1998, Discobole) — um álbum fundador do Goa grego",
+      "country": "🇬🇷 Grécia",
+      "born": "ativo desde finais dos anos 90"
+    }
+  },
+  "spiralkinder": {
+    "en": {
+      "bio": "A German Goa/ambient project that started in 1991-1992. Arne Schaffhausen (later Extrawelt, Spirallianz, Midimiliz) and Marco Schmedding. Collaborated with X-Dream (Marcus Maichel & Jan Müller), Planet B.E.N., Morphem and others. One of the building blocks of the dark, experimental German scene of the early 90s.",
+      "notable": "A legendary and rare project — few live shows. ZNA 2026 = a one-off opportunity",
+      "country": "🇩🇪 Germany",
+      "born": "active since 1991"
+    },
+    "pt": {
+      "bio": "Um projecto alemão de Goa/ambient que começou em 1991-1992. Arne Schaffhausen (mais tarde Extrawelt, Spirallianz, Midimiliz) e Marco Schmedding. Colaboraram com os X-Dream (Marcus Maichel & Jan Müller), Planet B.E.N., Morphem e outros. Uma das pedras de construção da cena alemã sombria e experimental do início dos anos 90.",
+      "notable": "Um projecto lendário e raro — poucos concertos ao vivo. ZNA 2026 = uma oportunidade única",
+      "country": "🇩🇪 Alemanha",
+      "born": "ativo desde 1991"
+    }
+  },
+  "hypnoxock": {
+    "en": {
+      "bio": "Victor Solsona from Barcelona — over 15 years of producing psychedelic music. In the past decade he has focused on Goa Trance. Albums on Suntrip Records, Goa Madness and Matsuri Digital. He has played at major festivals: Ozora, ZNA Gathering, Sun Festival and others.",
+      "notable": "'Beyond The Wormhole' (2020, Suntrip) — his sixth album",
+      "country": "🇪🇸 Spain",
+      "born": "active since the 2000s"
+    },
+    "pt": {
+      "bio": "Victor Solsona de Barcelona — mais de 15 anos a produzir música psicadélica. Na última década focou-se no Goa Trance. Álbuns na Suntrip Records, Goa Madness e Matsuri Digital. Tocou em grandes festivais: Ozora, ZNA Gathering, Sun Festival e outros.",
+      "notable": "'Beyond The Wormhole' (2020, Suntrip) — o seu sexto álbum",
+      "country": "🇪🇸 Espanha",
+      "born": "ativo desde os anos 2000"
+    }
+  },
+  "artifact303": {
+    "en": {
+      "bio": "A Hungarian-Romanian artist — one of the most prominent rising stars of melodic Goa. The debut album 'Back To Space' (2011, Suntrip) cemented his name in the genre. A decade later — 'From The Stars' (Global Sect).",
+      "notable": "'Back To Space' (2011, Suntrip) — one of the key albums of the new Goa",
+      "country": "🇷🇴 Romania",
+      "born": "active since the 2010s"
+    },
+    "pt": {
+      "bio": "Um artista húngaro-romeno — uma das estrelas em ascensão mais notáveis do Goa melódico. O álbum de estreia 'Back To Space' (2011, Suntrip) cimentou o seu nome no género. Uma década depois — 'From The Stars' (Global Sect).",
+      "notable": "'Back To Space' (2011, Suntrip) — um dos álbuns chave do novo Goa",
+      "country": "🇷🇴 Roménia",
+      "born": "ativo desde a década de 2010"
+    }
+  },
+  "proxeeus": {
+    "en": {
+      "bio": "Jerome Lesterps — a French-Belgian producer, one of the leaders of the new Goa. His music is deeply influenced by H.P. Lovecraft (Dream Cycle, Cthulhu Mythos). Four studio albums on Neogoa Records, plus collaborations with Suntrip.",
+      "notable": "'Celephaïs' (2019, Neogoa) — a melodic journey in Lovecraft's footsteps. Also 'Weep From Within' (2023, Goa Madness)",
+      "country": "🇫🇷 France",
+      "born": "active since the 2010s"
+    },
+    "pt": {
+      "bio": "Jerome Lesterps — produtor franco-belga, um dos líderes do novo Goa. A sua música é profundamente influenciada por H.P. Lovecraft (Dream Cycle, Cthulhu Mythos). Quatro álbuns de estúdio na Neogoa Records, além de colaborações com a Suntrip.",
+      "notable": "'Celephaïs' (2019, Neogoa) — uma viagem melódica nos passos de Lovecraft. Também 'Weep From Within' (2023, Goa Madness)",
+      "country": "🇫🇷 França",
+      "born": "ativo desde a década de 2010"
+    }
+  },
+  "mark-allen": {
+    "en": {
+      "bio": "A British DJ and producer — one of the pioneers of Goa Trance. He entered the scene in 1991 on his first trip to Goa. Partner in Quirk with Tim Healey, member of Mindfield, owner of the Phantasm label. He organised the 'Return to the Source' parties in London from 1994, which went global (UK / US / Europe / Japan / Israel) until 2001.",
+      "notable": "Phantasm Records (founder) + Return to the Source parties — foundational figure of British Goa",
+      "country": "🇬🇧 UK",
+      "born": "active since 1991"
+    },
+    "pt": {
+      "bio": "DJ e produtor britânico — um dos pioneiros do Goa Trance. Entrou na cena em 1991 na sua primeira visita a Goa. Sócio do Quirk com Tim Healey, membro dos Mindfield, dono da editora Phantasm. Organizou as festas 'Return to the Source' em Londres a partir de 1994, que se tornaram globais (Reino Unido / EUA / Europa / Japão / Israel) até 2001.",
+      "notable": "Phantasm Records (fundador) + festas Return to the Source — figura fundadora do Goa britânico",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde 1991"
+    }
+  },
+  "silicon-sound": {
+    "en": {
+      "bio": "A Goa Trance project — a French pioneer who appeared at events like 'Genesis of Psytrance' (Bologna, 2009). Known for his remix of Jaïa's 'Mai Mai'.",
+      "notable": "Silicon Sound 90's Remix of Jaïa — 'Mai Mai'",
+      "country": "🇫🇷 France",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um projecto de Goa Trance — um pioneiro francês que apareceu em eventos como 'Genesis of Psytrance' (Bolonha, 2009). Conhecido pelo seu remix de 'Mai Mai' dos Jaïa.",
+      "notable": "Silicon Sound 90's Remix de Jaïa — 'Mai Mai'",
+      "country": "🇫🇷 França",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "sun-project": {
+    "en": {
+      "bio": "S.U.N. Project — a Goa Trance collective from Hamburg, Germany. Three musicians who were inspired by the original Goa parties in India and merged their rock roots into the psychedelic sound. First EP 'Crazy Stories' (1996, Spirit Zone), debut album 'Drosophila' (1997).",
+      "notable": "'Drosophila' (1997, Spirit Zone) — one of the classic German Goa albums",
+      "country": "🇩🇪 Germany",
+      "born": "active since the mid-90s"
+    },
+    "pt": {
+      "bio": "S.U.N. Project — um colectivo de Goa Trance de Hamburgo, Alemanha. Três músicos inspirados pelas festas originais de Goa na Índia que fundiram as suas raízes rock no som psicadélico. Primeiro EP 'Crazy Stories' (1996, Spirit Zone), álbum de estreia 'Drosophila' (1997).",
+      "notable": "'Drosophila' (1997, Spirit Zone) — um dos álbuns clássicos do Goa alemão",
+      "country": "🇩🇪 Alemanha",
+      "born": "ativo desde meados dos anos 90"
+    }
+  },
+  "reefer-decree": {
+    "en": {
+      "bio": "A progressive psytrance project that was the first name released on Denmark's Iboga Records in 1999. The debut album 'Soundframes' is still considered Iboga's best-selling vinyl release ever. Known tracks: Nightvision, Curved Air.",
+      "notable": "'Soundframes' (Iboga Records) — the label's best-selling vinyl release",
+      "country": "🇩🇰 Denmark",
+      "born": "active since 1999"
+    },
+    "pt": {
+      "bio": "Um projecto de psytrance progressivo que foi o primeiro nome a sair pela Iboga Records dinamarquesa em 1999. O álbum de estreia 'Soundframes' continua a ser o lançamento em vinil mais vendido de sempre da Iboga. Temas conhecidos: Nightvision, Curved Air.",
+      "notable": "'Soundframes' (Iboga Records) — o lançamento em vinil mais vendido da editora",
+      "country": "🇩🇰 Dinamarca",
+      "born": "ativo desde 1999"
+    }
+  },
+  "mini-spacer": {
+    "en": {
+      "bio": "A Goa Trance project that releases on Timewarp Records — a label focused on the classic style with modern production. Debut EP 'The Spirit Of Trance' (2021).",
+      "notable": "'The Spirit Of Trance' EP (2021, Timewarp Records) — debut Goa release",
+      "country": "🇧🇪 Belgium",
+      "born": "active since the 2020s"
+    },
+    "pt": {
+      "bio": "Um projecto de Goa Trance que lança pela Timewarp Records — uma editora focada no estilo clássico com produção moderna. EP de estreia 'The Spirit Of Trance' (2021).",
+      "notable": "EP 'The Spirit Of Trance' (2021, Timewarp Records) — lançamento Goa de estreia",
+      "country": "🇧🇪 Bélgica",
+      "born": "ativo desde a década de 2020"
+    }
+  },
+  "moon-beasts": {
+    "en": {
+      "bio": "A collaborative project between Ephedra (Alexandre Cohen, Belgium) and Proxeeus (Jerome Lesterps, France). They started in 2019 with a joint show in Portugal — since then, a full project. Mixes Ephedra's melodic, floating side with Proxeeus's aggressive sound. Signed to Goa Madness Records.",
+      "notable": "Collab between Ephedra and Proxeeus — two leading names in the new Goa",
+      "country": "🇫🇷 France / 🇧🇪 Belgium",
+      "born": "active since 2019"
+    },
+    "pt": {
+      "bio": "Um projecto colaborativo entre Ephedra (Alexandre Cohen, Bélgica) e Proxeeus (Jerome Lesterps, França). Começaram em 2019 com um concerto conjunto em Portugal — desde então, um projecto a tempo inteiro. Mistura o lado melódico e flutuante de Ephedra com o som agressivo de Proxeeus. Assinou pela Goa Madness Records.",
+      "notable": "Colaboração entre Ephedra e Proxeeus — dois nomes de topo do novo Goa",
+      "country": "🇫🇷 França / 🇧🇪 Bélgica",
+      "born": "ativo desde 2019"
+    }
+  },
+  "antidot-and-dica": {
+    "en": {
+      "bio": "A collaboration between two French artists from the Acid/Goa scene — DICA (known in the Acid scene) and Antidot. They cross acid-techno with Goa in a high-energy set.",
+      "notable": "EP 'From Dawn To Dusk' (2025, Suntrip Records) + 'Soulbinder' on the 'Acidum Influxum' compilation",
+      "country": "🇫🇷 France",
+      "born": "active since the 2020s"
+    },
+    "pt": {
+      "bio": "Uma colaboração entre dois artistas franceses da cena Acid/Goa — DICA (conhecido na cena Acid) e Antidot. Cruzam acid-techno com Goa num set de alta energia.",
+      "notable": "EP 'From Dawn To Dusk' (2025, Suntrip Records) + 'Soulbinder' na colectânea 'Acidum Influxum'",
+      "country": "🇫🇷 França",
+      "born": "ativo desde a década de 2020"
+    }
+  },
+  "andrew-till": {
+    "en": {
+      "bio": "Andrew Till — co-founder of Australia's Psy-Harmonics together with Ollie Olsen in 1993. The label focused on the experimental edges, breakbeat and twisted Goa coming out of Australia, Japan and New Zealand. Andrew still runs the label today and plays at ZNA in the transition from night to light.",
+      "notable": "Psy-Harmonics (1993) — the iconic Australian label that put out Zen Paradox, Mystic Force, Shaolin Wooden Men and more",
+      "country": "🇦🇺 Australia",
+      "born": "active since 1993"
+    },
+    "pt": {
+      "bio": "Andrew Till — co-fundador da australiana Psy-Harmonics em conjunto com Ollie Olsen em 1993. A editora focou-se nas margens experimentais, breakbeat e Goa torcido vindos da Austrália, Japão e Nova Zelândia. Andrew continua a gerir a editora até hoje e toca no ZNA na transição entre a noite e a luz.",
+      "notable": "Psy-Harmonics (1993) — a editora australiana icónica que lançou Zen Paradox, Mystic Force, Shaolin Wooden Men e mais",
+      "country": "🇦🇺 Austrália",
+      "born": "ativo desde 1993"
+    }
+  },
+  "cosmosis-vs-laughing-buddha": {
+    "en": {
+      "bio": "A reunion of two legendary names: Bill Halsey (Cosmosis) and Jez 'Buddha' (Laughing Buddha) jointly produced 'Cosmology' (1996, Transient) — one of the foundational albums of classic Goa. Thirty years on, they reunite for a special B2B at ZNA 2026.",
+      "notable": "Co-producers of debut album 'Cosmology' (1996, Transient) — a historic reunion",
+      "country": "🇬🇧 UK",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um reencontro de dois nomes lendários: Bill Halsey (Cosmosis) e Jez 'Buddha' (Laughing Buddha) co-produziram 'Cosmology' (1996, Transient) — um dos álbuns fundadores do Goa clássico. Trinta anos depois, reúnem-se para um B2B especial no ZNA 2026.",
+      "notable": "Co-produtores do álbum de estreia 'Cosmology' (1996, Transient) — um reencontro histórico",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "domino-vs-ree-k": {
+    "en": {
+      "bio": "A meeting of two figures from the first generation of Goa: Domino — the first DJ widely recognised in the classic Goa scene, playing from DATs (digital audio tape) — and Ree.K from Japan. At ZNA 2026 they cross between the classic and the new.",
+      "notable": "Legendary B2B between two leading figures from Goa's first generation",
+      "country": "🇬🇧 UK / 🇯🇵 Japan",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um encontro entre duas figuras da primeira geração do Goa: Domino — a primeira DJ reconhecida na cena Goa clássica, a tocar a partir de DATs (digital audio tape) — e Ree.K do Japão. No ZNA 2026 cruzam o clássico com o novo.",
+      "notable": "B2B lendário entre duas figuras de topo da primeira geração do Goa",
+      "country": "🇬🇧 Reino Unido / 🇯🇵 Japão",
+      "born": "ativas desde os anos 90"
+    }
+  },
+  "skizologic-vs-filteria": {
+    "en": {
+      "bio": "A meeting between Skizologic (Maor Hasbani, Israel) — a Goa-Psytrance artist with a retro-futuristic fusion — and Filteria (Jannis Tzikas, Greece/Stockholm), one of the leaders of the Goa revival. Both are leading voices of the new Goa.",
+      "notable": "A meeting between two leading names of the new Goa — Israel × Sweden",
+      "country": "🇮🇱 Israel / 🇸🇪 Sweden",
+      "born": "active since the 2000s"
+    },
+    "pt": {
+      "bio": "Um encontro entre Skizologic (Maor Hasbani, Israel) — um artista de Goa-Psytrance com uma fusão retro-futurista — e Filteria (Jannis Tzikas, Grécia/Estocolmo), um dos líderes do renascimento do Goa. Ambos são vozes de topo do novo Goa.",
+      "notable": "Um encontro entre dois nomes de topo do novo Goa — Israel × Suécia",
+      "country": "🇮🇱 Israel / 🇸🇪 Suécia",
+      "born": "ativos desde os anos 2000"
+    }
+  },
+  "mittelstandskinder-ohne-strom": {
+    "en": {
+      "bio": "A German psytrance/Goa project formed in 1995. The name in German means 'middle-class kids without electricity'. Known for their extreme remix of Ticon's 'We Are The Mammoth Hunters'. Albums: Доклад о революции, Drive, Bug.",
+      "notable": "M.O.S. — a key name of the classic German scene (active since 1995)",
+      "country": "🇩🇪 Germany",
+      "born": "active since 1995"
+    },
+    "pt": {
+      "bio": "Um projecto alemão de psytrance/Goa formado em 1995. O nome em alemão significa 'crianças da classe média sem electricidade'. Conhecidos pelo seu remix extremo de 'We Are The Mammoth Hunters' dos Ticon. Álbuns: Доклад о революции, Drive, Bug.",
+      "notable": "M.O.S. — um nome chave da cena alemã clássica (activo desde 1995)",
+      "country": "🇩🇪 Alemanha",
+      "born": "ativo desde 1995"
+    }
+  },
+  "encens-vs-ominus": {
+    "en": {
+      "bio": "A 29-year reunion: Marcello Bonifacii (Encens) and Dara Lee (Koyote Records founder) on the Zambu Temple stage. Encens with 'Spiritual Transgression' and 'Psychedelic Sun' on Koyote. Ominus was a supergroup: Cello + Dara Lee + Miranda, released in 1997 on Koyote.",
+      "notable": "A 29-year reunion — Encens and Ominus return to the stage",
+      "country": "🇩🇪 Germany / 🇬🇧 UK",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um reencontro de 29 anos: Marcello Bonifacii (Encens) e Dara Lee (fundadora da Koyote Records) no palco Zambu Temple. Encens com 'Spiritual Transgression' e 'Psychedelic Sun' na Koyote. Ominus foi um supergrupo: Cello + Dara Lee + Miranda, lançado em 1997 pela Koyote.",
+      "notable": "Reencontro de 29 anos — Encens e Ominus regressam ao palco",
+      "country": "🇩🇪 Alemanha / 🇬🇧 Reino Unido",
+      "born": "ativos desde os anos 90"
+    }
+  },
+  "gangguru-vs-cop": {
+    "en": {
+      "bio": "Gangguru — a French trio formed in 1994 by Pierre Branet, Phil Weiss and Willy Boutron. The name 'Be Your Own Guru' came from their experience at the Vuuv festival in 1993 with DJ Antaro. COP (Children Of Paradise) is their collaborative project with Jan Müller of X-Dream.",
+      "notable": "'Be Your Own Guru' (DAT Records, 2018) — 33 tracks preserved on DATs and restored",
+      "country": "🇫🇷 France / 🇩🇪 Germany",
+      "born": "active since 1994"
+    },
+    "pt": {
+      "bio": "Gangguru — um trio francês formado em 1994 por Pierre Branet, Phil Weiss e Willy Boutron. O nome 'Be Your Own Guru' veio da sua experiência no festival Vuuv em 1993 com o DJ Antaro. COP (Children Of Paradise) é o seu projecto colaborativo com Jan Müller dos X-Dream.",
+      "notable": "'Be Your Own Guru' (DAT Records, 2018) — 33 temas preservados em DATs e restaurados",
+      "country": "🇫🇷 França / 🇩🇪 Alemanha",
+      "born": "ativos desde 1994"
+    }
+  },
+  "drop-dash-vs-germinator": {
+    "en": {
+      "bio": "Germinator — an Australo-Swedish 90s trio with two unforgettable albums. After years of silence, they unveiled the Single Collection of their 12\" releases and tracks that didn't make it onto compilations. A deep, funky sound of classic Australian Goa.",
+      "notable": "Single Collection (Classic Goa Trax / Suntrip) — treasures of 90s Goa",
+      "country": "🇸🇪 Sweden / 🇦🇺 Australia",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Germinator — um trio australo-sueco dos anos 90 com dois álbuns inesquecíveis. Após anos de silêncio, revelaram a Single Collection dos seus 12\" e de temas que não saíram em colectâneas. Um som profundo e funky do Goa australiano clássico.",
+      "notable": "Single Collection (Classic Goa Trax / Suntrip) — tesouros do Goa dos anos 90",
+      "country": "🇸🇪 Suécia / 🇦🇺 Austrália",
+      "born": "ativos desde os anos 90"
+    }
+  },
+  "psyko-disko-vs-spies": {
+    "en": {
+      "bio": "Psyko Disko — an Australian-international collaboration between Fred Disko (one of the early DJs of Goa alongside Goa Gil) and Ollie Olsen (Shaolin Wooden Men, founder of Psy-Harmonics). The album 'Psycho Disco' is on Psy-Harmonics.",
+      "notable": "Fred Disko — one of the early figures who turned Goa into electronic trance (with Laurent and Goa Gil in 1983)",
+      "country": "🇦🇺 Australia / 🇫🇷 France",
+      "born": "active since the 80s"
+    },
+    "pt": {
+      "bio": "Psyko Disko — uma colaboração australo-internacional entre Fred Disko (um dos primeiros DJs do Goa, ao lado de Goa Gil) e Ollie Olsen (Shaolin Wooden Men, fundador da Psy-Harmonics). O álbum 'Psycho Disco' saiu pela Psy-Harmonics.",
+      "notable": "Fred Disko — uma das primeiras figuras que transformou o Goa em trance electrónico (com Laurent e Goa Gil em 1983)",
+      "country": "🇦🇺 Austrália / 🇫🇷 França",
+      "born": "ativos desde os anos 80"
+    }
+  },
+  "jordan": {
+    "en": {
+      "bio": "A Greek DJ — a long history in the musical underground: 80s hip-hop and acid house, into the London Goa scene from 1995. Co-founder of Disco Hooligans (with Nectarios Meidanis) — an upbeat psytrance duo, and after 2012 also Outer World Elements (with John Petsopoulos from Athens). Represented by DAT Universe.",
+      "notable": "Disco Hooligans — 'Clear Skies' (debut album) and 'Darjeeling Express'. Also Outer World Elements (active since 2013)",
+      "country": "🇬🇷 Greece",
+      "born": "active since the 80s"
+    },
+    "pt": {
+      "bio": "Um DJ grego — uma longa história no underground musical: hip-hop e acid house dos anos 80, até à cena Goa londrina a partir de 1995. Co-fundador dos Disco Hooligans (com Nectarios Meidanis) — um duo de psytrance optimista, e a partir de 2012 também dos Outer World Elements (com John Petsopoulos de Atenas). Representado pela DAT Universe.",
+      "notable": "Disco Hooligans — 'Clear Skies' (álbum de estreia) e 'Darjeeling Express'. Também Outer World Elements (activo desde 2013)",
+      "country": "🇬🇷 Grécia",
+      "born": "ativo desde os anos 80"
+    }
+  },
+  "larsik": {
+    "en": {
+      "bio": "A DJ in 'Goa Guardians' — one of the regular figures who preserve the classic Goa heritage. Guardians, curators and storytellers of the scene — some of them hold rare archives of edits and unreleased material that even the original producers no longer keep.",
+      "notable": "Goa Guardians (pre-party for ZNA Gathering) — keeper of the legacy",
+      "country": "🇨🇭 Switzerland",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Um DJ dos 'Goa Guardians' — uma das figuras regulares que preservam a herança Goa clássica. Guardiões, curadores e contadores de histórias da cena — alguns deles têm arquivos raros de edits e material inédito que nem os próprios produtores originais já conservam.",
+      "notable": "Goa Guardians (pre-party do ZNA Gathering) — guardião do legado",
+      "country": "🇨🇭 Suíça",
+      "born": "activo na cena"
+    }
+  },
+  "dj-eden": {
+    "en": {
+      "bio": "A psytrance/Goa DJ — part of the international DJ community. Presence on Spotify and YouTube.",
+      "notable": "Goa Guardians DJ",
+      "country": "🇮🇱 Israel",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Uma DJ de psytrance/Goa — parte da comunidade internacional de DJs. Presença no Spotify e no YouTube.",
+      "notable": "DJ dos Goa Guardians",
+      "country": "🇮🇱 Israel",
+      "born": "activa na cena"
+    }
+  },
+  "sancho-meiso": {
+    "en": {
+      "bio": "Shin Sasama from Tokyo — his career began in the 90s as a saxophonist in the dub band Cultivator and on Japanese reggae productions. In the early 2000s he opened the solo project Sancho Meiso Chaya with ambient and electronic experimentation. His sound combines deep atmospheres with improvised rhythms. Live shows at Ozora, Mo:Dem and ZNA Gathering.",
+      "notable": "A Japanese dub/experimental project — 3 albums + EPs (b.p.f.records 2008-2009)",
+      "country": "🇯🇵 Japan",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Shin Sasama de Tóquio — a sua carreira começou nos anos 90 como saxofonista da banda de dub Cultivator e em produções de reggae japonês. No início dos anos 2000 abriu o projecto solo Sancho Meiso Chaya com ambient e experimentação electrónica. O seu som combina atmosferas profundas com ritmos improvisados. Concertos ao vivo no Ozora, Mo:Dem e ZNA Gathering.",
+      "notable": "Um projecto japonês de dub/experimental — 3 álbuns + EPs (b.p.f.records 2008-2009)",
+      "country": "🇯🇵 Japão",
+      "born": "ativo desde os anos 90"
+    }
+  },
+  "goaacen": {
+    "en": {
+      "bio": "One of the leading Portuguese DJs in Goa Trance. A DJ for Suntrip Records and part of 604 Productions. Loves to explore the darker territories of Goa. At ZNA he shows how a two-hour journey can fly by.",
+      "notable": "DJ for Suntrip Records + 604 Freaks Productions (Portugal)",
+      "country": "🇵🇹 Portugal",
+      "born": "active in the scene"
+    },
+    "pt": {
+      "bio": "Um dos principais DJs portugueses de Goa Trance. DJ da Suntrip Records e parte da 604 Productions. Adora explorar os territórios mais sombrios do Goa. No ZNA mostra como uma viagem de duas horas pode passar a voar.",
+      "notable": "DJ da Suntrip Records + 604 Freaks Productions (Portugal)",
+      "country": "🇵🇹 Portugal",
+      "born": "ativo na cena"
+    }
+  },
+  "bill-robin-maya": {
+    "en": {
+      "bio": "Bill Robin & Maya Wada — a DJ duo at the Market Stage of ZNA 2026. Maya Wada is Japanese, with a presence on SoundCloud and Discogs. A live performance in the dub/experimental tradition of the Japanese scene.",
+      "notable": "Market Stage duo — Japan",
+      "country": "🇬🇧 UK / 🇯🇵 Japan",
+      "born": "duo"
+    },
+    "pt": {
+      "bio": "Bill Robin & Maya Wada — um duo de DJs no Market Stage do ZNA 2026. Maya Wada é japonesa, com presença no SoundCloud e Discogs. Uma actuação ao vivo na tradição dub/experimental da cena japonesa.",
+      "notable": "Duo do Market Stage — Japão",
+      "country": "🇬🇧 Reino Unido / 🇯🇵 Japão",
+      "born": "duo"
+    }
+  },
+  "dara-lee": {
+    "en": {
+      "bio": "Founder of Koyote Records — a Goa/psychedelic trance label from Brighton (UK) launched in November 1995. The DJ and producer Dara-Lee ran Koyote/Peyote Records and its distribution. Member of Ominus (1997) together with Encens (Marcello Bonifacii) and Miranda — that collab also appears at ZNA 2026.",
+      "notable": "Founder of Koyote Records (1995, Brighton) — one of the central figures of classic British Goa",
+      "country": "🇬🇧 UK",
+      "born": "active since 1995"
+    },
+    "pt": {
+      "bio": "Fundadora da Koyote Records — uma editora de Goa/trance psicadélico de Brighton (Reino Unido) lançada em Novembro de 1995. A DJ e produtora Dara-Lee geriu a Koyote/Peyote Records e a sua distribuição. Membro de Ominus (1997) com Encens (Marcello Bonifacii) e Miranda — essa colaboração também aparece no ZNA 2026.",
+      "notable": "Fundadora da Koyote Records (1995, Brighton) — uma das figuras centrais do Goa britânico clássico",
+      "country": "🇬🇧 Reino Unido",
+      "born": "activa desde 1995"
+    }
+  },
+  "ultravibe": {
+    "en": {
+      "bio": "A collaborative project between Bill Halsey (Cosmosis) and Jannis Tzikas (Filteria) — two leading Goa veterans. Cosmosis is a pioneer of the genre since the 'Cosmology' release (1996), and Filteria brought the classic sound back to life in 2004. Ultravibe blends the classic Goa sound with modern production.",
+      "notable": "EP 'Electrosurge' (October 2024) and album 'Transmitter' (December 2024) on Future Music Records",
+      "country": "🇸🇪 Sweden / 🇬🇧 UK",
+      "born": "active since 2024"
+    },
+    "pt": {
+      "bio": "Um projecto colaborativo entre Bill Halsey (Cosmosis) e Jannis Tzikas (Filteria) — dois veteranos de topo do Goa. Cosmosis é pioneiro do género desde o lançamento de 'Cosmology' (1996), e Filteria devolveu o som clássico à vida em 2004. Ultravibe mistura o som clássico do Goa com produção moderna.",
+      "notable": "EP 'Electrosurge' (Outubro de 2024) e álbum 'Transmitter' (Dezembro de 2024) na Future Music Records",
+      "country": "🇸🇪 Suécia / 🇬🇧 Reino Unido",
+      "born": "activos desde 2024"
+    }
+  },
+  "ephedra": {
+    "en": {
+      "bio": "A Belgian producer/DJ from Brussels. A pure Goatrance artist — 5 albums on Goa Madness Records (the Belgian label he runs together with Kuririn). Also part of the joint project Moon Beasts with Proxeeus.",
+      "notable": "5 Goa albums on Goa Madness Records: Journey Through My Head (2014), Flying Over The Universe (2016), What The Future Brings (2018), Another Place On Earth (2021), Resilient Horizon (2024)",
+      "country": "🇧🇪 Belgium",
+      "born": "active since the 2010s"
+    },
+    "pt": {
+      "bio": "Um produtor/DJ belga de Bruxelas. Um artista de Goatrance puro — 5 álbuns na Goa Madness Records (a editora belga que gere com Kuririn). Também parte do projecto conjunto Moon Beasts com Proxeeus.",
+      "notable": "5 álbuns Goa na Goa Madness Records: Journey Through My Head (2014), Flying Over The Universe (2016), What The Future Brings (2018), Another Place On Earth (2021), Resilient Horizon (2024)",
+      "country": "🇧🇪 Bélgica",
+      "born": "ativo desde a década de 2010"
+    }
+  },
+  "space-cat-vs-talamasca": {
+    "en": {
+      "bio": "A meeting of two psytrance fathers: Space Cat — Avi Algranati from Bat Yam, Israel — whose debut album 'Beam Me Up' (1999, HOMmega) is one of the most important in the history of Goa Trance, with collaborations with Hallucinogen, Transwave, Infected Mushroom, Oforia and Elysium. Talamasca — the Frenchman Cédric Dassule (also DJ Lestat) — whose album 'Musica Divinorum' (2001, Spiral Trax) cemented his name.",
+      "notable": "Space Cat — 'Beam Me Up' (1999, HOMmega), a cornerstone of psytrance. Talamasca — 'Musica Divinorum' (2001, Spiral Trax)",
+      "country": "🇮🇱 Israel / 🇫🇷 France",
+      "born": "active since the late 90s"
+    },
+    "pt": {
+      "bio": "Um encontro entre dois pais do psytrance: Space Cat — Avi Algranati de Bat Yam, Israel — cujo álbum de estreia 'Beam Me Up' (1999, HOMmega) é um dos mais importantes da história do Goa Trance, com colaborações com Hallucinogen, Transwave, Infected Mushroom, Oforia e Elysium. Talamasca — o francês Cédric Dassule (também DJ Lestat) — cujo álbum 'Musica Divinorum' (2001, Spiral Trax) cimentou o seu nome.",
+      "notable": "Space Cat — 'Beam Me Up' (1999, HOMmega), uma pedra angular do psytrance. Talamasca — 'Musica Divinorum' (2001, Spiral Trax)",
+      "country": "🇮🇱 Israel / 🇫🇷 França",
+      "born": "ativos desde o final dos anos 90"
+    }
+  },
+  "infinity-project-vs-excess-head": {
+    "en": {
+      "bio": "A special set by Graham Wood — his two aliases at ZNA 2026: The Infinity Project (with Raja Ram, founders of TIP Records in 1994 — solo after 1998) and Excess Head (his solo alias with a huge body of unreleased material). Two complementary journeys: the nostalgia of classic TIP plus the thrill of a sound never heard before.",
+      "notable": "Graham Wood — solo aliases: TIP (Mystical Experiences 1995, Feeling Weird 1995) + Excess Head (rare material)",
+      "country": "🇬🇧 UK",
+      "born": "active since 1994"
+    },
+    "pt": {
+      "bio": "Um set especial de Graham Wood — os seus dois aliases no ZNA 2026: The Infinity Project (com Raja Ram, fundadores da TIP Records em 1994 — solo a partir de 1998) e Excess Head (o seu alias solo com uma grande quantidade de material inédito). Duas viagens complementares: a nostalgia do TIP clássico mais a emoção de um som nunca antes ouvido.",
+      "notable": "Graham Wood — aliases solo: TIP (Mystical Experiences 1995, Feeling Weird 1995) + Excess Head (material raro)",
+      "country": "🇬🇧 Reino Unido",
+      "born": "ativo desde 1994"
+    }
+  },
+  "jean-borelli-vs-sid-shanti": {
+    "en": {
+      "bio": "An exclusive vinyl VS set between Jean Borelli (Orion) and Sid Shanti — a meeting between two fathers of the classic scene. Orion is a key psytrance figure from the early 90s; Sid Shanti is a Phantasm Records artist known for mixed CDs from 1996-1999.",
+      "notable": "Exclusive B2B on vinyl — a meeting between two collectors of the classic sound",
+      "country": "🇩🇰 Denmark / 🇬🇧 UK",
+      "born": "active since the 90s"
+    },
+    "pt": {
+      "bio": "Um set VS exclusivo em vinil entre Jean Borelli (Orion) e Sid Shanti — um encontro entre dois pais da cena clássica. Orion é uma figura chave do psytrance do início dos anos 90; Sid Shanti é um artista da Phantasm Records, conhecido pelos CDs misturados de 1996-1999.",
+      "notable": "B2B exclusivo em vinil — um encontro entre dois coleccionadores do som clássico",
+      "country": "🇩🇰 Dinamarca / 🇬🇧 Reino Unido",
+      "born": "ativos desde os anos 90"
+    }
+  },
+  "dado-vs-dino-psaras": {
+    "en": {
+      "bio": "Dado — the Frenchman Frédéric Holyszewski, also known as Deedrah, half of Transwave (with Christof Drouillet / Absolum, 1994), and Synthetic. His first solo album 'Self Oscillation' (1997) broke open the classic Goa sound. Dino Psaras — one of the fathers of global psytrance, active since 1988, member of Ayahuasca with Steve Ronan and Joti Sidhu.",
+      "notable": "A meeting between two fathers of the scene — Transwave/Deedrah and Ayahuasca/Lick It (Oktava 2003)",
+      "country": "🇫🇷 France / 🇬🇧 UK",
+      "born": "active since the late 80s"
+    },
+    "pt": {
+      "bio": "Dado — o francês Frédéric Holyszewski, também conhecido como Deedrah, metade dos Transwave (com Christof Drouillet / Absolum, 1994), e Synthetic. O seu primeiro álbum solo 'Self Oscillation' (1997) abriu o som clássico do Goa. Dino Psaras — um dos pais do psytrance global, activo desde 1988, membro dos Ayahuasca com Steve Ronan e Joti Sidhu.",
+      "notable": "Um encontro entre dois pais da cena — Transwave/Deedrah e Ayahuasca/Lick It (Oktava 2003)",
+      "country": "🇫🇷 França / 🇬🇧 Reino Unido",
+      "born": "ativos desde o final dos anos 80"
+    }
   }
 };
