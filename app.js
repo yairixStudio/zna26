@@ -239,7 +239,19 @@ function t(key, vars) {
 // Per-artist translated field. Falls back through current lang → en → he → original.
 function tArtist(a, field) {
   const tr = a.translations || {};
-  return tr[currentLang]?.[field] || tr.en?.[field] || tr.he?.[field] || a[field] || "";
+  // Explicit translation in the user's language always wins when present.
+  const own = tr[currentLang]?.[field];
+  if (own) return own;
+  // Hebrew is the source-of-truth language: the raw `a[field]` was
+  // originally written in Hebrew, so for Hebrew users we prefer it over
+  // foreign-language translations. Without this fall-back order, an
+  // artist whose translations table has only { en, pt } (the common
+  // case after the bulk translate pass) was leaking EN text to Hebrew
+  // users because tr.en?.[field] resolved before a[field].
+  if (currentLang === "he" && a[field]) return a[field];
+  // EN / PT users: try the other foreign translation, then the raw
+  // Hebrew (better than nothing) as a last resort.
+  return tr.en?.[field] || tr.pt?.[field] || a[field] || "";
 }
 
 // Country strings on the artist record look like "🇮🇱 ישראל" or
@@ -298,18 +310,42 @@ function captureScrollState() {
 
 function restoreScrollState(state) {
   if (!state || !reel) return;
-  let target = null;
-  if (state.sectionKey === "hero") {
-    target = reel.querySelector('[data-section="hero"]');
-  } else if (typeof state.sectionKey === "string" && state.sectionKey.startsWith("artist:")) {
-    const id = state.sectionKey.slice("artist:".length);
-    target = reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`);
-  }
-  if (!target) return;
-  target.scrollIntoView({ behavior: "auto", block: "start" });
-  const pager = target.querySelector(".pager") || target.querySelector(".hero-pager");
-  const child = pager?.children[state.panelIdx || 0];
-  if (child) child.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
+  // Run the actual scroll in a small loop of RAFs — buildReel rebuilds
+  // the whole reel innerHTML, and on slower devices the new sections
+  // sometimes haven't finished laying out by the time one RAF fires
+  // (scrollIntoView would then land on offsetTop=0 → user gets dumped
+  // at the top instead of the artist they were reading).
+  const findTarget = () => {
+    if (state.sectionKey === "hero") {
+      return reel.querySelector('[data-section="hero"]');
+    }
+    if (typeof state.sectionKey === "string" && state.sectionKey.startsWith("artist:")) {
+      const id = state.sectionKey.slice("artist:".length);
+      return reel.querySelector(`[data-artist-id="${CSS.escape(id)}"]`);
+    }
+    return null;
+  };
+  const doRestore = () => {
+    const target = findTarget();
+    if (!target) return;
+    // scrollIntoView on the SECTION first (vertical), then on the active
+    // panel (horizontal). Use direct scrollTop on the reel so smooth-
+    // scroll animation queues from the bus stop don't fight us.
+    reel.scrollTo({ top: target.offsetTop, behavior: "auto" });
+    const pager = target.querySelector(".pager") || target.querySelector(".hero-pager");
+    const child = pager?.children[state.panelIdx || 0];
+    if (child) {
+      pager.scrollTo({ left: child.offsetLeft, behavior: "auto" });
+    }
+    // Let the rest of the app (active-section observer, hero autoplay,
+    // URL sync) re-anchor to the restored position.
+    if (typeof setActiveSection === "function") setActiveSection(target);
+  };
+  // Two RAFs gives layout a chance to settle even on slower devices;
+  // a 60ms fallback covers the rare case where the second RAF still
+  // sees pre-layout dimensions.
+  requestAnimationFrame(() => requestAnimationFrame(doRestore));
+  setTimeout(doRestore, 60);
 }
 
 function applyLang(lang) {
