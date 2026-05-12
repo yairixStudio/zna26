@@ -4418,8 +4418,13 @@ body.is-on-main-hero .top-bar-logo-img {
   margin: 26px auto 4px;
   width: 100%;
 }
-.hero-stats-group > .hero-artists-pill { margin: 0; }
 .hero-stats-group > .live-status      { margin: 0 auto; }
+/* Pill sits BELOW the live-status / countdown card, with a clear visual
+   gap so the two read as distinct units (timer first, then the
+   "see-the-artists" affordance as a separate call to action). */
+.hero-stats-group > .hero-artists-pill {
+  margin: 18px 0 0;
+}
 
 /* ===== Avatar-stack "+N artists" pill (on each hero panel) =====
    Three overlapping circular avatars followed by a total/+N counter.
@@ -4486,6 +4491,12 @@ body.is-on-main-hero .top-bar-logo-img {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
+/* Hebrew: read RTL so "+N" sits to the right of the word — Hebrew readers
+   scan right→left and expect the number first, then "אמנים". Without
+   this, the BiDi algorithm in the LTR body parks the LTR "+N" run on the
+   left and you get "אמנים +N" visually = "+N אמנים" read RTL, which feels
+   inverted to a native reader. */
+:lang(he) .hero-artists-count { direction: rtl; }
 
 /* ===== Artist-list overlay =====
    Same visual language as the favorites overlay (glass panel, big

@@ -1348,8 +1348,8 @@ function heroPanelMain() {
       <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
       <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
       <div class="hero-stats-group">
-        ${heroArtistsPill("all")}
         ${liveStatusCard("all")}
+        ${heroArtistsPill("all")}
       </div>
       <p class="hero-disclaimer">${t("hero.disclaimer")}</p>
     </div>
@@ -1393,8 +1393,8 @@ function heroPanelStage(stage) {
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
       <div class="hero-stats-group">
-        ${heroArtistsPill(stage.id)}
         ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
+        ${heroArtistsPill(stage.id)}
       </div>
     </div>
   `;
