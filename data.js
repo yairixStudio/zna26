@@ -816,7 +816,7 @@ let ARTISTS = [
     announcedAt: "2026-03-25",
     name: "Bill Robin & Maya Wada",
     realName: "ביל רובין ומאיה ואדה",
-    country: "🌍 בינלאומי",
+    country: "🇬🇧 בריטניה / 🇯🇵 יפן",
     age: null,
     born: "דואו",
     stage: "market",
@@ -850,7 +850,7 @@ let ARTISTS = [
     announcedAt: "2026-03-25",
     name: "Sancho Meisø Chaya",
     realName: "Sancho Meisø Chaya",
-    country: "🌍 בינלאומי",
+    country: "🇯🇵 יפן",
     age: null,
     born: "פעיל בסצנה",
     stage: "market",
@@ -1048,7 +1048,7 @@ let ARTISTS = [
     announcedAt: "2026-03-04",
     name: "Dark El Kante",
     realName: "חורחה בזאן (Dark El Kante)",
-    country: "🌍 בינלאומי",
+    country: "🇫🇮 פינלנד",
     age: null,
     born: "פעיל בסצנה",
     stage: "guardians",
@@ -2745,13 +2745,13 @@ const ARTIST_TRANSLATIONS = {
     "en": {
       "bio": "A leading DJ of the Suomisaundi genre — the eccentric, free-spirited Finnish Goa Trance. He runs the non-profit Random Records label, which supports indigenous rights organisations.",
       "notable": "Random Records — an activist label",
-      "country": "🌍 International",
+      "country": "🇫🇮 Finland",
       "born": "active in the scene"
     },
     "pt": {
       "bio": "DJ de referência do género Suomisaundi — o Goa Trance finlandês excêntrico e de espírito livre. Dirige a editora sem fins lucrativos Random Records, que apoia organizações de direitos dos povos indígenas.",
       "notable": "Random Records — uma editora activista",
-      "country": "🌍 Internacional",
+      "country": "🇫🇮 Finlândia",
       "born": "ativo na cena"
     }
   },
