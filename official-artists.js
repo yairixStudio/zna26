@@ -3226,6 +3226,64 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
     },
     "albums": [],
     "tracks": []
+  },
+  {
+    "id": "masaray",
+    "announcedAt": "2026-05-11",
+    "name": "Masaray",
+    "officialName": "Masaray",
+    "realName": "Ray Castle + Masa (Masayuki Kurihara)",
+    "country": "🇳🇿 ניו זילנד / 🇯🇵 יפן",
+    "age": null,
+    "born": "",
+    "stage": "retro",
+    "role": "Live",
+    "tags": [
+      "Retro Universe",
+      "Goa Pioneer",
+      "Psy-Harmonics",
+      "Live"
+    ],
+    "color": "#9b51e0",
+    "bio": "Masaray, the legendary collaboration between Ray Castle and Masa (Masayuki Kurihara), returns to the Zambu Temple stage for a very special live performance. Two pioneers of the international Goa trance scene whose seminal 1995 Psy-Harmonics releases — the 'Cosmic Trancer' album and the 'Time Traveler Of Trance' EP — became cornerstones of the genre, the Time Traveler track itself an almost Pink Floyd-like wailing-synth, slow-droning psychedelic odyssey channeled above Masayuki Kurihara's family restaurant in Tokyo. Ray Castle's restless inventiveness across projects like Rhythmystec, Insectoid, and Mantaray, combined with Masa's foundational role in Japan's Goa underground (X-Tron, Vortex), makes this a precious live appearance from two founding fathers of the global Goa scene.",
+    "notable": "תיאור רשמי מתוך עמוד ההכרזה של ZNA Gathering 2026 (11 במאי 2026)",
+    "representedBy": "Psy-Harmonics · NZ/JP",
+    "officialUrl": "https://znagathering.com/2026/05/11/artist-announcement-retro-universe-37/",
+    "photo": "images/artists/masaray.jpg",
+    "links": [
+      {
+        "type": "Discogs",
+        "url": "https://www.discogs.com/artist/26559-Masaray"
+      },
+      {
+        "type": "Bandcamp",
+        "url": "https://hypnodisk.bandcamp.com/album/cosmic-trancer-re-master"
+      },
+      {
+        "type": "Bandcamp (Ray Castle)",
+        "url": "https://suntriprecords.bandcamp.com/album/mystique-of-the-metaverse"
+      },
+      {
+        "type": "Booking (Masa)",
+        "url": "https://www.604bookings.com/acts/masa/"
+      }
+    ],
+    "channels": {
+      "spotify": "https://open.spotify.com/album/6uZ5zvwWH3S2PFFDrgbOCp",
+      "bandcamp": "https://hypnodisk.bandcamp.com/album/cosmic-trancer-re-master"
+    },
+    "albums": [
+      { "name": "Cosmic Trancer", "year": 1995, "project": "Psy-Harmonics (Australia)" },
+      { "name": "Time Traveler Of Trance EP", "year": 1995, "project": "Psy-Harmonics 12\"" },
+      { "name": "Cosmic Trancer (re:master)", "year": 2018, "project": "Hypnodisk" }
+    ],
+    "tracks": [
+      { "id": "oeq2CHG_cYE", "title": "Cosmic Trancer", "year": 1995 },
+      { "id": "CNeEcQYUpmA", "title": "Cosmic Trancer (Psy-Harmonics 1995)", "year": 1995 },
+      { "id": "QL5sYHb28J0", "title": "Time Traveler Of Trance", "year": 1995 },
+      { "id": "JM-FZh_gojg", "title": "Time Traveler", "year": 1995 },
+      { "id": "s_HIUmQjb7E", "title": "Time Traveller (alternate mix)", "year": 1995 }
+    ]
   }
 ];
 

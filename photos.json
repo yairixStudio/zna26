@@ -1,101 +1,21 @@
 {
-  "dark-el-kante": {
-    "avif": "images/artists/dark-el-kante.avif",
-    "webp": "images/artists/dark-el-kante.webp",
-    "jpg": "images/artists/dark-el-kante.jpg",
-    "avif320": "images/artists/dark-el-kante@320.avif",
-    "webp320": "images/artists/dark-el-kante@320.webp",
-    "jpg320": "images/artists/dark-el-kante@320.jpg",
+  "alex-tolstey": {
+    "avif": "images/artists/alex-tolstey.avif",
+    "webp": "images/artists/alex-tolstey.webp",
+    "jpg": "images/artists/alex-tolstey.jpg",
+    "avif320": "images/artists/alex-tolstey@320.avif",
+    "webp320": "images/artists/alex-tolstey@320.webp",
+    "jpg320": "images/artists/alex-tolstey@320.jpg",
     "w": 500,
     "h": 500
   },
-  "doctor-vagator": {
-    "avif": "images/artists/doctor-vagator.avif",
-    "webp": "images/artists/doctor-vagator.webp",
-    "jpg": "images/artists/doctor-vagator.jpg",
-    "avif320": "images/artists/doctor-vagator@320.avif",
-    "webp320": "images/artists/doctor-vagator@320.webp",
-    "jpg320": "images/artists/doctor-vagator@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "dj-eden": {
-    "avif": "images/artists/dj-eden.avif",
-    "webp": "images/artists/dj-eden.webp",
-    "jpg": "images/artists/dj-eden.jpg",
-    "avif320": "images/artists/dj-eden@320.avif",
-    "webp320": "images/artists/dj-eden@320.webp",
-    "jpg320": "images/artists/dj-eden@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "dj-emico-amore": {
-    "avif": "images/artists/dj-emico-amore.avif",
-    "webp": "images/artists/dj-emico-amore.webp",
-    "jpg": "images/artists/dj-emico-amore.jpg",
-    "avif320": "images/artists/dj-emico-amore@320.avif",
-    "webp320": "images/artists/dj-emico-amore@320.webp",
-    "jpg320": "images/artists/dj-emico-amore@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "jordan": {
-    "avif": "images/artists/jordan.avif",
-    "webp": "images/artists/jordan.webp",
-    "jpg": "images/artists/jordan.jpg",
-    "avif320": "images/artists/jordan@320.avif",
-    "webp320": "images/artists/jordan@320.webp",
-    "jpg320": "images/artists/jordan@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "larsik": {
-    "avif": "images/artists/larsik.avif",
-    "webp": "images/artists/larsik.webp",
-    "jpg": "images/artists/larsik.jpg",
-    "avif320": "images/artists/larsik@320.avif",
-    "webp320": "images/artists/larsik@320.webp",
-    "jpg320": "images/artists/larsik@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "psara": {
-    "avif": "images/artists/psara.avif",
-    "webp": "images/artists/psara.webp",
-    "jpg": "images/artists/psara.jpg",
-    "avif320": "images/artists/psara@320.avif",
-    "webp320": "images/artists/psara@320.webp",
-    "jpg320": "images/artists/psara@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "simon-ghahary": {
-    "avif": "images/artists/simon-ghahary.avif",
-    "webp": "images/artists/simon-ghahary.webp",
-    "jpg": "images/artists/simon-ghahary.jpg",
-    "avif320": "images/artists/simon-ghahary@320.avif",
-    "webp320": "images/artists/simon-ghahary@320.webp",
-    "jpg320": "images/artists/simon-ghahary@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "sjamadan": {
-    "avif": "images/artists/sjamadan.avif",
-    "webp": "images/artists/sjamadan.webp",
-    "jpg": "images/artists/sjamadan.jpg",
-    "avif320": "images/artists/sjamadan@320.avif",
-    "webp320": "images/artists/sjamadan@320.webp",
-    "jpg320": "images/artists/sjamadan@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "ukiro": {
-    "avif": "images/artists/ukiro.avif",
-    "webp": "images/artists/ukiro.webp",
-    "jpg": "images/artists/ukiro.jpg",
-    "avif320": "images/artists/ukiro@320.avif",
-    "webp320": "images/artists/ukiro@320.webp",
-    "jpg320": "images/artists/ukiro@320.jpg",
+  "alien-rain": {
+    "avif": "images/artists/alien-rain.avif",
+    "webp": "images/artists/alien-rain.webp",
+    "jpg": "images/artists/alien-rain.jpg",
+    "avif320": "images/artists/alien-rain@320.avif",
+    "webp320": "images/artists/alien-rain@320.webp",
+    "jpg320": "images/artists/alien-rain@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -109,6 +29,26 @@
     "w": 500,
     "h": 500
   },
+  "anais-lin": {
+    "avif": "images/artists/anais-lin.avif",
+    "webp": "images/artists/anais-lin.webp",
+    "jpg": "images/artists/anais-lin.jpg",
+    "avif320": "images/artists/anais-lin@320.avif",
+    "webp320": "images/artists/anais-lin@320.webp",
+    "jpg320": "images/artists/anais-lin@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "andrew-till-market": {
+    "avif": "images/artists/andrew-till-market.avif",
+    "webp": "images/artists/andrew-till-market.webp",
+    "jpg": "images/artists/andrew-till-market.jpg",
+    "avif320": "images/artists/andrew-till-market@320.avif",
+    "webp320": "images/artists/andrew-till-market@320.webp",
+    "jpg320": "images/artists/andrew-till-market@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "andrew-till": {
     "avif": "images/artists/andrew-till.avif",
     "webp": "images/artists/andrew-till.webp",
@@ -116,6 +56,36 @@
     "avif320": "images/artists/andrew-till@320.avif",
     "webp320": "images/artists/andrew-till@320.webp",
     "jpg320": "images/artists/andrew-till@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "anoebis": {
+    "avif": "images/artists/anoebis.avif",
+    "webp": "images/artists/anoebis.webp",
+    "jpg": "images/artists/anoebis.jpg",
+    "avif320": "images/artists/anoebis@320.avif",
+    "webp320": "images/artists/anoebis@320.webp",
+    "jpg320": "images/artists/anoebis@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "antidot-and-dica": {
+    "avif": "images/artists/antidot-and-dica.avif",
+    "webp": "images/artists/antidot-and-dica.webp",
+    "jpg": "images/artists/antidot-and-dica.jpg",
+    "avif320": "images/artists/antidot-and-dica@320.avif",
+    "webp320": "images/artists/antidot-and-dica@320.webp",
+    "jpg320": "images/artists/antidot-and-dica@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "artifact303": {
+    "avif": "images/artists/artifact303.avif",
+    "webp": "images/artists/artifact303.webp",
+    "jpg": "images/artists/artifact303.jpg",
+    "avif320": "images/artists/artifact303@320.avif",
+    "webp320": "images/artists/artifact303@320.webp",
+    "jpg320": "images/artists/artifact303@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -139,6 +109,16 @@
     "w": 500,
     "h": 500
   },
+  "bill-robin-maya": {
+    "avif": "images/artists/bill-robin-maya.avif",
+    "webp": "images/artists/bill-robin-maya.webp",
+    "jpg": "images/artists/bill-robin-maya.jpg",
+    "avif320": "images/artists/bill-robin-maya@320.avif",
+    "webp320": "images/artists/bill-robin-maya@320.webp",
+    "jpg320": "images/artists/bill-robin-maya@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "blue-planet-corporation": {
     "avif": "images/artists/blue-planet-corporation.avif",
     "webp": "images/artists/blue-planet-corporation.webp",
@@ -156,6 +136,16 @@
     "avif320": "images/artists/cosmosis-vs-laughing-buddha@320.avif",
     "webp320": "images/artists/cosmosis-vs-laughing-buddha@320.webp",
     "jpg320": "images/artists/cosmosis-vs-laughing-buddha@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "cosmosis": {
+    "avif": "images/artists/cosmosis.avif",
+    "webp": "images/artists/cosmosis.webp",
+    "jpg": "images/artists/cosmosis.jpg",
+    "avif320": "images/artists/cosmosis@320.avif",
+    "webp320": "images/artists/cosmosis@320.webp",
+    "jpg320": "images/artists/cosmosis@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -186,6 +176,46 @@
     "avif320": "images/artists/dara-lee@320.avif",
     "webp320": "images/artists/dara-lee@320.webp",
     "jpg320": "images/artists/dara-lee@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "dark-el-kante": {
+    "avif": "images/artists/dark-el-kante.avif",
+    "webp": "images/artists/dark-el-kante.webp",
+    "jpg": "images/artists/dark-el-kante.jpg",
+    "avif320": "images/artists/dark-el-kante@320.avif",
+    "webp320": "images/artists/dark-el-kante@320.webp",
+    "jpg320": "images/artists/dark-el-kante@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "dj-eden": {
+    "avif": "images/artists/dj-eden.avif",
+    "webp": "images/artists/dj-eden.webp",
+    "jpg": "images/artists/dj-eden.jpg",
+    "avif320": "images/artists/dj-eden@320.avif",
+    "webp320": "images/artists/dj-eden@320.webp",
+    "jpg320": "images/artists/dj-eden@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "dj-emico-amore": {
+    "avif": "images/artists/dj-emico-amore.avif",
+    "webp": "images/artists/dj-emico-amore.webp",
+    "jpg": "images/artists/dj-emico-amore.jpg",
+    "avif320": "images/artists/dj-emico-amore@320.avif",
+    "webp320": "images/artists/dj-emico-amore@320.webp",
+    "jpg320": "images/artists/dj-emico-amore@320.jpg",
+    "w": 640,
+    "h": 640
+  },
+  "doctor-vagator": {
+    "avif": "images/artists/doctor-vagator.avif",
+    "webp": "images/artists/doctor-vagator.webp",
+    "jpg": "images/artists/doctor-vagator.jpg",
+    "avif320": "images/artists/doctor-vagator@320.avif",
+    "webp320": "images/artists/doctor-vagator@320.webp",
+    "jpg320": "images/artists/doctor-vagator@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -229,13 +259,23 @@
     "w": 500,
     "h": 500
   },
-  "merv-eat-static": {
-    "avif": "images/artists/merv-eat-static.avif",
-    "webp": "images/artists/merv-eat-static.webp",
-    "jpg": "images/artists/merv-eat-static.jpg",
-    "avif320": "images/artists/merv-eat-static@320.avif",
-    "webp320": "images/artists/merv-eat-static@320.webp",
-    "jpg320": "images/artists/merv-eat-static@320.jpg",
+  "e-sko": {
+    "avif": "images/artists/e-sko.avif",
+    "webp": "images/artists/e-sko.webp",
+    "jpg": "images/artists/e-sko.jpg",
+    "avif320": "images/artists/e-sko@320.avif",
+    "webp320": "images/artists/e-sko@320.webp",
+    "jpg320": "images/artists/e-sko@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "earl-peal": {
+    "avif": "images/artists/earl-peal.avif",
+    "webp": "images/artists/earl-peal.webp",
+    "jpg": "images/artists/earl-peal.jpg",
+    "avif320": "images/artists/earl-peal@320.avif",
+    "webp320": "images/artists/earl-peal@320.webp",
+    "jpg320": "images/artists/earl-peal@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -249,6 +289,66 @@
     "w": 500,
     "h": 500
   },
+  "ephedra": {
+    "avif": "images/artists/ephedra.avif",
+    "webp": "images/artists/ephedra.webp",
+    "jpg": "images/artists/ephedra.jpg",
+    "avif320": "images/artists/ephedra@320.avif",
+    "webp320": "images/artists/ephedra@320.webp",
+    "jpg320": "images/artists/ephedra@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "extra-cheers": {
+    "avif": "images/artists/extra-cheers.avif",
+    "webp": "images/artists/extra-cheers.webp",
+    "jpg": "images/artists/extra-cheers.jpg",
+    "avif320": "images/artists/extra-cheers@320.avif",
+    "webp320": "images/artists/extra-cheers@320.webp",
+    "jpg320": "images/artists/extra-cheers@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "extrawelt": {
+    "avif": "images/artists/extrawelt.avif",
+    "webp": "images/artists/extrawelt.webp",
+    "jpg": "images/artists/extrawelt.jpg",
+    "avif320": "images/artists/extrawelt@320.avif",
+    "webp320": "images/artists/extrawelt@320.webp",
+    "jpg320": "images/artists/extrawelt@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "filteria": {
+    "avif": "images/artists/filteria.avif",
+    "webp": "images/artists/filteria.webp",
+    "jpg": "images/artists/filteria.jpg",
+    "avif320": "images/artists/filteria@320.avif",
+    "webp320": "images/artists/filteria@320.webp",
+    "jpg320": "images/artists/filteria@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "gabi-von-dub": {
+    "avif": "images/artists/gabi-von-dub.avif",
+    "webp": "images/artists/gabi-von-dub.webp",
+    "jpg": "images/artists/gabi-von-dub.jpg",
+    "avif320": "images/artists/gabi-von-dub@320.avif",
+    "webp320": "images/artists/gabi-von-dub@320.webp",
+    "jpg320": "images/artists/gabi-von-dub@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "gabriel-le-mar": {
+    "avif": "images/artists/gabriel-le-mar.avif",
+    "webp": "images/artists/gabriel-le-mar.webp",
+    "jpg": "images/artists/gabriel-le-mar.jpg",
+    "avif320": "images/artists/gabriel-le-mar@320.avif",
+    "webp320": "images/artists/gabriel-le-mar@320.webp",
+    "jpg320": "images/artists/gabriel-le-mar@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "gangguru-vs-cop": {
     "avif": "images/artists/gangguru-vs-cop.avif",
     "webp": "images/artists/gangguru-vs-cop.webp",
@@ -256,6 +356,26 @@
     "avif320": "images/artists/gangguru-vs-cop@320.avif",
     "webp320": "images/artists/gangguru-vs-cop@320.webp",
     "jpg320": "images/artists/gangguru-vs-cop@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "goaacen": {
+    "avif": "images/artists/goaacen.avif",
+    "webp": "images/artists/goaacen.webp",
+    "jpg": "images/artists/goaacen.jpg",
+    "avif320": "images/artists/goaacen@320.avif",
+    "webp320": "images/artists/goaacen@320.webp",
+    "jpg320": "images/artists/goaacen@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "graham-wood": {
+    "avif": "images/artists/graham-wood.avif",
+    "webp": "images/artists/graham-wood.webp",
+    "jpg": "images/artists/graham-wood.jpg",
+    "avif320": "images/artists/graham-wood@320.avif",
+    "webp320": "images/artists/graham-wood@320.webp",
+    "jpg320": "images/artists/graham-wood@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -269,6 +389,16 @@
     "w": 500,
     "h": 500
   },
+  "hypnoxock": {
+    "avif": "images/artists/hypnoxock.avif",
+    "webp": "images/artists/hypnoxock.webp",
+    "jpg": "images/artists/hypnoxock.jpg",
+    "avif320": "images/artists/hypnoxock@320.avif",
+    "webp320": "images/artists/hypnoxock@320.webp",
+    "jpg320": "images/artists/hypnoxock@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "infinity-project-vs-excess-head": {
     "avif": "images/artists/infinity-project-vs-excess-head.avif",
     "webp": "images/artists/infinity-project-vs-excess-head.webp",
@@ -276,6 +406,16 @@
     "avif320": "images/artists/infinity-project-vs-excess-head@320.avif",
     "webp320": "images/artists/infinity-project-vs-excess-head@320.webp",
     "jpg320": "images/artists/infinity-project-vs-excess-head@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "isoquant": {
+    "avif": "images/artists/isoquant.avif",
+    "webp": "images/artists/isoquant.webp",
+    "jpg": "images/artists/isoquant.jpg",
+    "avif320": "images/artists/isoquant@320.avif",
+    "webp320": "images/artists/isoquant@320.webp",
+    "jpg320": "images/artists/isoquant@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -289,6 +429,16 @@
     "w": 500,
     "h": 500
   },
+  "james-monro": {
+    "avif": "images/artists/james-monro.avif",
+    "webp": "images/artists/james-monro.webp",
+    "jpg": "images/artists/james-monro.jpg",
+    "avif320": "images/artists/james-monro@320.avif",
+    "webp320": "images/artists/james-monro@320.webp",
+    "jpg320": "images/artists/james-monro@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "jean-borelli-vs-sid-shanti": {
     "avif": "images/artists/jean-borelli-vs-sid-shanti.avif",
     "webp": "images/artists/jean-borelli-vs-sid-shanti.webp",
@@ -296,6 +446,66 @@
     "avif320": "images/artists/jean-borelli-vs-sid-shanti@320.avif",
     "webp320": "images/artists/jean-borelli-vs-sid-shanti@320.webp",
     "jpg320": "images/artists/jean-borelli-vs-sid-shanti@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "jordan": {
+    "avif": "images/artists/jordan.avif",
+    "webp": "images/artists/jordan.webp",
+    "jpg": "images/artists/jordan.jpg",
+    "avif320": "images/artists/jordan@320.avif",
+    "webp320": "images/artists/jordan@320.webp",
+    "jpg320": "images/artists/jordan@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "joti-sidhu-market": {
+    "avif": "images/artists/joti-sidhu-market.avif",
+    "webp": "images/artists/joti-sidhu-market.webp",
+    "jpg": "images/artists/joti-sidhu-market.jpg",
+    "avif320": "images/artists/joti-sidhu-market@320.avif",
+    "webp320": "images/artists/joti-sidhu-market@320.webp",
+    "jpg320": "images/artists/joti-sidhu-market@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "joti-sidhu": {
+    "avif": "images/artists/joti-sidhu.avif",
+    "webp": "images/artists/joti-sidhu.webp",
+    "jpg": "images/artists/joti-sidhu.jpg",
+    "avif320": "images/artists/joti-sidhu@320.avif",
+    "webp320": "images/artists/joti-sidhu@320.webp",
+    "jpg320": "images/artists/joti-sidhu@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "klil-co": {
+    "avif": "images/artists/klil-co.avif",
+    "webp": "images/artists/klil-co.webp",
+    "jpg": "images/artists/klil-co.jpg",
+    "avif320": "images/artists/klil-co@320.avif",
+    "webp320": "images/artists/klil-co@320.webp",
+    "jpg320": "images/artists/klil-co@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "kris-kylven": {
+    "avif": "images/artists/kris-kylven.avif",
+    "webp": "images/artists/kris-kylven.webp",
+    "jpg": "images/artists/kris-kylven.jpg",
+    "avif320": "images/artists/kris-kylven@320.avif",
+    "webp320": "images/artists/kris-kylven@320.webp",
+    "jpg320": "images/artists/kris-kylven@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "larsik": {
+    "avif": "images/artists/larsik.avif",
+    "webp": "images/artists/larsik.webp",
+    "jpg": "images/artists/larsik.jpg",
+    "avif320": "images/artists/larsik@320.avif",
+    "webp320": "images/artists/larsik@320.webp",
+    "jpg320": "images/artists/larsik@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -319,6 +529,66 @@
     "w": 800,
     "h": 800
   },
+  "mark-van-der-vlugt-market": {
+    "avif": "images/artists/mark-van-der-vlugt-market.avif",
+    "webp": "images/artists/mark-van-der-vlugt-market.webp",
+    "jpg": "images/artists/mark-van-der-vlugt-market.jpg",
+    "avif320": "images/artists/mark-van-der-vlugt-market@320.avif",
+    "webp320": "images/artists/mark-van-der-vlugt-market@320.webp",
+    "jpg320": "images/artists/mark-van-der-vlugt-market@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "masaray": {
+    "avif": "images/artists/masaray.avif",
+    "webp": "images/artists/masaray.webp",
+    "jpg": "images/artists/masaray.jpg",
+    "avif320": "images/artists/masaray@320.avif",
+    "webp320": "images/artists/masaray@320.webp",
+    "jpg320": "images/artists/masaray@320.jpg",
+    "w": 800,
+    "h": 800
+  },
+  "mathew-jonson": {
+    "avif": "images/artists/mathew-jonson.avif",
+    "webp": "images/artists/mathew-jonson.webp",
+    "jpg": "images/artists/mathew-jonson.jpg",
+    "avif320": "images/artists/mathew-jonson@320.avif",
+    "webp320": "images/artists/mathew-jonson@320.webp",
+    "jpg320": "images/artists/mathew-jonson@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "merrow": {
+    "avif": "images/artists/merrow.avif",
+    "webp": "images/artists/merrow.webp",
+    "jpg": "images/artists/merrow.jpg",
+    "avif320": "images/artists/merrow@320.avif",
+    "webp320": "images/artists/merrow@320.webp",
+    "jpg320": "images/artists/merrow@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "merv-eat-static": {
+    "avif": "images/artists/merv-eat-static.avif",
+    "webp": "images/artists/merv-eat-static.webp",
+    "jpg": "images/artists/merv-eat-static.jpg",
+    "avif320": "images/artists/merv-eat-static@320.avif",
+    "webp320": "images/artists/merv-eat-static@320.webp",
+    "jpg320": "images/artists/merv-eat-static@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "mini-spacer": {
+    "avif": "images/artists/mini-spacer.avif",
+    "webp": "images/artists/mini-spacer.webp",
+    "jpg": "images/artists/mini-spacer.jpg",
+    "avif320": "images/artists/mini-spacer@320.avif",
+    "webp320": "images/artists/mini-spacer@320.webp",
+    "jpg320": "images/artists/mini-spacer@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "mittelstandskinder-ohne-strom": {
     "avif": "images/artists/mittelstandskinder-ohne-strom.avif",
     "webp": "images/artists/mittelstandskinder-ohne-strom.webp",
@@ -329,13 +599,33 @@
     "w": 800,
     "h": 800
   },
-  "sean-williams": {
-    "avif": "images/artists/sean-williams.avif",
-    "webp": "images/artists/sean-williams.webp",
-    "jpg": "images/artists/sean-williams.jpg",
-    "avif320": "images/artists/sean-williams@320.avif",
-    "webp320": "images/artists/sean-williams@320.webp",
-    "jpg320": "images/artists/sean-williams@320.jpg",
+  "moon-beasts": {
+    "avif": "images/artists/moon-beasts.avif",
+    "webp": "images/artists/moon-beasts.webp",
+    "jpg": "images/artists/moon-beasts.jpg",
+    "avif320": "images/artists/moon-beasts@320.avif",
+    "webp320": "images/artists/moon-beasts@320.webp",
+    "jpg320": "images/artists/moon-beasts@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "nouveau-shamanique": {
+    "avif": "images/artists/nouveau-shamanique.avif",
+    "webp": "images/artists/nouveau-shamanique.webp",
+    "jpg": "images/artists/nouveau-shamanique.jpg",
+    "avif320": "images/artists/nouveau-shamanique@320.avif",
+    "webp320": "images/artists/nouveau-shamanique@320.webp",
+    "jpg320": "images/artists/nouveau-shamanique@320.jpg",
+    "w": 800,
+    "h": 853
+  },
+  "orion-borelli": {
+    "avif": "images/artists/orion-borelli.avif",
+    "webp": "images/artists/orion-borelli.webp",
+    "jpg": "images/artists/orion-borelli.jpg",
+    "avif320": "images/artists/orion-borelli@320.avif",
+    "webp320": "images/artists/orion-borelli@320.webp",
+    "jpg320": "images/artists/orion-borelli@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -349,13 +639,33 @@
     "w": 500,
     "h": 500
   },
-  "joti-sidhu": {
-    "avif": "images/artists/joti-sidhu.avif",
-    "webp": "images/artists/joti-sidhu.webp",
-    "jpg": "images/artists/joti-sidhu.jpg",
-    "avif320": "images/artists/joti-sidhu@320.avif",
-    "webp320": "images/artists/joti-sidhu@320.webp",
-    "jpg320": "images/artists/joti-sidhu@320.jpg",
+  "proxeeus": {
+    "avif": "images/artists/proxeeus.avif",
+    "webp": "images/artists/proxeeus.webp",
+    "jpg": "images/artists/proxeeus.jpg",
+    "avif320": "images/artists/proxeeus@320.avif",
+    "webp320": "images/artists/proxeeus@320.webp",
+    "jpg320": "images/artists/proxeeus@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "psara-market": {
+    "avif": "images/artists/psara-market.avif",
+    "webp": "images/artists/psara-market.webp",
+    "jpg": "images/artists/psara-market.jpg",
+    "avif320": "images/artists/psara-market@320.avif",
+    "webp320": "images/artists/psara-market@320.webp",
+    "jpg320": "images/artists/psara-market@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "psara": {
+    "avif": "images/artists/psara.avif",
+    "webp": "images/artists/psara.webp",
+    "jpg": "images/artists/psara.jpg",
+    "avif320": "images/artists/psara@320.avif",
+    "webp320": "images/artists/psara@320.webp",
+    "jpg320": "images/artists/psara@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -369,6 +679,26 @@
     "w": 800,
     "h": 800
   },
+  "ray-castle": {
+    "avif": "images/artists/ray-castle.avif",
+    "webp": "images/artists/ray-castle.webp",
+    "jpg": "images/artists/ray-castle.jpg",
+    "avif320": "images/artists/ray-castle@320.avif",
+    "webp320": "images/artists/ray-castle@320.webp",
+    "jpg320": "images/artists/ray-castle@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "ree-k": {
+    "avif": "images/artists/ree-k.avif",
+    "webp": "images/artists/ree-k.webp",
+    "jpg": "images/artists/ree-k.jpg",
+    "avif320": "images/artists/ree-k@320.avif",
+    "webp320": "images/artists/ree-k@320.webp",
+    "jpg320": "images/artists/ree-k@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "reefer-decree": {
     "avif": "images/artists/reefer-decree.avif",
     "webp": "images/artists/reefer-decree.webp",
@@ -379,6 +709,46 @@
     "w": 500,
     "h": 500
   },
+  "robert-leiner": {
+    "avif": "images/artists/robert-leiner.avif",
+    "webp": "images/artists/robert-leiner.webp",
+    "jpg": "images/artists/robert-leiner.jpg",
+    "avif320": "images/artists/robert-leiner@320.avif",
+    "webp320": "images/artists/robert-leiner@320.webp",
+    "jpg320": "images/artists/robert-leiner@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "sancho-meiso": {
+    "avif": "images/artists/sancho-meiso.avif",
+    "webp": "images/artists/sancho-meiso.webp",
+    "jpg": "images/artists/sancho-meiso.jpg",
+    "avif320": "images/artists/sancho-meiso@320.avif",
+    "webp320": "images/artists/sancho-meiso@320.webp",
+    "jpg320": "images/artists/sancho-meiso@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "sean-williams": {
+    "avif": "images/artists/sean-williams.avif",
+    "webp": "images/artists/sean-williams.webp",
+    "jpg": "images/artists/sean-williams.jpg",
+    "avif320": "images/artists/sean-williams@320.avif",
+    "webp320": "images/artists/sean-williams@320.webp",
+    "jpg320": "images/artists/sean-williams@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "sid-shanti": {
+    "avif": "images/artists/sid-shanti.avif",
+    "webp": "images/artists/sid-shanti.webp",
+    "jpg": "images/artists/sid-shanti.jpg",
+    "avif320": "images/artists/sid-shanti@320.avif",
+    "webp320": "images/artists/sid-shanti@320.webp",
+    "jpg320": "images/artists/sid-shanti@320.jpg",
+    "w": 500,
+    "h": 500
+  },
   "silicon-sound": {
     "avif": "images/artists/silicon-sound.avif",
     "webp": "images/artists/silicon-sound.webp",
@@ -386,6 +756,36 @@
     "avif320": "images/artists/silicon-sound@320.avif",
     "webp320": "images/artists/silicon-sound@320.webp",
     "jpg320": "images/artists/silicon-sound@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "simon-ghahary": {
+    "avif": "images/artists/simon-ghahary.avif",
+    "webp": "images/artists/simon-ghahary.webp",
+    "jpg": "images/artists/simon-ghahary.jpg",
+    "avif320": "images/artists/simon-ghahary@320.avif",
+    "webp320": "images/artists/simon-ghahary@320.webp",
+    "jpg320": "images/artists/simon-ghahary@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "sjamadan": {
+    "avif": "images/artists/sjamadan.avif",
+    "webp": "images/artists/sjamadan.webp",
+    "jpg": "images/artists/sjamadan.jpg",
+    "avif320": "images/artists/sjamadan@320.avif",
+    "webp320": "images/artists/sjamadan@320.webp",
+    "jpg320": "images/artists/sjamadan@320.jpg",
+    "w": 500,
+    "h": 500
+  },
+  "skizologic-vs-filteria": {
+    "avif": "images/artists/skizologic-vs-filteria.avif",
+    "webp": "images/artists/skizologic-vs-filteria.webp",
+    "jpg": "images/artists/skizologic-vs-filteria.jpg",
+    "avif320": "images/artists/skizologic-vs-filteria@320.avif",
+    "webp320": "images/artists/skizologic-vs-filteria@320.webp",
+    "jpg320": "images/artists/skizologic-vs-filteria@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -429,16 +829,6 @@
     "w": 500,
     "h": 500
   },
-  "tsuyoshi-suzuki": {
-    "avif": "images/artists/tsuyoshi-suzuki.avif",
-    "webp": "images/artists/tsuyoshi-suzuki.webp",
-    "jpg": "images/artists/tsuyoshi-suzuki.jpg",
-    "avif320": "images/artists/tsuyoshi-suzuki@320.avif",
-    "webp320": "images/artists/tsuyoshi-suzuki@320.webp",
-    "jpg320": "images/artists/tsuyoshi-suzuki@320.jpg",
-    "w": 500,
-    "h": 500
-  },
   "takeshi-isogai": {
     "avif": "images/artists/takeshi-isogai.avif",
     "webp": "images/artists/takeshi-isogai.webp",
@@ -446,376 +836,6 @@
     "avif320": "images/artists/takeshi-isogai@320.avif",
     "webp320": "images/artists/takeshi-isogai@320.webp",
     "jpg320": "images/artists/takeshi-isogai@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "kris-kylven": {
-    "avif": "images/artists/kris-kylven.avif",
-    "webp": "images/artists/kris-kylven.webp",
-    "jpg": "images/artists/kris-kylven.jpg",
-    "avif320": "images/artists/kris-kylven@320.avif",
-    "webp320": "images/artists/kris-kylven@320.webp",
-    "jpg320": "images/artists/kris-kylven@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "yahel": {
-    "avif": "images/artists/yahel.avif",
-    "webp": "images/artists/yahel.webp",
-    "jpg": "images/artists/yahel.jpg",
-    "avif320": "images/artists/yahel@320.avif",
-    "webp320": "images/artists/yahel@320.webp",
-    "jpg320": "images/artists/yahel@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "anoebis": {
-    "avif": "images/artists/anoebis.avif",
-    "webp": "images/artists/anoebis.webp",
-    "jpg": "images/artists/anoebis.jpg",
-    "avif320": "images/artists/anoebis@320.avif",
-    "webp320": "images/artists/anoebis@320.webp",
-    "jpg320": "images/artists/anoebis@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "antidot-and-dica": {
-    "avif": "images/artists/antidot-and-dica.avif",
-    "webp": "images/artists/antidot-and-dica.webp",
-    "jpg": "images/artists/antidot-and-dica.jpg",
-    "avif320": "images/artists/antidot-and-dica@320.avif",
-    "webp320": "images/artists/antidot-and-dica@320.webp",
-    "jpg320": "images/artists/antidot-and-dica@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "artifact303": {
-    "avif": "images/artists/artifact303.avif",
-    "webp": "images/artists/artifact303.webp",
-    "jpg": "images/artists/artifact303.jpg",
-    "avif320": "images/artists/artifact303@320.avif",
-    "webp320": "images/artists/artifact303@320.webp",
-    "jpg320": "images/artists/artifact303@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "ephedra": {
-    "avif": "images/artists/ephedra.avif",
-    "webp": "images/artists/ephedra.webp",
-    "jpg": "images/artists/ephedra.jpg",
-    "avif320": "images/artists/ephedra@320.avif",
-    "webp320": "images/artists/ephedra@320.webp",
-    "jpg320": "images/artists/ephedra@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "goaacen": {
-    "avif": "images/artists/goaacen.avif",
-    "webp": "images/artists/goaacen.webp",
-    "jpg": "images/artists/goaacen.jpg",
-    "avif320": "images/artists/goaacen@320.avif",
-    "webp320": "images/artists/goaacen@320.webp",
-    "jpg320": "images/artists/goaacen@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "hypnoxock": {
-    "avif": "images/artists/hypnoxock.avif",
-    "webp": "images/artists/hypnoxock.webp",
-    "jpg": "images/artists/hypnoxock.jpg",
-    "avif320": "images/artists/hypnoxock@320.avif",
-    "webp320": "images/artists/hypnoxock@320.webp",
-    "jpg320": "images/artists/hypnoxock@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "merrow": {
-    "avif": "images/artists/merrow.avif",
-    "webp": "images/artists/merrow.webp",
-    "jpg": "images/artists/merrow.jpg",
-    "avif320": "images/artists/merrow@320.avif",
-    "webp320": "images/artists/merrow@320.webp",
-    "jpg320": "images/artists/merrow@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "mini-spacer": {
-    "avif": "images/artists/mini-spacer.avif",
-    "webp": "images/artists/mini-spacer.webp",
-    "jpg": "images/artists/mini-spacer.jpg",
-    "avif320": "images/artists/mini-spacer@320.avif",
-    "webp320": "images/artists/mini-spacer@320.webp",
-    "jpg320": "images/artists/mini-spacer@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "moon-beasts": {
-    "avif": "images/artists/moon-beasts.avif",
-    "webp": "images/artists/moon-beasts.webp",
-    "jpg": "images/artists/moon-beasts.jpg",
-    "avif320": "images/artists/moon-beasts@320.avif",
-    "webp320": "images/artists/moon-beasts@320.webp",
-    "jpg320": "images/artists/moon-beasts@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "nouveau-shamanique": {
-    "avif": "images/artists/nouveau-shamanique.avif",
-    "webp": "images/artists/nouveau-shamanique.webp",
-    "jpg": "images/artists/nouveau-shamanique.jpg",
-    "avif320": "images/artists/nouveau-shamanique@320.avif",
-    "webp320": "images/artists/nouveau-shamanique@320.webp",
-    "jpg320": "images/artists/nouveau-shamanique@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "proxeeus": {
-    "avif": "images/artists/proxeeus.avif",
-    "webp": "images/artists/proxeeus.webp",
-    "jpg": "images/artists/proxeeus.jpg",
-    "avif320": "images/artists/proxeeus@320.avif",
-    "webp320": "images/artists/proxeeus@320.webp",
-    "jpg320": "images/artists/proxeeus@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "skizologic-vs-filteria": {
-    "avif": "images/artists/skizologic-vs-filteria.avif",
-    "webp": "images/artists/skizologic-vs-filteria.webp",
-    "jpg": "images/artists/skizologic-vs-filteria.jpg",
-    "avif320": "images/artists/skizologic-vs-filteria@320.avif",
-    "webp320": "images/artists/skizologic-vs-filteria@320.webp",
-    "jpg320": "images/artists/skizologic-vs-filteria@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "ultravibe": {
-    "avif": "images/artists/ultravibe.avif",
-    "webp": "images/artists/ultravibe.webp",
-    "jpg": "images/artists/ultravibe.jpg",
-    "avif320": "images/artists/ultravibe@320.avif",
-    "webp320": "images/artists/ultravibe@320.webp",
-    "jpg320": "images/artists/ultravibe@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "alex-tolstey": {
-    "avif": "images/artists/alex-tolstey.avif",
-    "webp": "images/artists/alex-tolstey.webp",
-    "jpg": "images/artists/alex-tolstey.jpg",
-    "avif320": "images/artists/alex-tolstey@320.avif",
-    "webp320": "images/artists/alex-tolstey@320.webp",
-    "jpg320": "images/artists/alex-tolstey@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "alien-rain": {
-    "avif": "images/artists/alien-rain.avif",
-    "webp": "images/artists/alien-rain.webp",
-    "jpg": "images/artists/alien-rain.jpg",
-    "avif320": "images/artists/alien-rain@320.avif",
-    "webp320": "images/artists/alien-rain@320.webp",
-    "jpg320": "images/artists/alien-rain@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "anais-lin": {
-    "avif": "images/artists/anais-lin.avif",
-    "webp": "images/artists/anais-lin.webp",
-    "jpg": "images/artists/anais-lin.jpg",
-    "avif320": "images/artists/anais-lin@320.avif",
-    "webp320": "images/artists/anais-lin@320.webp",
-    "jpg320": "images/artists/anais-lin@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "andrew-till-market": {
-    "avif": "images/artists/andrew-till-market.avif",
-    "webp": "images/artists/andrew-till-market.webp",
-    "jpg": "images/artists/andrew-till-market.jpg",
-    "avif320": "images/artists/andrew-till-market@320.avif",
-    "webp320": "images/artists/andrew-till-market@320.webp",
-    "jpg320": "images/artists/andrew-till-market@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "bill-robin-maya": {
-    "avif": "images/artists/bill-robin-maya.avif",
-    "webp": "images/artists/bill-robin-maya.webp",
-    "jpg": "images/artists/bill-robin-maya.jpg",
-    "avif320": "images/artists/bill-robin-maya@320.avif",
-    "webp320": "images/artists/bill-robin-maya@320.webp",
-    "jpg320": "images/artists/bill-robin-maya@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "extra-cheers": {
-    "avif": "images/artists/extra-cheers.avif",
-    "webp": "images/artists/extra-cheers.webp",
-    "jpg": "images/artists/extra-cheers.jpg",
-    "avif320": "images/artists/extra-cheers@320.avif",
-    "webp320": "images/artists/extra-cheers@320.webp",
-    "jpg320": "images/artists/extra-cheers@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "earl-peal": {
-    "avif": "images/artists/earl-peal.avif",
-    "webp": "images/artists/earl-peal.webp",
-    "jpg": "images/artists/earl-peal.jpg",
-    "avif320": "images/artists/earl-peal@320.avif",
-    "webp320": "images/artists/earl-peal@320.webp",
-    "jpg320": "images/artists/earl-peal@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "e-sko": {
-    "avif": "images/artists/e-sko.avif",
-    "webp": "images/artists/e-sko.webp",
-    "jpg": "images/artists/e-sko.jpg",
-    "avif320": "images/artists/e-sko@320.avif",
-    "webp320": "images/artists/e-sko@320.webp",
-    "jpg320": "images/artists/e-sko@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "extrawelt": {
-    "avif": "images/artists/extrawelt.avif",
-    "webp": "images/artists/extrawelt.webp",
-    "jpg": "images/artists/extrawelt.jpg",
-    "avif320": "images/artists/extrawelt@320.avif",
-    "webp320": "images/artists/extrawelt@320.webp",
-    "jpg320": "images/artists/extrawelt@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "gabi-von-dub": {
-    "avif": "images/artists/gabi-von-dub.avif",
-    "webp": "images/artists/gabi-von-dub.webp",
-    "jpg": "images/artists/gabi-von-dub.jpg",
-    "avif320": "images/artists/gabi-von-dub@320.avif",
-    "webp320": "images/artists/gabi-von-dub@320.webp",
-    "jpg320": "images/artists/gabi-von-dub@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "gabriel-le-mar": {
-    "avif": "images/artists/gabriel-le-mar.avif",
-    "webp": "images/artists/gabriel-le-mar.webp",
-    "jpg": "images/artists/gabriel-le-mar.jpg",
-    "avif320": "images/artists/gabriel-le-mar@320.avif",
-    "webp320": "images/artists/gabriel-le-mar@320.webp",
-    "jpg320": "images/artists/gabriel-le-mar@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "isoquant": {
-    "avif": "images/artists/isoquant.avif",
-    "webp": "images/artists/isoquant.webp",
-    "jpg": "images/artists/isoquant.jpg",
-    "avif320": "images/artists/isoquant@320.avif",
-    "webp320": "images/artists/isoquant@320.webp",
-    "jpg320": "images/artists/isoquant@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "james-monro": {
-    "avif": "images/artists/james-monro.avif",
-    "webp": "images/artists/james-monro.webp",
-    "jpg": "images/artists/james-monro.jpg",
-    "avif320": "images/artists/james-monro@320.avif",
-    "webp320": "images/artists/james-monro@320.webp",
-    "jpg320": "images/artists/james-monro@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "joti-sidhu-market": {
-    "avif": "images/artists/joti-sidhu-market.avif",
-    "webp": "images/artists/joti-sidhu-market.webp",
-    "jpg": "images/artists/joti-sidhu-market.jpg",
-    "avif320": "images/artists/joti-sidhu-market@320.avif",
-    "webp320": "images/artists/joti-sidhu-market@320.webp",
-    "jpg320": "images/artists/joti-sidhu-market@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "klil-co": {
-    "avif": "images/artists/klil-co.avif",
-    "webp": "images/artists/klil-co.webp",
-    "jpg": "images/artists/klil-co.jpg",
-    "avif320": "images/artists/klil-co@320.avif",
-    "webp320": "images/artists/klil-co@320.webp",
-    "jpg320": "images/artists/klil-co@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "mark-van-der-vlugt-market": {
-    "avif": "images/artists/mark-van-der-vlugt-market.avif",
-    "webp": "images/artists/mark-van-der-vlugt-market.webp",
-    "jpg": "images/artists/mark-van-der-vlugt-market.jpg",
-    "avif320": "images/artists/mark-van-der-vlugt-market@320.avif",
-    "webp320": "images/artists/mark-van-der-vlugt-market@320.webp",
-    "jpg320": "images/artists/mark-van-der-vlugt-market@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "mathew-jonson": {
-    "avif": "images/artists/mathew-jonson.avif",
-    "webp": "images/artists/mathew-jonson.webp",
-    "jpg": "images/artists/mathew-jonson.jpg",
-    "avif320": "images/artists/mathew-jonson@320.avif",
-    "webp320": "images/artists/mathew-jonson@320.webp",
-    "jpg320": "images/artists/mathew-jonson@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "psara-market": {
-    "avif": "images/artists/psara-market.avif",
-    "webp": "images/artists/psara-market.webp",
-    "jpg": "images/artists/psara-market.jpg",
-    "avif320": "images/artists/psara-market@320.avif",
-    "webp320": "images/artists/psara-market@320.webp",
-    "jpg320": "images/artists/psara-market@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "ray-castle": {
-    "avif": "images/artists/ray-castle.avif",
-    "webp": "images/artists/ray-castle.webp",
-    "jpg": "images/artists/ray-castle.jpg",
-    "avif320": "images/artists/ray-castle@320.avif",
-    "webp320": "images/artists/ray-castle@320.webp",
-    "jpg320": "images/artists/ray-castle@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "ree-k": {
-    "avif": "images/artists/ree-k.avif",
-    "webp": "images/artists/ree-k.webp",
-    "jpg": "images/artists/ree-k.jpg",
-    "avif320": "images/artists/ree-k@320.avif",
-    "webp320": "images/artists/ree-k@320.webp",
-    "jpg320": "images/artists/ree-k@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "robert-leiner": {
-    "avif": "images/artists/robert-leiner.avif",
-    "webp": "images/artists/robert-leiner.webp",
-    "jpg": "images/artists/robert-leiner.jpg",
-    "avif320": "images/artists/robert-leiner@320.avif",
-    "webp320": "images/artists/robert-leiner@320.webp",
-    "jpg320": "images/artists/robert-leiner@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "sancho-meiso": {
-    "avif": "images/artists/sancho-meiso.avif",
-    "webp": "images/artists/sancho-meiso.webp",
-    "jpg": "images/artists/sancho-meiso.jpg",
-    "avif320": "images/artists/sancho-meiso@320.avif",
-    "webp320": "images/artists/sancho-meiso@320.webp",
-    "jpg320": "images/artists/sancho-meiso@320.jpg",
     "w": 500,
     "h": 500
   },
@@ -839,944 +859,44 @@
     "w": 500,
     "h": 500
   },
-  "cosmosis": {
-    "avif": "images/artists/cosmosis.avif",
-    "webp": "images/artists/cosmosis.webp",
-    "jpg": "images/artists/cosmosis.jpg",
-    "avif320": "images/artists/cosmosis@320.avif",
-    "webp320": "images/artists/cosmosis@320.webp",
-    "jpg320": "images/artists/cosmosis@320.jpg",
+  "tsuyoshi-suzuki": {
+    "avif": "images/artists/tsuyoshi-suzuki.avif",
+    "webp": "images/artists/tsuyoshi-suzuki.webp",
+    "jpg": "images/artists/tsuyoshi-suzuki.jpg",
+    "avif320": "images/artists/tsuyoshi-suzuki@320.avif",
+    "webp320": "images/artists/tsuyoshi-suzuki@320.webp",
+    "jpg320": "images/artists/tsuyoshi-suzuki@320.jpg",
     "w": 500,
     "h": 500
   },
-  "filteria": {
-    "avif": "images/artists/filteria.avif",
-    "webp": "images/artists/filteria.webp",
-    "jpg": "images/artists/filteria.jpg",
-    "avif320": "images/artists/filteria@320.avif",
-    "webp320": "images/artists/filteria@320.webp",
-    "jpg320": "images/artists/filteria@320.jpg",
+  "ukiro": {
+    "avif": "images/artists/ukiro.avif",
+    "webp": "images/artists/ukiro.webp",
+    "jpg": "images/artists/ukiro.jpg",
+    "avif320": "images/artists/ukiro@320.avif",
+    "webp320": "images/artists/ukiro@320.webp",
+    "jpg320": "images/artists/ukiro@320.jpg",
     "w": 500,
     "h": 500
   },
-  "graham-wood": {
-    "avif": "images/artists/graham-wood.avif",
-    "webp": "images/artists/graham-wood.webp",
-    "jpg": "images/artists/graham-wood.jpg",
-    "avif320": "images/artists/graham-wood@320.avif",
-    "webp320": "images/artists/graham-wood@320.webp",
-    "jpg320": "images/artists/graham-wood@320.jpg",
+  "ultravibe": {
+    "avif": "images/artists/ultravibe.avif",
+    "webp": "images/artists/ultravibe.webp",
+    "jpg": "images/artists/ultravibe.jpg",
+    "avif320": "images/artists/ultravibe@320.avif",
+    "webp320": "images/artists/ultravibe@320.webp",
+    "jpg320": "images/artists/ultravibe@320.jpg",
     "w": 500,
     "h": 500
   },
-  "orion-borelli": {
-    "avif": "images/artists/orion-borelli.avif",
-    "webp": "images/artists/orion-borelli.webp",
-    "jpg": "images/artists/orion-borelli.jpg",
-    "avif320": "images/artists/orion-borelli@320.avif",
-    "webp320": "images/artists/orion-borelli@320.webp",
-    "jpg320": "images/artists/orion-borelli@320.jpg",
+  "yahel": {
+    "avif": "images/artists/yahel.avif",
+    "webp": "images/artists/yahel.webp",
+    "jpg": "images/artists/yahel.jpg",
+    "avif320": "images/artists/yahel@320.avif",
+    "webp320": "images/artists/yahel@320.webp",
+    "jpg320": "images/artists/yahel@320.jpg",
     "w": 500,
     "h": 500
-  },
-  "sid-shanti": {
-    "avif": "images/artists/sid-shanti.avif",
-    "webp": "images/artists/sid-shanti.webp",
-    "jpg": "images/artists/sid-shanti.jpg",
-    "avif320": "images/artists/sid-shanti@320.avif",
-    "webp320": "images/artists/sid-shanti@320.webp",
-    "jpg320": "images/artists/sid-shanti@320.jpg",
-    "w": 500,
-    "h": 500
-  },
-  "alex-tolstey@320": {
-    "avif": "images/artists/alex-tolstey@320.avif",
-    "webp": "images/artists/alex-tolstey@320.webp",
-    "jpg": "images/artists/alex-tolstey@320.jpg",
-    "avif320": "images/artists/alex-tolstey@320@320.avif",
-    "webp320": "images/artists/alex-tolstey@320@320.webp",
-    "jpg320": "images/artists/alex-tolstey@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "alien-rain@320": {
-    "avif": "images/artists/alien-rain@320.avif",
-    "webp": "images/artists/alien-rain@320.webp",
-    "jpg": "images/artists/alien-rain@320.jpg",
-    "avif320": "images/artists/alien-rain@320@320.avif",
-    "webp320": "images/artists/alien-rain@320@320.webp",
-    "jpg320": "images/artists/alien-rain@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "alphanaut@320": {
-    "avif": "images/artists/alphanaut@320.avif",
-    "webp": "images/artists/alphanaut@320.webp",
-    "jpg": "images/artists/alphanaut@320.jpg",
-    "avif320": "images/artists/alphanaut@320@320.avif",
-    "webp320": "images/artists/alphanaut@320@320.webp",
-    "jpg320": "images/artists/alphanaut@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "anais-lin@320": {
-    "avif": "images/artists/anais-lin@320.avif",
-    "webp": "images/artists/anais-lin@320.webp",
-    "jpg": "images/artists/anais-lin@320.jpg",
-    "avif320": "images/artists/anais-lin@320@320.avif",
-    "webp320": "images/artists/anais-lin@320@320.webp",
-    "jpg320": "images/artists/anais-lin@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "andrew-till-market@320": {
-    "avif": "images/artists/andrew-till-market@320.avif",
-    "webp": "images/artists/andrew-till-market@320.webp",
-    "jpg": "images/artists/andrew-till-market@320.jpg",
-    "avif320": "images/artists/andrew-till-market@320@320.avif",
-    "webp320": "images/artists/andrew-till-market@320@320.webp",
-    "jpg320": "images/artists/andrew-till-market@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "andrew-till@320": {
-    "avif": "images/artists/andrew-till@320.avif",
-    "webp": "images/artists/andrew-till@320.webp",
-    "jpg": "images/artists/andrew-till@320.jpg",
-    "avif320": "images/artists/andrew-till@320@320.avif",
-    "webp320": "images/artists/andrew-till@320@320.webp",
-    "jpg320": "images/artists/andrew-till@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "anoebis@320": {
-    "avif": "images/artists/anoebis@320.avif",
-    "webp": "images/artists/anoebis@320.webp",
-    "jpg": "images/artists/anoebis@320.jpg",
-    "avif320": "images/artists/anoebis@320@320.avif",
-    "webp320": "images/artists/anoebis@320@320.webp",
-    "jpg320": "images/artists/anoebis@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "antidot-and-dica@320": {
-    "avif": "images/artists/antidot-and-dica@320.avif",
-    "webp": "images/artists/antidot-and-dica@320.webp",
-    "jpg": "images/artists/antidot-and-dica@320.jpg",
-    "avif320": "images/artists/antidot-and-dica@320@320.avif",
-    "webp320": "images/artists/antidot-and-dica@320@320.webp",
-    "jpg320": "images/artists/antidot-and-dica@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "artifact303@320": {
-    "avif": "images/artists/artifact303@320.avif",
-    "webp": "images/artists/artifact303@320.webp",
-    "jpg": "images/artists/artifact303@320.jpg",
-    "avif320": "images/artists/artifact303@320@320.avif",
-    "webp320": "images/artists/artifact303@320@320.webp",
-    "jpg320": "images/artists/artifact303@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "atmos@320": {
-    "avif": "images/artists/atmos@320.avif",
-    "webp": "images/artists/atmos@320.webp",
-    "jpg": "images/artists/atmos@320.jpg",
-    "avif320": "images/artists/atmos@320@320.avif",
-    "webp320": "images/artists/atmos@320@320.webp",
-    "jpg320": "images/artists/atmos@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "battle-future-buddhas@320": {
-    "avif": "images/artists/battle-future-buddhas@320.avif",
-    "webp": "images/artists/battle-future-buddhas@320.webp",
-    "jpg": "images/artists/battle-future-buddhas@320.jpg",
-    "avif320": "images/artists/battle-future-buddhas@320@320.avif",
-    "webp320": "images/artists/battle-future-buddhas@320@320.webp",
-    "jpg320": "images/artists/battle-future-buddhas@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "bill-robin-maya@320": {
-    "avif": "images/artists/bill-robin-maya@320.avif",
-    "webp": "images/artists/bill-robin-maya@320.webp",
-    "jpg": "images/artists/bill-robin-maya@320.jpg",
-    "avif320": "images/artists/bill-robin-maya@320@320.avif",
-    "webp320": "images/artists/bill-robin-maya@320@320.webp",
-    "jpg320": "images/artists/bill-robin-maya@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "blue-planet-corporation@320": {
-    "avif": "images/artists/blue-planet-corporation@320.avif",
-    "webp": "images/artists/blue-planet-corporation@320.webp",
-    "jpg": "images/artists/blue-planet-corporation@320.jpg",
-    "avif320": "images/artists/blue-planet-corporation@320@320.avif",
-    "webp320": "images/artists/blue-planet-corporation@320@320.webp",
-    "jpg320": "images/artists/blue-planet-corporation@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "cosmosis-vs-laughing-buddha@320": {
-    "avif": "images/artists/cosmosis-vs-laughing-buddha@320.avif",
-    "webp": "images/artists/cosmosis-vs-laughing-buddha@320.webp",
-    "jpg": "images/artists/cosmosis-vs-laughing-buddha@320.jpg",
-    "avif320": "images/artists/cosmosis-vs-laughing-buddha@320@320.avif",
-    "webp320": "images/artists/cosmosis-vs-laughing-buddha@320@320.webp",
-    "jpg320": "images/artists/cosmosis-vs-laughing-buddha@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "cosmosis@320": {
-    "avif": "images/artists/cosmosis@320.avif",
-    "webp": "images/artists/cosmosis@320.webp",
-    "jpg": "images/artists/cosmosis@320.jpg",
-    "avif320": "images/artists/cosmosis@320@320.avif",
-    "webp320": "images/artists/cosmosis@320@320.webp",
-    "jpg320": "images/artists/cosmosis@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "cyan@320": {
-    "avif": "images/artists/cyan@320.avif",
-    "webp": "images/artists/cyan@320.webp",
-    "jpg": "images/artists/cyan@320.jpg",
-    "avif320": "images/artists/cyan@320@320.avif",
-    "webp320": "images/artists/cyan@320@320.webp",
-    "jpg320": "images/artists/cyan@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "dado-vs-dino-psaras@320": {
-    "avif": "images/artists/dado-vs-dino-psaras@320.avif",
-    "webp": "images/artists/dado-vs-dino-psaras@320.webp",
-    "jpg": "images/artists/dado-vs-dino-psaras@320.jpg",
-    "avif320": "images/artists/dado-vs-dino-psaras@320@320.avif",
-    "webp320": "images/artists/dado-vs-dino-psaras@320@320.webp",
-    "jpg320": "images/artists/dado-vs-dino-psaras@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "dara-lee@320": {
-    "avif": "images/artists/dara-lee@320.avif",
-    "webp": "images/artists/dara-lee@320.webp",
-    "jpg": "images/artists/dara-lee@320.jpg",
-    "avif320": "images/artists/dara-lee@320@320.avif",
-    "webp320": "images/artists/dara-lee@320@320.webp",
-    "jpg320": "images/artists/dara-lee@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "dark-el-kante@320": {
-    "avif": "images/artists/dark-el-kante@320.avif",
-    "webp": "images/artists/dark-el-kante@320.webp",
-    "jpg": "images/artists/dark-el-kante@320.jpg",
-    "avif320": "images/artists/dark-el-kante@320@320.avif",
-    "webp320": "images/artists/dark-el-kante@320@320.webp",
-    "jpg320": "images/artists/dark-el-kante@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "dj-eden@320": {
-    "avif": "images/artists/dj-eden@320.avif",
-    "webp": "images/artists/dj-eden@320.webp",
-    "jpg": "images/artists/dj-eden@320.jpg",
-    "avif320": "images/artists/dj-eden@320@320.avif",
-    "webp320": "images/artists/dj-eden@320@320.webp",
-    "jpg320": "images/artists/dj-eden@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "dj-emico-amore@320": {
-    "avif": "images/artists/dj-emico-amore@320.avif",
-    "webp": "images/artists/dj-emico-amore@320.webp",
-    "jpg": "images/artists/dj-emico-amore@320.jpg",
-    "avif320": "images/artists/dj-emico-amore@320@320.avif",
-    "webp320": "images/artists/dj-emico-amore@320@320.webp",
-    "jpg320": "images/artists/dj-emico-amore@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "doctor-vagator@320": {
-    "avif": "images/artists/doctor-vagator@320.avif",
-    "webp": "images/artists/doctor-vagator@320.webp",
-    "jpg": "images/artists/doctor-vagator@320.jpg",
-    "avif320": "images/artists/doctor-vagator@320@320.avif",
-    "webp320": "images/artists/doctor-vagator@320@320.webp",
-    "jpg320": "images/artists/doctor-vagator@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "dogma@320": {
-    "avif": "images/artists/dogma@320.avif",
-    "webp": "images/artists/dogma@320.webp",
-    "jpg": "images/artists/dogma@320.jpg",
-    "avif320": "images/artists/dogma@320@320.avif",
-    "webp320": "images/artists/dogma@320@320.webp",
-    "jpg320": "images/artists/dogma@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "domino-vs-ree-k@320": {
-    "avif": "images/artists/domino-vs-ree-k@320.avif",
-    "webp": "images/artists/domino-vs-ree-k@320.webp",
-    "jpg": "images/artists/domino-vs-ree-k@320.jpg",
-    "avif320": "images/artists/domino-vs-ree-k@320@320.avif",
-    "webp320": "images/artists/domino-vs-ree-k@320@320.webp",
-    "jpg320": "images/artists/domino-vs-ree-k@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "doof@320": {
-    "avif": "images/artists/doof@320.avif",
-    "webp": "images/artists/doof@320.webp",
-    "jpg": "images/artists/doof@320.jpg",
-    "avif320": "images/artists/doof@320@320.avif",
-    "webp320": "images/artists/doof@320@320.webp",
-    "jpg320": "images/artists/doof@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "drop-dash-vs-germinator@320": {
-    "avif": "images/artists/drop-dash-vs-germinator@320.avif",
-    "webp": "images/artists/drop-dash-vs-germinator@320.webp",
-    "jpg": "images/artists/drop-dash-vs-germinator@320.jpg",
-    "avif320": "images/artists/drop-dash-vs-germinator@320@320.avif",
-    "webp320": "images/artists/drop-dash-vs-germinator@320@320.webp",
-    "jpg320": "images/artists/drop-dash-vs-germinator@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "e-sko@320": {
-    "avif": "images/artists/e-sko@320.avif",
-    "webp": "images/artists/e-sko@320.webp",
-    "jpg": "images/artists/e-sko@320.jpg",
-    "avif320": "images/artists/e-sko@320@320.avif",
-    "webp320": "images/artists/e-sko@320@320.webp",
-    "jpg320": "images/artists/e-sko@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "earl-peal@320": {
-    "avif": "images/artists/earl-peal@320.avif",
-    "webp": "images/artists/earl-peal@320.webp",
-    "jpg": "images/artists/earl-peal@320.jpg",
-    "avif320": "images/artists/earl-peal@320@320.avif",
-    "webp320": "images/artists/earl-peal@320@320.webp",
-    "jpg320": "images/artists/earl-peal@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "encens-vs-ominus@320": {
-    "avif": "images/artists/encens-vs-ominus@320.avif",
-    "webp": "images/artists/encens-vs-ominus@320.webp",
-    "jpg": "images/artists/encens-vs-ominus@320.jpg",
-    "avif320": "images/artists/encens-vs-ominus@320@320.avif",
-    "webp320": "images/artists/encens-vs-ominus@320@320.webp",
-    "jpg320": "images/artists/encens-vs-ominus@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "ephedra@320": {
-    "avif": "images/artists/ephedra@320.avif",
-    "webp": "images/artists/ephedra@320.webp",
-    "jpg": "images/artists/ephedra@320.jpg",
-    "avif320": "images/artists/ephedra@320@320.avif",
-    "webp320": "images/artists/ephedra@320@320.webp",
-    "jpg320": "images/artists/ephedra@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "extra-cheers@320": {
-    "avif": "images/artists/extra-cheers@320.avif",
-    "webp": "images/artists/extra-cheers@320.webp",
-    "jpg": "images/artists/extra-cheers@320.jpg",
-    "avif320": "images/artists/extra-cheers@320@320.avif",
-    "webp320": "images/artists/extra-cheers@320@320.webp",
-    "jpg320": "images/artists/extra-cheers@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "extrawelt@320": {
-    "avif": "images/artists/extrawelt@320.avif",
-    "webp": "images/artists/extrawelt@320.webp",
-    "jpg": "images/artists/extrawelt@320.jpg",
-    "avif320": "images/artists/extrawelt@320@320.avif",
-    "webp320": "images/artists/extrawelt@320@320.webp",
-    "jpg320": "images/artists/extrawelt@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "filteria@320": {
-    "avif": "images/artists/filteria@320.avif",
-    "webp": "images/artists/filteria@320.webp",
-    "jpg": "images/artists/filteria@320.jpg",
-    "avif320": "images/artists/filteria@320@320.avif",
-    "webp320": "images/artists/filteria@320@320.webp",
-    "jpg320": "images/artists/filteria@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "gabi-von-dub@320": {
-    "avif": "images/artists/gabi-von-dub@320.avif",
-    "webp": "images/artists/gabi-von-dub@320.webp",
-    "jpg": "images/artists/gabi-von-dub@320.jpg",
-    "avif320": "images/artists/gabi-von-dub@320@320.avif",
-    "webp320": "images/artists/gabi-von-dub@320@320.webp",
-    "jpg320": "images/artists/gabi-von-dub@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "gabriel-le-mar@320": {
-    "avif": "images/artists/gabriel-le-mar@320.avif",
-    "webp": "images/artists/gabriel-le-mar@320.webp",
-    "jpg": "images/artists/gabriel-le-mar@320.jpg",
-    "avif320": "images/artists/gabriel-le-mar@320@320.avif",
-    "webp320": "images/artists/gabriel-le-mar@320@320.webp",
-    "jpg320": "images/artists/gabriel-le-mar@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "gangguru-vs-cop@320": {
-    "avif": "images/artists/gangguru-vs-cop@320.avif",
-    "webp": "images/artists/gangguru-vs-cop@320.webp",
-    "jpg": "images/artists/gangguru-vs-cop@320.jpg",
-    "avif320": "images/artists/gangguru-vs-cop@320@320.avif",
-    "webp320": "images/artists/gangguru-vs-cop@320@320.webp",
-    "jpg320": "images/artists/gangguru-vs-cop@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "goaacen@320": {
-    "avif": "images/artists/goaacen@320.avif",
-    "webp": "images/artists/goaacen@320.webp",
-    "jpg": "images/artists/goaacen@320.jpg",
-    "avif320": "images/artists/goaacen@320@320.avif",
-    "webp320": "images/artists/goaacen@320@320.webp",
-    "jpg320": "images/artists/goaacen@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "graham-wood@320": {
-    "avif": "images/artists/graham-wood@320.avif",
-    "webp": "images/artists/graham-wood@320.webp",
-    "jpg": "images/artists/graham-wood@320.jpg",
-    "avif320": "images/artists/graham-wood@320@320.avif",
-    "webp320": "images/artists/graham-wood@320@320.webp",
-    "jpg320": "images/artists/graham-wood@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "growling-mad-scientists@320": {
-    "avif": "images/artists/growling-mad-scientists@320.avif",
-    "webp": "images/artists/growling-mad-scientists@320.webp",
-    "jpg": "images/artists/growling-mad-scientists@320.jpg",
-    "avif320": "images/artists/growling-mad-scientists@320@320.avif",
-    "webp320": "images/artists/growling-mad-scientists@320@320.webp",
-    "jpg320": "images/artists/growling-mad-scientists@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "hypnoxock@320": {
-    "avif": "images/artists/hypnoxock@320.avif",
-    "webp": "images/artists/hypnoxock@320.webp",
-    "jpg": "images/artists/hypnoxock@320.jpg",
-    "avif320": "images/artists/hypnoxock@320@320.avif",
-    "webp320": "images/artists/hypnoxock@320@320.webp",
-    "jpg320": "images/artists/hypnoxock@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "infinity-project-vs-excess-head@320": {
-    "avif": "images/artists/infinity-project-vs-excess-head@320.avif",
-    "webp": "images/artists/infinity-project-vs-excess-head@320.webp",
-    "jpg": "images/artists/infinity-project-vs-excess-head@320.jpg",
-    "avif320": "images/artists/infinity-project-vs-excess-head@320@320.avif",
-    "webp320": "images/artists/infinity-project-vs-excess-head@320@320.webp",
-    "jpg320": "images/artists/infinity-project-vs-excess-head@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "isoquant@320": {
-    "avif": "images/artists/isoquant@320.avif",
-    "webp": "images/artists/isoquant@320.webp",
-    "jpg": "images/artists/isoquant@320.jpg",
-    "avif320": "images/artists/isoquant@320@320.avif",
-    "webp320": "images/artists/isoquant@320@320.webp",
-    "jpg320": "images/artists/isoquant@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "jaia@320": {
-    "avif": "images/artists/jaia@320.avif",
-    "webp": "images/artists/jaia@320.webp",
-    "jpg": "images/artists/jaia@320.jpg",
-    "avif320": "images/artists/jaia@320@320.avif",
-    "webp320": "images/artists/jaia@320@320.webp",
-    "jpg320": "images/artists/jaia@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "james-monro@320": {
-    "avif": "images/artists/james-monro@320.avif",
-    "webp": "images/artists/james-monro@320.webp",
-    "jpg": "images/artists/james-monro@320.jpg",
-    "avif320": "images/artists/james-monro@320@320.avif",
-    "webp320": "images/artists/james-monro@320@320.webp",
-    "jpg320": "images/artists/james-monro@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "jean-borelli-vs-sid-shanti@320": {
-    "avif": "images/artists/jean-borelli-vs-sid-shanti@320.avif",
-    "webp": "images/artists/jean-borelli-vs-sid-shanti@320.webp",
-    "jpg": "images/artists/jean-borelli-vs-sid-shanti@320.jpg",
-    "avif320": "images/artists/jean-borelli-vs-sid-shanti@320@320.avif",
-    "webp320": "images/artists/jean-borelli-vs-sid-shanti@320@320.webp",
-    "jpg320": "images/artists/jean-borelli-vs-sid-shanti@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "jordan@320": {
-    "avif": "images/artists/jordan@320.avif",
-    "webp": "images/artists/jordan@320.webp",
-    "jpg": "images/artists/jordan@320.jpg",
-    "avif320": "images/artists/jordan@320@320.avif",
-    "webp320": "images/artists/jordan@320@320.webp",
-    "jpg320": "images/artists/jordan@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "joti-sidhu-market@320": {
-    "avif": "images/artists/joti-sidhu-market@320.avif",
-    "webp": "images/artists/joti-sidhu-market@320.webp",
-    "jpg": "images/artists/joti-sidhu-market@320.jpg",
-    "avif320": "images/artists/joti-sidhu-market@320@320.avif",
-    "webp320": "images/artists/joti-sidhu-market@320@320.webp",
-    "jpg320": "images/artists/joti-sidhu-market@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "joti-sidhu@320": {
-    "avif": "images/artists/joti-sidhu@320.avif",
-    "webp": "images/artists/joti-sidhu@320.webp",
-    "jpg": "images/artists/joti-sidhu@320.jpg",
-    "avif320": "images/artists/joti-sidhu@320@320.avif",
-    "webp320": "images/artists/joti-sidhu@320@320.webp",
-    "jpg320": "images/artists/joti-sidhu@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "klil-co@320": {
-    "avif": "images/artists/klil-co@320.avif",
-    "webp": "images/artists/klil-co@320.webp",
-    "jpg": "images/artists/klil-co@320.jpg",
-    "avif320": "images/artists/klil-co@320@320.avif",
-    "webp320": "images/artists/klil-co@320@320.webp",
-    "jpg320": "images/artists/klil-co@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "kris-kylven@320": {
-    "avif": "images/artists/kris-kylven@320.avif",
-    "webp": "images/artists/kris-kylven@320.webp",
-    "jpg": "images/artists/kris-kylven@320.jpg",
-    "avif320": "images/artists/kris-kylven@320@320.avif",
-    "webp320": "images/artists/kris-kylven@320@320.webp",
-    "jpg320": "images/artists/kris-kylven@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "larsik@320": {
-    "avif": "images/artists/larsik@320.avif",
-    "webp": "images/artists/larsik@320.webp",
-    "jpg": "images/artists/larsik@320.jpg",
-    "avif320": "images/artists/larsik@320@320.avif",
-    "webp320": "images/artists/larsik@320@320.webp",
-    "jpg320": "images/artists/larsik@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "marc-van-der-vlugt@320": {
-    "avif": "images/artists/marc-van-der-vlugt@320.avif",
-    "webp": "images/artists/marc-van-der-vlugt@320.webp",
-    "jpg": "images/artists/marc-van-der-vlugt@320.jpg",
-    "avif320": "images/artists/marc-van-der-vlugt@320@320.avif",
-    "webp320": "images/artists/marc-van-der-vlugt@320@320.webp",
-    "jpg320": "images/artists/marc-van-der-vlugt@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "mark-allen@320": {
-    "avif": "images/artists/mark-allen@320.avif",
-    "webp": "images/artists/mark-allen@320.webp",
-    "jpg": "images/artists/mark-allen@320.jpg",
-    "avif320": "images/artists/mark-allen@320@320.avif",
-    "webp320": "images/artists/mark-allen@320@320.webp",
-    "jpg320": "images/artists/mark-allen@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "mark-van-der-vlugt-market@320": {
-    "avif": "images/artists/mark-van-der-vlugt-market@320.avif",
-    "webp": "images/artists/mark-van-der-vlugt-market@320.webp",
-    "jpg": "images/artists/mark-van-der-vlugt-market@320.jpg",
-    "avif320": "images/artists/mark-van-der-vlugt-market@320@320.avif",
-    "webp320": "images/artists/mark-van-der-vlugt-market@320@320.webp",
-    "jpg320": "images/artists/mark-van-der-vlugt-market@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "mathew-jonson@320": {
-    "avif": "images/artists/mathew-jonson@320.avif",
-    "webp": "images/artists/mathew-jonson@320.webp",
-    "jpg": "images/artists/mathew-jonson@320.jpg",
-    "avif320": "images/artists/mathew-jonson@320@320.avif",
-    "webp320": "images/artists/mathew-jonson@320@320.webp",
-    "jpg320": "images/artists/mathew-jonson@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "merrow@320": {
-    "avif": "images/artists/merrow@320.avif",
-    "webp": "images/artists/merrow@320.webp",
-    "jpg": "images/artists/merrow@320.jpg",
-    "avif320": "images/artists/merrow@320@320.avif",
-    "webp320": "images/artists/merrow@320@320.webp",
-    "jpg320": "images/artists/merrow@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "merv-eat-static@320": {
-    "avif": "images/artists/merv-eat-static@320.avif",
-    "webp": "images/artists/merv-eat-static@320.webp",
-    "jpg": "images/artists/merv-eat-static@320.jpg",
-    "avif320": "images/artists/merv-eat-static@320@320.avif",
-    "webp320": "images/artists/merv-eat-static@320@320.webp",
-    "jpg320": "images/artists/merv-eat-static@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "mini-spacer@320": {
-    "avif": "images/artists/mini-spacer@320.avif",
-    "webp": "images/artists/mini-spacer@320.webp",
-    "jpg": "images/artists/mini-spacer@320.jpg",
-    "avif320": "images/artists/mini-spacer@320@320.avif",
-    "webp320": "images/artists/mini-spacer@320@320.webp",
-    "jpg320": "images/artists/mini-spacer@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "mittelstandskinder-ohne-strom@320": {
-    "avif": "images/artists/mittelstandskinder-ohne-strom@320.avif",
-    "webp": "images/artists/mittelstandskinder-ohne-strom@320.webp",
-    "jpg": "images/artists/mittelstandskinder-ohne-strom@320.jpg",
-    "avif320": "images/artists/mittelstandskinder-ohne-strom@320@320.avif",
-    "webp320": "images/artists/mittelstandskinder-ohne-strom@320@320.webp",
-    "jpg320": "images/artists/mittelstandskinder-ohne-strom@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "moon-beasts@320": {
-    "avif": "images/artists/moon-beasts@320.avif",
-    "webp": "images/artists/moon-beasts@320.webp",
-    "jpg": "images/artists/moon-beasts@320.jpg",
-    "avif320": "images/artists/moon-beasts@320@320.avif",
-    "webp320": "images/artists/moon-beasts@320@320.webp",
-    "jpg320": "images/artists/moon-beasts@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "nouveau-shamanique@320": {
-    "avif": "images/artists/nouveau-shamanique@320.avif",
-    "webp": "images/artists/nouveau-shamanique@320.webp",
-    "jpg": "images/artists/nouveau-shamanique@320.jpg",
-    "avif320": "images/artists/nouveau-shamanique@320@320.avif",
-    "webp320": "images/artists/nouveau-shamanique@320@320.webp",
-    "jpg320": "images/artists/nouveau-shamanique@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "orion-borelli@320": {
-    "avif": "images/artists/orion-borelli@320.avif",
-    "webp": "images/artists/orion-borelli@320.webp",
-    "jpg": "images/artists/orion-borelli@320.jpg",
-    "avif320": "images/artists/orion-borelli@320@320.avif",
-    "webp320": "images/artists/orion-borelli@320@320.webp",
-    "jpg320": "images/artists/orion-borelli@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "prometheus@320": {
-    "avif": "images/artists/prometheus@320.avif",
-    "webp": "images/artists/prometheus@320.webp",
-    "jpg": "images/artists/prometheus@320.jpg",
-    "avif320": "images/artists/prometheus@320@320.avif",
-    "webp320": "images/artists/prometheus@320@320.webp",
-    "jpg320": "images/artists/prometheus@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "proxeeus@320": {
-    "avif": "images/artists/proxeeus@320.avif",
-    "webp": "images/artists/proxeeus@320.webp",
-    "jpg": "images/artists/proxeeus@320.jpg",
-    "avif320": "images/artists/proxeeus@320@320.avif",
-    "webp320": "images/artists/proxeeus@320@320.webp",
-    "jpg320": "images/artists/proxeeus@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "psara-market@320": {
-    "avif": "images/artists/psara-market@320.avif",
-    "webp": "images/artists/psara-market@320.webp",
-    "jpg": "images/artists/psara-market@320.jpg",
-    "avif320": "images/artists/psara-market@320@320.avif",
-    "webp320": "images/artists/psara-market@320@320.webp",
-    "jpg320": "images/artists/psara-market@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "psara@320": {
-    "avif": "images/artists/psara@320.avif",
-    "webp": "images/artists/psara@320.webp",
-    "jpg": "images/artists/psara@320.jpg",
-    "avif320": "images/artists/psara@320@320.avif",
-    "webp320": "images/artists/psara@320@320.webp",
-    "jpg320": "images/artists/psara@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "psyko-disko-vs-spies@320": {
-    "avif": "images/artists/psyko-disko-vs-spies@320.avif",
-    "webp": "images/artists/psyko-disko-vs-spies@320.webp",
-    "jpg": "images/artists/psyko-disko-vs-spies@320.jpg",
-    "avif320": "images/artists/psyko-disko-vs-spies@320@320.avif",
-    "webp320": "images/artists/psyko-disko-vs-spies@320@320.webp",
-    "jpg320": "images/artists/psyko-disko-vs-spies@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "ray-castle@320": {
-    "avif": "images/artists/ray-castle@320.avif",
-    "webp": "images/artists/ray-castle@320.webp",
-    "jpg": "images/artists/ray-castle@320.jpg",
-    "avif320": "images/artists/ray-castle@320@320.avif",
-    "webp320": "images/artists/ray-castle@320@320.webp",
-    "jpg320": "images/artists/ray-castle@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "ree-k@320": {
-    "avif": "images/artists/ree-k@320.avif",
-    "webp": "images/artists/ree-k@320.webp",
-    "jpg": "images/artists/ree-k@320.jpg",
-    "avif320": "images/artists/ree-k@320@320.avif",
-    "webp320": "images/artists/ree-k@320@320.webp",
-    "jpg320": "images/artists/ree-k@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "reefer-decree@320": {
-    "avif": "images/artists/reefer-decree@320.avif",
-    "webp": "images/artists/reefer-decree@320.webp",
-    "jpg": "images/artists/reefer-decree@320.jpg",
-    "avif320": "images/artists/reefer-decree@320@320.avif",
-    "webp320": "images/artists/reefer-decree@320@320.webp",
-    "jpg320": "images/artists/reefer-decree@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "robert-leiner@320": {
-    "avif": "images/artists/robert-leiner@320.avif",
-    "webp": "images/artists/robert-leiner@320.webp",
-    "jpg": "images/artists/robert-leiner@320.jpg",
-    "avif320": "images/artists/robert-leiner@320@320.avif",
-    "webp320": "images/artists/robert-leiner@320@320.webp",
-    "jpg320": "images/artists/robert-leiner@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "sancho-meiso@320": {
-    "avif": "images/artists/sancho-meiso@320.avif",
-    "webp": "images/artists/sancho-meiso@320.webp",
-    "jpg": "images/artists/sancho-meiso@320.jpg",
-    "avif320": "images/artists/sancho-meiso@320@320.avif",
-    "webp320": "images/artists/sancho-meiso@320@320.webp",
-    "jpg320": "images/artists/sancho-meiso@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "sean-williams@320": {
-    "avif": "images/artists/sean-williams@320.avif",
-    "webp": "images/artists/sean-williams@320.webp",
-    "jpg": "images/artists/sean-williams@320.jpg",
-    "avif320": "images/artists/sean-williams@320@320.avif",
-    "webp320": "images/artists/sean-williams@320@320.webp",
-    "jpg320": "images/artists/sean-williams@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "sid-shanti@320": {
-    "avif": "images/artists/sid-shanti@320.avif",
-    "webp": "images/artists/sid-shanti@320.webp",
-    "jpg": "images/artists/sid-shanti@320.jpg",
-    "avif320": "images/artists/sid-shanti@320@320.avif",
-    "webp320": "images/artists/sid-shanti@320@320.webp",
-    "jpg320": "images/artists/sid-shanti@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "silicon-sound@320": {
-    "avif": "images/artists/silicon-sound@320.avif",
-    "webp": "images/artists/silicon-sound@320.webp",
-    "jpg": "images/artists/silicon-sound@320.jpg",
-    "avif320": "images/artists/silicon-sound@320@320.avif",
-    "webp320": "images/artists/silicon-sound@320@320.webp",
-    "jpg320": "images/artists/silicon-sound@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "simon-ghahary@320": {
-    "avif": "images/artists/simon-ghahary@320.avif",
-    "webp": "images/artists/simon-ghahary@320.webp",
-    "jpg": "images/artists/simon-ghahary@320.jpg",
-    "avif320": "images/artists/simon-ghahary@320@320.avif",
-    "webp320": "images/artists/simon-ghahary@320@320.webp",
-    "jpg320": "images/artists/simon-ghahary@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "sjamadan@320": {
-    "avif": "images/artists/sjamadan@320.avif",
-    "webp": "images/artists/sjamadan@320.webp",
-    "jpg": "images/artists/sjamadan@320.jpg",
-    "avif320": "images/artists/sjamadan@320@320.avif",
-    "webp320": "images/artists/sjamadan@320@320.webp",
-    "jpg320": "images/artists/sjamadan@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "skizologic-vs-filteria@320": {
-    "avif": "images/artists/skizologic-vs-filteria@320.avif",
-    "webp": "images/artists/skizologic-vs-filteria@320.webp",
-    "jpg": "images/artists/skizologic-vs-filteria@320.jpg",
-    "avif320": "images/artists/skizologic-vs-filteria@320@320.avif",
-    "webp320": "images/artists/skizologic-vs-filteria@320@320.webp",
-    "jpg320": "images/artists/skizologic-vs-filteria@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "solitare@320": {
-    "avif": "images/artists/solitare@320.avif",
-    "webp": "images/artists/solitare@320.webp",
-    "jpg": "images/artists/solitare@320.jpg",
-    "avif320": "images/artists/solitare@320@320.avif",
-    "webp320": "images/artists/solitare@320@320.webp",
-    "jpg320": "images/artists/solitare@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "space-cat-vs-talamasca@320": {
-    "avif": "images/artists/space-cat-vs-talamasca@320.avif",
-    "webp": "images/artists/space-cat-vs-talamasca@320.webp",
-    "jpg": "images/artists/space-cat-vs-talamasca@320.jpg",
-    "avif320": "images/artists/space-cat-vs-talamasca@320@320.avif",
-    "webp320": "images/artists/space-cat-vs-talamasca@320@320.webp",
-    "jpg320": "images/artists/space-cat-vs-talamasca@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "spiralkinder@320": {
-    "avif": "images/artists/spiralkinder@320.avif",
-    "webp": "images/artists/spiralkinder@320.webp",
-    "jpg": "images/artists/spiralkinder@320.jpg",
-    "avif320": "images/artists/spiralkinder@320@320.avif",
-    "webp320": "images/artists/spiralkinder@320@320.webp",
-    "jpg320": "images/artists/spiralkinder@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "sun-project@320": {
-    "avif": "images/artists/sun-project@320.avif",
-    "webp": "images/artists/sun-project@320.webp",
-    "jpg": "images/artists/sun-project@320.jpg",
-    "avif320": "images/artists/sun-project@320@320.avif",
-    "webp320": "images/artists/sun-project@320@320.webp",
-    "jpg320": "images/artists/sun-project@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "takeshi-isogai@320": {
-    "avif": "images/artists/takeshi-isogai@320.avif",
-    "webp": "images/artists/takeshi-isogai@320.webp",
-    "jpg": "images/artists/takeshi-isogai@320.jpg",
-    "avif320": "images/artists/takeshi-isogai@320@320.avif",
-    "webp320": "images/artists/takeshi-isogai@320@320.webp",
-    "jpg320": "images/artists/takeshi-isogai@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "tecnica@320": {
-    "avif": "images/artists/tecnica@320.avif",
-    "webp": "images/artists/tecnica@320.webp",
-    "jpg": "images/artists/tecnica@320.jpg",
-    "avif320": "images/artists/tecnica@320@320.avif",
-    "webp320": "images/artists/tecnica@320@320.webp",
-    "jpg320": "images/artists/tecnica@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "triple-distilled@320": {
-    "avif": "images/artists/triple-distilled@320.avif",
-    "webp": "images/artists/triple-distilled@320.webp",
-    "jpg": "images/artists/triple-distilled@320.jpg",
-    "avif320": "images/artists/triple-distilled@320@320.avif",
-    "webp320": "images/artists/triple-distilled@320@320.webp",
-    "jpg320": "images/artists/triple-distilled@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "tsuyoshi-suzuki@320": {
-    "avif": "images/artists/tsuyoshi-suzuki@320.avif",
-    "webp": "images/artists/tsuyoshi-suzuki@320.webp",
-    "jpg": "images/artists/tsuyoshi-suzuki@320.jpg",
-    "avif320": "images/artists/tsuyoshi-suzuki@320@320.avif",
-    "webp320": "images/artists/tsuyoshi-suzuki@320@320.webp",
-    "jpg320": "images/artists/tsuyoshi-suzuki@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "ukiro@320": {
-    "avif": "images/artists/ukiro@320.avif",
-    "webp": "images/artists/ukiro@320.webp",
-    "jpg": "images/artists/ukiro@320.jpg",
-    "avif320": "images/artists/ukiro@320@320.avif",
-    "webp320": "images/artists/ukiro@320@320.webp",
-    "jpg320": "images/artists/ukiro@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "ultravibe@320": {
-    "avif": "images/artists/ultravibe@320.avif",
-    "webp": "images/artists/ultravibe@320.webp",
-    "jpg": "images/artists/ultravibe@320.jpg",
-    "avif320": "images/artists/ultravibe@320@320.avif",
-    "webp320": "images/artists/ultravibe@320@320.webp",
-    "jpg320": "images/artists/ultravibe@320@320.jpg",
-    "w": 320,
-    "h": 320
-  },
-  "yahel@320": {
-    "avif": "images/artists/yahel@320.avif",
-    "webp": "images/artists/yahel@320.webp",
-    "jpg": "images/artists/yahel@320.jpg",
-    "avif320": "images/artists/yahel@320@320.avif",
-    "webp320": "images/artists/yahel@320@320.webp",
-    "jpg320": "images/artists/yahel@320@320.jpg",
-    "w": 320,
-    "h": 320
   }
 }

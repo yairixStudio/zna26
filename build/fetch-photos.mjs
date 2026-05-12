@@ -13,9 +13,12 @@ const ROOT = path.resolve(__dirname, "..");
 const PAGES = [
   "https://znagathering.com/program/",
   "https://znagathering.com/program/dancefloor/",
+  "https://znagathering.com/program/marketstage/",
   "https://znagathering.com/program/the-market-2026/",
   "https://znagathering.com/program/goa-guardians/",
   "https://znagathering.com/program/retro-universe/",
+  "https://znagathering.com/2026/05/11/artist-announcement-retro-universe-37/",
+  "https://znagathering.com/2026/05/04/artist-announcement-retro-universe-36/",
   "https://znagathering.com/2026/04/27/artist-announcement-retro-universe-35/",
   "https://znagathering.com/2026/04/06/artist-announcement-retro-universe-32/",
   "https://znagathering.com/2026/03/30/artist-announcement-retro-universe-31/",
@@ -120,7 +123,19 @@ const ARTIST_ALIASES = [
   ["sjamadan", "sjamadan"],
   ["sjama_dan", "sjamadan"],
   ["sjama-dan", "sjamadan"],
-  ["cheers", "extra-cheers"]
+  ["cheers", "extra-cheers"],
+  ["masaray", "masaray"],
+  ["masa ray", "masaray"],
+  ["masa_ray", "masaray"],
+  ["emico amore", "dj-emico-amore"],
+  ["emico_amore", "dj-emico-amore"],
+  ["dj emico", "dj-emico-amore"],
+  ["dj_emico", "dj-emico-amore"],
+  ["nouveau shamanique", "nouveau-shamanique"],
+  ["nouveau_shamanique", "nouveau-shamanique"],
+  ["triquetra", "nouveau-shamanique"],
+  ["dragon twins", "nouveau-shamanique"],
+  ["dragon_twins", "nouveau-shamanique"]
 ];
 
 function matchArtist(text) {

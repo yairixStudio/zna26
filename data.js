@@ -1958,6 +1958,98 @@ let ARTISTS = [
       { id: "GF4Ve5hgRIk", title: "Deedrah - Singles & EP's 2014-2018", year: null },
       { id: "XMZzXkNWc-M", title: "Dino Psaras - White Lights Psy", year: null }
     ]
+  },
+  {
+    id: "masaray",
+    announcedAt: "2026-05-11",
+    name: "Masaray",
+    realName: "Ray Castle (NZ/AU) + Masa = Masayuki Kurihara (JP)",
+    country: "🇳🇿 ניו זילנד / 🇯🇵 יפן",
+    age: null,
+    born: "פעילים מ-1995",
+    stage: "retro",
+    role: "Live",
+    tags: ["Goa Trance", "Pioneer", "Psy-Harmonics"],
+    color: "#9b51e0",
+    bio: "Masaray - שיתוף פעולה היסטורי בין Ray Castle (החלוץ הניו-זילנדי-אוסטרלי שעיצב את מסיבות Pagan Productions באירופה 1987-1991) ל-Masa - מאסיוקי קוריהארה היפני (החלוץ של גואה היפני, X-Tron). שני אבות מייסדים של גואה הבינלאומי - מיפן ועד אוסטרליה. אלבום הביכורים 'Cosmic Trancer' (1995, Psy-Harmonics) הוא אבן יסוד של גואה הקלאסי. ה-EP 'Time Traveler Of Trance' (נובמבר 1995) - יצירת מופת פסיכדלית עם סינתסייזרים נוהים, סיפור-סיפור מורחב וגרוב נמתח שכמעט פינק-פלוידי. הוקלט מעל המסעדה המשפחתית של מאסה בטוקיו. הופעת חיים מיוחדת ב-Zambu Temple של ZNA 2026.",
+    notable: "'Cosmic Trancer' (1995, Psy-Harmonics) ו-'Time Traveler Of Trance EP' (1995) - מאלפי המאסטרים של גואה הקלאסי. רימאסטר ב-2018 על Hypnodisk",
+    albums: [
+      { name: "Cosmic Trancer", year: 1995, project: "Psy-Harmonics (Australia)" },
+      { name: "Time Traveler Of Trance EP", year: 1995, project: "Psy-Harmonics 12\"" },
+      { name: "Cosmic Trancer (re:master)", year: 2018, project: "Hypnodisk" }
+    ],
+    links: [
+      { type: "Discogs", url: "https://www.discogs.com/artist/26559-Masaray" },
+      { type: "Bandcamp (re:master)", url: "https://hypnodisk.bandcamp.com/album/cosmic-trancer-re-master" },
+      { type: "Bandcamp (Ray Castle)", url: "https://suntriprecords.bandcamp.com/album/mystique-of-the-metaverse" },
+      { type: "Spotify", url: "https://open.spotify.com/album/6uZ5zvwWH3S2PFFDrgbOCp" }
+    ],
+    tracks: [
+      { id: "oeq2CHG_cYE", title: "Cosmic Trancer", year: 1995 },
+      { id: "CNeEcQYUpmA", title: "Cosmic Trancer (Psy-Harmonics 1995)", year: 1995 },
+      { id: "QL5sYHb28J0", title: "Time Traveler Of Trance", year: 1995 },
+      { id: "JM-FZh_gojg", title: "Time Traveler", year: 1995 },
+      { id: "s_HIUmQjb7E", title: "Time Traveller (alternate mix)", year: 1995 }
+    ]
+  },
+  {
+    id: "dj-emico-amore",
+    announcedAt: "2026-03-04",
+    name: "DJ Emico Amore",
+    realName: "Emico Amore",
+    country: "🇯🇵 יפן",
+    age: null,
+    born: "פעילה מ-1993",
+    stage: "guardians",
+    role: "DJ Set",
+    tags: ["Goa Guardians", "DAT Universe", "Tokyo Underground"],
+    color: "#00d4ff",
+    bio: "אמיקו אמורה - DJ ותיקה של פסיטראנס וגואה מטוקיו, חברה ב-DAT Universe. נחשפה לאלקטרוניקה גואה לראשונה ב-1993 ומאז לא הסתכלה לאחור. נעה בין השחר של הסצנה היפנית התת-קרקעית לחופי גואה, השתתפה אקטיבית בלילות הזהב של שנות ה-90 והכירה את האנשים שעיצבו את הסצנה. החלה את הקריירה כ-DJ עם דגש על אמביינט, ועם השנים העבירה את המוקד לרחבת הריקודים - סטים עם תחושת סיפור חזקה ועומק רגשי שמגיע מאהבה אמיתית לרוח הגואה.",
+    notable: "DAT Universe / Goa Guardians (Japan) - דמות מפתח של גואה ביפן מ-1993",
+    albums: [],
+    links: [
+      { type: "Mixcloud", url: "https://www.mixcloud.com/djemikoamore/" },
+      { type: "Facebook", url: "https://www.facebook.com/people/DJ-Emico-Amore/100048926726118/" },
+      { type: "Instagram", url: "https://www.instagram.com/djemicoamore" }
+    ],
+    tracks: []
+  },
+  {
+    id: "nouveau-shamanique",
+    announcedAt: "2025-12-25",
+    name: "Nouveau Shamanique",
+    realName: "Triquetra (Elric & Jurian Reinartz) × Dragon Twins (Mathias Pico)",
+    country: "🇧🇪 בלגיה",
+    age: null,
+    born: "פרויקט חדש 2025",
+    stage: "zambu",
+    role: "Live",
+    tags: ["Futuristic Reality", "New School Goa", "Suntrip", "Hardware Live"],
+    color: "#ff006e",
+    bio: "פרויקט חי חדש (2025) של שני שמות מובילים בגואה הבלגי החדש: Triquetra - התאומים אלריק וג'וריאן ריינארץ, ידועים בסטים אנלוגיים עם סמפלרים, מכונות מתוכנתות ודידג'רידו (אלבומים על Suntrip Records: 'Ecstatic Planet' 2018, 'Human Control' 2020, ו-'Myriad Vision') - יחד עם Dragon Twins - מאתיאס פיקו מאנטוורפן, בעל הפקות אקדיות חזקות שמופיעות ב-Cronomi, Underground Alien Factory ובאוסף 'Suntrip Classix Vol. 3 - Gaia'. ב-ZNA 2026 השניים יופיעו חיים עם 100% חומרה על הבמה - פיוז'ן ריתמי, ניסיוני ופסיכדלי במיוחד שמרגיש כמו שנות ה-90 הזהובות עם ראייה רטרו-עתידנית.",
+    notable: "Triquetra × Dragon Twins - הופעה חיה עם 100% חומרה (Suntrip Records, 2025)",
+    albums: [
+      { name: "Ecstatic Planet", year: 2018, project: "Triquetra / Suntrip Records (debut)" },
+      { name: "Human Control", year: 2020, project: "Triquetra / Suntrip Records" },
+      { name: "Myriad Vision", year: null, project: "Triquetra / Suntrip Records" },
+      { name: "Suntrip Classix Vol. 3 - Gaia (compilation)", year: null, project: "Dragon Twins - 'Eating Crow'" }
+    ],
+    links: [
+      { type: "Discogs (Triquetra)", url: "https://www.discogs.com/artist/5252321-Triquetra-3" },
+      { type: "Discogs (Dragon Twins)", url: "https://www.discogs.com/artist/3531478-Dragon-Twins" },
+      { type: "Bandcamp (Triquetra)", url: "https://suntriprecords.bandcamp.com/album/triquetra-ecstatic-planet" },
+      { type: "Bandcamp (Human Control)", url: "https://suntriprecords.bandcamp.com/album/human-control" },
+      { type: "SoundCloud (Triquetra)", url: "https://soundcloud.com/triquetra-2" },
+      { type: "SoundCloud (Dragon Twins)", url: "https://soundcloud.com/djunasaurus" }
+    ],
+    tracks: [
+      { id: "c9xzED0OtZE", title: "Triquetra - Ecstatic Planet (Full Album)", year: 2018 },
+      { id: "AasQuFMRB9M", title: "Triquetra - Sunstream Hardware Live", year: 2020 },
+      { id: "wLAYeYhFxPg", title: "Triquetra - Full Hardware Live", year: 2019 },
+      { id: "NKajxMh1v54", title: "Triquetra - Home Studio Live", year: 2019 },
+      { id: "sxsxjbKQ00Q", title: "Triquetra - Talk Binary to Me", year: null },
+      { id: "vQbg0LQxmmo", title: "Dragon Twins - MPC Live (Studio Session)", year: 2020 }
+    ]
   }
 ];
 
@@ -2173,6 +2265,26 @@ const ARTIST_EXTRAS = {
   "filteria": {
     representedBy: "Suntrip Records",
     channels: { spotify: "https://open.spotify.com/artist/1GYwH0iIUKPlyhrcSq8rJ8" }
+  },
+  "masaray": {
+    representedBy: "Psy-Harmonics (historical) · Hypnodisk (re:master)",
+    channels: {
+      spotify: "https://open.spotify.com/album/6uZ5zvwWH3S2PFFDrgbOCp",
+      bandcamp: "https://hypnodisk.bandcamp.com/album/cosmic-trancer-re-master"
+    }
+  },
+  "dj-emico-amore": {
+    representedBy: "DAT Universe · JP",
+    channels: {
+      mixcloud: "https://www.mixcloud.com/djemikoamore/"
+    }
+  },
+  "nouveau-shamanique": {
+    representedBy: "Suntrip Records · BE",
+    channels: {
+      soundcloud: "https://soundcloud.com/triquetra-2",
+      bandcamp: "https://suntriprecords.bandcamp.com/album/triquetra-ecstatic-planet"
+    }
   }
 };
 
@@ -3411,6 +3523,48 @@ const ARTIST_TRANSLATIONS = {
       "notable": "Um encontro entre dois pais da cena — Transwave/Deedrah e Ayahuasca/Lick It (Oktava 2003)",
       "country": "🇫🇷 França / 🇬🇧 Reino Unido",
       "born": "ativos desde o final dos anos 80"
+    }
+  },
+  "masaray": {
+    "en": {
+      "bio": "Masaray — a historic collaboration between Ray Castle (the New Zealand/Australian pioneer who ran Pagan Productions parties across Europe 1987-1991) and Masa = Masayuki Kurihara (the Japanese Goa pioneer, X-Tron). Two founding fathers of international Goa Trance — from Japan to Australia. Their debut album 'Cosmic Trancer' (1995, Psy-Harmonics) is a cornerstone of classic Goa. The 'Time Traveler Of Trance' EP (November 1995) is a psychedelic masterpiece with wailing synths, extended storytelling and a slow droning groove almost Pink Floyd-like in feel. Recorded above Masa's family restaurant in Tokyo. A special live performance at Zambu Temple, ZNA 2026.",
+      "notable": "'Cosmic Trancer' (1995, Psy-Harmonics) and 'Time Traveler Of Trance EP' (1995) — classics of golden-era Goa. Re-mastered in 2018 on Hypnodisk",
+      "country": "🇳🇿 New Zealand / 🇯🇵 Japan",
+      "born": "active since 1995"
+    },
+    "pt": {
+      "bio": "Masaray — uma colaboração histórica entre Ray Castle (o pioneiro neozelandês/australiano que organizou as festas Pagan Productions pela Europa em 1987-1991) e Masa = Masayuki Kurihara (o pioneiro do Goa japonês, X-Tron). Dois pais fundadores do Goa Trance internacional — do Japão à Austrália. O álbum de estreia 'Cosmic Trancer' (1995, Psy-Harmonics) é uma pedra angular do Goa clássico. O EP 'Time Traveler Of Trance' (Novembro de 1995) é uma obra-prima psicadélica com sintetizadores lamentosos, narrativa estendida e um groove lento e arrastado quase à Pink Floyd. Gravado por cima do restaurante da família do Masa em Tóquio. Uma actuação ao vivo especial no Zambu Temple, ZNA 2026.",
+      "notable": "'Cosmic Trancer' (1995, Psy-Harmonics) e 'Time Traveler Of Trance EP' (1995) — clássicos da era de ouro do Goa. Remasterizado em 2018 na Hypnodisk",
+      "country": "🇳🇿 Nova Zelândia / 🇯🇵 Japão",
+      "born": "activos desde 1995"
+    }
+  },
+  "dj-emico-amore": {
+    "en": {
+      "bio": "Emico Amore — a veteran psytrance and Goa DJ from Tokyo, part of DAT Universe. Her first encounter with Goa electronica was in 1993, and she has never looked back. She moved between the dawn of the Tokyo underground scene and the beaches of Goa, actively participating in the golden 90s nights and forging close ties with the people who shaped the scene. She started her DJ career focused on ambient, and over the years shifted to the dance arena — sets with a strong sense of narrative and the emotional depth of someone who truly loves the spirit of Goa.",
+      "notable": "DAT Universe / Goa Guardians (Japan) — a key figure of Japanese Goa since 1993",
+      "country": "🇯🇵 Japan",
+      "born": "active since 1993"
+    },
+    "pt": {
+      "bio": "Emico Amore — uma DJ veterana de psytrance e Goa de Tóquio, parte do DAT Universe. O seu primeiro encontro com a electrónica Goa foi em 1993 e nunca olhou para trás. Moveu-se entre o despertar da cena underground de Tóquio e as praias de Goa, participando activamente nas noites douradas dos anos 90 e construindo laços com as pessoas que moldaram a cena. Começou a carreira de DJ focada em ambient e ao longo dos anos passou para a pista de dança — sets com forte sentido narrativo e a profundidade emocional de quem ama verdadeiramente o espírito Goa.",
+      "notable": "DAT Universe / Goa Guardians (Japão) — uma figura-chave do Goa japonês desde 1993",
+      "country": "🇯🇵 Japão",
+      "born": "activa desde 1993"
+    }
+  },
+  "nouveau-shamanique": {
+    "en": {
+      "bio": "A new live project (2025) by two leading names of new-school Belgian Goa: Triquetra — the twins Elric & Jurian Reinartz, known for analogue live sets with samplers, programmed machines and didgeridoo (albums on Suntrip Records: 'Ecstatic Planet' 2018, 'Human Control' 2020 and 'Myriad Vision') — joined by Dragon Twins — Mathias Pico from Antwerp, whose powerful acid productions appear on Cronomi, Underground Alien Factory and the 'Suntrip Classix Vol. 3 - Gaia' compilation. At ZNA 2026 the two perform live with 100% hardware on stage — a rhythmic, experimental and especially psychedelic fusion that feels like the golden 90s seen through retro-futuristic eyes.",
+      "notable": "Triquetra × Dragon Twins — live performance with 100% hardware on stage (Suntrip Records, 2025)",
+      "country": "🇧🇪 Belgium",
+      "born": "new project — 2025"
+    },
+    "pt": {
+      "bio": "Um novo projecto ao vivo (2025) de dois nomes de referência do Goa belga da nova escola: Triquetra — os gémeos Elric & Jurian Reinartz, conhecidos pelos sets ao vivo analógicos com samplers, máquinas programadas e didgeridoo (álbuns na Suntrip Records: 'Ecstatic Planet' 2018, 'Human Control' 2020 e 'Myriad Vision') — juntando-se a Dragon Twins — Mathias Pico de Antuérpia, cujas produções ácidas e poderosas aparecem na Cronomi, Underground Alien Factory e na compilação 'Suntrip Classix Vol. 3 - Gaia'. No ZNA 2026 os dois actuam ao vivo com 100% hardware no palco — uma fusão rítmica, experimental e especialmente psicadélica que parece os anos 90 dourados vistos por olhos retro-futuristas.",
+      "notable": "Triquetra × Dragon Twins — actuação ao vivo com 100% hardware no palco (Suntrip Records, 2025)",
+      "country": "🇧🇪 Bélgica",
+      "born": "novo projecto — 2025"
     }
   }
 };

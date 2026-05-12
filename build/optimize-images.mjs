@@ -15,9 +15,10 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const ARTISTS_DIR = path.join(ROOT, "images/artists");
 const ZNA3D_DIR   = path.join(ROOT, "images/zna-3d");
 const PHOTOS_JSON = path.join(ROOT, "photos.json");
