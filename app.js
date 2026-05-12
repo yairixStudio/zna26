@@ -1850,7 +1850,14 @@ function installWheelClamp(container, axis, getEnabled) {
     // a vertical gesture by an ancestor handler.
     e.stopPropagation();
     const now = performance.now();
-    if (now < cooldownUntil) return;
+    // Still cooling down from a previous step: trackpad momentum is still
+    // arriving. Keep extending the cooldown as long as events keep coming
+    // so a single fling can never resolve to two pages — only let the
+    // next step land once the gesture has actually settled (~250ms gap).
+    if (now < cooldownUntil) {
+      cooldownUntil = now + 250;
+      return;
+    }
     cooldownUntil = now + 480;
     const w = axis === "y" ? container.clientHeight : container.clientWidth;
     if (!w) return;
@@ -1873,6 +1880,10 @@ function buildReel() {
   wireHeroPager();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
+  // Desktop trackpad: clamp horizontal wheel/swipe on the hero pager too,
+  // so one fling = one stage. Without this, momentum from a single trackpad
+  // swipe could blow past two stage panels on macOS.
+  installWheelClamp(document.getElementById("hero-pager"), "x");
   // Reel vertical wheel: handled by the single global wheel listener
   // further down (see "Reel-level wheel router"). It used to also be
   // wired through installWheelClamp here, which doubled-fired with
@@ -2105,7 +2116,7 @@ function clearDotMagnify(strip) {
 }
 
 function updateDotMagnify(strip, clientX, clientY) {
-  if (!strip || !strip.classList.contains("is-armed")) {
+  if (!strip || (!strip.classList.contains("is-armed") && !strip.classList.contains("is-hovered"))) {
     clearDotMagnify(strip);
     return -1;
   }
@@ -2192,12 +2203,32 @@ function handleStripClick(e) {
 reel.addEventListener("click", handleStripClick);
 verticalProgress?.addEventListener("click", handleStripClick);
 
-// Live magnification: as the pointer moves over an armed strip, bump the
-// nearest dot. Use document-level delegation so we cover dots strips
-// rendered later too.
+// Live magnification: as the pointer moves over the strip, bump the
+// nearest dot. On desktop (mouse pointer) the strip is treated as hovered
+// — the strip reveals + magnifies without needing the user to click first,
+// and the magnification follows the cursor's X coordinate (not just when
+// the cursor lands directly on a dot pixel). Mobile/touch keeps the
+// previous "tap to arm" flow.
 document.addEventListener("pointermove", e => {
   const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
   if (!strip) return;
+  // Auto-hover treatment only for the horizontal strips. The vertical
+  // progress strip has its own showVDots / hideVDots fade logic and
+  // shouldn't be force-revealed while the mouse passes by.
+  const isHorizontal = strip.classList.contains("dots") || strip.classList.contains("hero-dots");
+  const isHover = e.pointerType === "mouse";
+  if (isHover && isHorizontal) {
+    // Mark hovered (CSS reveals the strip identically to armed) and
+    // cancel any pending relax timer so the strip stays open while
+    // the cursor is in the area.
+    if (!strip.classList.contains("is-hovered")) {
+      strip.classList.add("is-hovered");
+    }
+    const t = dotArmTimers.get(strip);
+    if (t) { clearTimeout(t); dotArmTimers.delete(strip); }
+    updateDotMagnify(strip, e.clientX, e.clientY);
+    return;
+  }
   if (!strip.classList.contains("is-armed")) return;
   updateDotMagnify(strip, e.clientX, e.clientY);
 }, { passive: true });
@@ -2212,8 +2243,9 @@ document.addEventListener("touchmove", e => {
   if (t) updateDotMagnify(strip, t.clientX, t.clientY);
 }, { passive: true });
 
-// Pointer leaves a strip (or lifts off): relax the magnification but
-// leave the strip armed — the 2s TTL still runs.
+// Pointer leaves a strip (or lifts off): relax the magnification. On
+// desktop, also drop the hovered state so the strip can fade back to
+// its compact form. The armed state still runs its 2s TTL independently.
 document.addEventListener("pointerout", e => {
   const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
   if (!strip) return;
@@ -2221,6 +2253,9 @@ document.addEventListener("pointerout", e => {
   // descendant (e.g. from padding into a dot button).
   if (e.relatedTarget && strip.contains(e.relatedTarget)) return;
   clearDotMagnify(strip);
+  if (e.pointerType === "mouse") {
+    strip.classList.remove("is-hovered");
+  }
 }, { passive: true });
 
 // Any tap (or touch) outside an armed dots strip is a strong "you don't
@@ -2872,8 +2907,17 @@ reel.addEventListener("wheel", e => {
   // Ignore mostly-horizontal wheels — those are handled per-pager (above).
   if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
   const now = Date.now();
-  if (now < wheelLockUntil) { e.preventDefault(); return; }
   e.preventDefault();
+  // Already locked from a recent nav: trackpad momentum is still firing.
+  // Extend the lock as long as events keep arriving — only let the next
+  // navigation through once the gesture has actually settled (~250ms gap
+  // between events). This is what stops a single Mac trackpad fling from
+  // sometimes pushing two sections instead of one.
+  if (now < wheelLockUntil) {
+    wheelLockUntil = now + 250;
+    wheelAccumY = 0;
+    return;
+  }
   wheelAccumY += e.deltaY;
   if (Math.abs(wheelAccumY) > 60) {
     navVertical(wheelAccumY > 0 ? 1 : -1);
@@ -2905,7 +2949,7 @@ function buildStageDropdown() {
   // The full language name lives on aria-label for screen readers.
   const langRow = `
     <li class="lang-row" aria-label="${escapeHtml(t("nav.language"))}">
-      ${["en", "he", "pt"].map(lang => `
+      ${["en", "pt", "he"].map(lang => `
         <button class="lang-cell ${currentLang === lang ? "active" : ""}" data-set-lang="${lang}" type="button" aria-label="${escapeHtml(LANG_LABELS[lang])}">
           <span class="lang-cell-code">${LANG_CODES[lang]}</span>
         </button>

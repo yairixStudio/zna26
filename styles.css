@@ -188,10 +188,23 @@ a { color: var(--sun-yellow); }
    not continuous). */
 .hero-pager .hero-panel {
   transition: transform 720ms cubic-bezier(0.4, 0.04, 0.2, 1);
+  /* Pre-promote each panel to its own GPU layer so the transform
+     during peek doesn't trigger a fresh layer setup mid-animation
+     (which was visible as a jitter on the stage panels — they have
+     a drop-shadow stage-element AND a backdrop-filter live-status,
+     both expensive to re-rasterise). translateZ(0) plus will-change
+     is the standard way to keep the layer warm without paying a
+     repaint cost on every frame. */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
-.hero-pager.is-peeking .hero-panel { will-change: transform; }
 .hero-pager.peek-forward  .hero-panel { transform: translate3d(-12%, 0, 0); }
 .hero-pager.peek-backward .hero-panel { transform: translate3d( 12%, 0, 0); }
+/* Drop the most expensive filter on the stage artwork while the peek is
+   running — drop-shadow is full-image GPU work every frame and is what
+   produced the shake on Retro/Zambu/Guardians/Market hero panels. */
+.hero-pager.is-peeking .hero-stage-element { filter: none; }
 @media (prefers-reduced-motion: reduce) {
   .hero-pager .hero-panel { transition: none; }
   .hero-pager.peek-forward  .hero-panel,
@@ -270,7 +283,8 @@ a { color: var(--sun-yellow); }
   transition: bottom 0.25s ease, background 0.25s ease, border-color 0.25s ease, padding 0.25s ease, box-shadow 0.25s ease;
 }
 
-.hero-dots.is-armed {
+.hero-dots.is-armed,
+.hero-dots.is-hovered {
   background: rgba(10, 5, 36, 0.92);
   border-color: var(--card-border);
   padding: 12px 18px;
@@ -280,24 +294,27 @@ a { color: var(--sun-yellow); }
 }
 
 .hero-dot {
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   border: none;
   padding: 0;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.55);
-  transition: width 0.18s ease, height 0.18s ease, background 0.25s ease;
+  /* Magnify via transform: scale so layout stays stable and adjacent dots
+     don't shift when the focus moves (matches the per-artist .dots
+     behaviour). */
+  transform: scale(0.78);
+  transform-origin: center;
+  transition: transform 0.18s ease, background 0.25s ease, box-shadow 0.25s ease;
   box-sizing: content-box;
-  outline: 8px solid transparent;
-  outline-offset: -8px;
 }
 
 .hero-dot.active {
   background: var(--sun-yellow);
-  width: 18px;
   border-radius: 999px;
   box-shadow: 0 0 10px var(--sun-yellow);
+  transform: scaleX(2) scaleY(1);
 }
 
 body.has-mini-player .hero-dots {
@@ -1567,10 +1584,14 @@ a.collab-link:hover {
   box-shadow: none;
 }
 
-/* Armed state — appears after the user's first tap on the strip. Now the
-   pill chrome is visible (so the targets read as buttons) and the dots are
-   big enough to hit accurately. A 4s timer reverts back to idle. */
-.dots.is-armed {
+/* Armed state — appears after the user's first tap on the strip OR while
+   a desktop mouse pointer hovers over the strip area. The pill chrome
+   appears (so the targets read as buttons) and the dots magnify based on
+   pointer X. A 2s timer reverts back to idle when not hovering. */
+.dots.is-armed,
+.dots.is-hovered,
+.hero-dots.is-armed,
+.hero-dots.is-hovered {
   background: rgba(10, 5, 36, 0.92);
   border-color: var(--card-border);
   padding: 12px 18px;
@@ -1578,65 +1599,78 @@ a.collab-link:hover {
 }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.55);
-  transition: all 0.25s;
+  /* Magnify via transform: scale so the dot's LAYOUT BOX never changes
+     size — siblings don't shift around as the focus moves. That was the
+     source of the cursor-flicker on hover (dot grows → flex re-lays-out
+     neighbours → cursor now over a different dot → cycle). transform
+     scaling renders visually larger without touching layout. */
+  transform: scale(0.78); /* 7/9 — pre-armed dots appear slightly smaller */
+  transform-origin: center;
+  transition: transform 0.18s ease, background 0.2s ease;
   border: none;
   padding: 0;
   cursor: pointer;
-  /* Bigger invisible touch target around each dot — easier to hit. */
   box-sizing: content-box;
-  outline: 8px solid transparent;
-  outline-offset: -8px;
 }
 
-/* Armed state: a mild base bump so dots are visible, plus the dock-style
+/* Armed/hovered: dots become more visible (full size), with dock-style
    graduated magnification driven by [data-near] (set by JS pointer
-   tracking). Only the touched dot + its 1-2 neighbours grow; the rest stay
-   compact so the strip never sprawls off-screen even with many panels. */
+   tracking). All magnification is transform-only so no layout shifts. */
 .dots.is-armed .dot,
-.hero-dots.is-armed .hero-dot {
-  width: 9px;
-  height: 9px;
+.dots.is-hovered .dot,
+.hero-dots.is-armed .hero-dot,
+.hero-dots.is-hovered .hero-dot {
+  transform: scale(1);
 }
 .dots.is-armed .dot.active,
-.hero-dots.is-armed .hero-dot.active {
-  width: 22px;
+.dots.is-hovered .dot.active,
+.hero-dots.is-armed .hero-dot.active,
+.hero-dots.is-hovered .hero-dot.active {
+  transform: scaleX(2.45) scaleY(1);
 }
 
-/* Graduated magnification: data-near goes 0 (focused) → 2 (further). The
-   focused dot is comfortably tappable; neighbours are softly enlarged so
-   the bump feels smooth rather than punchy. */
+/* Graduated magnification: data-near goes 0 (focused) → 2 (further). */
 .dots.is-armed .dot[data-near="2"],
-.hero-dots.is-armed .hero-dot[data-near="2"] {
-  width: 12px;
-  height: 12px;
+.dots.is-hovered .dot[data-near="2"],
+.hero-dots.is-armed .hero-dot[data-near="2"],
+.hero-dots.is-hovered .hero-dot[data-near="2"] {
+  transform: scale(1.33);
 }
 .dots.is-armed .dot[data-near="1"],
-.hero-dots.is-armed .hero-dot[data-near="1"] {
-  width: 16px;
-  height: 16px;
+.dots.is-hovered .dot[data-near="1"],
+.hero-dots.is-armed .hero-dot[data-near="1"],
+.hero-dots.is-hovered .hero-dot[data-near="1"] {
+  transform: scale(1.78);
 }
 .dots.is-armed .dot[data-near="0"],
-.hero-dots.is-armed .hero-dot[data-near="0"] {
-  width: 22px;
-  height: 22px;
+.dots.is-hovered .dot[data-near="0"],
+.hero-dots.is-armed .hero-dot[data-near="0"],
+.hero-dots.is-hovered .hero-dot[data-near="0"] {
+  transform: scale(2.45);
 }
 
 /* Active dot stays pill-shaped; magnification stretches its width too. */
 .dots.is-armed .dot.active[data-near="2"],
-.hero-dots.is-armed .hero-dot.active[data-near="2"] {
-  width: 28px;
+.dots.is-hovered .dot.active[data-near="2"],
+.hero-dots.is-armed .hero-dot.active[data-near="2"],
+.hero-dots.is-hovered .hero-dot.active[data-near="2"] {
+  transform: scaleX(3.1) scaleY(1.33);
 }
 .dots.is-armed .dot.active[data-near="1"],
-.hero-dots.is-armed .hero-dot.active[data-near="1"] {
-  width: 36px;
+.dots.is-hovered .dot.active[data-near="1"],
+.hero-dots.is-armed .hero-dot.active[data-near="1"],
+.hero-dots.is-hovered .hero-dot.active[data-near="1"] {
+  transform: scaleX(4) scaleY(1.78);
 }
 .dots.is-armed .dot.active[data-near="0"],
-.hero-dots.is-armed .hero-dot.active[data-near="0"] {
-  width: 44px;
+.dots.is-hovered .dot.active[data-near="0"],
+.hero-dots.is-armed .hero-dot.active[data-near="0"],
+.hero-dots.is-hovered .hero-dot.active[data-near="0"] {
+  transform: scaleX(4.9) scaleY(2.45);
 }
 
 /* Soft fade over the bottom of the panel so scrolled content doesn't visually
