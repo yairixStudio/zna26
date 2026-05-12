@@ -262,15 +262,41 @@ function tArtist(a, field) {
 }
 
 // Country strings on the artist record look like "🇮🇱 ישראל" or
-// "🇯🇵 Japan (London)" — the flag emoji is two regional-indicator code
-// points at the start. Grab just the flag so the artist hero shows
-// the flag as its own self-explanatory icon (no need for a "📍" pin
-// or the spelled-out country name beside it).
+// "🇯🇵 Japan (London)" — the flag emoji at the start is two regional-
+// indicator code points. Convert that pair to a 2-letter ISO country
+// code (IL, JP, GB, US…) which is what the artist hero now prints
+// above the name. Falls back to "INT" if the country has the globe
+// emoji and to "" for an empty input.
+function countryToISO(countryStr) {
+  if (!countryStr) return "";
+  const s = String(countryStr).trim();
+  // Multi-country fallback: "🇸🇪 Sweden / 🇫🇷 France" — take the first flag.
+  // Regional indicator code points live at U+1F1E6 (A) … U+1F1FF (Z).
+  // Each flag is two of these → 4 UTF-16 code units. We read the first
+  // two surrogate pairs and map them back to A-Z.
+  const cps = [...s];
+  const REGIONAL_BASE = 0x1F1E6;
+  const A_CHARCODE = 65;
+  let chars = "";
+  for (const cp of cps) {
+    const code = cp.codePointAt(0);
+    if (code >= REGIONAL_BASE && code <= REGIONAL_BASE + 25) {
+      chars += String.fromCharCode(A_CHARCODE + (code - REGIONAL_BASE));
+      if (chars.length === 2) break;
+    } else if (chars.length > 0) {
+      break; // hit a non-flag glyph mid-pair
+    }
+  }
+  if (chars.length === 2) return chars;
+  // Globe emoji (🌍 / 🌎 / 🌏) → "INT" — and fall through for anything else.
+  if (/[\u{1F30D}-\u{1F30F}]/u.test(s)) return "INT";
+  return "";
+}
+
+// Backward-compat: a few callers still ask for the flag glyph itself
+// (e.g. in places where the visual emoji reads better than the code).
 function extractCountryFlag(countryStr) {
   if (!countryStr) return "";
-  // Take everything up to the first ASCII space — flags don't contain
-  // ASCII spaces but the rest of the string does. Falls back to the
-  // whole string when there's no space (so a bare emoji still shows).
   const m = String(countryStr).match(/^\S+/);
   return m ? m[0] : "";
 }
@@ -1540,9 +1566,9 @@ function panelHero(a) {
         </div>
         <div class="artist-hero-text">
           <div class="artist-hero-headline">
+            ${countryToISO(tArtist(a, "country")) ? `<span class="artist-country-iso">${escapeHtml(countryToISO(tArtist(a, "country")))}</span>` : ""}
             <h1 class="artist-name">${escapeHtml(a.name)}</h1>
             <div class="artist-meta-line">
-              <span class="meta-item meta-item--flag">${extractCountryFlag(tArtist(a, "country"))}</span>
               ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
               <span class="meta-item">${escapeHtml(a.role)}</span>
             </div>

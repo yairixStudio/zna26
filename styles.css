@@ -1276,6 +1276,27 @@ body.has-mini-player .hero-dots {
   z-index: 2;
 }
 
+/* 2-char ISO country code (IL, FR, JP…) printed ABOVE the artist
+   name. Replaces the flag-emoji + spelled-out country combo. Small,
+   accent-coloured monospace so it reads like a passport stamp. */
+.artist-country-iso {
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  font-family: "Orbitron", "Heebo", system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--accent, var(--sun-yellow));
+  background: color-mix(in oklab, var(--accent, var(--sun-yellow)) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--accent, var(--sun-yellow)) 35%, transparent);
+  border-radius: 4px;
+  /* Inherit alignment from .artist-hero-headline (centered on mobile,
+     flex-start on desktop) — the badge sits above the name and lines
+     up with whatever side the rest of the headline lines up with. */
+  align-self: inherit;
+  max-width: max-content;
+}
+
 .artist-name {
   font-family: "Orbitron", "Heebo", sans-serif;
   font-size: clamp(28px, 8vw, 48px);

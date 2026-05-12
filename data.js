@@ -565,7 +565,7 @@ let ARTISTS = [
     announcedAt: "2026-03-25",
     name: "Cheers",
     realName: "Cheers",
-    country: "🌍 בינלאומי",
+    country: "🇮🇱 ישראל",
     age: null,
     born: "פעיל בסצנה",
     stage: "market",
@@ -632,7 +632,7 @@ let ARTISTS = [
     announcedAt: "2026-03-25",
     name: "Earl Peal",
     realName: "ארל פיל",
-    country: "🌍 בינלאומי",
+    country: "🇮🇱 ישראל",
     age: null,
     born: "פעיל בסצנה",
     stage: "market",
@@ -833,7 +833,7 @@ let ARTISTS = [
     announcedAt: "2026-03-25",
     name: "E-Skø",
     realName: "E-Skø",
-    country: "🌍 בינלאומי",
+    country: "🇮🇱 ישראל",
     age: null,
     born: "פעיל בסצנה",
     stage: "market",
@@ -2465,13 +2465,13 @@ const ARTIST_TRANSLATIONS = {
     "en": {
       "bio": "A Retro Universe artist — part of ZNA 2026's retro Goa journey.",
       "notable": "Retro Universe",
-      "country": "🌍 International",
+      "country": "🇮🇱 Israel",
       "born": "active in the scene"
     },
     "pt": {
       "bio": "Artista do Retro Universe — faz parte da viagem retro Goa do ZNA 2026.",
       "notable": "Retro Universe",
-      "country": "🌍 Internacional",
+      "country": "🇮🇱 Israel",
       "born": "ativo na cena"
     }
   },
@@ -2507,13 +2507,13 @@ const ARTIST_TRANSLATIONS = {
     "en": {
       "bio": "A Retro Universe artist at ZNA 2026.",
       "notable": "Retro Universe",
-      "country": "🌍 International",
+      "country": "🇮🇱 Israel",
       "born": "active in the scene"
     },
     "pt": {
       "bio": "Artista do Retro Universe no ZNA 2026.",
       "notable": "Retro Universe",
-      "country": "🌍 Internacional",
+      "country": "🇮🇱 Israel",
       "born": "ativo na cena"
     }
   },
@@ -2619,13 +2619,13 @@ const ARTIST_TRANSLATIONS = {
     "en": {
       "bio": "A Retro Universe selector — member of the ZNA 2026 family.",
       "notable": "Retro Universe",
-      "country": "🌍 International",
+      "country": "🇮🇱 Israel",
       "born": "active in the scene"
     },
     "pt": {
       "bio": "Selector do Retro Universe — membro da família ZNA 2026.",
       "notable": "Retro Universe",
-      "country": "🌍 Internacional",
+      "country": "🇮🇱 Israel",
       "born": "ativo na cena"
     }
   },
