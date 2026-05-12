@@ -33,6 +33,25 @@
     .top-bar > *{pointer-events:auto}
     .vertical-progress{position:fixed;left:8px;top:50%;transform:translateY(-50%);
       z-index:20;display:flex;flex-direction:column;gap:6px;opacity:0;transition:opacity .25s}
+    /* Boot loader — shown until app.js fires the first render, then
+       removed via JS (#boot-loader). Keeps the user from staring at a
+       blank dark screen while data.js + official-artists.js + app.js
+       parse and the first photos lazy-fetch. */
+    .boot-loader{position:fixed;inset:0;z-index:9999;background:#0a0524;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:18px;transition:opacity .35s ease}
+    .boot-loader.is-fading{opacity:0;pointer-events:none}
+    .boot-spinner{width:54px;height:54px;border-radius:50%;
+      border:3px solid rgba(255,255,255,0.12);
+      border-top-color:#FEB447;border-right-color:#ff5c8a;
+      animation:boot-spin 0.85s linear infinite}
+    .boot-mark{font-family:"Orbitron","Heebo",system-ui,sans-serif;
+      font-size:13px;font-weight:800;letter-spacing:4px;color:#FEB447;
+      opacity:.85;text-transform:uppercase}
+    @keyframes boot-spin{to{transform:rotate(360deg)}}
+    @media (prefers-reduced-motion: reduce){
+      .boot-spinner{animation:none}
+    }
   </style>
 
   <!-- Preconnect once to the gstatic font CDN; googleapis is the discovery
@@ -63,6 +82,14 @@
   <link rel="apple-touch-icon" href="images/icons/apple-touch-icon.png" />
 </head>
 <body>
+  <!-- Boot loader covers the screen until app.js builds the first reel,
+       so the user sees a spinner instead of a blank dark page while the
+       JS parses and the first photo batch starts loading. -->
+  <div class="boot-loader" id="boot-loader" aria-hidden="true">
+    <div class="boot-spinner" aria-hidden="true"></div>
+    <div class="boot-mark">ZNA 2026</div>
+  </div>
+
   <div class="bg-scene" id="bg-scene"></div>
   <div class="stars"></div>
   <div class="bg-grid"></div>
@@ -248,6 +275,23 @@
 
   <!-- UI overlays -->
   <div class="vertical-progress" id="vertical-progress" aria-hidden="true"></div>
+
+  <!-- Desktop-only nudge: a tiny arrow-keys cluster at bottom-right that
+       hints "you can drive the reel with the keyboard". Hidden on touch
+       devices via CSS (hover:none / pointer:coarse). -->
+  <div class="kb-hint" id="kb-hint" aria-hidden="true">
+    <div class="kb-hint-keys">
+      <div class="kb-hint-row kb-hint-row--top">
+        <kbd class="kb-key" aria-label="Up arrow">↑</kbd>
+      </div>
+      <div class="kb-hint-row kb-hint-row--bottom">
+        <kbd class="kb-key" aria-label="Left arrow">←</kbd>
+        <kbd class="kb-key" aria-label="Down arrow">↓</kbd>
+        <kbd class="kb-key" aria-label="Right arrow">→</kbd>
+      </div>
+    </div>
+    <div class="kb-hint-label" id="kb-hint-label">Arrow keys to navigate</div>
+  </div>
 
   <!-- Floating tooltip used by the vertical dots on desktop hover.
        Lives outside .vertical-progress so the container's max-height/overflow

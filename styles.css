@@ -1767,6 +1767,33 @@ body.has-mini-player .panel {
   transition: opacity 0.4s;
 }
 
+/* Wide invisible "approach zone" that extends rightward of the visible
+   strip on desktop. Mouse entering this zone counts as hovering the
+   strip — that's how the dots reveal themselves the moment the cursor
+   gets near, instead of only when the user manages to land directly on
+   one of them. The pseudo doesn't grow the visible footprint; it only
+   intercepts hit-testing for the hover handler in app.js. */
+@media (hover: hover) and (pointer: fine) {
+  .vertical-progress::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    bottom: -10px;
+    left: -8px;
+    right: -90px;
+    pointer-events: auto;
+  }
+  /* While the mouse is in the approach zone, force the strip to stay
+     visible — the auto-hide / is-idle states are overridden so it
+     doesn't disappear under the cursor. */
+  .vertical-progress.is-hovered,
+  .vertical-progress.is-hovered.is-idle,
+  .vertical-progress.is-hovered.is-hidden {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
 /* Auto-hide when there's no scroll activity for ~2s. Wakes up the moment
    the user scrolls again. Both classes can apply; either one hides it. */
 .vertical-progress.is-hidden,
@@ -1776,11 +1803,18 @@ body.has-mini-player .panel {
 }
 
 .v-dot {
-  width: 3px;
-  height: 12px;
+  /* Layout box stays a fixed size; magnification happens via transform
+     so adjacent dots never shift around. The previous height-based
+     magnification was the source of the cursor-flicker the user saw on
+     hover — growing one dot pushed neighbours, the cursor ended up on
+     a different dot, that one grew, layout shifted again, etc. */
+  width: 4px;
+  height: 14px;
   border-radius: 999px;
   background: rgba(255,255,255,0.25);
-  transition: width 0.22s ease, height 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+  transform: scale(0.78);
+  transform-origin: center;
+  transition: transform 0.18s ease, background 0.22s ease, box-shadow 0.22s ease;
   border: none;
   padding: 0;
   cursor: pointer;
@@ -1789,42 +1823,46 @@ body.has-mini-player .panel {
 
 .v-dot.active {
   background: var(--sun-yellow);
-  height: 22px;
   box-shadow: 0 0 10px var(--sun-yellow);
+  transform: scaleY(1.6);
 }
 
-/* ----- Two-stage tap + dock-style magnification on the vertical strip,
-   mirroring the horizontal panel-dot behaviour. The strip stays compact
-   in idle; the first tap arms it (small visible bump on every dot), and
-   pointer-tracking from app.js sets data-near on the dot under the finger
-   so only that dot + its 1-2 neighbours grow. The arm TTL (2s) then
-   relaxes the strip back. */
-.vertical-progress.is-armed .v-dot {
-  width: 4px;
-  height: 14px;
+/* Two-stage tap + dock-style magnification on the vertical strip,
+   mirroring the horizontal panel-dot behaviour. Both armed (tap-driven)
+   and hovered (desktop pointer-driven) states share the same look so
+   the strip behaves consistently across input methods. */
+.vertical-progress.is-armed .v-dot,
+.vertical-progress.is-hovered .v-dot {
   background: rgba(255,255,255,0.45);
+  transform: scale(1);
 }
 
-.vertical-progress.is-armed .v-dot[data-near="2"] { height: 18px; }
-.vertical-progress.is-armed .v-dot[data-near="1"] { height: 24px; }
-.vertical-progress.is-armed .v-dot[data-near="0"] {
-  width: 5px;
-  height: 32px;
+.vertical-progress.is-armed .v-dot[data-near="2"],
+.vertical-progress.is-hovered .v-dot[data-near="2"] { transform: scaleY(1.3); }
+.vertical-progress.is-armed .v-dot[data-near="1"],
+.vertical-progress.is-hovered .v-dot[data-near="1"] { transform: scaleY(1.7); }
+.vertical-progress.is-armed .v-dot[data-near="0"],
+.vertical-progress.is-hovered .v-dot[data-near="0"] {
+  transform: scaleX(1.25) scaleY(2.3);
 }
 /* Brighten the focused dot on inactive sections so it reads as the
    tap target. The active dot keeps its yellow accent untouched. */
-.vertical-progress.is-armed .v-dot[data-near="0"]:not(.active) {
+.vertical-progress.is-armed .v-dot[data-near="0"]:not(.active),
+.vertical-progress.is-hovered .v-dot[data-near="0"]:not(.active) {
   background: rgba(255,255,255,0.85);
 }
 
 /* Active dot keeps its yellow accent but follows the same graduated
    magnification so the user can still see where they are in the lineup. */
-.vertical-progress.is-armed .v-dot.active            { height: 26px; }
-.vertical-progress.is-armed .v-dot.active[data-near="2"] { height: 30px; }
-.vertical-progress.is-armed .v-dot.active[data-near="1"] { height: 34px; }
-.vertical-progress.is-armed .v-dot.active[data-near="0"] {
-  width: 6px;
-  height: 40px;
+.vertical-progress.is-armed .v-dot.active,
+.vertical-progress.is-hovered .v-dot.active            { transform: scaleY(1.85); }
+.vertical-progress.is-armed .v-dot.active[data-near="2"],
+.vertical-progress.is-hovered .v-dot.active[data-near="2"] { transform: scaleY(2.1); }
+.vertical-progress.is-armed .v-dot.active[data-near="1"],
+.vertical-progress.is-hovered .v-dot.active[data-near="1"] { transform: scaleY(2.4); }
+.vertical-progress.is-armed .v-dot.active[data-near="0"],
+.vertical-progress.is-hovered .v-dot.active[data-near="0"] {
+  transform: scaleX(1.5) scaleY(2.85);
 }
 
 /* ===== Bottom-anchored mini-player (Spotify-style) ===== */
@@ -2416,7 +2454,15 @@ body.has-mini-player .panel {
   font-size: 16px;
   padding: 14px 18px;
   outline: none;
-  direction: rtl;
+  /* Lock the search input to LTR in every UI language. Most artist names
+     are Latin (Yahel, Tsuyoshi Suzuki, Mark Van Der Vlugt…) so an RTL
+     input flipped the caret + text alignment in a way the user reported
+     as "messy" when searching from the EN/PT UI. */
+  direction: ltr;
+  text-align: left;
+}
+.search-input::placeholder {
+  text-align: left;
 }
 
 .search-input:focus {
@@ -2442,6 +2488,10 @@ body.has-mini-player .panel {
   border: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   transition: background 0.15s;
+  /* Match the search input — names render LTR consistently across UI
+     languages so the artist-name column always reads left-to-right. */
+  direction: ltr;
+  text-align: left;
 }
 
 .search-result:hover {
@@ -2449,8 +2499,8 @@ body.has-mini-player .panel {
   border-color: rgba(254, 180, 71, 0.4);
 }
 
-.search-result-name { font-weight: 700; color: var(--text); font-size: 14px; }
-.search-result-meta { font-size: 11px; color: var(--text-muted); }
+.search-result-name { font-weight: 700; color: var(--text); font-size: 14px; text-align: left; }
+.search-result-meta { font-size: 11px; color: var(--text-muted); text-align: left; }
 .search-empty { text-align: center; padding: 22px; color: var(--text-muted); font-size: 14px; }
 
 /* ===== Favorites overlay ===== */
@@ -3525,6 +3575,46 @@ body.has-mini-player .panel {
 
 .hero-actions { flex-wrap: wrap; }
 
+/* Clean icon-only variant used on the main hero — no pill chrome, no
+   text labels, just three small white outline glyphs. */
+.hero-actions--icons {
+  gap: 22px;
+  flex-wrap: nowrap;
+  margin-top: 8px;
+}
+.hero-icon-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: color 0.15s ease, transform 0.12s ease;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.hero-icon-action:active { transform: scale(0.92); }
+@media (hover: hover) and (pointer: fine) {
+  .hero-icon-action:hover {
+    color: #fff;
+  }
+  .hero-icon-action:hover svg {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.55));
+  }
+}
+.hero-icon-action svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+  pointer-events: none;
+  transition: filter 0.18s ease;
+}
+
 /* "Official site" link rendered under the disclaimer on the main hero. */
 .hero-official-link {
   display: inline-block;
@@ -4249,48 +4339,84 @@ body.is-on-hero #random-btn { display: inline-flex; }
   overflow-wrap: break-word;
 }
 
-/* ---------- Vertical dots: dock-style hover + tooltip (desktop) ---------- */
+/* ---------- Vertical dots: desktop hover hit-zone tweaks ----------
+   Magnification is now handled entirely via the .is-hovered/.is-armed
+   transform: scale rules above (no width/height changes), which fixes
+   the cursor-flicker the previous height-based :hover rules caused. */
 @media (hover: hover) and (pointer: fine) {
   /* Wider hit-zone so users don't need pixel-perfect aim */
   .vertical-progress {
     padding: 8px 24px 8px 4px;
     margin-inline-start: -4px;
   }
-
   .v-dot {
-    transition:
-      transform 0.18s ease,
-      width 0.18s ease,
-      height 0.18s ease,
-      background 0.18s ease,
-      box-shadow 0.18s ease;
     position: relative;
   }
-
-  /* Hovered dot: scaled, glowing, full-color */
-  .v-dot:hover,
   .v-dot:focus-visible {
-    width: 5px;
-    height: 28px;
     background: var(--sun-yellow);
     box-shadow: 0 0 14px var(--sun-yellow);
   }
+}
 
-  /* Adjacent dots: gentle lift (Apple Dock effect). */
-  .v-dot:hover + .v-dot,
-  .v-dot:has(+ .v-dot:hover) {
-    height: 20px;
-    background: rgba(255, 255, 255, 0.55);
-  }
-  .v-dot:hover + .v-dot + .v-dot,
-  .v-dot:has(+ .v-dot + .v-dot:hover) {
-    height: 16px;
-    background: rgba(255, 255, 255, 0.4);
-  }
-
-  /* The CSS ::after tooltip used to live here, but it was clipped by the
-     container's max-height/overflow. Replaced by the floating
-     #v-dot-tooltip element positioned via JS — see app.js. */
+/* ===== Keyboard arrow-keys hint (desktop only) =====
+   Tiny cluster pinned to the bottom-right that mimics the arrow-keys
+   block of a keyboard. Hidden on touch devices. The cluster fades out
+   for a few seconds after the user actually uses the keyboard (class
+   .has-used-keys on body) so it's not perpetually in the way. */
+.kb-hint {
+  position: fixed;
+  bottom: max(14px, env(safe-area-inset-bottom, 0));
+  right: 16px;
+  z-index: 18;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  opacity: 0.55;
+  transition: opacity 0.5s ease;
+  user-select: none;
+}
+@media (hover: hover) and (pointer: fine) and (min-width: 720px) {
+  .kb-hint { display: flex; }
+}
+.kb-hint:hover { opacity: 0.95; }
+body.has-mini-player .kb-hint {
+  bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 14px);
+}
+body.has-used-keys .kb-hint { opacity: 0; }
+.kb-hint-keys {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.kb-hint-row {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+.kb-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-family: "Heebo", system-ui, sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+.kb-hint-label {
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
 }
 
 /* Floating tooltip for vertical dots (desktop only). Positioned via JS

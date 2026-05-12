@@ -189,6 +189,16 @@ const STRINGS = {
     en: "The world headquarters of old-school Goa Trance. A biennial gathering of just 5,000 attendees celebrating the spirit of '90s Anjuna.",
     pt: "A sede mundial do Goa Trance da velha-guarda. Encontro bienal de apenas 5.000 participantes que celebra o espírito de Anjuna nos anos 90."
   },
+  // Site-purpose blurb shown under the ZNA wordmark on the main hero —
+  // this is what the SITE is for, separate from FESTIVAL.description (which
+  // describes the festival itself and is reused elsewhere).
+  "hero.sitePurpose": {
+    he: "מדריך לליינאפ של ZNA 2026 — להכיר את האומנים, לשמוע את המוזיקה ולגלות את הסיפור שמאחורי כל סט.",
+    en: "Your guide to the ZNA 2026 lineup — meet the artists, hear the music and discover the story behind every set.",
+    pt: "Guia do alinhamento ZNA 2026 — conhecer os artistas, ouvir a música e descobrir a história por trás de cada set."
+  },
+  // Tiny desktop hint that the keyboard arrow keys can navigate the reel.
+  "kbHint.label": { he: "ניווט עם החיצים", en: "Arrow keys to navigate", pt: "Setas para navegar" },
 
   // Stage names + descriptions
   "stage.retro":           { he: "Retro Universe", en: "Retro Universe", pt: "Retro Universe" },
@@ -310,6 +320,9 @@ function applyLang(lang) {
   // Nav-sheet copy + festival map caption follow the language switch.
   if (typeof refreshNavSheetCopy === "function") refreshNavSheetCopy();
   if (mapCaptionEl && mapOverlay && !mapOverlay.hidden) mapCaptionEl.textContent = t("nav.festivalMap");
+  // Keyboard-arrows hint sits outside the reel; refresh its label too.
+  const kbLabel = document.getElementById("kb-hint-label");
+  if (kbLabel) kbLabel.textContent = t("kbHint.label");
 }
 
 document.documentElement.lang = currentLang;
@@ -757,11 +770,48 @@ let activeStageFilter = "all";
 // LCP. The SW caches the app shell + artist photos so a repeat visit (a
 // festival-goer back at camp with bad cellular) boots offline. Registered
 // with a relative URL so the same code works from a GitHub Pages sub-path.
+// Service-worker registration with smart auto-update. After a deploy the
+// browser picks up the new sw.js via networkFirst, installs it, and the
+// new SW posts "sw-activated" — we then do a single one-time reload so
+// the user lands on the fresh bundle without needing a manual hard
+// refresh. The reload guard prevents an infinite loop if multiple tabs
+// race to claim the new SW.
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     setTimeout(() => {
-      navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(() => {});
+      navigator.serviceWorker.register("./sw.js", { scope: "./" })
+        .then(reg => {
+          // Poll for an updated sw.js every 5 minutes for long-lived
+          // sessions (someone leaves the tab open) so a fresh deploy
+          // gets noticed without needing the user to close + reopen.
+          setInterval(() => reg.update().catch(() => {}), 5 * 60 * 1000);
+          // On any newly-installed SW, ask it to take over right away.
+          reg.addEventListener("updatefound", () => {
+            const next = reg.installing;
+            if (!next) return;
+            next.addEventListener("statechange", () => {
+              if (next.state === "installed" && navigator.serviceWorker.controller) {
+                next.postMessage("skipWaiting");
+              }
+            });
+          });
+        })
+        .catch(() => {});
     }, 0);
+    let reloadedForSW = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (reloadedForSW) return;
+      reloadedForSW = true;
+      // The new SW is now in charge — reload once so all subsequent
+      // network requests on the page are served by the fresh worker.
+      window.location.reload();
+    });
+    navigator.serviceWorker.addEventListener("message", (e) => {
+      if (e.data?.type === "sw-activated" && !reloadedForSW) {
+        reloadedForSW = true;
+        window.location.reload();
+      }
+    });
   }, { once: true });
 }
 
@@ -1151,21 +1201,18 @@ function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
       ${pictureTagStatic("images/zna-3d/community-zna-logo-26-celebration", { className: "hero-zna-mark", alt: "ZNA 26 Community — The Retro Futuristic Celebration", width: 600, height: 400, loading: "eager", fetchpriority: "high" })}
-      <p class="hero-tagline">${escapeHtml(t("festival.description"))}</p>
+      <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
-      <div class="hero-actions" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
-        <button class="hero-action glass-btn" id="hero-nav-btn" type="button" title="${escapeHtml(t("nav.navigate"))}" aria-label="${escapeHtml(t("nav.navigate"))}">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M21.71 11.29 12.71 2.29a1 1 0 0 0-1.42 0l-9 9a1 1 0 0 0 0 1.42l9 9a1 1 0 0 0 1.42 0l9-9a1 1 0 0 0 0-1.42zM14 14.5V12h-4v3H8v-4a1 1 0 0 1 1-1h5V7.5l3.5 3.5z"/></svg>
-          <span class="hero-action-label">${escapeHtml(t("nav.navigate"))}</span>
+      <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
+        <button class="hero-icon-action" id="hero-nav-btn" type="button" title="${escapeHtml(t("nav.navigate"))}" aria-label="${escapeHtml(t("nav.navigate"))}">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.5-7-12a7 7 0 1 1 14 0c0 4.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
         </button>
-        <button class="hero-action glass-btn" id="hero-map-btn" type="button" title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
-          <span class="hero-action-label">${escapeHtml(t("nav.festivalMap"))}</span>
+        <button class="hero-icon-action" id="hero-map-btn" type="button" title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>
         </button>
-        <a class="hero-action glass-btn hero-action--yt" id="hero-yt-btn" href="https://youtube.com/playlist?list=PLueV5lFNV9_R1F0dNCtgNSbT2zvdFwGQf&amp;si=4kMxSvtOHUMI40hZ" target="_blank" rel="noopener" title="${escapeHtml(t("nav.ytPlaylist"))}" aria-label="${escapeHtml(t("nav.ytPlaylist"))}">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#ff0033" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/><path fill="#fff" d="M9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
-          <span class="hero-action-label">${escapeHtml(t("nav.ytPlaylist"))}</span>
+        <a class="hero-icon-action" id="hero-yt-btn" href="https://youtube.com/playlist?list=PLueV5lFNV9_R1F0dNCtgNSbT2zvdFwGQf&amp;si=4kMxSvtOHUMI40hZ" target="_blank" rel="noopener" title="${escapeHtml(t("nav.ytPlaylist"))}" aria-label="${escapeHtml(t("nav.ytPlaylist"))}">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5z" fill="currentColor" stroke="none"/></svg>
         </a>
       </div>
       <p class="hero-disclaimer">${escapeHtml(t("hero.disclaimer"))}</p>
@@ -1838,11 +1885,12 @@ function installWheelClamp(container, axis, getEnabled) {
   if (!container || container.dataset.wheelClamp === "1") return;
   container.dataset.wheelClamp = "1";
   // Per-pager momentum gate: same shape as the reel-level wheel router —
-  // a 110ms quiet timer detects when trackpad momentum from the previous
-  // step has actually died down so the next gesture isn't stuck waiting
-  // out a fixed cooldown.
+  // 140ms quiet timer + 350ms hard min-lock so a trackpad fling can never
+  // resolve to two pages, while a deliberate second swipe after a real
+  // pause goes through immediately.
   let inMomentum = false;
   let quietTimer = null;
+  let hardLockUntil = 0;
   container.addEventListener("wheel", e => {
     if (getEnabled && !getEnabled()) return;
     const primary = axis === "y" ? e.deltaY : e.deltaX;
@@ -1854,8 +1902,10 @@ function installWheelClamp(container, axis, getEnabled) {
     // horizontal trackpad swipe on a pager can't also be interpreted as
     // a vertical gesture by an ancestor handler.
     e.stopPropagation();
+    const now = performance.now();
     clearTimeout(quietTimer);
-    quietTimer = setTimeout(() => { inMomentum = false; }, 110);
+    quietTimer = setTimeout(() => { inMomentum = false; }, 140);
+    if (now < hardLockUntil) return;
     if (inMomentum) return;
     const w = axis === "y" ? container.clientHeight : container.clientWidth;
     if (!w) return;
@@ -1866,6 +1916,7 @@ function installWheelClamp(container, axis, getEnabled) {
     const target = targetIdx * w;
     container.scrollTo({ [axis === "y" ? "top" : "left"]: target, behavior: "smooth" });
     inMomentum = true;
+    hardLockUntil = now + 350;
   }, { passive: false });
 }
 
@@ -1912,6 +1963,25 @@ function buildReel() {
   // would just steal vertical pans from the reel for no reason.
   reel.querySelectorAll('[data-section="artist"] .panel--info, [data-section="artist"] .panel--tracks')
     .forEach(setupPanelPullToNavigate);
+
+  // The first reel is on screen — fade out the boot loader. Subsequent
+  // calls (filter changes, language switches) re-run buildReel but the
+  // loader is already gone, so this is a no-op.
+  hideBootLoader();
+}
+
+let _bootLoaderHidden = false;
+function hideBootLoader() {
+  if (_bootLoaderHidden) return;
+  _bootLoaderHidden = true;
+  const el = document.getElementById("boot-loader");
+  if (!el) return;
+  // Wait one frame so the freshly-rendered reel paints under the loader
+  // before we start fading it — avoids a flash of empty bg.
+  requestAnimationFrame(() => {
+    el.classList.add("is-fading");
+    setTimeout(() => el.remove(), 400);
+  });
 }
 
 // Live dot tracking: a continuous RAF loop polls scrollLeft on whichever
@@ -2211,17 +2281,21 @@ verticalProgress?.addEventListener("click", handleStripClick);
 document.addEventListener("pointermove", e => {
   const strip = e.target.closest?.(DOT_STRIP_SELECTOR);
   if (!strip) return;
-  // Auto-hover treatment only for the horizontal strips. The vertical
-  // progress strip has its own showVDots / hideVDots fade logic and
-  // shouldn't be force-revealed while the mouse passes by.
-  const isHorizontal = strip.classList.contains("dots") || strip.classList.contains("hero-dots");
+  // Auto-hover treatment for ALL dot strips on desktop — including the
+  // vertical progress strip. The vertical strip has a wide invisible
+  // approach zone (.vertical-progress::before in CSS), so cursor enters
+  // the strip's hit area as it gets near, not only when it lands on a
+  // dot. While hovered, we cancel any pending relax/auto-hide timer so
+  // the strip stays revealed under the cursor.
   const isHover = e.pointerType === "mouse";
-  if (isHover && isHorizontal) {
-    // Mark hovered (CSS reveals the strip identically to armed) and
-    // cancel any pending relax timer so the strip stays open while
-    // the cursor is in the area.
+  if (isHover) {
     if (!strip.classList.contains("is-hovered")) {
       strip.classList.add("is-hovered");
+      // The vertical strip auto-hides on idle; force its showVDots path
+      // so the hidden/idle classes drop while the cursor is near.
+      if (strip.classList.contains("vertical-progress") && typeof showVDots === "function") {
+        showVDots();
+      }
     }
     const t = dotArmTimers.get(strip);
     if (t) { clearTimeout(t); dotArmTimers.delete(strip); }
@@ -2254,6 +2328,11 @@ document.addEventListener("pointerout", e => {
   clearDotMagnify(strip);
   if (e.pointerType === "mouse") {
     strip.classList.remove("is-hovered");
+    // Vertical strip can fade itself back out via the normal idle timer
+    // once the cursor leaves the approach zone.
+    if (strip.classList.contains("vertical-progress") && typeof showVDots === "function") {
+      showVDots();
+    }
   }
 }, { passive: true });
 
@@ -2877,12 +2956,19 @@ function observeYTThumbs() {
 }
 
 document.addEventListener("keydown", e => {
+  let used = false;
   // ArrowDown / ArrowUp -> next/prev artist
-  if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); navVertical(1); }
-  else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); navVertical(-1); }
+  if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); navVertical(1); used = true; }
+  else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); navVertical(-1); used = true; }
   // LTR layout: ArrowRight = next, ArrowLeft = prev
-  else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(1); }
-  else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(-1); }
+  else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(1); used = true; }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(-1); used = true; }
+  // Once the user has actually used the arrow keys, fade the hint cluster
+  // out — it's served its purpose. The class persists for the session so
+  // the hint stays out of the way.
+  if (used && !document.body.classList.contains("has-used-keys")) {
+    document.body.classList.add("has-used-keys");
+  }
 });
 
 // ===== Reel-level wheel router =====
@@ -2901,35 +2987,43 @@ document.addEventListener("keydown", e => {
 let wheelInMomentum = false;
 let wheelAccumY = 0;
 let wheelQuietTimer = null;
+let wheelHardLockUntil = 0;
 
 reel.addEventListener("wheel", e => {
   // Ignore mostly-horizontal wheels — those are handled per-pager (above).
   if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
   e.preventDefault();
-  // Detect when wheel events stop arriving — that's when a trackpad fling's
-  // momentum has actually died down and the user can scroll again. Every
-  // event resets a 110ms quiet timer; once it fires, we know the gesture
-  // ended. This replaces the previous fixed-cooldown approach, which was
-  // either too short (let momentum push a second section) or extended for
-  // too long (left the user unable to scroll until they clicked somewhere
-  // or waited several seconds for momentum to die down).
+  const now = Date.now();
+  // Quiet-timer detection: when wheel events stop arriving for 140ms,
+  // we treat the trackpad fling as finished — momentum flag clears and
+  // the next gesture is allowed through.
   clearTimeout(wheelQuietTimer);
   wheelQuietTimer = setTimeout(() => {
     wheelInMomentum = false;
     wheelAccumY = 0;
-  }, 110);
-  // After navigating, swallow any further events from the SAME gesture
-  // (i.e. until the quiet timer fires). The first new event after a real
-  // pause counts as a fresh gesture.
+  }, 140);
+  // Hard min-lock window after a nav: even if a wheel event sneaks in
+  // before the quiet timer fires, we ignore it for 350ms. This catches
+  // the case where a trackpad fling has a brief lull in events but
+  // hasn't actually ended — without it, that lull could be misread as a
+  // new gesture and trigger a second nav.
+  if (now < wheelHardLockUntil) {
+    wheelAccumY = 0;
+    return;
+  }
   if (wheelInMomentum) {
     wheelAccumY = 0;
     return;
   }
   wheelAccumY += e.deltaY;
-  if (Math.abs(wheelAccumY) > 60) {
+  // Lower threshold (was 60) so a single small intentional scroll moves
+  // one section instead of being eaten as "not enough delta". Momentum
+  // events after the nav are still safely caught by the flag/lock above.
+  if (Math.abs(wheelAccumY) > 25) {
     navVertical(wheelAccumY > 0 ? 1 : -1);
     wheelAccumY = 0;
     wheelInMomentum = true;
+    wheelHardLockUntil = now + 350;
   }
 }, { passive: false });
 
@@ -3948,6 +4042,16 @@ buildReel();
 buildVerticalProgress();
 buildStageDropdown();
 observeSections();
+// One-time initial sync of UI chrome that lives outside the reel —
+// applyLang() does this on every language switch but we also need it
+// on first boot so the keyboard-hint label / search placeholder /
+// favorites count are in the right language from frame 1.
+{
+  const kbLabel = document.getElementById("kb-hint-label");
+  if (kbLabel) kbLabel.textContent = t("kbHint.label");
+  const searchInput = document.getElementById("search-input");
+  if (searchInput) searchInput.placeholder = t("search.placeholder");
+}
 // Initial active state
 setTimeout(() => setActiveSection(reel.querySelector(".section")), 50);
 // Apply deep-link from URL after first render
