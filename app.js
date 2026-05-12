@@ -792,13 +792,26 @@ let activeStageFilter = "all";
 // LCP. The SW caches the app shell + artist photos so a repeat visit (a
 // festival-goer back at camp with bad cellular) boots offline. Registered
 // with a relative URL so the same code works from a GitHub Pages sub-path.
-// Service-worker registration with smart auto-update. After a deploy the
-// browser picks up the new sw.js via networkFirst, installs it, and the
-// new SW posts "sw-activated" — we then do a single one-time reload so
-// the user lands on the fresh bundle without needing a manual hard
-// refresh. The reload guard prevents an infinite loop if multiple tabs
-// race to claim the new SW.
+// Service-worker registration with smart auto-update. On a deploy the
+// browser picks up the new sw.js via networkFirst, installs it, and on
+// activate it claims the page — at which point we do a one-time reload
+// so the user lands on the fresh bundle without needing a manual hard
+// refresh. We ONLY reload when there was already a controller at boot
+// (i.e. this is a real upgrade), never on the very first visit — that
+// race used to trigger a reload mid-init and leave the boot spinner
+// stuck until the user manually refreshed.
 if ("serviceWorker" in navigator) {
+  // Snapshot the controller BEFORE registering so we can tell first-
+  // install (null at boot) from upgrade (some controller at boot)
+  // when controllerchange fires later.
+  const hadControllerAtBoot = !!navigator.serviceWorker.controller;
+  let reloadedForSW = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (reloadedForSW) return;
+    if (!hadControllerAtBoot) return; // first install — page is already fresh
+    reloadedForSW = true;
+    window.location.reload();
+  });
   window.addEventListener("load", () => {
     setTimeout(() => {
       navigator.serviceWorker.register("./sw.js", { scope: "./" })
@@ -807,7 +820,9 @@ if ("serviceWorker" in navigator) {
           // sessions (someone leaves the tab open) so a fresh deploy
           // gets noticed without needing the user to close + reopen.
           setInterval(() => reg.update().catch(() => {}), 5 * 60 * 1000);
-          // On any newly-installed SW, ask it to take over right away.
+          // On any newly-installed SW (when there's already a controller),
+          // ask it to take over right away — controllerchange + our
+          // reload-on-upgrade handler does the rest.
           reg.addEventListener("updatefound", () => {
             const next = reg.installing;
             if (!next) return;
@@ -820,20 +835,6 @@ if ("serviceWorker" in navigator) {
         })
         .catch(() => {});
     }, 0);
-    let reloadedForSW = false;
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (reloadedForSW) return;
-      reloadedForSW = true;
-      // The new SW is now in charge — reload once so all subsequent
-      // network requests on the page are served by the fresh worker.
-      window.location.reload();
-    });
-    navigator.serviceWorker.addEventListener("message", (e) => {
-      if (e.data?.type === "sw-activated" && !reloadedForSW) {
-        reloadedForSW = true;
-        window.location.reload();
-      }
-    });
   }, { once: true });
 }
 
@@ -2024,6 +2025,14 @@ function hideBootLoader() {
     setTimeout(() => el.remove(), 400);
   });
 }
+
+// Safety net: if buildReel throws or some asset stalls (e.g. SW
+// claiming the page mid-init on a flaky network), hide the loader
+// after 6s anyway so the user is never staring at a stuck spinner.
+// 6s is well past the longest legitimate cold-boot we've seen on a
+// 3G phone. The flag guard above means this is a no-op if buildReel
+// already removed the loader normally.
+setTimeout(() => hideBootLoader(), 6000);
 
 // Live dot tracking: a continuous RAF loop polls scrollLeft on whichever
 // pager is currently being interacted with, so the active dot updates
