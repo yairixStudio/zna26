@@ -1297,7 +1297,7 @@ function heroPanelStage(stage) {
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementMarkup}
       <button class="hero-icon-action hero-icon-action--top hero-nav-diamond" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">
           <defs>
             <linearGradient id="nav-grad-${escapeHtml(stage.id)}" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%"  stop-color="var(--hero-text-1)"/>
@@ -1305,8 +1305,14 @@ function heroPanelStage(stage) {
               <stop offset="100%" stop-color="var(--hero-text-3)"/>
             </linearGradient>
           </defs>
-          <circle cx="12" cy="12" r="10" stroke="url(#nav-grad-${escapeHtml(stage.id)})"/>
-          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="url(#nav-grad-${escapeHtml(stage.id)})" stroke="url(#nav-grad-${escapeHtml(stage.id)})"/>
+          <!-- Yield-style diamond outline + the Google-Maps navigation
+               arrow (Material Symbols `navigation`) filled inside.
+               Both share the per-stage linearGradient above. -->
+          <path d="M12 1.5 L22.5 12 L12 22.5 L1.5 12 Z"
+                fill="none" stroke="url(#nav-grad-${escapeHtml(stage.id)})"
+                stroke-width="1.6" stroke-linejoin="round"/>
+          <path d="M12 6.5 L16.5 17.5 L12 15.5 L7.5 17.5 Z"
+                fill="url(#nav-grad-${escapeHtml(stage.id)})"/>
         </svg>
       </button>
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
