@@ -1297,7 +1297,7 @@ function heroPanelStage(stage) {
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementMarkup}
       <button class="hero-icon-action hero-icon-action--top hero-nav-diamond" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-        <svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" aria-hidden="true">
           <defs>
             <linearGradient id="nav-grad-${escapeHtml(stage.id)}" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%"  stop-color="var(--hero-text-1)"/>
@@ -1305,14 +1305,14 @@ function heroPanelStage(stage) {
               <stop offset="100%" stop-color="var(--hero-text-3)"/>
             </linearGradient>
           </defs>
-          <!-- Yield-style diamond outline + the Google-Maps navigation
-               arrow (Material Symbols "navigation") filled inside.
-               Both share the per-stage linearGradient above. -->
-          <path d="M12 1.5 L22.5 12 L12 22.5 L1.5 12 Z"
-                fill="none" stroke="url(#nav-grad-${escapeHtml(stage.id)})"
-                stroke-width="1.6" stroke-linejoin="round"/>
-          <path d="M12 6.5 L16.5 17.5 L12 15.5 L7.5 17.5 Z"
-                fill="url(#nav-grad-${escapeHtml(stage.id)})"/>
+          <!-- Double-right chevron (flaticon-style) drawn as two thick
+               > strokes, both painted with the per-stage gradient. -->
+          <path d="M6 5 L13 12 L6 19"
+                stroke="url(#nav-grad-${escapeHtml(stage.id)})"
+                stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 5 L19 12 L12 19"
+                stroke="url(#nav-grad-${escapeHtml(stage.id)})"
+                stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
@@ -1412,6 +1412,12 @@ function wireHeroPager() {
         rerenderArtistsBelowHero();
         if (typeof syncUrlFromActive === "function") syncUrlFromActive();
       }
+      // Keep is-on-main-hero in sync with horizontal swipes too —
+      // setActiveSection only fires on vertical section changes, so
+      // without this the logo wouldn't switch sizes while the user
+      // swiped left/right between Main and the stage heroes.
+      document.body.classList.toggle("is-on-main-hero",
+        getCurrentSection()?.dataset.section === "hero" && activeStageFilter === "all");
       // Restart the autoplay countdown on the new stage's dot so the
       // fill always rides on whichever pill the user is currently
       // looking at. Skip while the autoplay is paused (manual gesture).
@@ -2650,6 +2656,10 @@ function setActiveSection(section) {
   // panelIdx=1 which would always be flagged "non-hero".
   const isHero = section.dataset.section === "hero";
   document.body.classList.toggle("is-on-hero", isHero);
+  // Distinguish "on the Main hero panel" from "on a stage hero panel"
+  // so the top-bar logo can stay extra-large only on Main and collapse
+  // to a smaller version on Retro / Zambu / Guardians / Market.
+  document.body.classList.toggle("is-on-main-hero", isHero && activeStageFilter === "all");
   const pager = section.querySelector(".pager");
   // Compute realIdx after any anchoring scrollTo below — defer to a single
   // pass at the end of setActiveSection.
@@ -3098,17 +3108,22 @@ reel.addEventListener("touchend", e => {
 function navHorizontal(dir) {
   const current = getCurrentSection();
   if (!current) return;
-  // Hero section: route to the hero-pager (Main + 4 stages)
+  // Hero section: drive the hero-pager with the same physical
+  // child-step logic the artist carousel uses, so keyboard arrows
+  // (and any other caller of navHorizontal) get the same infinite
+  // loop as touch/wheel — landing on the cloneStart/cloneEnd
+  // bookend triggers the settle handler, which instant-jumps back
+  // to the matching real twin and the user keeps cycling forever.
   if (current.dataset.section === "hero") {
-    const idx = HERO_STAGES.findIndex(s => s.id === activeStageFilter);
-    const next = Math.max(0, Math.min(HERO_STAGES.length - 1, idx + dir));
-    if (next !== idx) {
-      const stage = HERO_STAGES[next].id;
-      activeStageFilter = stage;
-      buildStageDropdown();
-      scrollHeroToStage(stage, false);
-      rerenderArtistsBelowHero();
-      updateHeroDots();
+    const heroPager = document.getElementById("hero-pager");
+    if (!heroPager || !heroPager.children.length) return;
+    const w = heroPager.clientWidth || 1;
+    const cur = Math.round(Math.abs(heroPager.scrollLeft) / w);
+    const next = cur + dir;
+    if (next < 0 || next >= heroPager.children.length) return;
+    const target = heroPager.children[next];
+    if (target) {
+      heroPager.scrollTo({ left: target.offsetLeft, behavior: "smooth" });
     }
     return;
   }
@@ -3605,11 +3620,10 @@ function renderSearchResults(query) {
   }
   searchResults.innerHTML = list.slice(0, 30).map(a => `
     <button class="search-result" data-artist-id="${escapeHtml(a.id)}">
-      <span>
+      <span class="search-result-text">
         <span class="search-result-name">${escapeHtml(a.name)}</span>
-        ${a.realName ? `<span class="search-result-meta"> · ${escapeHtml(a.realName)}</span>` : ""}
+        <span class="search-result-meta">${escapeHtml(stageLabel(a.stage))}</span>
       </span>
-      <span class="search-result-meta">${escapeHtml(stageLabel(a.stage))}</span>
     </button>
   `).join("");
 }

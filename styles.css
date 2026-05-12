@@ -1806,7 +1806,12 @@ a.collab-link:hover {
 .dots.is-hovered .dot.active,
 .hero-dots.is-armed .hero-dot.active,
 .hero-dots.is-hovered .hero-dot.active {
-  transform: scaleX(2.45) scaleY(1);
+  /* Subtle proportional bump only — was scaleX(2.45) which turned the
+     active pill into a comically-long bar on hover. The pill is
+     already pre-stretched to 18px wide via .dot.active { width:18px },
+     so a uniform scale(1.1) just makes it pop ~10% bigger relative to
+     the rest of the strip without distorting its 2:1 aspect ratio. */
+  transform: scale(1.1);
 }
 
 /* Per-dot dock-magnification on the horizontal strips was retired:
@@ -2382,7 +2387,9 @@ body.has-mini-player .panel {
   border-radius: 0;
   font-size: 13px;
   letter-spacing: 0.3px;
-  flex-direction: row-reverse;
+  /* Natural row order: label first, chevron second — chevron sits on
+     the RIGHT of the text in LTR languages (EN/PT). The button's
+     DOM is `<span>label</span><svg/>`. */
 }
 .stage-select-trigger.top-bar-btn svg {
   filter: none; /* the parent already drop-shadows */
@@ -2425,10 +2432,20 @@ body.has-mini-player .panel {
 
 /* Hero state: bigger logo + slight downward shift so it overlaps the
    top of the Main hero panel rather than living inside the top bar. */
+/* On any hero panel (Main / Retro / Zambu / Guardians / Market) push
+   the logo a bit below the top bar so it reads as part of the hero
+   composition rather than top-bar chrome. */
 body.is-on-hero .top-bar-logo {
-  transform: translateY(70px);
+  transform: translateY(40px);
 }
 body.is-on-hero .top-bar-logo-img {
+  height: 80px;
+}
+/* Main hero panel only — the "landing" — gets the full-size logo. */
+body.is-on-main-hero .top-bar-logo {
+  transform: translateY(70px);
+}
+body.is-on-main-hero .top-bar-logo-img {
   height: 170px;
 }
 
@@ -2739,8 +2756,15 @@ body.is-on-hero .top-bar-logo-img {
   }
 }
 
-.search-result-name { font-weight: 700; color: var(--text); font-size: 14px; text-align: left; }
-.search-result-meta { font-size: 11px; color: var(--text-muted); text-align: left; }
+.search-result-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  min-width: 0;
+}
+.search-result-name { font-weight: 700; color: var(--text); font-size: 14px; text-align: left; line-height: 1.25; }
+.search-result-meta { font-size: 11px; color: var(--text-muted); text-align: left; line-height: 1.25; }
 .search-empty { text-align: center; padding: 22px; color: var(--text-muted); font-size: 14px; }
 
 /* ===== Favorites overlay ===== */
@@ -3591,6 +3615,32 @@ body.is-on-hero .top-bar-logo-img {
   color: var(--sun-yellow);
   text-shadow: 0 0 8px rgba(255, 180, 71, 0.7);
   animation: countdown-sep-blink 1s steps(2, end) infinite;
+}
+
+/* When the countdown sits inside a hero panel, recolour it with the
+   stage's accent palette so the timer reads as part of the panel's
+   identity. Each .hero-panel-- variant already defines --hero-text-1
+   / --hero-text-2 / --hero-text-3 via CSS custom properties; we pull
+   from those so the timer borders + glow on Retro look orange-pink,
+   Zambu purple-magenta, Guardians cyan-yellow, Market sun-orange,
+   and the Main hero stays at its default yellow. */
+.hero-panel .countdown-unit {
+  border-color: color-mix(in oklab, var(--hero-text-1) 55%, transparent);
+  box-shadow:
+    inset 0 0 10px color-mix(in oklab, var(--hero-text-1) 22%, transparent),
+    0 0 12px color-mix(in oklab, var(--hero-text-2, var(--hero-text-1)) 20%, transparent);
+}
+.hero-panel .countdown-value {
+  color: var(--hero-text-1);
+  text-shadow: 0 0 8px color-mix(in oklab, var(--hero-text-1) 70%, transparent);
+}
+.hero-panel .countdown-sep {
+  color: var(--hero-text-2, var(--hero-text-1));
+  text-shadow: 0 0 8px color-mix(in oklab, var(--hero-text-2, var(--hero-text-1)) 70%, transparent);
+}
+.hero-panel .countdown-label {
+  color: color-mix(in oklab, var(--hero-text-1) 75%, white 25%);
+  opacity: 0.85;
 }
 
 @keyframes countdown-sep-blink {
