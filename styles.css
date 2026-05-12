@@ -1347,22 +1347,44 @@ body.has-mini-player .hero-dots {
   margin: 0;
   /* Cap the bio at ~7 lines and let the rest scroll INSIDE the box, so
      a long bio doesn't push the streaming row + links off the panel
-     (and doesn't trigger the panel's outer scroll). The internal scroll
-     is silent on desktop and uses iOS momentum on touch. */
+     (and doesn't trigger the panel's outer scroll). overscroll-behavior:
+     contain stops the scroll from chaining to the reel once it hits the
+     internal top/bottom — the reel's wheel router also checks for this
+     scrollable via findScrollableAncestor() so a desktop wheel inside
+     the bio stays local until the bio runs out of room to scroll. */
   max-height: calc(1.8em * 7);
   overflow-y: auto;
   overscroll-behavior: contain;
+  /* Force the scrollbar to be visible always (instead of the OS-default
+     auto-hide), with a brighter accent-coloured thumb on a soft track
+     so the user immediately sees "there's more text below". */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.18) transparent;
+  scrollbar-color: var(--sun-yellow) rgba(255, 255, 255, 0.08);
+  scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
-  padding-inline-end: 4px;
+  padding-inline-end: 10px;
+  /* Pull-to-navigate uses touch-action on the panel; the bio-text gets
+     its own pan-y allowance so iOS doesn't claim the gesture before our
+     pointer-stack figures out the user is reading the bio. */
+  touch-action: pan-y;
 }
-.bio-text::-webkit-scrollbar { width: 4px; }
+.bio-text::-webkit-scrollbar {
+  width: 6px;
+}
 .bio-text::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--sun-yellow);
+  border-radius: 999px;
+  box-shadow: 0 0 6px rgba(254, 180, 71, 0.45);
+  /* Keep the thumb visible even when the user isn't actively scrolling. */
+  opacity: 1;
+}
+.bio-text::-webkit-scrollbar-thumb:hover {
+  background: var(--sun-pink);
+}
+.bio-text::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.07);
   border-radius: 999px;
 }
-.bio-text::-webkit-scrollbar-track { background: transparent; }
 
 /* Legacy `.notable` chip used to live inside the bio card. It's been
    moved to the artist hero (see .hero-notable below). The selector is

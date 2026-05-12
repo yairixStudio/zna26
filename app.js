@@ -2813,6 +2813,24 @@ function setupPanelPullToNavigate(panel) {
     setText(dir, ready);
   }
 
+  // When the touch starts inside a nested scrollable child (e.g. .bio-text
+  // which has its own overflow-y:auto), pull-to-navigate must NOT compete
+  // with it — the user is trying to read the long bio, not jump to the
+  // next artist. This stays set across the whole gesture.
+  let innerScrollable = null;
+  function findInnerScrollable(target) {
+    let el = target;
+    while (el && el !== panel && el.nodeType === 1) {
+      const style = window.getComputedStyle(el);
+      const oy = style.overflowY;
+      if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) {
+        return el;
+      }
+      el = el.parentElement;
+    }
+    return null;
+  }
+
   panel.addEventListener("touchstart", (e) => {
     if (e.touches.length !== 1) return;
     startY = e.touches[0].clientY;
@@ -2822,6 +2840,7 @@ function setupPanelPullToNavigate(panel) {
     // over native scroll or let the panel scroll itself.
     startedAtTop    = panel.scrollTop <= 0;
     startedAtBottom = panel.scrollTop >= max - 1;
+    innerScrollable = findInnerScrollable(e.target);
     direction = null;
     lastDelta = 0;
     intercepting = false;
@@ -2838,6 +2857,19 @@ function setupPanelPullToNavigate(panel) {
     // than 1 pixel of vertical motion qualifies — waiting for a larger
     // threshold gives iOS time to lock and ignore preventDefault later.
     if (!direction) {
+      // Defer to a nested scrollable child (e.g. .bio-text) that's still
+      // able to consume the gesture in this direction. We only intercept
+      // for pull-to-nav once that inner scroll has actually hit its edge.
+      if (innerScrollable) {
+        const sMax = innerScrollable.scrollHeight - innerScrollable.clientHeight;
+        const sAtTop = innerScrollable.scrollTop <= 0;
+        const sAtBottom = innerScrollable.scrollTop >= sMax - 1;
+        const innerCanScrollDown = dy < 0 && !sAtBottom;
+        const innerCanScrollUp   = dy > 0 && !sAtTop;
+        if (innerCanScrollDown || innerCanScrollUp) {
+          return; // inner scroll wins
+        }
+      }
       const isPullTop    = startedAtTop    && dy > 0;
       const isPullBottom = startedAtBottom && dy < 0;
       if (!isPullTop && !isPullBottom) {
@@ -3047,9 +3079,37 @@ let wheelAccumY = 0;
 let wheelQuietTimer = null;
 let wheelHardLockUntil = 0;
 
+// Walk up from `start` looking for an ancestor with overflow-y:auto/scroll
+// that can still consume scroll in the requested direction (deltaY > 0 →
+// downward; < 0 → upward). Used to keep the reel-level wheel router from
+// hijacking scroll that the bio-text (or any nested scrollable) is still
+// able to absorb.
+function findScrollableAncestor(start, deltaY) {
+  let el = start;
+  while (el && el !== reel && el.nodeType === 1) {
+    const style = window.getComputedStyle(el);
+    const oy = style.overflowY;
+    if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) {
+      const atTop = el.scrollTop <= 0;
+      const atBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - 1;
+      if (deltaY > 0 && !atBottom) return el;
+      if (deltaY < 0 && !atTop) return el;
+    }
+    el = el.parentElement;
+  }
+  return null;
+}
+
 reel.addEventListener("wheel", e => {
   // Ignore mostly-horizontal wheels — those are handled per-pager (above).
   if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+  // Don't hijack the wheel if the user is pointing at a nested scrollable
+  // (e.g. .bio-text on the info panel) that hasn't yet hit its boundary —
+  // let native scroll consume it first. Once the inner scrollable hits
+  // its top/bottom, the next wheel event WILL reach this handler (because
+  // findScrollableAncestor returns null at the boundary) and section
+  // navigation kicks in as before.
+  if (findScrollableAncestor(e.target, e.deltaY)) return;
   e.preventDefault();
   const now = Date.now();
   // Quiet-timer detection: when wheel events stop arriving for 140ms,
