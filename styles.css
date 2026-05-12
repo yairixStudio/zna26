@@ -2528,9 +2528,19 @@ body.is-on-main-hero .top-bar-logo-img {
   list-style: none;
   position: absolute;
   top: calc(100% + 10px);
-  /* Pin to the trigger's right edge in LTR — the dropdown sits on the right
-     side of the bar so opening rightward would push it off-screen. */
-  right: 0;
+  /* Anchor follows the trigger's screen position so the panel always
+     opens INTO the viewport, never out of it:
+       * EN / PT — top-bar flips so the dropdown sits on the screen-LEFT.
+         Pin the menu's left edge to the trigger and let it extend
+         rightward.
+       * Hebrew — top-bar is in natural order; trigger sits on the
+         screen-RIGHT. Pin the menu's right edge to the trigger and let
+         it extend leftward.
+     A previous version always used right:0 which pushed the menu off
+     the left edge of the screen the moment the layout was flipped to
+     EN/PT. */
+  left: 0;
+  right: auto;
   border-radius: 18px;
   padding: 8px;
   min-width: 220px;
@@ -2540,6 +2550,10 @@ body.is-on-main-hero .top-bar-logo-img {
   animation: glass-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
   display: block;
   z-index: 30;
+}
+:lang(he) .stage-select-menu {
+  left: auto;
+  right: 0;
 }
 
 /* ===== Language picker ===== */
