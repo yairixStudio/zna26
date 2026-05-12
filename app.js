@@ -1306,7 +1306,7 @@ function heroPanelStage(stage) {
             </linearGradient>
           </defs>
           <!-- Yield-style diamond outline + the Google-Maps navigation
-               arrow (Material Symbols `navigation`) filled inside.
+               arrow (Material Symbols "navigation") filled inside.
                Both share the per-stage linearGradient above. -->
           <path d="M12 1.5 L22.5 12 L12 22.5 L1.5 12 Z"
                 fill="none" stroke="url(#nav-grad-${escapeHtml(stage.id)})"
