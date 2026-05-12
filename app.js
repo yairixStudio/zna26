@@ -1837,7 +1837,12 @@ function installSnapClamp(container, axis) {
 function installWheelClamp(container, axis, getEnabled) {
   if (!container || container.dataset.wheelClamp === "1") return;
   container.dataset.wheelClamp = "1";
-  let cooldownUntil = 0;
+  // Per-pager momentum gate: same shape as the reel-level wheel router —
+  // a 110ms quiet timer detects when trackpad momentum from the previous
+  // step has actually died down so the next gesture isn't stuck waiting
+  // out a fixed cooldown.
+  let inMomentum = false;
+  let quietTimer = null;
   container.addEventListener("wheel", e => {
     if (getEnabled && !getEnabled()) return;
     const primary = axis === "y" ? e.deltaY : e.deltaX;
@@ -1849,16 +1854,9 @@ function installWheelClamp(container, axis, getEnabled) {
     // horizontal trackpad swipe on a pager can't also be interpreted as
     // a vertical gesture by an ancestor handler.
     e.stopPropagation();
-    const now = performance.now();
-    // Still cooling down from a previous step: trackpad momentum is still
-    // arriving. Keep extending the cooldown as long as events keep coming
-    // so a single fling can never resolve to two pages — only let the
-    // next step land once the gesture has actually settled (~250ms gap).
-    if (now < cooldownUntil) {
-      cooldownUntil = now + 250;
-      return;
-    }
-    cooldownUntil = now + 480;
+    clearTimeout(quietTimer);
+    quietTimer = setTimeout(() => { inMomentum = false; }, 110);
+    if (inMomentum) return;
     const w = axis === "y" ? container.clientHeight : container.clientWidth;
     if (!w) return;
     const pos = axis === "y" ? container.scrollTop : container.scrollLeft;
@@ -1867,6 +1865,7 @@ function installWheelClamp(container, axis, getEnabled) {
     const targetIdx = Math.max(0, Math.min(maxIdx, Math.round(pos / w) + sign));
     const target = targetIdx * w;
     container.scrollTo({ [axis === "y" ? "top" : "left"]: target, behavior: "smooth" });
+    inMomentum = true;
   }, { passive: false });
 }
 
@@ -2899,22 +2898,30 @@ document.addEventListener("keydown", e => {
 //   - Artist pager → installWheelClamp(pager, "x") on the per-artist
 //     pager itself; that listener stops propagation, so this handler
 //     doesn't see the horizontal input at all.
-let wheelLockUntil = 0;
+let wheelInMomentum = false;
 let wheelAccumY = 0;
-let wheelResetTimer = null;
+let wheelQuietTimer = null;
 
 reel.addEventListener("wheel", e => {
   // Ignore mostly-horizontal wheels — those are handled per-pager (above).
   if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-  const now = Date.now();
   e.preventDefault();
-  // Already locked from a recent nav: trackpad momentum is still firing.
-  // Extend the lock as long as events keep arriving — only let the next
-  // navigation through once the gesture has actually settled (~250ms gap
-  // between events). This is what stops a single Mac trackpad fling from
-  // sometimes pushing two sections instead of one.
-  if (now < wheelLockUntil) {
-    wheelLockUntil = now + 250;
+  // Detect when wheel events stop arriving — that's when a trackpad fling's
+  // momentum has actually died down and the user can scroll again. Every
+  // event resets a 110ms quiet timer; once it fires, we know the gesture
+  // ended. This replaces the previous fixed-cooldown approach, which was
+  // either too short (let momentum push a second section) or extended for
+  // too long (left the user unable to scroll until they clicked somewhere
+  // or waited several seconds for momentum to die down).
+  clearTimeout(wheelQuietTimer);
+  wheelQuietTimer = setTimeout(() => {
+    wheelInMomentum = false;
+    wheelAccumY = 0;
+  }, 110);
+  // After navigating, swallow any further events from the SAME gesture
+  // (i.e. until the quiet timer fires). The first new event after a real
+  // pause counts as a fresh gesture.
+  if (wheelInMomentum) {
     wheelAccumY = 0;
     return;
   }
@@ -2922,10 +2929,8 @@ reel.addEventListener("wheel", e => {
   if (Math.abs(wheelAccumY) > 60) {
     navVertical(wheelAccumY > 0 ? 1 : -1);
     wheelAccumY = 0;
-    wheelLockUntil = now + 500;
+    wheelInMomentum = true;
   }
-  clearTimeout(wheelResetTimer);
-  wheelResetTimer = setTimeout(() => { wheelAccumY = 0; }, 200);
 }, { passive: false });
 
 // ===== Stage dropdown: filter the reel to a single stage =====

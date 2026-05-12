@@ -1087,8 +1087,8 @@ body.has-mini-player .hero-dots {
 .artist-favorite {
   margin-top: 4px;
   align-self: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1098,20 +1098,47 @@ body.has-mini-player .hero-dots {
   border-radius: 999px;
   padding: 0;
   cursor: pointer;
+  /* Tell the browser to skip the synthetic 300ms tap delay and the
+     double-tap-to-zoom heuristic on this button — both contribute to
+     the "first tap only shows hover, second tap saves" feel on mobile. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, color 0.2s ease;
+  position: relative;
+}
+
+/* Generous invisible hit area extending past the visible 48px circle so
+   the heart is forgiving to tap. The pseudo-element only handles pointer
+   events; the click delegates to the button itself. */
+.artist-favorite::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  border-radius: inherit;
 }
 
 .artist-favorite .fav-icon {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   display: block;
   transition: transform 0.2s ease;
+  /* Keep the SVG out of the hit-test so the click lands on the button
+     itself — avoids the iOS pattern where the icon eats the tap and the
+     button never receives it. */
+  pointer-events: none;
 }
 
-.artist-favorite:hover {
-  background: rgba(255, 92, 138, 0.12);
-  border-color: rgba(255, 92, 138, 0.6);
-  color: #ff5c8a;
+/* Hover styling is restricted to real-mouse devices. On mobile, the first
+   tap was triggering sticky hover (color change but no save), forcing the
+   user to tap a second time to commit. With hover gated to (hover:hover),
+   a single mobile tap goes straight to the click handler and the heart
+   saves immediately. */
+@media (hover: hover) and (pointer: fine) {
+  .artist-favorite:hover {
+    background: rgba(255, 92, 138, 0.12);
+    border-color: rgba(255, 92, 138, 0.6);
+    color: #ff5c8a;
+  }
 }
 
 .artist-favorite:active {
@@ -3022,9 +3049,16 @@ body.has-mini-player .panel {
   }
   .panel-hero .artist-name {
     font-size: clamp(56px, 5.6vw, 96px);
-    line-height: 0.95;
+    /* Slightly looser line-height and a small bottom pad give Orbitron's
+       tall glyphs + descenders (e.g. lowercase "g") room to render the
+       gradient (background-clip:text) all the way down. With the tight
+       0.95 line-height + no padding, the last line's "g"/"y"/"p" tails
+       were rendering past the element's background box and getting
+       clipped to invisible (color:transparent). */
+    line-height: 1.0;
     letter-spacing: -2px;
     margin: 0;
+    padding-bottom: 0.12em;
   }
   .panel-hero .artist-real {
     font-size: 20px;
@@ -3059,7 +3093,7 @@ body.has-mini-player .panel {
   }
   .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { max-width: 480px; }
-  .panel-hero .artist-name { font-size: clamp(72px, 6vw, 120px); }
+  .panel-hero .artist-name { font-size: clamp(72px, 6vw, 120px); padding-bottom: 0.12em; }
   .tracks-stack { grid-template-columns: repeat(3, 1fr); }
   .tracks-stack:has(> .track-card:only-child),
   .tracks-stack:has(> .track-card:nth-child(2):last-child) {
@@ -3813,9 +3847,13 @@ body.has-mini-player .panel {
   }
   .panel-hero .artist-name {
     font-size: clamp(26px, 7vh, 44px);
-    line-height: 0.95;
+    /* Looser line-height + bottom padding so descenders on the last
+       wrapped line (e.g. "g" in "Vlugt") aren't clipped by the
+       background-clip:text gradient box. */
+    line-height: 1.0;
     letter-spacing: -1px;
     margin: 0;
+    padding-bottom: 0.12em;
   }
   .panel-hero .artist-real { font-size: 13px; margin: 0; }
   .panel-hero .artist-meta-line { font-size: 12px; gap: 4px 12px; }
@@ -3840,7 +3878,7 @@ body.has-mini-player .panel {
    above 520, but small Androids can go lower). One more tier. */
 @media (orientation: landscape) and (max-height: 380px) {
   .hero-panel .logo-mark { font-size: clamp(28px, 10vh, 48px); }
-  .panel-hero .artist-name { font-size: clamp(22px, 6vh, 34px); }
+  .panel-hero .artist-name { font-size: clamp(22px, 6vh, 34px); padding-bottom: 0.12em; }
   .panel-hero .artist-hero-photo,
   .panel-hero .artist-hero-art { max-width: 150px; }
   .panel { padding: 48px 16px 60px; }
