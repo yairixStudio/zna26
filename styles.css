@@ -2239,6 +2239,15 @@ body.has-mini-player .panel {
   align-items: center;
   gap: 8px;
   pointer-events: none;
+  /* Default (EN / PT): stage dropdown leads, search+heart trail —
+     i.e. dropdown on the visual LEFT of the bar, the other controls
+     on the right. DOM order is unchanged (search+heart first, then
+     dropdown), so row-reverse just flips the visual placement. The
+     :lang(he) rule below restores natural row order so the Hebrew
+     layout keeps the dropdown on the right (its leading edge). */
+  flex-direction: row-reverse;
+}
+:lang(he) .top-bar { flex-direction: row; }
 }
 
 .top-bar > * { pointer-events: auto; }
@@ -2395,14 +2404,18 @@ body.has-mini-player .panel {
    absolute-positioned chip — no surrounding circle any more. */
 .favorites-btn.top-bar-btn { color: #ff5c8a; position: relative; }
 
-/* Stage-select pill: keeps the rounded shape but loses the heavy
-   glass chrome; just a thin outline so the affordance still reads. */
+/* Stage-select trigger: completely chromeless on the header — no
+   border, no pill — and the chevron is ALWAYS positioned on the
+   leading visual side (left of the label) regardless of language.
+   The drop-shadow on .top-bar-btn keeps the text + glyph readable
+   over bright hero gradients. */
 .stage-select-trigger.top-bar-btn {
-  padding: 8px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 0;
   font-size: 13px;
   letter-spacing: 0.3px;
+  flex-direction: row-reverse;
 }
 .stage-select-trigger.top-bar-btn svg {
   filter: none; /* the parent already drop-shadows */
@@ -2498,13 +2511,9 @@ body.is-on-hero .top-bar-logo-img {
   opacity: 0.85;
 }
 
-/* In Hebrew, the chevron sits on the LEFT of the label text — same
-   intuition as "the affordance is on the leading edge". :lang(he)
-   inherits from html[lang="he"] so it works regardless of the body's
-   explicit direction: ltr (the site is laid out LTR globally with
-   localised copy). Flipping flex-direction means the SVG is the
-   first visual item on Hebrew, second on EN/PT. */
-:lang(he) .stage-select-trigger { flex-direction: row-reverse; }
+/* (Chevron-left-of-label is now applied to .stage-select-trigger
+   universally via .stage-select-trigger.top-bar-btn above — same
+   placement in every language.) */
 
 .stage-select.is-open .stage-select-trigger svg {
   transform: rotate(180deg);
