@@ -1173,9 +1173,10 @@ function liveStatusCard(stageId = "all") {
   const status = getScheduleStatus(stageId);
   const startsAt = parseScheduleTime(FESTIVAL.startsAt);
 
+  const dirAttr = currentLang === "he" ? "rtl" : "ltr";
   if (status.state === "live") {
     return `
-      <div class="live-status live-status--live" aria-live="polite">
+      <div class="live-status live-status--live" aria-live="polite" dir="${dirAttr}">
         <div class="live-now-track is-live"><span class="live-now-dot"></span></div>
         <strong class="live-status-title">${escapeHtml(status.artist.name)}</strong>
         <span class="live-status-meta">${escapeHtml(stageLabel(status.artist.stage))} · ${escapeHtml(formatScheduleRange(status.schedule))}</span>
@@ -1184,7 +1185,7 @@ function liveStatusCard(stageId = "all") {
   }
 
   return `
-    <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
+    <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite" dir="${dirAttr}">
       <div class="live-now-track"><span class="live-now-dot"></span></div>
       ${buildCountdownTimer(startsAt, "hero")}
     </div>
@@ -1216,6 +1217,7 @@ function marketLiveDemoCard() {
   const pct = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
   return `
     <div class="live-status live-status--live live-status--demo" aria-live="polite"
+         dir="${currentLang === "he" ? "rtl" : "ltr"}"
          data-demo-progress data-demo-start="${escapeHtml(startISO)}" data-demo-end="${escapeHtml(endISO)}">
       <div class="live-status-topline">
         <div class="live-now-track is-live"><span class="live-now-dot"></span><span class="live-now-label">${escapeHtml(t("live.now"))}</span></div>
