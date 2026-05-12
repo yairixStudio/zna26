@@ -207,6 +207,9 @@ const STRINGS = {
   },
   // Tiny desktop hint that the keyboard arrow keys can navigate the reel.
   "kbHint.label": { he: "ניווט עם החיצים", en: "Arrow keys to navigate", pt: "Setas para navegar" },
+  // "Surprise me" pill under the hero tagline — jumps to a random artist.
+  "hero.random": { he: "🎲 קפיצה לאומן אקראי", en: "🎲 Surprise me — random artist", pt: "🎲 Surpreende-me — artista aleatório" },
+  "hero.randomLabel": { he: "קפיצה לאומן אקראי", en: "Jump to a random artist", pt: "Saltar para um artista aleatório" },
 
   // Stage names + descriptions
   "stage.retro":           { he: "Retro Universe", en: "Retro Universe", pt: "Retro Universe" },
@@ -353,6 +356,10 @@ function applyLang(lang) {
   currentLang = lang;
   try { localStorage.setItem("zna-lang", lang); } catch (_) {}
   document.documentElement.lang = lang;
+  // Flip the global document direction too, so RTL-specific CSS selectors
+  // ([dir="rtl"] / :dir(rtl)) can adjust per-element layout — e.g. the
+  // stage dropdown's chevron-on-left positioning in Hebrew.
+  document.documentElement.dir = lang === "he" ? "rtl" : "ltr";
   // Update static UI chrome that sits outside the reel.
   const searchBtn = document.getElementById("search-btn");
   const logoBtn = document.getElementById("logo-btn");
@@ -384,6 +391,7 @@ function applyLang(lang) {
 }
 
 document.documentElement.lang = currentLang;
+document.documentElement.dir = currentLang === "he" ? "rtl" : "ltr";
 
 // Mini-player
 const miniPlayer = document.getElementById("mini-player");
@@ -1261,7 +1269,10 @@ function heroPanelMain() {
     <div class="hero-panel hero-panel--main" data-stage="all">
       ${pictureTagStatic("images/zna-3d/community-zna-logo-26-celebration", { className: "hero-zna-mark", alt: "ZNA 26 Community — The Retro Futuristic Celebration", width: 600, height: 400, loading: "eager", fetchpriority: "high" })}
       <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
-      <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
+      <button class="hero-random-btn" id="hero-random-btn" type="button" title="${escapeHtml(t("hero.randomLabel"))}" aria-label="${escapeHtml(t("hero.randomLabel"))}">
+        <span class="hero-random-text">${escapeHtml(t("hero.random"))}</span>
+      </button>
+      <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
       <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
         <a class="hero-icon-action" id="hero-yt-btn" href="https://youtube.com/playlist?list=PLueV5lFNV9_R1F0dNCtgNSbT2zvdFwGQf&amp;si=4kMxSvtOHUMI40hZ" target="_blank" rel="noopener" title="${escapeHtml(t("nav.ytPlaylist"))}" aria-label="${escapeHtml(t("nav.ytPlaylist"))}">
@@ -1288,10 +1299,9 @@ function heroPanelStage(stage) {
   return `
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementMarkup}
-      <div class="hero-stage-tag">${escapeHtml(t("nav.stage"))}</div>
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
-      <div class="hero-meta">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
+      <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
       <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
         <button class="hero-icon-action" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
@@ -3993,10 +4003,12 @@ if (!hasStoredLang()) {
   showWelcomeModal();
 }
 
-// Random-artist button: pick a random artist from whatever's currently
-// visible on the hero (Main → all artists; a stage hero → that stage only).
-const randomBtn = document.getElementById("random-btn");
-randomBtn?.addEventListener("click", () => {
+// Random-artist button — used to live in the top bar, now sits as a
+// pill under the hero tagline on the Main hero. Delegated through the
+// reel so the listener survives buildReel() rerenders.
+reel.addEventListener("click", (e) => {
+  const btn = e.target.closest?.("#hero-random-btn");
+  if (!btn) return;
   const stage = activeStageFilter;
   const pool = stage === "all" ? ARTISTS : ARTISTS.filter(a => a.stage === stage);
   if (!pool.length) return;
@@ -4010,9 +4022,9 @@ randomBtn?.addEventListener("click", () => {
   const sec = reel.querySelector(`[data-artist-id="${pick.id}"]`);
   if (sec) sec.scrollIntoView({ behavior: "smooth", block: "start" });
   // Tiny tactile spin so the click feels playful
-  randomBtn.classList.remove("is-spinning");
-  void randomBtn.offsetWidth;
-  randomBtn.classList.add("is-spinning");
+  btn.classList.remove("is-spinning");
+  void btn.offsetWidth;
+  btn.classList.add("is-spinning");
 });
 searchOverlay?.addEventListener("click", e => {
   if (e.target === searchOverlay) closeSearch();

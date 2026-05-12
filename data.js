@@ -736,7 +736,7 @@ let ARTISTS = [
     announcedAt: "2026-03-25",
     name: "Klil.co",
     realName: "Klil.co",
-    country: "🌍 בינלאומי",
+    country: "🇮🇱 ישראל",
     age: null,
     born: "פעיל בסצנה",
     stage: "market",
@@ -2563,13 +2563,13 @@ const ARTIST_TRANSLATIONS = {
     "en": {
       "bio": "A Retro Universe selector — part of the ZNA 2026 family.",
       "notable": "Retro Universe",
-      "country": "🌍 International",
+      "country": "🇮🇱 Israel",
       "born": "active in the scene"
     },
     "pt": {
       "bio": "Selector do Retro Universe — faz parte da família ZNA 2026.",
       "notable": "Retro Universe",
-      "country": "🌍 Internacional",
+      "country": "🇮🇱 Israel",
       "born": "ativo na cena"
     }
   },

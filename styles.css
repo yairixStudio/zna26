@@ -2362,6 +2362,14 @@ body.has-mini-player .panel {
   opacity: 0.85;
 }
 
+/* In Hebrew, the chevron sits on the LEFT of the label text — same
+   intuition as "the affordance is on the leading edge". :lang(he)
+   inherits from html[lang="he"] so it works regardless of the body's
+   explicit direction: ltr (the site is laid out LTR globally with
+   localised copy). Flipping flex-direction means the SVG is the
+   first visual item on Hebrew, second on EN/PT. */
+:lang(he) .stage-select-trigger { flex-direction: row-reverse; }
+
 .stage-select.is-open .stage-select-trigger svg {
   transform: rotate(180deg);
 }
@@ -4111,16 +4119,40 @@ body.has-mini-player .panel {
   .panel-hero { padding: 40px 20px 60px; }
 }
 
-/* ===== Random-artist button (visible on hero only) ===== */
-#random-btn {
-  display: none;
-  transition: transform 0.18s ease;
+/* ===== Random-artist pill (under the hero tagline on Main) =====
+   Used to live as a circular button in the top bar; now sits inline
+   under the hero tagline as a small glass pill labelled "Surprise me".
+   Spins briefly on click via the .is-spinning class. */
+.hero-random-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px auto 8px;
+  padding: 8px 18px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
 }
-body.is-on-hero #random-btn { display: inline-flex; }
-#random-btn.is-spinning { animation: random-spin 0.55s ease-out; }
+@media (hover: hover) and (pointer: fine) {
+  .hero-random-btn:hover {
+    background: rgba(254, 180, 71, 0.16);
+    border-color: rgba(254, 180, 71, 0.5);
+  }
+}
+.hero-random-btn:active { transform: scale(0.96); }
+.hero-random-btn.is-spinning { animation: random-spin 0.55s ease-out; }
 @keyframes random-spin {
   0%   { transform: rotate(0deg)   scale(1); }
-  60%  { transform: rotate(360deg) scale(1.1); }
+  60%  { transform: rotate(360deg) scale(1.05); }
   100% { transform: rotate(360deg) scale(1); }
 }
 
