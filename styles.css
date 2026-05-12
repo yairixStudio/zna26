@@ -192,38 +192,9 @@ a { color: var(--sun-yellow); }
 }
 .hero-pager::-webkit-scrollbar { display: none; }
 
-/* Idle peek hint: nudge every hero panel sideways so the user sees
-   BOTH the current panel sliding out AND the next/previous panel
-   sliding in. Translating each .hero-panel (rather than the pager)
-   means the next slot's content shifts into the viewport as the
-   current one shifts away — a true two-card peek. The transform is
-   applied only during the brief peek window, so backdrop-filter
-   compositing cost only fires once per nudge (one-time animation,
-   not continuous). */
-.hero-pager .hero-panel {
-  transition: transform 720ms cubic-bezier(0.4, 0.04, 0.2, 1);
-  /* Pre-promote each panel to its own GPU layer so the transform
-     during peek doesn't trigger a fresh layer setup mid-animation
-     (which was visible as a jitter on the stage panels — they have
-     a drop-shadow stage-element AND a backdrop-filter live-status,
-     both expensive to re-rasterise). translateZ(0) plus will-change
-     is the standard way to keep the layer warm without paying a
-     repaint cost on every frame. */
-  will-change: transform;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-}
-.hero-pager.peek-forward  .hero-panel { transform: translate3d(-12%, 0, 0); }
-.hero-pager.peek-backward .hero-panel { transform: translate3d( 12%, 0, 0); }
-/* Drop the most expensive filter on the stage artwork while the peek is
-   running — drop-shadow is full-image GPU work every frame and is what
-   produced the shake on Retro/Zambu/Guardians/Market hero panels. */
-.hero-pager.is-peeking .hero-stage-element { filter: none; }
-@media (prefers-reduced-motion: reduce) {
-  .hero-pager .hero-panel { transition: none; }
-  .hero-pager.peek-forward  .hero-panel,
-  .hero-pager.peek-backward .hero-panel { transform: none; }
-}
+/* Apple-TV-style auto-advance — see app.js startHeroAutoplay(). The
+   active stage dot fills with the accent colour over 7s, then the pager
+   auto-advances to the next stage. Old "peek" sideways nudge is gone. */
 
 .hero-panel {
   flex: 0 0 100%;
@@ -325,16 +296,38 @@ a { color: var(--sun-yellow); }
 }
 
 .hero-dot.active {
-  /* Mirror .dot.active exactly so the orange "you are here" pill looks
-     identical on the hero strip and the artist-card strip. The previous
-     scaleX(2) transform on a 9px circle rendered as a stretched ellipse
-     in Safari (border-radius:50% on the unscaled box scales with the
-     transform), which is why the hero pill looked smeared. Going back
-     to a real width-based pill renders consistently in every browser. */
-  background: var(--sun-yellow);
-  width: 18px;
+  /* Wider pill for the hero strip so the auto-advance fill (see
+     .hero-dot.is-filling below) has visible runway. Renders identically
+     in every browser because both width and height are explicit. The
+     filled segment is painted by a child ::before so the unfilled
+     "track" can stay subtly visible behind it. */
+  width: 28px;
+  background: rgba(255, 255, 255, 0.18);
   border-radius: 999px;
-  box-shadow: 0 0 10px var(--sun-yellow);
+  box-shadow: 0 0 10px rgba(254, 180, 71, 0.0);
+  position: relative;
+  overflow: hidden;
+}
+.hero-dot.active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: var(--fill, 0%);
+  background: var(--sun-yellow);
+  border-radius: inherit;
+  /* Faint glow trails the filled segment; intensifies as it gets longer. */
+  box-shadow: 0 0 8px var(--sun-yellow);
+  /* Snap to 0% / full as the autoplay script sets --fill each frame; no
+     CSS transition needed (RAF drives it). */
+}
+/* While the fill animation is running, lift the dot a touch and brighten
+   the shell so the runway reads clearly even in the empty portion. */
+.hero-dot.is-filling {
+  background: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 8px rgba(254, 180, 71, 0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-dot.active::before { width: 100%; }
 }
 
 body.has-mini-player .hero-dots {
@@ -911,6 +904,14 @@ body.has-mini-player .hero-dots {
   margin-inline-end: 14px;
   margin-inline-start: -8px;
   font-weight: 900;
+}
+
+/* The country meta-item now renders just the flag emoji (the spelled-
+   out country name and the 📍 pin both removed per the slim-down). A
+   slightly larger size makes the flag readable on its own. */
+.artist-meta-line .meta-item--flag {
+  font-size: 1.25em;
+  line-height: 1;
 }
 
 .artist-set-time {
@@ -3724,21 +3725,19 @@ body.has-mini-player .panel {
   transition: filter 0.18s ease;
 }
 
-/* "Official site" link rendered under the disclaimer on the main hero. */
+/* "Official site" link is now rendered INLINE inside the disclaimer
+   paragraph (see STRINGS["hero.disclaimer"]). Keeps the disclaimer to
+   one short line — no separate floating link below. */
 .hero-official-link {
-  display: inline-block;
-  margin-top: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
   color: var(--sun-yellow);
+  font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 2px;
-  opacity: 0.85;
-  text-align: center;
-  transition: opacity 0.15s, color 0.15s;
+  transition: color 0.15s ease, opacity 0.15s ease;
 }
-.hero-official-link:hover { opacity: 1; color: var(--sun-pink); }
+@media (hover: hover) and (pointer: fine) {
+  .hero-official-link:hover { color: var(--sun-pink); }
+}
 
 @media (max-width: 380px) {
   .hero-actions { gap: 8px; }
@@ -4473,9 +4472,9 @@ body.is-on-hero #random-btn { display: inline-flex; }
 
 /* ===== Keyboard arrow-keys hint (desktop only) =====
    Tiny cluster pinned to the bottom-right that mimics the arrow-keys
-   block of a keyboard. Hidden on touch devices. The cluster fades out
-   for a few seconds after the user actually uses the keyboard (class
-   .has-used-keys on body) so it's not perpetually in the way. */
+   block of a keyboard. Hidden on touch devices, always visible on
+   desktop. When the user presses an arrow key, the matching <kbd>
+   briefly lights up white via .is-pressed (toggled in app.js). */
 .kb-hint {
   position: fixed;
   bottom: max(14px, env(safe-area-inset-bottom, 0));
@@ -4486,18 +4485,15 @@ body.is-on-hero #random-btn { display: inline-flex; }
   align-items: center;
   gap: 6px;
   pointer-events: none;
-  opacity: 0.55;
-  transition: opacity 0.5s ease;
+  opacity: 0.7;
   user-select: none;
 }
 @media (hover: hover) and (pointer: fine) and (min-width: 720px) {
   .kb-hint { display: flex; }
 }
-.kb-hint:hover { opacity: 0.95; }
 body.has-mini-player .kb-hint {
   bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 14px);
 }
-body.has-used-keys .kb-hint { opacity: 0; }
 .kb-hint-keys {
   display: flex;
   flex-direction: column;
@@ -4524,6 +4520,15 @@ body.has-used-keys .kb-hint { opacity: 0; }
   border-bottom-width: 2px;
   border-radius: 5px;
   font-weight: 700;
+  transition: color 0.08s ease, background 0.08s ease, border-color 0.08s ease, transform 0.08s ease;
+}
+/* "I just got pressed" flash — the key glyph flips to a solid white
+   tile so the user sees a visual ack on every arrow keypress. */
+.kb-key.is-pressed {
+  color: #0a0524;
+  background: #fff;
+  border-color: #fff;
+  transform: translateY(1px);
 }
 .kb-hint-label {
   font-size: 10px;

@@ -278,16 +278,18 @@
 
   <!-- Desktop-only nudge: a tiny arrow-keys cluster at bottom-right that
        hints "you can drive the reel with the keyboard". Hidden on touch
-       devices via CSS (hover:none / pointer:coarse). -->
+       devices via CSS (hover:none / pointer:coarse). Stays visible for
+       the whole session; the pressed key briefly lights up white via
+       JS toggling .is-pressed on the matching <kbd>. -->
   <div class="kb-hint" id="kb-hint" aria-hidden="true">
     <div class="kb-hint-keys">
       <div class="kb-hint-row kb-hint-row--top">
-        <kbd class="kb-key" aria-label="Up arrow">↑</kbd>
+        <kbd class="kb-key" data-key="up" aria-label="Up arrow">↑</kbd>
       </div>
       <div class="kb-hint-row kb-hint-row--bottom">
-        <kbd class="kb-key" aria-label="Left arrow">←</kbd>
-        <kbd class="kb-key" aria-label="Down arrow">↓</kbd>
-        <kbd class="kb-key" aria-label="Right arrow">→</kbd>
+        <kbd class="kb-key" data-key="left" aria-label="Left arrow">←</kbd>
+        <kbd class="kb-key" data-key="down" aria-label="Down arrow">↓</kbd>
+        <kbd class="kb-key" data-key="right" aria-label="Right arrow">→</kbd>
       </div>
     </div>
     <div class="kb-hint-label" id="kb-hint-label">Arrow keys to navigate</div>

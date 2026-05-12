@@ -112,7 +112,15 @@ const STRINGS = {
   "hero.artistsCount": { he: "אומנים", en: "artists", pt: "artistas" },
   "hero.diveStage":    { he: "↓ צללו לתוך הבמה", en: "↓ Dive into the stage", pt: "↓ Mergulhe no palco" },
   "hero.swipeRightHint":{ he: "החליקו ימינה לבמות הפסטיבל →", en: "Swipe right for the festival stages →", pt: "Deslize para a direita pelos palcos →" },
-  "hero.disclaimer":   { he: "אתר מעריצים בלתי-רשמי, נבנה ע״י משתתפים מתנדבים — לא קשור לארגון הפסטיבל.", en: "Unofficial fan site, built by volunteer attendees — not affiliated with the festival's organisation.", pt: "Site de fãs não oficial, criado por voluntários — sem afiliação à organização do festival." },
+  // Single-line disclaimer with an inline link to the official site. The
+  // <a> markup is intentionally inline; heroPanelMain renders this string
+  // without escapeHtml so the link survives. The "Official site" anchor
+  // text gets a separate translation key so each language stays natural.
+  "hero.disclaimer": {
+    he: 'אתר מעריצים בלא-רשמי, לא קשור לארגון הפסטיבל. <a href="https://znagathering.com" target="_blank" rel="noopener" class="hero-official-link">לאתר הרשמי</a>',
+    en: 'Unofficial fan website — not affiliated with the festival\'s organisation. <a href="https://znagathering.com" target="_blank" rel="noopener" class="hero-official-link">Visit the official site</a>',
+    pt: 'Site de fãs não oficial — sem afiliação à organização do festival. <a href="https://znagathering.com" target="_blank" rel="noopener" class="hero-official-link">Visitar o site oficial</a>'
+  },
 
   // Live status
   "live.now":          { he: "עכשיו בלייב", en: "Live now", pt: "Em direto agora" },
@@ -232,6 +240,20 @@ function t(key, vars) {
 function tArtist(a, field) {
   const tr = a.translations || {};
   return tr[currentLang]?.[field] || tr.en?.[field] || tr.he?.[field] || a[field] || "";
+}
+
+// Country strings on the artist record look like "🇮🇱 ישראל" or
+// "🇯🇵 Japan (London)" — the flag emoji is two regional-indicator code
+// points at the start. Grab just the flag so the artist hero shows
+// the flag as its own self-explanatory icon (no need for a "📍" pin
+// or the spelled-out country name beside it).
+function extractCountryFlag(countryStr) {
+  if (!countryStr) return "";
+  // Take everything up to the first ASCII space — flags don't contain
+  // ASCII spaces but the rest of the string does. Falls back to the
+  // whole string when there's no space (so a bare emoji still shows).
+  const m = String(countryStr).match(/^\S+/);
+  return m ? m[0] : "";
 }
 
 // Per-stage translated field (name / description).
@@ -1205,18 +1227,11 @@ function heroPanelMain() {
       <div class="hero-meta">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))} · ${ARTISTS.length} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${liveStatusCard("all")}
       <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
-        <button class="hero-icon-action" id="hero-nav-btn" type="button" title="${escapeHtml(t("nav.navigate"))}" aria-label="${escapeHtml(t("nav.navigate"))}">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-7.5-7-12a7 7 0 1 1 14 0c0 4.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
-        </button>
-        <button class="hero-icon-action" id="hero-map-btn" type="button" title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>
-        </button>
         <a class="hero-icon-action" id="hero-yt-btn" href="https://youtube.com/playlist?list=PLueV5lFNV9_R1F0dNCtgNSbT2zvdFwGQf&amp;si=4kMxSvtOHUMI40hZ" target="_blank" rel="noopener" title="${escapeHtml(t("nav.ytPlaylist"))}" aria-label="${escapeHtml(t("nav.ytPlaylist"))}">
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10.5 9.5v5l4.5-2.5-4.5-2.5z" fill="currentColor" stroke="none"/></svg>
         </a>
       </div>
-      <p class="hero-disclaimer">${escapeHtml(t("hero.disclaimer"))}</p>
-      <a class="hero-official-link" href="https://znagathering.com" target="_blank" rel="noopener">${escapeHtml(t("nav.officialSite"))}</a>
+      <p class="hero-disclaimer">${t("hero.disclaimer")}</p>
     </div>
   `;
 }
@@ -1241,6 +1256,11 @@ function heroPanelStage(stage) {
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
       <div class="hero-meta">${count} ${escapeHtml(t("hero.artistsCount"))}</div>
       ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
+      <div class="hero-actions hero-actions--icons" role="group" aria-label="${escapeHtml(t("hero.actions"))}">
+        <button class="hero-icon-action" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14"/><path d="M15 6v14"/></svg>
+        </button>
+      </div>
       <div class="hero-hint"><span>${escapeHtml(t("hero.diveStage").replace(/^[↓\s]+/, ""))}</span><span class="hero-hint-arrow">↓</span></div>
     </div>
   `;
@@ -1272,6 +1292,13 @@ function wireHeroPager() {
         buildStageDropdown();
         rerenderArtistsBelowHero();
         if (typeof syncUrlFromActive === "function") syncUrlFromActive();
+      }
+      // Restart the autoplay countdown on the new stage's dot so the
+      // fill always rides on whichever pill the user is currently
+      // looking at. Skip while the autoplay is paused (manual gesture).
+      if (typeof startHeroAutoplay === "function" &&
+          getCurrentSection()?.dataset.section === "hero") {
+        startHeroAutoplay();
       }
     }, 160);
   }, { passive: true });
@@ -1377,11 +1404,10 @@ function panelHero(a) {
         <div class="artist-hero-text">
           <div class="artist-hero-headline">
             <h1 class="artist-name">${escapeHtml(a.name)}</h1>
-            ${a.realName ? `<div class="artist-real">${escapeHtml(a.realName)}</div>` : ""}
             <div class="artist-meta-line">
-              <span class="meta-item">📍 ${escapeHtml(tArtist(a, "country"))}</span>
+              <span class="meta-item meta-item--flag">${extractCountryFlag(tArtist(a, "country"))}</span>
               ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
-              <span class="meta-item">🎧 ${escapeHtml(a.role)}</span>
+              <span class="meta-item">${escapeHtml(a.role)}</span>
             </div>
             ${tArtist(a, "notable") ? `<div class="hero-notable">★ ${escapeHtml(tArtist(a, "notable"))}</div>` : ""}
           </div>
@@ -2531,94 +2557,109 @@ function setActiveSection(section) {
     bgScene.style.background = stageColor[stage];
   }
 
-  // Hero peek hint: schedule when the active section is a hero, cancel
-  // otherwise so we don't peek behind the user's back on artist sections.
+  // Apple-TV-style auto-advance: while the user is on the multi-hero
+  // section, the currently-active stage dot fills up with the accent
+  // colour over HERO_AUTOPLAY_MS, then the pager auto-advances to the
+  // next stage. Pauses the moment the user touches/swipes/clicks/scrolls.
   if (section.dataset.section === "hero") {
-    schedulePeek();
+    startHeroAutoplay();
   } else {
-    cancelPeek();
+    stopHeroAutoplay();
   }
 
   // Keep the URL in sync so the current view is always shareable.
   if (typeof syncUrlFromActive === "function") syncUrlFromActive();
 }
 
-// ===== Hero peek hint =====
-// After a few seconds idle on the multi-hero, nudge the hero panels sideways
-// so the user discovers the horizontal swipe gesture. Driven by a CSS
-// transition on transform — does not actually scroll the pager, so
-// scroll-snap can't fight us back. Transitions (not @keyframes) so any
-// interrupt smoothly slides back to 0 instead of snapping.
-let heroPeekTimer = null;
-let heroPeekHoldTimer = null;
-let heroPeekReleaseTimer = null;
-let isPeeking = false;
-const PEEK_IDLE_MS = 3500;   // first nudge fairly soon
-const PEEK_NEXT_MS = 8000;   // subsequent nudges further apart
-const PEEK_HOLD_MS = 550;    // how long to hold at the peeked position
-const PEEK_TRANSITION_MS = 720; // matches CSS transition duration
+// ===== Apple-TV-style auto-advance =====
+// While the user is on the multi-hero section, the currently-active stage
+// dot fills with the accent colour over HERO_AUTOPLAY_MS, then the pager
+// auto-advances to the next stage. Once the user touches anything that
+// looks like a navigation gesture (pointer/wheel/key) the autoplay
+// pauses for HERO_AUTOPLAY_PAUSE_MS before resuming.
+const HERO_AUTOPLAY_MS       = 7000; // fill duration per stage
+const HERO_AUTOPLAY_PAUSE_MS = 4500; // pause after a manual interaction
+let heroAutoplayRaf = null;
+let heroAutoplayStartedAt = 0;
+let heroAutoplayDot = null;
+let heroAutoplayResumeTimer = null;
+let heroAutoplayPaused = false;
 
-function schedulePeek(delay = PEEK_IDLE_MS) {
-  if (isPeeking) return;
-  clearTimeout(heroPeekTimer);
-  heroPeekTimer = setTimeout(performPeek, delay);
+function startHeroAutoplay() {
+  stopHeroAutoplay();
+  if (heroAutoplayPaused) return; // resume timer will call us back
+  const dots = document.getElementById("hero-dots");
+  if (!dots) return;
+  const active = dots.querySelector(".hero-dot.active");
+  if (!active) return;
+  heroAutoplayDot = active;
+  heroAutoplayDot.classList.add("is-filling");
+  heroAutoplayDot.style.setProperty("--fill", "0%");
+  heroAutoplayStartedAt = performance.now();
+  const tick = (now) => {
+    if (!heroAutoplayDot || !heroAutoplayDot.isConnected) {
+      heroAutoplayRaf = null;
+      return;
+    }
+    const pct = Math.min(100, ((now - heroAutoplayStartedAt) / HERO_AUTOPLAY_MS) * 100);
+    heroAutoplayDot.style.setProperty("--fill", pct.toFixed(1) + "%");
+    if (pct >= 100) {
+      heroAutoplayRaf = null;
+      advanceHeroAutoplay();
+      return;
+    }
+    heroAutoplayRaf = requestAnimationFrame(tick);
+  };
+  heroAutoplayRaf = requestAnimationFrame(tick);
 }
 
-function cancelPeek() {
-  clearTimeout(heroPeekTimer);
-  clearTimeout(heroPeekHoldTimer);
-  clearTimeout(heroPeekReleaseTimer);
-  heroPeekTimer = null;
-  heroPeekHoldTimer = null;
-  heroPeekReleaseTimer = null;
-  if (isPeeking) {
-    const heroPager = document.getElementById("hero-pager");
-    heroPager?.classList.remove("peek-forward", "peek-backward", "is-peeking");
-    isPeeking = false;
+function stopHeroAutoplay() {
+  if (heroAutoplayRaf) cancelAnimationFrame(heroAutoplayRaf);
+  heroAutoplayRaf = null;
+  if (heroAutoplayDot) {
+    heroAutoplayDot.classList.remove("is-filling");
+    heroAutoplayDot.style.removeProperty("--fill");
   }
+  heroAutoplayDot = null;
 }
 
-function performPeek() {
-  const current = getCurrentSection();
-  if (!current || current.dataset.section !== "hero") return;
+function advanceHeroAutoplay() {
   const heroPager = document.getElementById("hero-pager");
   if (!heroPager) return;
-  const w = heroPager.clientWidth;
-  if (!w) return;
-  const cur = Math.round(heroPager.scrollLeft / w);
+  const w = heroPager.clientWidth || 1;
+  const cur = Math.round(Math.abs(heroPager.scrollLeft) / w);
   const total = heroPager.children.length;
-  if (total < 2) return;
-
-  // Forward unless we're at the last stage, then peek backward.
-  const dir = cur < total - 1 ? 1 : -1;
-  const cls = dir > 0 ? "peek-forward" : "peek-backward";
-
-  isPeeking = true;
-  // Add is-peeking first so will-change kicks in BEFORE the transform —
-  // the browser hoists the deck onto its own GPU layer ahead of the
-  // first frame, which is what made the previous version stutter.
-  heroPager.classList.add("is-peeking");
-  requestAnimationFrame(() => heroPager.classList.add(cls));
-  heroPeekHoldTimer = setTimeout(() => {
-    heroPager.classList.remove(cls);
-    heroPeekReleaseTimer = setTimeout(() => {
-      heroPager.classList.remove("is-peeking");
-      isPeeking = false;
-      if (getCurrentSection()?.dataset.section === "hero") {
-        schedulePeek(PEEK_NEXT_MS);
-      }
-    }, PEEK_TRANSITION_MS);
-  }, PEEK_TRANSITION_MS + PEEK_HOLD_MS);
+  const next = (cur + 1) % total;
+  const nextStage = HERO_STAGES[next]?.id;
+  // scrollHeroToStage handles activeStageFilter + dot updates via the
+  // existing scroll listener, so we just point the pager at the next
+  // stage and let the rest of the machinery flow.
+  if (typeof scrollHeroToStage === "function" && nextStage) {
+    scrollHeroToStage(nextStage, false);
+  }
+  // The setActiveSection observer will fire startHeroAutoplay() again
+  // once the next stage settles, so no manual restart needed here.
 }
 
-// Any user activity reschedules the peek (or cancels one mid-flight).
-const peekActivityHandler = () => {
-  cancelPeek();
-  const current = getCurrentSection();
-  if (current?.dataset.section === "hero") schedulePeek();
-};
+function pauseHeroAutoplay() {
+  stopHeroAutoplay();
+  heroAutoplayPaused = true;
+  clearTimeout(heroAutoplayResumeTimer);
+  heroAutoplayResumeTimer = setTimeout(() => {
+    heroAutoplayPaused = false;
+    if (getCurrentSection()?.dataset.section === "hero") {
+      startHeroAutoplay();
+    }
+  }, HERO_AUTOPLAY_PAUSE_MS);
+}
+
+// Any user-driven navigation gesture pauses the autoplay clock so the
+// fill doesn't keep racing while the user is reading / interacting.
 ["pointerdown", "touchstart", "wheel", "keydown"].forEach(ev => {
-  document.addEventListener(ev, peekActivityHandler, { passive: true });
+  document.addEventListener(ev, () => {
+    if (getCurrentSection()?.dataset.section !== "hero") return;
+    pauseHeroAutoplay();
+  }, { passive: true });
 });
 
 let currentObserver = null;
@@ -2968,20 +3009,24 @@ function observeYTThumbs() {
   });
 }
 
+// Flash a single arrow-key tile in the bottom-right hint cluster so the
+// user sees a visual ack on every keypress. The .is-pressed class is
+// removed shortly after so the flash reads as a tap.
+function flashKbHintKey(which) {
+  const el = document.querySelector(`.kb-key[data-key="${which}"]`);
+  if (!el) return;
+  el.classList.add("is-pressed");
+  clearTimeout(el._flashTimer);
+  el._flashTimer = setTimeout(() => el.classList.remove("is-pressed"), 220);
+}
+
 document.addEventListener("keydown", e => {
-  let used = false;
   // ArrowDown / ArrowUp -> next/prev artist
-  if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); navVertical(1); used = true; }
-  else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); navVertical(-1); used = true; }
+  if (e.key === "ArrowDown" || e.key === "PageDown") { e.preventDefault(); navVertical(1); flashKbHintKey("down"); }
+  else if (e.key === "ArrowUp" || e.key === "PageUp") { e.preventDefault(); navVertical(-1); flashKbHintKey("up"); }
   // LTR layout: ArrowRight = next, ArrowLeft = prev
-  else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(1); used = true; }
-  else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(-1); used = true; }
-  // Once the user has actually used the arrow keys, fade the hint cluster
-  // out — it's served its purpose. The class persists for the session so
-  // the hint stays out of the way.
-  if (used && !document.body.classList.contains("has-used-keys")) {
-    document.body.classList.add("has-used-keys");
-  }
+  else if (e.key === "ArrowRight") { e.preventDefault(); navHorizontal(1); flashKbHintKey("right"); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); navHorizontal(-1); flashKbHintKey("left"); }
 });
 
 // ===== Reel-level wheel router =====
@@ -3784,9 +3829,9 @@ mapRotateBtn?.addEventListener("click",  () => { mapTx.rotation += 90; applyMapT
 mapResetBtn?.addEventListener("click",   resetMapTransform);
 
 document.addEventListener("click", e => {
-  const navBtn = e.target.closest("#hero-nav-btn");
-  if (navBtn) { openNavSheet(); return; }
-  const mapBtn = e.target.closest("#hero-map-btn");
+  // Each stage hero gets its own map-btn id (hero-map-btn-retro etc.); a
+  // shared [data-hero-map] attribute catches all of them.
+  const mapBtn = e.target.closest("[data-hero-map]");
   if (mapBtn)  { openMap();     return; }
 });
 
