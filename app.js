@@ -1270,7 +1270,6 @@ const HERO_STAGE_ELEMENTS = {
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
-      ${pictureTagStatic("images/zna-3d/community-zna-logo-26-celebration", { className: "hero-zna-mark", alt: "ZNA 26 Community — The Retro Futuristic Celebration", width: 600, height: 400, loading: "eager", fetchpriority: "high" })}
       <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
       ${heroArtistsPill("all")}
       <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>

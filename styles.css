@@ -2362,6 +2362,104 @@ body.has-mini-player .panel {
   color: transparent;
 }
 
+/* ===== Clean top-bar buttons (no pill chrome) =====
+   Replaces the previous .round-btn + .glass-btn combo on search,
+   favorites and stage-select. The icons sit directly on the canvas
+   with just a soft drop-shadow so they remain readable on top of
+   bright hero gradients, and lean on color/opacity for hover state
+   instead of a circular background. */
+.top-bar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  border-radius: 8px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55));
+  transition: color 0.15s ease, transform 0.12s ease, filter 0.15s ease;
+}
+.top-bar-btn:active { transform: scale(0.94); }
+@media (hover: hover) and (pointer: fine) {
+  .top-bar-btn:hover {
+    color: var(--sun-yellow);
+    filter: drop-shadow(0 0 10px rgba(254, 180, 71, 0.55));
+  }
+}
+
+/* Top-bar favorites variant: heart icon stays pink, badge keeps its
+   absolute-positioned chip — no surrounding circle any more. */
+.favorites-btn.top-bar-btn { color: #ff5c8a; position: relative; }
+
+/* Stage-select pill: keeps the rounded shape but loses the heavy
+   glass chrome; just a thin outline so the affordance still reads. */
+.stage-select-trigger.top-bar-btn {
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+.stage-select-trigger.top-bar-btn svg {
+  filter: none; /* the parent already drop-shadows */
+}
+
+/* ===== Top-bar logo (replaces the old ZNA round-btn) =====
+   Uses the same 3D community-zna-logo image as the hero used to. In
+   the header it's small (~ 40px tall) and tucked into the centre slot.
+   When the user is on the Main hero panel (body.is-on-hero) we morph
+   it bigger and nudge it down a touch so it reads as the hero brand
+   mark, not a top-bar logo. Smooth transition between the two states. */
+.top-bar-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.32s cubic-bezier(0.4, 0.05, 0.2, 1.0),
+              filter 0.32s ease;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.55));
+  -webkit-tap-highlight-color: transparent;
+}
+.top-bar-logo-img {
+  display: block;
+  height: 38px;
+  width: auto;
+  max-width: 40vw;
+  transition: height 0.32s cubic-bezier(0.4, 0.05, 0.2, 1.0);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.top-bar-logo:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) {
+  .top-bar-logo:hover {
+    filter: drop-shadow(0 0 14px rgba(255, 92, 138, 0.45)) drop-shadow(0 4px 14px rgba(0, 0, 0, 0.55));
+  }
+}
+
+/* Hero state: bigger logo + slight downward shift so it overlaps the
+   top of the Main hero panel rather than living inside the top bar. */
+body.is-on-hero .top-bar-logo {
+  transform: translateY(34px);
+}
+body.is-on-hero .top-bar-logo-img {
+  height: 110px;
+}
+
+/* On smaller phones the "hero state" growth would otherwise crowd the
+   hero tagline — keep it readable but still clearly larger. */
+@media (max-width: 480px) {
+  body.is-on-hero .top-bar-logo-img { height: 90px; }
+  body.is-on-hero .top-bar-logo { transform: translateY(28px); }
+  .top-bar-logo-img { height: 32px; }
+}
+
 /* Stage selector */
 .stage-select { position: relative; }
 
