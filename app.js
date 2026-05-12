@@ -1159,8 +1159,8 @@ function liveStatusCard(stageId = "all") {
 
   return `
     <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite">
-      ${buildCountdownTimer(startsAt, "hero")}
       <div class="live-now-track"><span class="live-now-dot"></span></div>
+      ${buildCountdownTimer(startsAt, "hero")}
     </div>
   `;
 }
@@ -1271,9 +1271,11 @@ function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
       <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
-      ${heroArtistsPill("all")}
       <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
-      ${liveStatusCard("all")}
+      <div class="hero-stats-group">
+        ${heroArtistsPill("all")}
+        ${liveStatusCard("all")}
+      </div>
       <p class="hero-disclaimer">${t("hero.disclaimer")}</p>
     </div>
   `;
@@ -1295,7 +1297,7 @@ function heroPanelStage(stage) {
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementMarkup}
       <button class="hero-icon-action hero-icon-action--top hero-nav-diamond" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-        <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <defs>
             <linearGradient id="nav-grad-${escapeHtml(stage.id)}" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%"  stop-color="var(--hero-text-1)"/>
@@ -1303,15 +1305,16 @@ function heroPanelStage(stage) {
               <stop offset="100%" stop-color="var(--hero-text-3)"/>
             </linearGradient>
           </defs>
-          <path d="M16 2 30 16 16 30 2 16Z" fill="url(#nav-grad-${escapeHtml(stage.id)})" opacity="0.18"/>
-          <path d="M16 2 30 16 16 30 2 16Z" fill="none" stroke="url(#nav-grad-${escapeHtml(stage.id)})" stroke-width="2"/>
-          <path d="M11 22 16 9l5 13-5-2.5z" fill="url(#nav-grad-${escapeHtml(stage.id)})"/>
+          <circle cx="12" cy="12" r="10" stroke="url(#nav-grad-${escapeHtml(stage.id)})"/>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="url(#nav-grad-${escapeHtml(stage.id)})" stroke="url(#nav-grad-${escapeHtml(stage.id)})"/>
         </svg>
       </button>
       <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
       <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
-      ${heroArtistsPill(stage.id)}
-      ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
+      <div class="hero-stats-group">
+        ${heroArtistsPill(stage.id)}
+        ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
+      </div>
     </div>
   `;
 }

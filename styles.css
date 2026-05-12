@@ -4267,6 +4267,23 @@ body.is-on-hero .top-bar-logo-img {
   .panel-hero { padding: 40px 20px 60px; }
 }
 
+/* ===== Hero stats group =====
+   Wraps the avatar-count pill + the progress-line + the countdown
+   timer as a single visual block on every hero panel. Generous
+   top-margin separates the stats from the tagline / description
+   above; tight internal gap keeps the three items reading as one
+   unit. */
+.hero-stats-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 26px auto 4px;
+  width: 100%;
+}
+.hero-stats-group > .hero-artists-pill { margin: 0; }
+.hero-stats-group > .live-status      { margin: 0 auto; }
+
 /* ===== Avatar-stack "+N artists" pill (on each hero panel) =====
    Three overlapping circular avatars followed by a total/+N counter.
    Tapping it opens the #artists-overlay scoped to the relevant pool
