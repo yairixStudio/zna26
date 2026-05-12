@@ -85,6 +85,8 @@ const STRINGS = {
   "nav.openInWaze":    { he: "פתיחה ב-Waze", en: "Open in Waze", pt: "Abrir no Waze" },
   "nav.openInGmaps":   { he: "פתיחה ב-Google Maps", en: "Open in Google Maps", pt: "Abrir no Google Maps" },
   "nav.cancel":        { he: "ביטול", en: "Cancel", pt: "Cancelar" },
+  "nav.ytPlaylist":    { he: "פלייליסט YouTube", en: "YouTube playlist", pt: "Playlist YouTube" },
+  "nav.officialSite":  { he: "לאתר הרשמי", en: "Official site", pt: "Site oficial" },
   "hero.actions":      { he: "פעולות", en: "Quick actions", pt: "Ações rápidas" },
 
   // Artist panels
@@ -1161,8 +1163,13 @@ function heroPanelMain() {
           <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
           <span class="hero-action-label">${escapeHtml(t("nav.festivalMap"))}</span>
         </button>
+        <a class="hero-action glass-btn hero-action--yt" id="hero-yt-btn" href="https://youtube.com/playlist?list=PLueV5lFNV9_R1F0dNCtgNSbT2zvdFwGQf&amp;si=4kMxSvtOHUMI40hZ" target="_blank" rel="noopener" title="${escapeHtml(t("nav.ytPlaylist"))}" aria-label="${escapeHtml(t("nav.ytPlaylist"))}">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#ff0033" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z"/><path fill="#fff" d="M9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+          <span class="hero-action-label">${escapeHtml(t("nav.ytPlaylist"))}</span>
+        </a>
       </div>
       <p class="hero-disclaimer">${escapeHtml(t("hero.disclaimer"))}</p>
+      <a class="hero-official-link" href="https://znagathering.com" target="_blank" rel="noopener">${escapeHtml(t("nav.officialSite"))}</a>
     </div>
   `;
 }
@@ -1932,6 +1939,14 @@ function applyDotsForPager(pager) {
     if (stageColor[stage]) bgScene.style.background = stageColor[stage];
     const sec = reel.querySelector('[data-section="hero"]');
     if (sec) sec.dataset.stage = stage;
+    // Snap the top-bar stage-dropdown trigger label to the new stage
+    // immediately (frame-by-frame, same cadence as the hero dots). The
+    // heavy work — flipping activeStageFilter and re-rendering the
+    // artist sections below — still debounces in wireHeroPager so we
+    // don't thrash the DOM mid-flick.
+    if (stageSelectLabel && stageSelectLabel.textContent !== stageLabel(stage)) {
+      stageSelectLabel.textContent = stageLabel(stage);
+    }
     return;
   }
 

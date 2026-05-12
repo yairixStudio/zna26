@@ -178,25 +178,24 @@ a { color: var(--sun-yellow); }
 }
 .hero-pager::-webkit-scrollbar { display: none; }
 
-/* Idle peek hint: nudge the entire hero deck sideways so the user
-   discovers the horizontal swipe gesture. Driving a single transform
-   on .hero-pager (instead of one transform per child .hero-panel)
-   lets the browser keep ONE composited layer for the whole deck —
-   the previous version was re-rasterising five panels, each with its
-   own backdrop-filter live-status pill, every frame, which is what
-   produced the shake/stutter the user saw. translate3d forces a
-   compositing layer; will-change is only set while .is-peeking is
-   on, so we don't permanently inflate memory. */
-.hero-pager {
+/* Idle peek hint: nudge every hero panel sideways so the user sees
+   BOTH the current panel sliding out AND the next/previous panel
+   sliding in. Translating each .hero-panel (rather than the pager)
+   means the next slot's content shifts into the viewport as the
+   current one shifts away — a true two-card peek. The transform is
+   applied only during the brief peek window, so backdrop-filter
+   compositing cost only fires once per nudge (one-time animation,
+   not continuous). */
+.hero-pager .hero-panel {
   transition: transform 720ms cubic-bezier(0.4, 0.04, 0.2, 1);
 }
-.hero-pager.is-peeking { will-change: transform; }
-.hero-pager.peek-forward  { transform: translate3d(-12%, 0, 0); }
-.hero-pager.peek-backward { transform: translate3d( 12%, 0, 0); }
+.hero-pager.is-peeking .hero-panel { will-change: transform; }
+.hero-pager.peek-forward  .hero-panel { transform: translate3d(-12%, 0, 0); }
+.hero-pager.peek-backward .hero-panel { transform: translate3d( 12%, 0, 0); }
 @media (prefers-reduced-motion: reduce) {
-  .hero-pager { transition: none; }
-  .hero-pager.peek-forward,
-  .hero-pager.peek-backward { transform: none; }
+  .hero-pager .hero-panel { transition: none; }
+  .hero-pager.peek-forward  .hero-panel,
+  .hero-pager.peek-backward .hero-panel { transform: none; }
 }
 
 .hero-panel {
@@ -3448,9 +3447,31 @@ body.has-mini-player .panel {
   color: var(--sun-yellow);
 }
 
+/* YouTube playlist button keeps its native red play-button SVG colours
+   (the inline <path fill> wins over the parent colour). */
+.hero-action--yt svg { color: inherit; }
+
 .hero-action-label {
   white-space: nowrap;
 }
+
+.hero-actions { flex-wrap: wrap; }
+
+/* "Official site" link rendered under the disclaimer on the main hero. */
+.hero-official-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: var(--sun-yellow);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  opacity: 0.85;
+  text-align: center;
+  transition: opacity 0.15s, color 0.15s;
+}
+.hero-official-link:hover { opacity: 1; color: var(--sun-pink); }
 
 @media (max-width: 380px) {
   .hero-actions { gap: 8px; }
