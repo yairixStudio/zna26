@@ -90,6 +90,50 @@
     <div class="boot-mark">ZNA 2026</div>
   </div>
 
+  <!-- Inline last-resort safety: if app.js fails to parse or throws
+       before its own hideBootLoader runs, this still removes the
+       spinner so the user isn't staring at it forever. Also force-
+       updates the SW registration so a stale-cached app.js gets
+       evicted on the next load. Runs synchronously from HTML, so a
+       broken external script can't prevent it from registering. -->
+  <script>
+    (function bootSafety() {
+      var bl = document.getElementById("boot-loader");
+      // Stage 1 — 8s: just fade the spinner so the user sees the page.
+      setTimeout(function () {
+        if (bl && !bl._gone) bl.classList.add("is-fading");
+      }, 8000);
+      // Stage 2 — 12s: if app.js still hasn't taken over (no reel
+      // content), assume the bundle is broken / cached-stale. Force
+      // the SW to fetch a fresh sw.js + clear the shell cache, then
+      // hard-reload. The sessionStorage flag caps this to ONE attempt
+      // per tab so a hard network outage can't put us in a reload
+      // loop.
+      setTimeout(function () {
+        var reel = document.getElementById("reel");
+        if (reel && reel.children.length > 0) return; // app.js ran
+        try {
+          if (sessionStorage.getItem("zna-boot-retry") === "1") return;
+          sessionStorage.setItem("zna-boot-retry", "1");
+        } catch (e) { /* private mode — proceed anyway */ }
+        try {
+          if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              regs.forEach(function (r) { r.update(); });
+            });
+          }
+          if (window.caches && caches.keys) {
+            caches.keys().then(function (keys) {
+              keys.forEach(function (k) { if (k.indexOf("zna-shell") === 0) caches.delete(k); });
+            }).finally(function () { location.reload(); });
+          } else {
+            location.reload();
+          }
+        } catch (e) { location.reload(); }
+      }, 12000);
+    })();
+  </script>
+
   <div class="bg-scene" id="bg-scene"></div>
   <div class="stars"></div>
   <div class="bg-grid"></div>
