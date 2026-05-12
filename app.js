@@ -1778,7 +1778,7 @@ function panelInfo(a) {
     ? `
       <div class="info-section">
         <h3 class="info-section-title">${escapeHtml(t("panel.bio"))}</h3>
-        ${notableText ? `<p class="bio-notable-lede">★ ${escapeHtml(notableText)}</p>` : ""}
+        ${notableText ? `<p class="bio-notable-lede" dir="${currentLang === "he" ? "rtl" : "ltr"}">★ ${escapeHtml(notableText)}</p>` : ""}
         <p class="bio-text">${escapeHtml(bioText)}</p>
       </div>
     `
@@ -1787,8 +1787,8 @@ function panelInfo(a) {
     <div class="panel panel--info">
       <div class="panel-inner">
         <div class="panel-eyebrow has-artist">
-          <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
           <span class="eyebrow-section">${escapeHtml(t("panel.about"))}</span>
+          <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
         </div>
         <div class="bio-card">
           ${metaRowHtml}
@@ -1855,8 +1855,8 @@ function linkifyCollaborators(projectStr, selfId) {
 function panelAlbums(a) {
   const eyebrow = (label) => `
     <div class="panel-eyebrow has-artist">
-      <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
       <span class="eyebrow-section">${escapeHtml(label)}</span>
+      <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
     </div>
   `;
   if (!a.albums || !a.albums.length) {
@@ -1889,8 +1889,8 @@ function panelTracks(a) {
   const tracks = a.tracks || [];
   const eyebrow = (label) => `
     <div class="panel-eyebrow has-artist">
-      <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
       <span class="eyebrow-section">${escapeHtml(label)}</span>
+      <span class="eyebrow-artist">${escapeHtml(a.name)}</span>
     </div>
   `;
   if (!tracks.length) {

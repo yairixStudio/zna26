@@ -784,15 +784,16 @@ body.has-mini-player .hero-dots {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  /* Wider gap between the two lines (was 2 — too cramped) so the
+     "Section" eyebrow on top and the artist name below it read as
+     two separate beats. */
+  gap: 10px;
   letter-spacing: normal;
   text-transform: none;
   opacity: 1;
-  /* Generous top-margin so the artist name doesn't crowd the top-bar
-     logo on the discography / tracks / about panels. The hero panel
-     uses a different eyebrow layout so this only applies to the
-     two-line stack. */
-  margin-top: 24px;
+  /* Tighter top-margin so the eyebrow stack sits closer to the
+     top-bar logo (was 24 — felt floaty on shorter screens). */
+  margin-top: 8px;
 }
 
 .panel-eyebrow.has-artist .eyebrow-artist {
