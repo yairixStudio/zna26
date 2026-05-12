@@ -1387,7 +1387,10 @@ function wireHeroPager() {
   if (!pager) return;
 
   // Initial scroll position to currently-active stage
-  setTimeout(() => scrollHeroToStage(activeStageFilter, true), 0);
+  // Hop the pager to its initial real-panel position synchronously so
+  // the user never sees a flash of the cloneStart bookend before the
+  // first frame. The offsetLeft read forces layout to settle first.
+  scrollHeroToStage(activeStageFilter, true);
 
   pager.addEventListener("scroll", () => {
     if (suppressHeroScroll) return;
@@ -1398,7 +1401,11 @@ function wireHeroPager() {
     heroScrollTimer = setTimeout(() => {
       const w = pager.clientWidth || 1;
       const idx = Math.round(Math.abs(pager.scrollLeft) / w);
-      const stage = HERO_STAGES[idx]?.id;
+      const child = pager.children[idx];
+      // Read the stage off the child element (works for both real and
+      // clone panels — they all carry data-stage). The settle handler
+      // will independently jump clones back to their real twin.
+      const stage = child?.dataset.stage;
       if (stage && stage !== activeStageFilter) {
         activeStageFilter = stage;
         buildStageDropdown();
@@ -1424,19 +1431,19 @@ function wireHeroPager() {
 function scrollHeroToStage(stageId, instant) {
   const pager = document.getElementById("hero-pager");
   if (!pager) return;
-  const idx = HERO_STAGES.findIndex(s => s.id === stageId);
-  if (idx < 0) return;
-  const w = pager.clientWidth || pager.offsetWidth;
-  // RTL: pager is laid out right-to-left, so we need negative scrollLeft for forward panels.
-  // Use scrollTo with the raw left value the browser computes for that index.
-  const target = pager.children[idx];
+  // Find the REAL (non-clone) hero-panel matching this stage. Clones
+  // carry the same data-stage but also have a data-clone attribute, so
+  // we filter them out — scrolling to a clone would immediately wrap
+  // back to the real twin and feel like a glitch.
+  const target = Array.from(pager.children).find(
+    c => c.dataset.stage === stageId && !c.dataset.clone
+  );
   if (!target) return;
   suppressHeroScroll = true;
-  if (instant) {
-    target.scrollIntoView({ behavior: "auto", inline: "start", block: "nearest" });
-  } else {
-    target.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-  }
+  // scrollTo with explicit offsetLeft is more reliable than scrollIntoView
+  // when there are clone bookends in front of the target (some browsers
+  // try to centre rather than left-align via scrollIntoView's inline:start).
+  pager.scrollTo({ left: target.offsetLeft, behavior: instant ? "auto" : "smooth" });
   setTimeout(() => { suppressHeroScroll = false; }, 400);
 }
 
@@ -1477,15 +1484,26 @@ function rerenderArtistsBelowHero() {
 }
 
 function multiHeroSection() {
-  const panels = HERO_STAGES.map(s => s.isMain ? heroPanelMain() : heroPanelStage(s)).join("");
+  const real = HERO_STAGES.map(s => s.isMain ? heroPanelMain() : heroPanelStage(s));
+  const realCount = real.length;
+  // Tag each real panel with data-real-idx so the settle handler can
+  // identify how far we've scrolled, then bookend with clones — same
+  // infinite-loop pattern used by the per-artist pagers. cloneStart is
+  // visually identical to the LAST real panel (so swiping LEFT off
+  // Main shows Market and then wraps), cloneEnd matches the FIRST
+  // real panel (swiping RIGHT off Market shows Main and wraps).
+  const realTagged = real.map((html, i) => injectPanelAttrs(html, `data-real-idx="${i}"`));
+  const cloneStart = injectPanelAttrs(real[realCount - 1], `data-clone="start" data-real-idx="${realCount - 1}"`);
+  const cloneEnd   = injectPanelAttrs(real[0],             `data-clone="end" data-real-idx="0"`);
+  const panels = cloneStart + realTagged.join("") + cloneEnd;
   const dots = HERO_STAGES.map((s, i) => `<button class="hero-dot ${activeStageFilter === s.id ? "active" : ""}" data-stage="${escapeHtml(s.id)}" aria-label="${escapeHtml(s.name)}"></button>`).join("");
   // The active hero panel sets the section's stage data attribute (used for bg tint)
   const activeStage = activeStageFilter === "all" ? "retro" : activeStageFilter;
   return `
-    <section class="section section--multi-hero" data-section="hero" data-stage="${escapeHtml(activeStage)}">
-      <div class="hero-pager" id="hero-pager">${panels}</div>
+    <section class="section section--multi-hero" data-section="hero" data-stage="${escapeHtml(activeStage)}" data-real-count="${realCount}">
+      <div class="hero-pager" id="hero-pager" data-real-count="${realCount}">${panels}</div>
       <div class="hero-dots" id="hero-dots">${dots}</div>
-      <div class="hero-hint" id="hero-hint"><span>${escapeHtml(t("hero.diveStage").replace(/^[↓\s]+/, ""))}</span><span class="hero-hint-arrow">↓</span></div>
+      <div class="hero-hint" id="hero-hint" aria-hidden="true"><span class="hero-hint-arrow">↓</span></div>
     </section>
   `;
 }
@@ -1890,7 +1908,11 @@ function panelTracks(a) {
 // Inject extra HTML attributes onto the first <div class="panel ..."> tag in
 // a panel HTML string. Used to mark real-vs-clone panels for the loop logic.
 function injectPanelAttrs(html, attrs) {
-  return html.replace(/<div\s+(class="panel)/, `<div ${attrs} $1`);
+  // Matches both the per-artist `<div class="panel …">` and the
+  // multi-hero `<div class="hero-panel …">` opening tag. Used by
+  // both the artist carousel and the hero pager to add data-real-idx
+  // and data-clone="start|end" to each panel for the wrap settle.
+  return html.replace(/<div\s+(class="(?:panel|hero-panel))/, `<div ${attrs} $1`);
 }
 
 function artistSection(a, idx, isFirstOfStage = false) {
@@ -2170,7 +2192,12 @@ function applyDotsForPager(pager) {
     const wH = pager.clientWidth || 1;
     const slH = Math.abs(pager.scrollLeft);
     const idxH = Math.floor((slH + wH * 0.3) / wH);
-    const stage = HERO_STAGES[idxH]?.id;
+    // Read stage off the child's data-stage so clone bookends (which
+    // carry the same data-stage as their real twin) still update the
+    // active dot during a wrap-around swipe — without it the dot would
+    // briefly go dark while the user is on the clone.
+    const child = pager.children[idxH];
+    const stage = child?.dataset.stage;
     if (!stage) return;
     const dotsEl = document.getElementById("hero-dots");
     if (dotsEl) {
@@ -2276,8 +2303,11 @@ function handlePagerSettle(pager) {
   const scrollIdx = Math.round(Math.abs(pager.scrollLeft) / w);
   const child = pager.children[scrollIdx];
   if (!child || !child.dataset.clone) return;
-  const section = pager.closest('[data-section="artist"]');
-  const realCount = +(section?.dataset.realCount) || (pager.children.length - 2);
+  // realCount comes off the pager itself so this works for any
+  // looping pager — the artist carousel AND the multi-hero pager
+  // (both render with a data-real-count attribute and bookended
+  // clones).
+  const realCount = +(pager.dataset.realCount) || (pager.children.length - 2);
   // Real panels live at scrollIdx 1..realCount (cloneStart is at 0, cloneEnd at realCount+1)
   const targetScrollIdx = child.dataset.clone === "start" ? realCount : 1;
   const target = pager.children[targetScrollIdx];
@@ -2751,17 +2781,13 @@ function advanceHeroAutoplay() {
   if (!heroPager) return;
   const w = heroPager.clientWidth || 1;
   const cur = Math.round(Math.abs(heroPager.scrollLeft) / w);
-  const total = heroPager.children.length;
-  const next = (cur + 1) % total;
-  const nextStage = HERO_STAGES[next]?.id;
-  // scrollHeroToStage handles activeStageFilter + dot updates via the
-  // existing scroll listener, so we just point the pager at the next
-  // stage and let the rest of the machinery flow.
-  if (typeof scrollHeroToStage === "function" && nextStage) {
-    scrollHeroToStage(nextStage, false);
-  }
-  // The setActiveSection observer will fire startHeroAutoplay() again
-  // once the next stage settles, so no manual restart needed here.
+  // Step exactly one panel right. If `cur+1` lands on the cloneEnd
+  // bookend (visually identical to real Main), the settle handler
+  // (handlePagerSettle) instant-jumps to real Main — the user just
+  // sees the autoplay loop seamlessly back to the first stage.
+  const nextEl = heroPager.children[cur + 1];
+  if (!nextEl) return;
+  heroPager.scrollTo({ left: nextEl.offsetLeft, behavior: "smooth" });
 }
 
 function pauseHeroAutoplay() {

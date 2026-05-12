@@ -363,9 +363,9 @@ body.has-mini-player .hero-dots {
   animation: hint-bounce 2.4s ease-in-out infinite;
 }
 .section--multi-hero > .hero-hint .hero-hint-arrow {
-  font-size: 16px;
+  font-size: 22px;
   line-height: 1;
-  opacity: 0.9;
+  opacity: 0.92;
   animation: hero-hint-arrow-bob 1.6s ease-in-out infinite;
 }
 
@@ -1809,45 +1809,12 @@ a.collab-link:hover {
   transform: scaleX(2.45) scaleY(1);
 }
 
-/* Graduated magnification: data-near goes 0 (focused) → 2 (further). */
-.dots.is-armed .dot[data-near="2"],
-.dots.is-hovered .dot[data-near="2"],
-.hero-dots.is-armed .hero-dot[data-near="2"],
-.hero-dots.is-hovered .hero-dot[data-near="2"] {
-  transform: scale(1.33);
-}
-.dots.is-armed .dot[data-near="1"],
-.dots.is-hovered .dot[data-near="1"],
-.hero-dots.is-armed .hero-dot[data-near="1"],
-.hero-dots.is-hovered .hero-dot[data-near="1"] {
-  transform: scale(1.78);
-}
-.dots.is-armed .dot[data-near="0"],
-.dots.is-hovered .dot[data-near="0"],
-.hero-dots.is-armed .hero-dot[data-near="0"],
-.hero-dots.is-hovered .hero-dot[data-near="0"] {
-  transform: scale(2.45);
-}
-
-/* Active dot stays pill-shaped; magnification stretches its width too. */
-.dots.is-armed .dot.active[data-near="2"],
-.dots.is-hovered .dot.active[data-near="2"],
-.hero-dots.is-armed .hero-dot.active[data-near="2"],
-.hero-dots.is-hovered .hero-dot.active[data-near="2"] {
-  transform: scaleX(3.1) scaleY(1.33);
-}
-.dots.is-armed .dot.active[data-near="1"],
-.dots.is-hovered .dot.active[data-near="1"],
-.hero-dots.is-armed .hero-dot.active[data-near="1"],
-.hero-dots.is-hovered .hero-dot.active[data-near="1"] {
-  transform: scaleX(4) scaleY(1.78);
-}
-.dots.is-armed .dot.active[data-near="0"],
-.dots.is-hovered .dot.active[data-near="0"],
-.hero-dots.is-armed .hero-dot.active[data-near="0"],
-.hero-dots.is-hovered .hero-dot.active[data-near="0"] {
-  transform: scaleX(4.9) scaleY(2.45);
-}
+/* Per-dot dock-magnification on the horizontal strips was retired:
+   the strip's own armed/hovered chrome already gives enough visual
+   feedback, and magnifying each dot on top of that felt like
+   double-action. Vertical-progress dots keep their data-near
+   magnification (see .vertical-progress rules below) since the
+   strip itself doesn't grow there. */
 
 /* Soft fade over the bottom of the panel so scrolled content doesn't visually
    collide with the dots pill above it. */
@@ -2459,17 +2426,17 @@ body.has-mini-player .panel {
 /* Hero state: bigger logo + slight downward shift so it overlaps the
    top of the Main hero panel rather than living inside the top bar. */
 body.is-on-hero .top-bar-logo {
-  transform: translateY(34px);
+  transform: translateY(70px);
 }
 body.is-on-hero .top-bar-logo-img {
-  height: 110px;
+  height: 170px;
 }
 
 /* On smaller phones the "hero state" growth would otherwise crowd the
    hero tagline — keep it readable but still clearly larger. */
 @media (max-width: 480px) {
-  body.is-on-hero .top-bar-logo-img { height: 90px; }
-  body.is-on-hero .top-bar-logo { transform: translateY(28px); }
+  body.is-on-hero .top-bar-logo-img { height: 130px; }
+  body.is-on-hero .top-bar-logo { transform: translateY(54px); }
   .top-bar-logo-img { height: 32px; }
 }
 
