@@ -1964,14 +1964,14 @@ let ARTISTS = [
     announcedAt: "2026-05-11",
     name: "Masaray",
     realName: "Ray Castle (NZ/AU) + Masa = Masayuki Kurihara (JP)",
-    country: "🇳🇿 ניו זילנד / 🇯🇵 יפן",
+    country: "🇯🇵 יפן / 🇦🇺 אוסטרליה",
     age: null,
     born: "פעילים מ-1995",
-    stage: "retro",
+    stage: "zambu",
     role: "Live",
     tags: ["Goa Trance", "Pioneer", "Psy-Harmonics"],
     color: "#9b51e0",
-    bio: "Masaray - שיתוף פעולה היסטורי בין Ray Castle (החלוץ הניו-זילנדי-אוסטרלי שעיצב את מסיבות Pagan Productions באירופה 1987-1991) ל-Masa - מאסיוקי קוריהארה היפני (החלוץ של גואה היפני, X-Tron). שני אבות מייסדים של גואה הבינלאומי - מיפן ועד אוסטרליה. אלבום הביכורים 'Cosmic Trancer' (1995, Psy-Harmonics) הוא אבן יסוד של גואה הקלאסי. ה-EP 'Time Traveler Of Trance' (נובמבר 1995) - יצירת מופת פסיכדלית עם סינתסייזרים נוהים, סיפור-סיפור מורחב וגרוב נמתח שכמעט פינק-פלוידי. הוקלט מעל המסעדה המשפחתית של מאסה בטוקיו. הופעת חיים מיוחדת ב-Zambu Temple של ZNA 2026.",
+    bio: "Masaray - שיתוף פעולה היסטורי בין Ray Castle (החלוץ הניו-זילנדי-אוסטרלי שעיצב את מסיבות Pagan Productions באירופה 1987-1991, לצד אגדות גואה כמו Laurent ו-Fred Disko) ל-Masa - מאסיוקי קוריהארה היפני (החלוץ של גואה היפני, X-Tron, מפיק ומנגן מתחילת שנות ה-90). שני אבות מייסדים של גואה הבינלאומי - מיפן ועד אוסטרליה. אלבום הביכורים 'Cosmic Trancer' (1995, Psy-Harmonics) הוא אבן יסוד של גואה הקלאסי. ה-EP 'Time Traveler Of Trance' (נובמבר 1995) - יצירת מופת פסיכדלית עם סינתסייזרים נוהים, סיפור-סיפור מורחב וגרוב נמתח שכמעט פינק-פלוידי. הוקלט מעל המסעדה המשפחתית של מאסה בטוקיו. מאסה כבר הוכיח את עצמו בקהילת ZNA עם הופעות בלתי-נשכחות ב-2017 וב-2019. ב-ZNA 2026 הם מתאחדים לסט בוקר מקורי באורך 3 שעות ב-Zambu Temple - מסע שמיימי שמיועד לרומם את רחבת הריקודים למצב תודעה גבוה של שמחה.",
     notable: "'Cosmic Trancer' (1995, Psy-Harmonics) ו-'Time Traveler Of Trance EP' (1995) - מאלפי המאסטרים של גואה הקלאסי. רימאסטר ב-2018 על Hypnodisk",
     albums: [
       { name: "Cosmic Trancer", year: 1995, project: "Psy-Harmonics (Australia)" },
@@ -3527,15 +3527,15 @@ const ARTIST_TRANSLATIONS = {
   },
   "masaray": {
     "en": {
-      "bio": "Masaray — a historic collaboration between Ray Castle (the New Zealand/Australian pioneer who ran Pagan Productions parties across Europe 1987-1991) and Masa = Masayuki Kurihara (the Japanese Goa pioneer, X-Tron). Two founding fathers of international Goa Trance — from Japan to Australia. Their debut album 'Cosmic Trancer' (1995, Psy-Harmonics) is a cornerstone of classic Goa. The 'Time Traveler Of Trance' EP (November 1995) is a psychedelic masterpiece with wailing synths, extended storytelling and a slow droning groove almost Pink Floyd-like in feel. Recorded above Masa's family restaurant in Tokyo. A special live performance at Zambu Temple, ZNA 2026.",
+      "bio": "Masaray — a historic collaboration between Ray Castle (the New Zealand/Australian pioneer who ran Pagan Productions parties across Europe 1987-1991, alongside true Goa legends like Laurent and Fred Disko) and Masa = Masayuki Kurihara (the Japanese Goa pioneer, X-Tron, producing and playing electronic music since the early 90s). Two founding fathers of international Goa Trance — from Japan to Australia. Their debut album 'Cosmic Trancer' (1995, Psy-Harmonics) is a cornerstone of classic Goa. The 'Time Traveler Of Trance' EP (November 1995) is a psychedelic masterpiece with wailing synths, extended storytelling and a slow droning groove almost Pink Floyd-like in feel. Recorded above Masa's family restaurant in Tokyo. Masa already left a deep mark on the ZNA community with unforgettable performances at ZNA 2017 and 2019. At ZNA 2026 they reunite for a celestial and fully original 3-hour morning session at Zambu Temple — a journey designed to elevate the dancefloor into a higher state of joyful consciousness.",
       "notable": "'Cosmic Trancer' (1995, Psy-Harmonics) and 'Time Traveler Of Trance EP' (1995) — classics of golden-era Goa. Re-mastered in 2018 on Hypnodisk",
-      "country": "🇳🇿 New Zealand / 🇯🇵 Japan",
+      "country": "🇯🇵 Japan / 🇦🇺 Australia",
       "born": "active since 1995"
     },
     "pt": {
-      "bio": "Masaray — uma colaboração histórica entre Ray Castle (o pioneiro neozelandês/australiano que organizou as festas Pagan Productions pela Europa em 1987-1991) e Masa = Masayuki Kurihara (o pioneiro do Goa japonês, X-Tron). Dois pais fundadores do Goa Trance internacional — do Japão à Austrália. O álbum de estreia 'Cosmic Trancer' (1995, Psy-Harmonics) é uma pedra angular do Goa clássico. O EP 'Time Traveler Of Trance' (Novembro de 1995) é uma obra-prima psicadélica com sintetizadores lamentosos, narrativa estendida e um groove lento e arrastado quase à Pink Floyd. Gravado por cima do restaurante da família do Masa em Tóquio. Uma actuação ao vivo especial no Zambu Temple, ZNA 2026.",
+      "bio": "Masaray — uma colaboração histórica entre Ray Castle (o pioneiro neozelandês/australiano que organizou as festas Pagan Productions pela Europa em 1987-1991, ao lado de verdadeiras lendas do Goa como Laurent e Fred Disko) e Masa = Masayuki Kurihara (o pioneiro do Goa japonês, X-Tron, a produzir e tocar música electrónica desde o início dos anos 90). Dois pais fundadores do Goa Trance internacional — do Japão à Austrália. O álbum de estreia 'Cosmic Trancer' (1995, Psy-Harmonics) é uma pedra angular do Goa clássico. O EP 'Time Traveler Of Trance' (Novembro de 1995) é uma obra-prima psicadélica com sintetizadores lamentosos, narrativa estendida e um groove lento e arrastado quase à Pink Floyd. Gravado por cima do restaurante da família do Masa em Tóquio. O Masa já deixou uma marca profunda na comunidade ZNA com actuações inesquecíveis em 2017 e 2019. No ZNA 2026 voltam a juntar-se para uma sessão matinal original e celestial de 3 horas no Zambu Temple — uma viagem feita para elevar a pista a um estado superior de consciência alegre.",
       "notable": "'Cosmic Trancer' (1995, Psy-Harmonics) e 'Time Traveler Of Trance EP' (1995) — clássicos da era de ouro do Goa. Remasterizado em 2018 na Hypnodisk",
-      "country": "🇳🇿 Nova Zelândia / 🇯🇵 Japão",
+      "country": "🇯🇵 Japão / 🇦🇺 Austrália",
       "born": "activos desde 1995"
     }
   },
