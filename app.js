@@ -203,9 +203,9 @@ const STRINGS = {
   // this is what the SITE is for, separate from FESTIVAL.description (which
   // describes the festival itself and is reused elsewhere).
   "hero.sitePurpose": {
-    he: "מדריך לליינאפ של ZNA 2026 — להכיר את האומנים, לשמוע את המוזיקה ולגלות את הסיפור שמאחורי כל סט.",
-    en: "Your guide to the ZNA 2026 lineup — meet the artists, hear the music and discover the story behind every set.",
-    pt: "Guia do alinhamento ZNA 2026 — conhecer os artistas, ouvir a música e descobrir a história por trás de cada set."
+    he: "הזדמנות להכיר מקרוב את אומני ZNA 2026 — לשמוע את המוזיקה ולגלות את הסיפור שמאחורי כל סט.",
+    en: "A chance to get to know the ZNA 2026 lineup — meet the artists, hear the music and discover the story behind every set.",
+    pt: "Uma oportunidade de conhecer de perto o alinhamento ZNA 2026 — ouvir a música e descobrir a história por trás de cada set."
   },
   // Tiny desktop hint that the keyboard arrow keys can navigate the reel.
   "kbHint.label": { he: "ניווט עם החיצים", en: "Arrow keys to navigate", pt: "Setas para navegar" },
@@ -1855,9 +1855,14 @@ function panelInfo(a) {
   // side on desktop (one anchored to each end of the row), stacked on
   // mobile. Old chip styling (`.info-meta` / `.info-rep` boxes) is gone —
   // these are now just lightweight one-liners that don't dominate the card.
-  const repText = a.representedBy ? `🎧 ${escapeHtml(a.representedBy)}` : "";
+  // Wrap the leading emoji in its own span so CSS can add visual breathing
+  // room between the icon and its text (a regular space character renders
+  // tight against the glyph; .meta-emoji's margin-inline-end widens it).
+  const repText = a.representedBy
+    ? `<span class="meta-emoji" aria-hidden="true">🎧</span>${escapeHtml(a.representedBy)}`
+    : "";
   const announcedText = a.announcedAt
-    ? `${escapeHtml(t("announced.prefix"))}${escapeHtml(formatAnnouncedDate(a.announcedAt))}`
+    ? `<span class="meta-emoji" aria-hidden="true">📣</span>${escapeHtml(t("announced.prefix").replace(/^\s*📣\s*/, ""))}${escapeHtml(formatAnnouncedDate(a.announcedAt))}`
     : "";
   const metaRowHtml = (announcedText || repText)
     ? `
@@ -1872,15 +1877,23 @@ function panelInfo(a) {
   // "Notable" sits as a small bold lede ABOVE the bio paragraph — not a
   // chip, just a one-line summary so the user sees the headline-fact for
   // this artist before reading the full bio.
+  // Bio paragraph. `dir` is set from the UI language so the bio-text's
+  // scrollbar lands on the side that matches the user's reading
+  // direction — left for Hebrew, right for EN/PT. Box `direction` follows
+  // the `dir` attribute and the scrollbar position follows the box.
+  const bioDir = currentLang === "he" ? "rtl" : "ltr";
   const bioHtml = bioText
     ? `
       <div class="info-section">
         <h3 class="info-section-title">${escapeHtml(t("panel.bio"))}</h3>
-        ${notableText ? buildBioNotableLedeHtml(notableText) : ""}
-        <p class="bio-text">${escapeHtml(bioText)}</p>
+        <p class="bio-text" dir="${bioDir}">${escapeHtml(bioText)}</p>
       </div>
     `
     : "";
+  // Notable lede now lives BELOW the meta-row and ABOVE the bio section,
+  // not inside it. The user reads it as a small grey caption (`Cofundador
+  // da Wagon Repair…`) separate from the biography paragraph proper.
+  const notableLedeHtml = notableText ? buildBioNotableLedeHtml(notableText) : "";
   return `
     <div class="panel panel--info">
       <div class="panel-inner">
@@ -1890,6 +1903,7 @@ function panelInfo(a) {
         </div>
         <div class="bio-card">
           ${metaRowHtml}
+          ${notableLedeHtml}
           ${bioHtml}
           ${streamingHtml}
           ${linksHtml}
@@ -3291,18 +3305,35 @@ function setupPanelPullToNavigate(panel) {
     setText(dir, ready);
   }
 
-  // When the touch starts inside a nested scrollable child (e.g. .bio-text
-  // which has its own overflow-y:auto), pull-to-navigate must NOT compete
-  // with it — the user is trying to read the long bio, not jump to the
-  // next artist. This stays set across the whole gesture.
+  // When the touch starts inside the bio area, pull-to-navigate must NEVER
+  // fire — the user is reading the bio. Vertical swipes there scroll the
+  // bio (when there's overflow) and otherwise do nothing; they must never
+  // navigate to the previous/next artist. Two regions count as "bio area":
+  //   1. The .bio-text paragraph itself.
+  //   2. The wrapping .info-section that holds the Biography <h3> + bio —
+  //      a tap on the heading is still inside the reading area.
+  // When `isBioArea` is true but bio-text isn't currently overflowing, the
+  // gesture is intentionally swallowed (no inner scroll AND no pull-to-nav).
   let innerScrollable = null;
+  let isBioArea = false;
+  function getBioAreaScrollable(target) {
+    if (!target?.closest) return null;
+    const direct = target.closest(".bio-text");
+    if (direct && direct !== panel) return direct;
+    const section = target.closest(".info-section");
+    if (section) {
+      const bio = section.querySelector(":scope > .bio-text");
+      if (bio) return bio;
+    }
+    return null;
+  }
   function findInnerScrollable(target) {
-    // The only overflow-y:auto descendant a .panel actually contains is
-    // .bio-text. closest() is far cheaper than walking each parent through
-    // window.getComputedStyle.
-    const el = target?.closest?.(".bio-text");
-    if (!el || el === panel) return null;
-    if (el.scrollHeight > el.clientHeight + 1) return el;
+    const bio = getBioAreaScrollable(target);
+    if (!bio) return null;
+    // Only return the bio element as innerScrollable if it actually has
+    // room to scroll right now — otherwise the touchmove handler still
+    // checks `isBioArea` and swallows the gesture without scrolling.
+    if (bio.scrollHeight > bio.clientHeight + 1) return bio;
     return null;
   }
 
@@ -3316,6 +3347,7 @@ function setupPanelPullToNavigate(panel) {
     startedAtTop    = panel.scrollTop <= 0;
     startedAtBottom = panel.scrollTop >= max - 1;
     innerScrollable = findInnerScrollable(e.target);
+    isBioArea = !!getBioAreaScrollable(e.target);
     direction = null;
     lastDelta = 0;
     intercepting = false;
@@ -3332,19 +3364,12 @@ function setupPanelPullToNavigate(panel) {
     // than 1 pixel of vertical motion qualifies — waiting for a larger
     // threshold gives iOS time to lock and ignore preventDefault later.
     if (!direction) {
-      // Defer to a nested scrollable child (e.g. .bio-text) that's still
-      // able to consume the gesture in this direction. We only intercept
-      // for pull-to-nav once that inner scroll has actually hit its edge.
-      if (innerScrollable) {
-        const sMax = innerScrollable.scrollHeight - innerScrollable.clientHeight;
-        const sAtTop = innerScrollable.scrollTop <= 0;
-        const sAtBottom = innerScrollable.scrollTop >= sMax - 1;
-        const innerCanScrollDown = dy < 0 && !sAtBottom;
-        const innerCanScrollUp   = dy > 0 && !sAtTop;
-        if (innerCanScrollDown || innerCanScrollUp) {
-          return; // inner scroll wins
-        }
-      }
+      // Bio area: the gesture is for the bio, period. If bio-text can
+      // scroll we defer to it (inner scroll wins); if it can't we still
+      // swallow the gesture so pull-to-navigate never fires from inside
+      // the reading area — the artist-to-artist nav must not be reachable
+      // by swiping over the biography.
+      if (isBioArea) return;
       const isPullTop    = startedAtTop    && dy > 0;
       const isPullBottom = startedAtBottom && dy < 0;
       if (!isPullTop && !isPullBottom) {
@@ -3589,6 +3614,14 @@ function findScrollableAncestor(start, deltaY) {
 reel.addEventListener("wheel", e => {
   // Ignore mostly-horizontal wheels — those are handled per-pager (above).
   if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+  // Bio reading area: wheel/scroll inside the Biography section never
+  // navigates to the previous/next artist. If the bio-text can scroll,
+  // native scroll handles it (overscroll-behavior: contain stops the
+  // chain). If it's already at top/bottom, swallow the wheel anyway so
+  // the reel-level router can't promote the gesture to artist-nav.
+  const bioArea = e.target?.closest?.(".bio-text") ||
+                  (e.target?.closest?.(".info-section")?.querySelector?.(":scope > .bio-text") ? e.target.closest(".info-section") : null);
+  if (bioArea) return;
   // Don't hijack the wheel if the user is pointing at a nested scrollable
   // (e.g. .bio-text on the info panel) that hasn't yet hit its boundary —
   // let native scroll consume it first. Once the inner scrollable hits
