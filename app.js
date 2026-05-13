@@ -314,7 +314,7 @@ function tStage(stageId, field = "name") {
 // rebuilt DOM (which clones the same way) lands on the same panel.
 function captureScrollState() {
   if (!reel) return null;
-  const sections = reel.querySelectorAll(".section");
+  const sections = cachedSections;
   if (!sections.length) return null;
   const mid = reel.scrollTop + reel.clientHeight / 2;
   let active = null, bestDist = Infinity;
@@ -2187,6 +2187,7 @@ function buildReel() {
   // The live-tracker cache holds direct DOM refs that are now detached.
   // Drop it so the next swipe rebuilds it against the freshly-rendered DOM.
   liveTrackingCache = null;
+  refreshSectionCache();
   wireHeroPager();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
@@ -2257,6 +2258,18 @@ setTimeout(() => hideBootLoader(), 6000);
 // frame-by-frame as the user swipes — not just when scroll events happen
 // to fire (iOS Safari batches them during momentum scroll, which is why
 // the old code felt like the dot only updated AFTER a swipe finished).
+// Module-level cache of the reel's .section list. Rebuilt by
+// refreshSectionCache() whenever buildReel() swaps in fresh DOM (the only
+// place we mutate reel.innerHTML). Several hot paths used to re-run
+// `reel.querySelectorAll(".section")` per event — including the four
+// document-level autoplay-pause listeners (pointerdown / touchstart /
+// wheel / keydown), each of which fires many times per second during any
+// gesture.
+let cachedSections = [];
+function refreshSectionCache() {
+  cachedSections = reel ? Array.from(reel.querySelectorAll(".section")) : [];
+}
+
 const pagerSettleTimers = new WeakMap();
 const pagersBeingWrapped = new WeakSet();
 const supportsScrollend = "onscrollend" in window;
@@ -2541,8 +2554,7 @@ function navigateDotTap(strip, dotEl) {
   }
   if (strip.classList.contains("vertical-progress")) {
     const idx = +dotEl.dataset.vidx;
-    const sections = reel.querySelectorAll(".section");
-    sections[idx]?.scrollIntoView({ behavior: "smooth" });
+    cachedSections[idx]?.scrollIntoView({ behavior: "smooth" });
     return;
   }
   const section = strip.closest('[data-section="artist"]');
@@ -2689,8 +2701,7 @@ reel.addEventListener("click", e => {
 
 function buildVerticalProgress() {
   // Build dots in lockstep with whatever buildReel emitted
-  const sections = reel.querySelectorAll(".section");
-  const items = Array.from(sections).map((s, i) => {
+  const items = cachedSections.map((s, i) => {
     let label;
     if (s.dataset.section === "hero") {
       label = t("nav.backHome");
@@ -2755,11 +2766,13 @@ function buildVerticalProgress() {
 function setActiveSection(section) {
   if (!section || !verticalProgress || !bgScene) return;
 
-  const sections = Array.from(reel.querySelectorAll(".section"));
+  const sections = cachedSections;
   const idx = sections.indexOf(section);
 
   // Mark active section (drives entry animation)
-  sections.forEach(s => s.classList.toggle("is-active", s === section));
+  for (let i = 0; i < sections.length; i++) {
+    sections[i].classList.toggle("is-active", sections[i] === section);
+  }
 
   // Vertical dots
   verticalProgress.querySelectorAll(".v-dot").forEach((d, i) => {
@@ -2930,19 +2943,23 @@ function pauseHeroAutoplay() {
 }
 
 // Any user-driven navigation gesture pauses the autoplay clock so the
-// fill doesn't keep racing while the user is reading / interacting.
-["pointerdown", "touchstart", "wheel", "keydown"].forEach(ev => {
-  document.addEventListener(ev, () => {
-    if (getCurrentSection()?.dataset.section !== "hero") return;
-    pauseHeroAutoplay();
-  }, { passive: true });
-});
+// fill doesn't keep racing while the user is reading / interacting. One
+// shared handler covers all four event types (was four near-identical
+// listeners, each doing its own getCurrentSection() walk on every fire).
+function maybePauseHeroAutoplay() {
+  if (getCurrentSection()?.dataset.section !== "hero") return;
+  pauseHeroAutoplay();
+}
+document.addEventListener("pointerdown", maybePauseHeroAutoplay, { passive: true });
+document.addEventListener("touchstart", maybePauseHeroAutoplay, { passive: true });
+document.addEventListener("wheel", maybePauseHeroAutoplay, { passive: true });
+document.addEventListener("keydown", maybePauseHeroAutoplay, { passive: true });
 
 let currentObserver = null;
 
 function observeSections() {
   if (currentObserver) currentObserver.disconnect();
-  const sections = Array.from(reel.querySelectorAll(".section"));
+  const sections = cachedSections;
   currentObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
@@ -2965,14 +2982,19 @@ function observeSections() {
 // ===== Keyboard navigation =====
 
 function getCurrentSection() {
-  const sections = Array.from(reel.querySelectorAll(".section"));
+  const sections = cachedSections;
   if (!sections.length) return null;
   const reelTop = reel.scrollTop;
-  return sections.find(s => s.offsetTop >= reelTop - 10) || sections[sections.length - 1] || null;
+  // Hot path: invoked by the four document-level autoplay-pause listeners
+  // (pointerdown / touchstart / wheel / keydown) on every gesture.
+  for (let i = 0; i < sections.length; i++) {
+    if (sections[i].offsetTop >= reelTop - 10) return sections[i];
+  }
+  return sections[sections.length - 1] || null;
 }
 
 function navVertical(dir) {
-  const sections = Array.from(reel.querySelectorAll(".section"));
+  const sections = cachedSections;
   if (!sections.length) return;
   const cur = getCurrentSection();
   const idx = cur ? sections.indexOf(cur) : 0;
