@@ -77,6 +77,16 @@ button, a, [role="button"], summary, label[for] {
   text-align: start;
 }
 
+/* Hero stage name is the big centred title on each stage panel — keep
+   `unicode-bidi: plaintext` from the rule above (so mixed-direction
+   names resolve correctly) but force center alignment so a wrapped
+   two-line title (e.g. "Retro Universe" on narrower desktop widths)
+   doesn't suddenly read as a left-aligned block while the rest of the
+   panel content is centered. */
+.hero-stage-name {
+  text-align: center;
+}
+
 img, iframe { display: block; max-width: 100%; }
 button { font-family: inherit; }
 
@@ -915,9 +925,19 @@ body.has-mini-player .hero-dots {
 }
 
 /* About panel: bio card ≈ 90% of column below eyebrow; bottom 1fr = gap
-   above pager dots. Bio paragraph scrolls inside the tall card. */
+   above pager dots. Bio paragraph scrolls inside the tall card.
+   The info panel uses a tighter bottom padding than other panels so the
+   bio-card claims more vertical real estate — every saved px shows up
+   as another line of bio rather than empty space above the pager dots. */
 .panel.panel--info {
   align-items: stretch;
+  padding-bottom: 50px;
+}
+@media (min-width: 768px) {
+  .panel.panel--info { padding-bottom: 60px; }
+}
+@media (min-width: 1024px) {
+  .panel.panel--info { padding-bottom: 70px; }
 }
 .panel--info .panel-inner {
   flex: 1 1 auto;
@@ -1247,12 +1267,21 @@ body.has-mini-player .hero-dots {
   border-radius: 28px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.5), 0 0 60px var(--accent);
+  /* A 2px solid border on a `border-radius` + `overflow: hidden` container
+     makes the content (the artist photo at `inset: 0`) clip at the inner
+     padding-box, which has a slightly smaller corner radius (28 - 2 = 26).
+     The visible result is a 2px mismatch between the gradient backdrop's
+     outer corner and the photo's apparent corner — exactly the asymmetry
+     the user noticed. Replace the border with an inset box-shadow so the
+     photo's clip and the outline share the same border-radius. */
+  box-shadow:
+    0 16px 50px rgba(0, 0, 0, 0.5),
+    0 0 60px var(--accent),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.15);
   background: linear-gradient(135deg, var(--accent) 0%, rgba(20, 10, 50, 0.7) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255,255,255,0.15);
 }
 
 .artist-hero-art::after {
@@ -1404,17 +1433,22 @@ body.has-mini-player .hero-dots {
 
 .bio-text {
   font-size: clamp(14px, 3.6vw, 17px);
-  line-height: 1.8;
+  /* Tighter than 1.8 — at body-text size this still reads as airy
+     without padding empty space between every line, so more of the
+     bio fits in the visible card before the user has to scroll. */
+  line-height: 1.55;
   color: var(--text);
   margin: 0;
-  /* Cap the bio at ~7 lines and let the rest scroll INSIDE the box, so
-     a long bio doesn't push the streaming row + links off the panel
-     (and doesn't trigger the panel's outer scroll). overscroll-behavior:
-     contain stops the scroll from chaining to the reel once it hits the
-     internal top/bottom — the reel's wheel router also checks for this
-     scrollable via findScrollableAncestor() so a desktop wheel inside
-     the bio stays local until the bio runs out of room to scroll. */
-  max-height: calc(1.8em * 7);
+  /* Cap the bio (outside .panel--info) at ~7 lines and let the rest scroll
+     INSIDE the box, so a long bio doesn't push the streaming row + links
+     off the panel (and doesn't trigger the panel's outer scroll).
+     overscroll-behavior: contain stops the scroll from chaining to the
+     reel once it hits the internal top/bottom — the reel's wheel router
+     also checks for this scrollable via findScrollableAncestor() so a
+     desktop wheel inside the bio stays local until it runs out of room.
+     Inside .panel--info the grid layout overrides max-height to none and
+     lets the bio fill the column below the eyebrow. */
+  max-height: calc(1.55em * 8);
   overflow-y: auto;
   overscroll-behavior: contain;
   /* Force the scrollbar to be visible always (instead of the OS-default
@@ -3120,7 +3154,7 @@ body.is-on-main-hero .top-bar-center {
   .artist-hero-photo,
   .artist-hero-art { width: min(36vw, 320px); }
   .artist-name { font-size: clamp(40px, 5.5vw, 64px); }
-  .bio-text { font-size: 18px; line-height: 1.85; }
+  .bio-text { font-size: 18px; line-height: 1.6; }
   .bio-card { padding: 28px 32px; }
   .albums-list li { padding: 16px 22px; }
   .album-name { font-size: 16px; }
@@ -3196,7 +3230,7 @@ body.is-on-main-hero .top-bar-center {
 
   /* Bio panel: wider, more readable */
   .bio-card { padding: 32px 36px; }
-  .bio-text { font-size: 18px; line-height: 1.85; }
+  .bio-text { font-size: 18px; line-height: 1.6; }
 
   /* Discography: 2-col when there are many albums */
   .albums-list { grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -3484,24 +3518,31 @@ body.is-on-main-hero .top-bar-center {
    so the wider/taller demo layout is respected. */
 .hero-panel .live-status.live-status--demo,
 .live-status--demo {
-  width: min(94%, 520px);
+  /* Narrower + lower opacity so the now-playing card reads as a quiet
+     status pill rather than a competing hero element. The faintly-glowing
+     green border was reading as a "callout" — replace with a near-
+     transparent white hairline + light backdrop blur for a calmer pro
+     look. */
+  width: min(86%, 360px);
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 10px;
-  padding: 14px 18px;
-  border-radius: 18px;
-  background: rgba(10, 5, 36, 0.7);
-  border: 1px solid rgba(57, 255, 20, 0.34);
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(10, 5, 36, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   overflow: visible;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .live-status--demo .live-status-topline {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
 }
 
 .live-status--demo .live-now-track {
@@ -3521,14 +3562,14 @@ body.is-on-main-hero .top-bar-center {
   position: static;
   transform: none;
   flex-shrink: 0;
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 .live-status--demo .live-now-label {
   font-family: "Heebo", sans-serif;
-  font-size: 10px;
-  letter-spacing: 2.4px;
+  font-size: 9px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   font-weight: 800;
   color: #39ff14;
@@ -3537,40 +3578,40 @@ body.is-on-main-hero .top-bar-center {
 
 .live-demo-badge {
   font-family: "Heebo", sans-serif;
-  font-size: 9px;
-  letter-spacing: 2px;
+  font-size: 8px;
+  letter-spacing: 1.6px;
   text-transform: uppercase;
   font-weight: 800;
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
-  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .live-status--demo .live-status-title {
   font-family: "Orbitron", "Heebo", sans-serif;
-  font-size: clamp(22px, 5.4vw, 30px);
+  font-size: clamp(16px, 3.8vw, 22px);
   font-weight: 900;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   margin: 2px 0 0;
 }
 
 .live-status--demo .live-status-meta {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
 .live-progress {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 4px;
+  margin-top: 2px;
 }
 
 .live-progress-track {
   position: relative;
-  height: 6px;
+  height: 3px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
   overflow: hidden;
@@ -3582,14 +3623,16 @@ body.is-on-main-hero .top-bar-center {
   width: 0%;
   background: linear-gradient(90deg, #39ff14, #00d4ff);
   border-radius: 999px;
-  box-shadow: 0 0 12px rgba(57, 255, 20, 0.55);
+  /* Subtle glow only — the heavy 12px glow read as decorative noise on
+     a calmer card. */
+  box-shadow: 0 0 6px rgba(57, 255, 20, 0.4);
   transition: width 0.6s linear;
 }
 
 .live-progress-times {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -3597,24 +3640,24 @@ body.is-on-main-hero .top-bar-center {
 .live-prev-next {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-top: 6px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.12);
-  padding-top: 8px;
+  gap: 3px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 6px;
 }
 
 .live-pn-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  font-size: 12px;
+  gap: 10px;
+  font-size: 11px;
   font-family: "Heebo", sans-serif;
 }
 
 .live-pn-label {
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 9px;
+  letter-spacing: 1.6px;
   text-transform: uppercase;
   font-weight: 700;
   color: var(--text-muted);
@@ -4332,17 +4375,20 @@ body.is-on-main-hero .top-bar-center {
   }
 }
 
-/* ---------- Main hero: better composition on tablet/desktop ---------- */
+/* ---------- Main hero: better composition on tablet/desktop ----------
+   Logo + UFO scene is the dominant visual; shrinking it on wider
+   viewports prevents the stack from overflowing into .hero-dots /
+   .hero-disclaimer and keeps the composition deliberate instead of
+   dominating. The pre-existing .hero-zna-mark rules pointed at a
+   class that JS doesn't emit (the live element is .hero-logo-scene),
+   so they were dead. Re-anchor the sizing on the real selector. */
 @media (min-width: 768px) {
-  /* Reserve more bottom padding on wider viewports so the vertically-
-     centered .hero-stack can't drift down into the .hero-dots strip
-     (absolute, bottom: 90px → its top edge is ~144px from the panel
-     bottom). 160px keeps the stack clear of the dots + the dive-hint
-     below them at every desktop height. */
-  .hero-panel { padding-bottom: 160px; }
-  .hero-panel--main .hero-zna-mark {
-    width: clamp(380px, 58vw, 640px);
-  }
+  /* Reserve more bottom padding so the vertically-centered .hero-stack
+     can't drift into the .hero-dots strip (absolute, bottom: 90px → its
+     top edge is ~144px from the panel bottom). 180px keeps the stack
+     clear of the dots + the dive-hint at every desktop height. */
+  .hero-panel { padding-bottom: 180px; }
+  .hero-logo-scene { width: min(56vw, 420px); }
   .hero-panel--main .logo-mark {
     font-size: clamp(96px, 14vw, 180px);
     letter-spacing: -5px;
@@ -4364,13 +4410,12 @@ body.is-on-main-hero .top-bar-center {
 
 @media (min-width: 1024px) {
   .hero-panel--main {
-    padding: 32px 40px 160px;
+    padding: 32px 40px 180px;
   }
-  /* Tightened desktop sizes — prior values were comically large
-     and overflowed the live-status pill on smaller laptops. */
-  .hero-panel--main .hero-zna-mark {
-    width: clamp(320px, 30vw, 460px);
-  }
+  /* Desktop sizing: prior values had the logo+UFOs visually dominating
+     the panel and pushing .hero-disclaimer into the .hero-dots strip.
+     This keeps the scene around ~35-40% of the panel height. */
+  .hero-logo-scene { width: min(34vw, 380px); }
   .hero-panel--main .logo-mark {
     font-size: clamp(80px, 9vw, 140px);
     line-height: 0.92;
@@ -4390,6 +4435,12 @@ body.is-on-main-hero .top-bar-center {
     font-size: 18px !important;
     max-width: 640px !important;
   }
+}
+
+@media (min-width: 1400px) {
+  /* On very wide laptops / external monitors, keep the logo scene
+     measured rather than letting it scale up indefinitely. */
+  .hero-logo-scene { width: min(28vw, 400px); }
 }
 
 /* Prevent the giant ZNA 2026 wordmark from spilling out at any width.
