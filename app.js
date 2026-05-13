@@ -954,15 +954,28 @@ async function loadPhotos() {
       }
     });
     if (upgraded > 0) {
-      try {
-        // Don't disturb a playing video - the player lives outside the reel.
-        buildReel();
-        observeSections();
-        setActiveSection(reel.querySelector(".section"));
-        // The rebuild wipes whatever section the deep-link landed on. If
-        // we came in on a deep-link, re-apply it so the URL target sticks.
-        if (typeof applyInitialRoute === "function") applyInitialRoute();
-      } catch (e) { console.warn("photo re-render failed:", e); }
+      // Split the photo-driven rebuild across two animation frames so the
+      // DOM mutation (buildReel rewrites reel.innerHTML for 85 artists)
+      // and the downstream layout reads (setActiveSection +
+      // applyInitialRoute call getBoundingClientRect / offsetTop) don't
+      // happen in the same synchronous JS task. Without the split, that
+      // chain logged "[Violation] Forced reflow ... 66 ms" because the
+      // engine had to flush layout twice in one frame to answer the reads.
+      requestAnimationFrame(() => {
+        try {
+          // Don't disturb a playing video - the player lives outside the reel.
+          buildReel();
+          observeSections();
+          requestAnimationFrame(() => {
+            try {
+              setActiveSection(reel.querySelector(".section"));
+              // The rebuild wipes whatever section the deep-link landed on.
+              // If we came in on a deep-link, re-apply so the URL target sticks.
+              if (typeof applyInitialRoute === "function") applyInitialRoute();
+            } catch (e) { /* downstream layout-read failure is non-fatal */ }
+          });
+        } catch (e) { console.warn("photo re-render failed:", e); }
+      });
     }
   } catch (e) { /* photos.json optional */ }
 }
@@ -1448,12 +1461,21 @@ function heroArtistsPill(stageId) {
   const counterLabel = remaining > 0
     ? (currentLang === "he" ? `${remaining}+ ${word}` : `+${remaining} ${word}`)
     : `${total} ${word}`;
+  const flyoutTitle = stageId === "all" ? t("artists.titleAll") : `${tStage(stageId)} · ${t("artists.title")}`;
   return `
     <button class="hero-artists-pill" type="button" data-artists-pool="${escapeHtml(stageId)}"
-            aria-label="${escapeHtml(t("hero.viewArtists"))}" title="${escapeHtml(t("hero.viewArtists"))}">
+            aria-label="${escapeHtml(t("hero.viewArtists"))}" title="${escapeHtml(t("hero.viewArtists"))}"
+            aria-expanded="false">
       <span class="hero-artists-stack" aria-hidden="true">${avatars}</span>
       <span class="hero-artists-count">${escapeHtml(counterLabel)}</span>
     </button>
+    <div class="hero-artists-flyout" data-flyout-pool="${escapeHtml(stageId)}" role="dialog"
+         aria-label="${escapeHtml(flyoutTitle)}" aria-hidden="true">
+      <div class="hero-artists-flyout-header">
+        <span class="hero-artists-flyout-title">${escapeHtml(flyoutTitle)}</span>
+      </div>
+      <div class="hero-artists-flyout-list" data-flyout-list></div>
+    </div>
   `;
 }
 
@@ -1499,6 +1521,9 @@ function wireHeroPager() {
       const stage = child?.dataset.stage;
       if (stage && stage !== activeStageFilter) {
         activeStageFilter = stage;
+        // Swiping to a different hero panel collapses any flyout that
+        // was left open on the previous panel.
+        if (typeof closePillFlyouts === "function") closePillFlyouts();
         buildStageDropdown();
         rerenderArtistsBelowHero();
         if (typeof syncUrlFromActive === "function") syncUrlFromActive();
@@ -3118,6 +3143,11 @@ function pauseHeroAutoplay() {
   clearTimeout(heroAutoplayResumeTimer);
   heroAutoplayResumeTimer = setTimeout(() => {
     heroAutoplayPaused = false;
+    // While the artists flyout is open the stage rotation must stay
+    // frozen — the user is reading a scoped list and a sideways swipe
+    // would yank them off it. Skip the resume; closePillFlyouts() will
+    // restart the autoplay when the user dismisses the panel.
+    if (document.querySelector(".hero-stack.pill-expanded")) return;
     if (getCurrentSection()?.dataset.section === "hero") {
       startHeroAutoplay();
     }
@@ -4185,8 +4215,78 @@ function closeArtistsOverlay() {
   artistsOverlay.hidden = true;
 }
 
+// In-place "flyout" expansion of the hero artists pill — replaces the
+// old modal overlay. The pill morphs into a card-shaped container
+// anchored inside the hero panel; everything else in the hero stack
+// (map button, stage name, tagline, live-now card) fades out for the
+// duration. Clicking outside the flyout collapses it back.
+function renderFlyoutList(listEl, stageId) {
+  if (!listEl) return;
+  const pool = getArtistPool(stageId);
+  listEl.innerHTML = pool.map(a => {
+    const src = pickThumbSrc(a.photo);
+    const initials = getInitials(a.name);
+    const avatar = src
+      ? `<span class="artists-row-avatar"><img loading="lazy" decoding="async" src="${escapeHtml(src)}" alt=""/></span>`
+      : `<span class="artists-row-avatar artists-row-avatar--fallback" style="--accent: ${escapeHtml(a.color || "#FEB447")};">${escapeHtml(initials)}</span>`;
+    return `
+      <button class="artists-row" type="button" data-artist-id="${escapeHtml(a.id)}">
+        ${avatar}
+        <span class="artists-row-text">
+          <span class="artists-row-name">${escapeHtml(a.name)}</span>
+          <span class="artists-row-meta">${escapeHtml(stageLabel(a.stage))}</span>
+        </span>
+      </button>
+    `;
+  }).join("");
+}
+
+function openPillFlyout(pillEl) {
+  if (!pillEl) return;
+  const stack = pillEl.closest(".hero-stack");
+  const flyout = stack?.querySelector(".hero-artists-flyout");
+  if (!stack || !flyout) return;
+  const stageId = pillEl.dataset.artistsPool || flyout.dataset.flyoutPool || "all";
+  const listEl = flyout.querySelector("[data-flyout-list]");
+  renderFlyoutList(listEl, stageId);
+  // Close any other flyout that might be open across panels.
+  document.querySelectorAll(".hero-stack.pill-expanded").forEach(s => {
+    if (s !== stack) s.classList.remove("pill-expanded");
+  });
+  stack.classList.add("pill-expanded");
+  flyout.setAttribute("aria-hidden", "false");
+  pillEl.setAttribute("aria-expanded", "true");
+  // Suspend the stage auto-advance while the user is reading the
+  // artist list — re-uses the existing manual-gesture pause path so
+  // the autoplay resumes naturally after the flyout closes (unless the
+  // user toggled it off via the dots strip).
+  if (typeof pauseHeroAutoplay === "function") pauseHeroAutoplay();
+}
+
+function closePillFlyouts() {
+  const wasOpen = document.querySelector(".hero-stack.pill-expanded");
+  document.querySelectorAll(".hero-stack.pill-expanded").forEach(stack => {
+    stack.classList.remove("pill-expanded");
+    const flyout = stack.querySelector(".hero-artists-flyout");
+    const pill   = stack.querySelector(".hero-artists-pill");
+    flyout?.setAttribute("aria-hidden", "true");
+    pill?.setAttribute("aria-expanded", "false");
+  });
+  // Resume the stage auto-advance after the flyout closes, unless the
+  // user explicitly turned it off via the dots toggle or they're no
+  // longer parked on the hero section.
+  if (wasOpen && typeof startHeroAutoplay === "function"
+      && !heroAutoplayUserSuspended
+      && getCurrentSection()?.dataset.section === "hero") {
+    heroAutoplayPaused = false;
+    clearTimeout(heroAutoplayResumeTimer);
+    startHeroAutoplay();
+  }
+}
+
 function jumpToArtist(id) {
   closeArtistsOverlay();
+  closePillFlyouts();
   // If the current filter would hide this artist (e.g. user is on a stage
   // hero but the modal was rendering "all"), reset to "all" before
   // scrolling so the section actually exists in the DOM.
@@ -4219,19 +4319,46 @@ artistsRandomBtn?.addEventListener("click", () => {
   jumpToArtist(pick.id);
 });
 
-// Opening the overlay from the avatar pill — delegated through the reel
-// so the listener survives buildReel() rebuilds.
+// Opening the in-place flyout from the avatar pill — delegated through
+// the reel so the listener survives buildReel() rebuilds.
 reel.addEventListener("click", (e) => {
+  // Row inside an expanded flyout: jump to that artist.
+  const row = e.target.closest?.(".hero-artists-flyout .artists-row");
+  if (row?.dataset.artistId) {
+    jumpToArtist(row.dataset.artistId);
+    return;
+  }
   const pill = e.target.closest?.(".hero-artists-pill");
-  if (!pill) return;
-  const pool = pill.dataset.artistsPool || "all";
-  openArtistsOverlay(pool);
+  if (pill) {
+    openPillFlyout(pill);
+    return;
+  }
+  // Click anywhere else inside an open flyout — let it through (selecting
+  // text, scrolling, etc). Outside-click handler below catches everything
+  // that misses the flyout panel itself.
+  const insideFlyout = e.target.closest?.(".hero-artists-flyout");
+  if (insideFlyout) return;
 });
 
-// Escape key closes the overlay.
+// Outside-click anywhere in the document closes any open pill flyout.
+// Bound on capture so we beat any other handlers that might call
+// stopPropagation downstream.
+document.addEventListener("pointerdown", (e) => {
+  if (!document.querySelector(".hero-stack.pill-expanded")) return;
+  if (e.target.closest?.(".hero-artists-flyout")) return;
+  if (e.target.closest?.(".hero-artists-pill")) return; // pill itself toggles
+  closePillFlyouts();
+}, true);
+
+// Escape key closes the modal overlay (legacy) OR any open pill flyout.
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && artistsOverlay && !artistsOverlay.hidden) {
+  if (e.key !== "Escape") return;
+  if (artistsOverlay && !artistsOverlay.hidden) {
     closeArtistsOverlay();
+    return;
+  }
+  if (document.querySelector(".hero-stack.pill-expanded")) {
+    closePillFlyouts();
   }
 });
 

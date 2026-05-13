@@ -10,6 +10,10 @@
   <!-- iOS Add-to-Home-Screen treats the app as a standalone PWA, hiding
        the Safari chrome. Modern browsers also read the W3C manifest below. -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <!-- Standardised replacement for `apple-mobile-web-app-capable` —
+       Chromium logs a deprecation warning if only the Apple-prefixed
+       form is present. Keep both so legacy iOS PWAs still install. -->
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ZNA 2026" />
   <meta name="format-detection" content="telephone=no" />
