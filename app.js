@@ -1194,7 +1194,6 @@ function liveStatusCard(stageId = "all") {
   if (status.state === "live") {
     return `
       <div class="live-status live-status--live" aria-live="polite" dir="${dirAttr}">
-        <div class="live-now-track is-live"><span class="live-now-dot"></span></div>
         <strong class="live-status-title">${escapeHtml(status.artist.name)}</strong>
         <span class="live-status-meta">${escapeHtml(stageLabel(status.artist.stage))} · ${escapeHtml(formatScheduleRange(status.schedule))}</span>
       </div>
@@ -1203,7 +1202,6 @@ function liveStatusCard(stageId = "all") {
 
   return `
     <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite" dir="${dirAttr}">
-      <div class="live-now-track"><span class="live-now-dot"></span></div>
       ${buildCountdownTimer(startsAt, "hero")}
     </div>
   `;
@@ -1241,7 +1239,7 @@ function marketLiveDemoCard() {
         <span class="live-demo-badge">${escapeHtml(t("live.demoBadge"))}</span>
       </div>
       <strong class="live-status-title">${escapeHtml(current.name)}</strong>
-      <span class="live-status-meta">${escapeHtml(stageLabel("market"))} · ${escapeHtml(fmt(start))}–${escapeHtml(fmt(end))}</span>
+      <span class="live-status-meta">${escapeHtml(fmt(start))}–${escapeHtml(fmt(end))}</span>
       <div class="live-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(0)}">
         <div class="live-progress-track">
           <div class="live-progress-fill" data-progress-fill style="width:${pct.toFixed(1)}%"></div>
@@ -1321,16 +1319,11 @@ const HERO_LOGO_ASSETS = [
 ];
 
 function heroLogoScene() {
-  const decorations = HERO_LOGO_ASSETS.map(asset => pictureTagStatic(asset.base, {
-    className: `hero-logo-decor hero-logo-decor--${asset.key}`,
-    alt: "",
-    width: asset.width,
-    height: asset.height
-  })).join("");
-
+  // UFOs / orbs no longer live inside the wordmark scene — they're
+  // scattered as section-level decoration via heroSectionUfos() so the
+  // logo unit reads as a clean wordmark composition.
   return `
     <div class="hero-logo-scene" aria-label="ZNA 26">
-      ${decorations}
       ${pictureTagStatic("images/zna-3d/generated-logo/zna26-logo", {
         className: "hero-logo-main",
         alt: "ZNA 26",
@@ -1351,13 +1344,28 @@ function heroLogoScene() {
   `;
 }
 
+// Tiny UFO + orb pictures scattered at section level — siblings to the
+// hero-pager. Absolutely positioned to avoid the center stack content
+// and the bottom dots/hint strip; pointer-events: none so they don't
+// trap swipes. The same five pictures used to live inside the logo
+// scene; they were lifted out per the design brief so the logo reads
+// as one tight wordmark unit.
+function heroSectionUfos() {
+  return HERO_LOGO_ASSETS.map(asset => pictureTagStatic(asset.base, {
+    className: `hero-section-ufo hero-section-ufo--${asset.key}`,
+    alt: "",
+    width: asset.width,
+    height: asset.height,
+  })).join("");
+}
+
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
       <div class="hero-stack">
         ${heroLogoScene()}
         <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
-        <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
+        <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))}</div>
         ${liveStatusCard("all")}
         ${heroArtistsPill("all")}
         <p class="hero-disclaimer">${t("hero.disclaimer")}</p>
@@ -1606,6 +1614,7 @@ function multiHeroSection() {
   return `
     <section class="section section--multi-hero" data-section="hero" data-stage="${escapeHtml(activeStage)}" data-real-count="${realCount}">
       <div class="hero-pager" id="hero-pager" data-real-count="${realCount}">${panels}</div>
+      ${heroSectionUfos()}
       <div class="hero-dots" id="hero-dots">${dots}${autoplayToggle}</div>
       <div class="hero-hint" id="hero-hint" aria-hidden="true"><span class="hero-hint-arrow">↓</span></div>
     </section>

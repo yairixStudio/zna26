@@ -463,8 +463,7 @@ body.has-mini-player .hero-dots {
 }
 
 .hero-logo-main,
-.hero-logo-community,
-.hero-logo-decor {
+.hero-logo-community {
   position: absolute;
   display: block;
   user-select: none;
@@ -492,7 +491,7 @@ body.has-mini-player .hero-dots {
 
 .hero-logo-main > img,
 .hero-logo-community > img,
-.hero-logo-decor > img {
+.hero-section-ufo > img {
   display: block;
   width: 100%;
   height: auto;
@@ -501,50 +500,66 @@ body.has-mini-player .hero-dots {
   -webkit-user-drag: none;
 }
 
-.hero-logo-decor {
-  z-index: 1;
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.42));
-  opacity: 0.96;
+/* ===== Section-level UFO + orb decor =====
+   The five tiny pictures used to live inside .hero-logo-scene as
+   .hero-logo-decor. They were lifted out per the design brief so the
+   logo unit reads as a clean wordmark; the UFOs are now small,
+   randomly placed accents pinned to the corners and edges of the
+   .section--multi-hero, behind the hero-dots strip and dive-hint
+   arrow (z-index < theirs) but above the hero-pager's content. They
+   stay out of the central stack's reading zone (logo + tagline +
+   live-status + pill + disclaimer) and above the bottom controls.
+   `pointer-events: none` so they don't trap horizontal swipes. */
+.hero-section-ufo {
+  position: absolute;
+  display: block;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.42));
+  opacity: 0.92;
   animation: zna-float-decor var(--float-duration, 6.8s) ease-in-out infinite;
   animation-delay: var(--float-delay, 0s);
 }
 
-.hero-logo-decor--ufo-top-left {
-  left: 4%;
-  top: 8%;
-  width: 21%;
+.hero-section-ufo--ufo-top-left {
+  top: 9vh;
+  left: 4vw;
+  width: clamp(28px, 5vw, 44px);
   --float-duration: 7.8s;
   --float-delay: -1.4s;
 }
 
-.hero-logo-decor--ufo-top-right {
-  right: 5%;
-  top: 9%;
-  width: 21%;
+.hero-section-ufo--ufo-top-right {
+  top: 13vh;
+  right: 5vw;
+  width: clamp(30px, 5.4vw, 48px);
   --float-duration: 8s;
   --float-delay: -1s;
 }
 
-.hero-logo-decor--ufo-bottom-left {
-  left: 3%;
-  bottom: 7%;
-  width: 24%;
+.hero-section-ufo--ufo-bottom-left {
+  bottom: 20vh;
+  left: 5vw;
+  width: clamp(32px, 5.8vw, 50px);
   --float-duration: 8.4s;
   --float-delay: -3s;
 }
 
-.hero-logo-decor--ufo-bottom-right {
-  right: 2%;
-  bottom: 9%;
-  width: 25%;
+.hero-section-ufo--ufo-bottom-right {
+  bottom: 24vh;
+  right: 4vw;
+  width: clamp(28px, 5vw, 44px);
   --float-duration: 7.6s;
   --float-delay: -2.7s;
 }
 
-.hero-logo-decor--orb-center {
-  left: 45%;
-  bottom: 0;
-  width: 10%;
+.hero-section-ufo--orb-center {
+  top: 32vh;
+  right: 1vw;
+  width: clamp(14px, 2.4vw, 22px);
+  opacity: 0.85;
   --float-duration: 6.9s;
   --float-delay: -3.5s;
 }
@@ -1414,7 +1429,12 @@ body.has-mini-player .hero-dots {
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  /* Tighter than the original 22 px so the notable-lede sits closer to
+     the Biography heading below it, and the biography paragraph sits
+     closer to the Streaming heading that follows. Every saved pixel
+     hands the .bio-text flex item more room — visible as additional
+     lines of bio before the user has to scroll. */
+  gap: 12px;
 }
 
 /* Plain-text replacement for the old .info-meta / .info-rep chips. The
@@ -1457,7 +1477,7 @@ body.has-mini-player .hero-dots {
   .info-rep-text { text-align: start; }
 }
 
-.info-section { display: flex; flex-direction: column; gap: 10px; }
+.info-section { display: flex; flex-direction: column; gap: 6px; }
 /* Bio section sits tighter against its title than the other info sections —
    the dashed border-bottom on the title already reads as a separator, so a
    wide gap on top of that felt loose. */
@@ -1555,7 +1575,10 @@ body.has-mini-player .hero-dots {
    announced/represented meta row and the Biography heading. Reads as
    a subtle subtitle, not as part of the biography paragraph itself. */
 .bio-notable-lede {
-  margin: 0 0 6px;
+  /* No bottom margin — the bio-card's `gap: 12 px` already gives this
+     caption its space from the Biography heading below. Stacking margin
+     on top of gap left a visible loose band between the two. */
+  margin: 0;
   font-size: 11.5px;
   font-weight: 400;
   letter-spacing: 0.2px;
@@ -1569,11 +1592,11 @@ body.has-mini-player .hero-dots {
   text-indent: -1.2em;
 }
 /* Pull the notable lede tight up under the info-meta-row above it. The
-   bio-card uses gap: 22px between every flex child by default, which
-   reads as too much air between the meta row (📣 Announced / 🎧 Rep)
-   and this directly-related caption beneath it. */
+   bio-card now uses gap: 12 px between every flex child, so we only
+   need a small extra negative margin to make the meta row + caption
+   read as a single grouped block. */
 .info-meta-row + .bio-notable-lede {
-  margin-top: -16px;
+  margin-top: -6px;
 }
 .bio-notable-lede[dir="rtl"] {
   text-align: start;
@@ -3827,10 +3850,13 @@ body.is-on-main-hero .top-bar-center {
 }
 .hero-icon-action--top svg { width: 28px; height: 28px; }
 
-/* "Official site" link is now rendered INLINE inside the disclaimer
-   paragraph (see STRINGS["hero.disclaimer"]). Keeps the disclaimer to
-   one short line — no separate floating link below. */
+/* "Official site" link is rendered inline inside the disclaimer
+   paragraph (see STRINGS["hero.disclaimer"]). It drops onto its own
+   line via display: block — the prose above explains the unofficial
+   status, the link below is the call-to-action to the real site. */
 .hero-official-link {
+  display: block;
+  margin-top: 4px;
   color: var(--sun-yellow);
   font-weight: 700;
   text-decoration: underline;
