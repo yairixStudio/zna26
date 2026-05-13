@@ -242,8 +242,19 @@ a { color: var(--sun-yellow); }
   position: absolute;
   bottom: -4px;
   right: max(-86px, -13vw);
-  width: clamp(210px, 48vw, 390px);
+  /* The natural artwork is portrait 600×1066 (~0.563 aspect), so a
+     pure width-driven sizing rule made the rendered height balloon to
+     80–90vh on taller viewports and dominate every stage panel. The
+     rules below hold the element to a strict 50vh ceiling: locking
+     aspect-ratio to 600/1066 and clamping width to min(originalWidth,
+     28vh) means the implied height never exceeds 28vh × 1066/600 ≈
+     49.7vh on any viewport. `height: auto` still resolves via the
+     aspect ratio; `max-height: 50vh` is a belt-and-braces fallback
+     for any browser without `aspect-ratio` support. */
+  width: min(clamp(210px, 48vw, 390px), 28vh);
+  aspect-ratio: 600 / 1066;
   height: auto;
+  max-height: 50vh;
   z-index: 0;
   pointer-events: none;
   user-select: none;
@@ -491,7 +502,7 @@ body.has-mini-player .hero-dots {
 
 .hero-logo-main > img,
 .hero-logo-community > img,
-.hero-section-ufo > img {
+.hero-section-ufo-img > img {
   display: block;
   width: 100%;
   height: auto;
@@ -501,118 +512,83 @@ body.has-mini-player .hero-dots {
 }
 
 /* ===== Section-level UFO + orb decor =====
-   The five tiny pictures used to live inside .hero-logo-scene as
-   .hero-logo-decor. They were lifted out per the design brief so the
-   logo unit reads as a clean wordmark; the UFOs are now small,
-   randomly placed accents pinned to the corners and edges of the
-   .section--multi-hero, behind the hero-dots strip and dive-hint
-   arrow (z-index < theirs) but above the hero-pager's content. They
-   stay out of the central stack's reading zone (logo + tagline +
-   live-status + pill + disclaimer) and above the bottom controls.
-   `pointer-events: none` so they don't trap horizontal swipes. */
+   Five tiny pictures pinned to the .section--multi-hero. Each stage
+   shows exactly THREE; the other two sit just off the viewport edge.
+   Positions per stage live in app.js (UFO_LAYOUT) and are interpolated
+   per scroll frame via inline `transform: translate3d(...vw, ...vh, 0)`
+   on the outer wrapper — so the offscreen UFOs slide INTO frame and
+   onscreen UFOs slide OUT during a swipe, 1:1 with the finger.
+   The outer wrapper owns the stage transform; the inner picture owns
+   the gentle CSS idle float, so the two transforms compose cleanly. */
 .hero-section-ufo {
   position: absolute;
+  top: 0;
+  left: 0;
   display: block;
   z-index: 2;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+  will-change: transform;
+  /* Initial transform = main-stage layout; overwritten by JS on next
+     scroll frame. Without this the UFOs would flash at (0,0) on first
+     paint before the RAF kicks in. */
+  transform: translate3d(0, 0, 0);
+}
+.hero-section-ufo-img {
+  display: block;
+  width: 100%;
+  height: 100%;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.42));
   opacity: 0.92;
-  animation: zna-float-decor var(--float-duration, 6.8s) ease-in-out infinite;
+  animation: zna-float-decor var(--float-duration, 7.4s) ease-in-out infinite;
   animation-delay: var(--float-delay, 0s);
-  /* When the section's data-stage attribute flips (RAF tracker in
-     applyDotsForPager — runs every frame while the hero-pager scrolls),
-     the per-stage rule blocks below switch the UFO to a new safe zone.
-     This transition makes that switch read as a smooth float, timed to
-     roughly match the browser's scroll-snap settle (~300-450 ms). */
-  transition: top 0.45s ease-out, left 0.45s ease-out, right 0.45s ease-out;
 }
 
-/* Each UFO keeps its identity (size + float cadence). The anchor values
-   live in the per-stage rule blocks further down so each entity drifts
-   to a new spot when the active hero panel changes. */
+/* Each UFO keeps its identity (size + idle-float cadence). */
 .hero-section-ufo--ufo-top-left {
   width: clamp(28px, 5vw, 44px);
+}
+.hero-section-ufo--ufo-top-left .hero-section-ufo-img {
   --float-duration: 7.8s;
   --float-delay: -1.4s;
 }
 
 .hero-section-ufo--ufo-top-right {
   width: clamp(30px, 5.4vw, 48px);
+}
+.hero-section-ufo--ufo-top-right .hero-section-ufo-img {
   --float-duration: 8s;
   --float-delay: -1s;
 }
 
 .hero-section-ufo--ufo-bottom-left {
   width: clamp(32px, 5.8vw, 50px);
+}
+.hero-section-ufo--ufo-bottom-left .hero-section-ufo-img {
   --float-duration: 8.4s;
   --float-delay: -3s;
 }
 
 .hero-section-ufo--ufo-bottom-right {
   width: clamp(28px, 5vw, 44px);
+}
+.hero-section-ufo--ufo-bottom-right .hero-section-ufo-img {
   --float-duration: 7.6s;
   --float-delay: -2.7s;
 }
 
 .hero-section-ufo--orb-center {
   width: clamp(14px, 2.4vw, 22px);
+}
+.hero-section-ufo--orb-center .hero-section-ufo-img {
   opacity: 0.85;
   --float-duration: 6.9s;
   --float-delay: -3.5s;
 }
 
-/* ===== Per-stage UFO parking spots =====
-   Each UFO keeps the same anchor properties (top + left  OR  top + right)
-   across every stage so the CSS transition can interpolate between
-   values smoothly — mixing `top`/`bottom` or `left`/`right` would force
-   one side to `auto` mid-transition and visibly teleport.
-
-   Safe-zone constraints respected:
-     · Main (`all`): tallest stack (logo scene + tagline + meta +
-       live-status + pill + disclaimer), so UFOs hug the top corners,
-       sit alongside the logo scene where the side corridor is widest,
-       and the orb tucks into the empty band between the disclaimer
-       end and the dots strip.
-     · Stage panels (retro/zambu/guardians/market): shorter central
-       stack but `.hero-stage-element` background artwork occupies the
-       bottom-right (~bottom 0 to top 60vh, right edge 0–35vw), so the
-       "bottom-right" UFO is LIFTED to the top-right corner and the
-       "bottom-left" sits well clear of both the artwork and the stack. */
-
-.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-top-left     { top: 5vh;  left: 5vw; }
-.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-top-right    { top: 8vh;  right: 5vw; }
-.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-bottom-left  { top: 28vh; left: 3vw; }
-.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-bottom-right { top: 38vh; right: 3vw; }
-.section--multi-hero[data-stage="all"] .hero-section-ufo--orb-center       { top: 78vh; left: 50vw; }
-
-.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-top-left     { top: 7vh;  left: 6vw; }
-.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-top-right    { top: 10vh; right: 7vw; }
-.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-bottom-left  { top: 62vh; left: 5vw; }
-.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-bottom-right { top: 14vh; right: 4vw; }
-.section--multi-hero[data-stage="retro"] .hero-section-ufo--orb-center       { top: 22vh; left: 16vw; }
-
-.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-top-left     { top: 9vh;  left: 4vw; }
-.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-top-right    { top: 6vh;  right: 5vw; }
-.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-bottom-left  { top: 70vh; left: 7vw; }
-.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-bottom-right { top: 18vh; right: 5vw; }
-.section--multi-hero[data-stage="zambu"] .hero-section-ufo--orb-center       { top: 26vh; left: 22vw; }
-
-.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-top-left     { top: 6vh;  left: 8vw; }
-.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-top-right    { top: 11vh; right: 4vw; }
-.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-bottom-left  { top: 66vh; left: 4vw; }
-.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-bottom-right { top: 22vh; right: 6vw; }
-.section--multi-hero[data-stage="guardians"] .hero-section-ufo--orb-center       { top: 20vh; left: 28vw; }
-
-.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-top-left     { top: 10vh; left: 3vw; }
-.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-top-right    { top: 7vh;  right: 6vw; }
-.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-bottom-left  { top: 68vh; left: 6vw; }
-.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-bottom-right { top: 16vh; right: 4vw; }
-.section--multi-hero[data-stage="market"] .hero-section-ufo--orb-center       { top: 24vh; left: 18vw; }
-
 @media (prefers-reduced-motion: reduce) {
-  .hero-section-ufo { transition: none; }
+  .hero-section-ufo-img { animation: none; }
 }
 
 @keyframes zna-float-main {
@@ -627,7 +603,7 @@ body.has-mini-player .hero-dots {
 
 @keyframes zna-float-decor {
   0%, 100% { transform: translateY(0) rotate(var(--float-rotate, 0deg)); }
-  50%      { transform: translateY(-8px) rotate(calc(var(--float-rotate, 0deg) * -1)); }
+  50%      { transform: translateY(-3px) rotate(calc(var(--float-rotate, 0deg) * -1)); }
 }
 
 /* Per-stage hero color identity */
@@ -4387,6 +4363,157 @@ body.is-on-main-hero .top-bar-center {
   letter-spacing: 0;
 }
 
+/* ===== In-place pill flyout =====
+   Tapping the avatars pill morphs the hero stack: everything else fades
+   out and the flyout scales up at viewport center. Visually it's the
+   same chrome as the pill itself — quiet glass, hairline border,
+   gentle blur, no heavy shadow — just at a larger size. */
+.hero-artists-flyout {
+  /* Fixed to the viewport so vertical centering is unambiguous (no
+     reliance on the hero panel's intrinsic padding/flex centering).
+     Note: `.hero-pager` has `will-change: transform`, so the spec
+     makes IT the containing block for this fixed-position element
+     (not the viewport). Hero-pager's padding box happens to equal
+     the section box which equals the viewport, so 50%/50% still
+     resolves to screen-center — but z-index of this flyout only
+     reaches within hero-pager's stacking context, which is why the
+     section-level UFOs / dots / hint need to be faded explicitly
+     while it's open (rule further below). */
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.92);
+  transform-origin: 50% 50%;
+  width: min(380px, calc(100% - 32px));
+  max-height: min(58vh, 460px);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 10px 12px;
+  /* Solid dark glass instead of 7% white over transparent — backdrop-
+     filter inside a transformed ancestor often degrades to a no-op,
+     leaving the original chrome effectively invisible against the
+     page gradient. The darker fill reads as a deliberate popover
+     even without the blur, and the box-shadow lifts it off the
+     background convincingly. */
+  background: rgba(10, 5, 36, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 22px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.2, 0.85, 0.3, 1.06),
+    visibility 0s linear 0.28s;
+}
+
+/* Hide every section-level decoration while the flyout is open. The
+   UFOs (z-index 2), .hero-dots (z-index 12) and .hero-hint (z-index
+   11) live in `.section--multi-hero`'s stacking context, OUTSIDE
+   .hero-pager's transform-induced context that holds the flyout, so
+   they would paint over the flyout regardless of its own z-index.
+   :has() scopes the fade to "the section currently holding the open
+   flyout". Same 0.22 s timing as the in-stack fade for continuity. */
+.section--multi-hero:has(.hero-stack.pill-expanded) .hero-section-ufo,
+.section--multi-hero:has(.hero-stack.pill-expanded) .hero-dots,
+.section--multi-hero:has(.hero-stack.pill-expanded) .hero-hint,
+.section--multi-hero:has(.hero-stack.pill-expanded) .hero-stage-element {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+.hero-stack.pill-expanded .hero-artists-flyout {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.2, 0.85, 0.3, 1.06),
+    visibility 0s linear 0s;
+}
+
+/* Fade every sibling in the stack — including the pill — while the
+   flyout is open. */
+.hero-stack.pill-expanded > *:not(.hero-artists-flyout) {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.hero-stack > *:not(.hero-artists-flyout) {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.hero-artists-flyout-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 0;
+}
+.hero-artists-flyout-title {
+  flex: 1 1 auto;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.2px;
+  text-align: start;
+}
+:lang(he) .hero-artists-flyout-title { font-weight: 500; letter-spacing: 0; }
+
+/* Hebrew: flip the flyout to RTL. `body { direction: ltr }` near the
+   top of this file traps every descendant in LTR even when
+   <html dir="rtl">; the override below scopes RTL exactly to the
+   flyout so the title sits flush-right and each row's avatar lands on
+   the right with the artist name/meta flowing from the right edge.
+   Each child uses `text-align: start` already, so RTL re-resolves
+   start = right automatically. */
+:lang(he) .hero-artists-flyout {
+  direction: rtl;
+}
+
+.hero-artists-flyout-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: grid;
+  gap: 4px;
+  padding: 2px 4px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  /* Fade the bottom edge so the last row dissolves into the panel. */
+  mask-image: linear-gradient(180deg, black 0, black calc(100% - 16px), transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, black 0, black calc(100% - 16px), transparent 100%);
+}
+.hero-artists-flyout-list::-webkit-scrollbar { width: 4px; }
+.hero-artists-flyout-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+/* Lighter row treatment inside the flyout — drop the artists-overlay's
+   chip-card look (filled bg, ring border) and let each row read as a
+   plain glass list item, matching the surrounding pill aesthetic. */
+.hero-artists-flyout-list .artists-row {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px 8px;
+  border-radius: 12px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .hero-artists-flyout-list .artists-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+.hero-artists-flyout-list .artists-row-avatar { width: 32px; height: 32px; }
+.hero-artists-flyout-list .artists-row-name { font-weight: 600; font-size: 13px; }
+.hero-artists-flyout-list .artists-row-meta { font-size: 10px; }
+
 /* ===== Artist-list overlay =====
    Same visual language as the favorites overlay (glass panel, big
    typography, full-screen on mobile). Lists every artist scoped to the
@@ -4591,11 +4718,16 @@ body.is-on-main-hero .top-bar-center {
    class that JS doesn't emit (the live element is .hero-logo-scene),
    so they were dead. Re-anchor the sizing on the real selector. */
 @media (min-width: 768px) {
-  /* Reserve more bottom padding so the vertically-centered .hero-stack
-     can't drift into the .hero-dots strip (absolute, bottom: 90px → its
-     top edge is ~144px from the panel bottom). 180px keeps the stack
-     clear of the dots + the dive-hint at every desktop height. */
-  .hero-panel { padding-bottom: 180px; }
+  /* Reserve the SAME flex-content margin on top (for the fixed top-bar)
+     and on bottom (for the absolutely-positioned .hero-dots + dive-hint
+     strip) so the hero-stack, which is justify-content: center inside
+     the content box, sits visually equidistant from the top chrome and
+     the bottom nav dots. Numbers:
+       · top-bar height ≈ 58 px → padding-top: 58
+       · .hero-dots { bottom: 70 } + ~60 px strip height = 130 px → padding-bottom: 130
+     Verified at 1024 / 1366 / 1600 → top gap ≈ bottom gap on every stage
+     panel (was offset by ~84 px high). */
+  .hero-panel { padding-top: 58px; padding-bottom: 130px; }
   .hero-logo-scene { width: min(44vw, 340px); }
   .hero-panel--main .logo-mark {
     font-size: clamp(96px, 14vw, 180px);
@@ -4618,7 +4750,12 @@ body.is-on-main-hero .top-bar-center {
 
 @media (min-width: 1024px) {
   .hero-panel--main {
-    padding: 32px 40px 180px;
+    /* Match the unified 58 / 130 vertical inset from the .hero-panel
+       desktop rule so the main hero's stack centers visually between
+       the top-bar and the hero-dots strip on the same axis as every
+       stage panel. Horizontal padding stays generous (40 px) to mirror
+       the main hero's wider headline composition. */
+    padding: 58px 40px 130px;
   }
   /* Desktop sizing: prior values had the logo+UFOs visually dominating
      the panel and pushing .hero-disclaimer into the .hero-dots strip.

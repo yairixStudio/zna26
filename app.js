@@ -1364,12 +1364,98 @@ function heroLogoScene() {
 // scene; they were lifted out per the design brief so the logo reads
 // as one tight wordmark unit.
 function heroSectionUfos() {
-  return HERO_LOGO_ASSETS.map(asset => pictureTagStatic(asset.base, {
-    className: `hero-section-ufo hero-section-ufo--${asset.key}`,
-    alt: "",
-    width: asset.width,
-    height: asset.height,
-  })).join("");
+  // Outer <div> owns the stage transform (set by JS per scroll frame).
+  // Inner <picture> keeps the gentle CSS idle float. Two transforms on
+  // different elements compose cleanly without overriding each other.
+  return HERO_LOGO_ASSETS.map(asset => `
+    <div class="hero-section-ufo hero-section-ufo--${asset.key}" data-ufo-key="${asset.key}">
+      ${pictureTagStatic(asset.base, {
+        className: "hero-section-ufo-img",
+        alt: "",
+        width: asset.width,
+        height: asset.height,
+      })}
+    </div>
+  `).join("");
+}
+
+// Per-stage layout for the 5 UFOs. Each stage shows exactly 3; the
+// other 2 sit just outside the viewport in the direction they "exit"
+// (top/left/right-anchored UFOs slide off the matching edge, orb slides
+// off top/bottom). JS interpolates each UFO's transform per scroll
+// frame so the offscreen-onscreen choreography reads as a smooth slide
+// in/out, perfectly synced with the finger.
+// Coordinates: x in vw (0 = viewport left), y in vh (0 = viewport top).
+const UFO_LAYOUT = {
+  all: {
+    "ufo-top-left":     { x:   5, y:   8 },
+    "ufo-top-right":    { x:  85, y:   8 },
+    "ufo-bottom-left":  { x: -25, y:  60 }, // off-screen left
+    "ufo-bottom-right": { x:  80, y:  58 },
+    "orb-center":       { x:  50, y: 110 }, // off-screen bottom
+  },
+  retro: {
+    "ufo-top-left":     { x:   7, y:   9 },
+    "ufo-top-right":    { x: 115, y:   8 }, // off-screen right
+    "ufo-bottom-left":  { x:   5, y:  64 },
+    "ufo-bottom-right": { x: 115, y:  58 }, // off-screen right
+    "orb-center":       { x:  18, y:  22 },
+  },
+  zambu: {
+    "ufo-top-left":     { x: -25, y:   9 }, // off-screen left
+    "ufo-top-right":    { x:  85, y:   6 },
+    "ufo-bottom-left":  { x:   7, y:  68 },
+    "ufo-bottom-right": { x:  86, y:  20 },
+    "orb-center":       { x:  50, y: -25 }, // off-screen top
+  },
+  guardians: {
+    "ufo-top-left":     { x:   8, y:   8 },
+    "ufo-top-right":    { x:  88, y:  11 },
+    "ufo-bottom-left":  { x: -25, y:  66 }, // off-screen left
+    "ufo-bottom-right": { x:  88, y:  22 },
+    "orb-center":       { x:  50, y: -25 }, // off-screen top
+  },
+  market: {
+    "ufo-top-left":     { x: -25, y:  10 }, // off-screen left
+    "ufo-top-right":    { x:  86, y:   7 },
+    "ufo-bottom-left":  { x:   6, y:  66 },
+    "ufo-bottom-right": { x: 115, y:  16 }, // off-screen right
+    "orb-center":       { x:  22, y:  26 },
+  },
+};
+
+let _ufoCachedSection = null;
+let _ufoCachedNodes   = null;
+function updateUfoTransformsForPager(pager) {
+  if (!pager || !pager.isConnected) return;
+  const section = pager.closest(".section--multi-hero");
+  if (!section) return;
+  // Cache the UFO node list per section so the per-frame loop avoids
+  // re-querying the DOM 60-120 times a second.
+  if (_ufoCachedSection !== section) {
+    _ufoCachedSection = section;
+    _ufoCachedNodes = Array.from(section.querySelectorAll(".hero-section-ufo"));
+  }
+  if (!_ufoCachedNodes.length) return;
+  const w = pager.clientWidth || 1;
+  const sl = Math.abs(pager.scrollLeft);
+  const idxF = sl / w;
+  const lowIdx = Math.max(0, Math.floor(idxF));
+  const highIdx = Math.min(pager.children.length - 1, lowIdx + 1);
+  const t = Math.min(1, Math.max(0, idxF - lowIdx));
+  const lowStage  = pager.children[lowIdx]?.dataset.stage  || "all";
+  const highStage = pager.children[highIdx]?.dataset.stage || lowStage;
+  const lo = UFO_LAYOUT[lowStage];
+  const hi = UFO_LAYOUT[highStage];
+  if (!lo || !hi) return;
+  for (const node of _ufoCachedNodes) {
+    const key = node.dataset.ufoKey;
+    const a = lo[key]; const b = hi[key];
+    if (!a || !b) continue;
+    const x = a.x + (b.x - a.x) * t;
+    const y = a.y + (b.y - a.y) * t;
+    node.style.transform = `translate3d(${x.toFixed(2)}vw, ${y.toFixed(2)}vh, 0)`;
+  }
 }
 
 function heroPanelMain() {
@@ -2327,8 +2413,18 @@ function buildReel() {
   // The live-tracker cache holds direct DOM refs that are now detached.
   // Drop it so the next swipe rebuilds it against the freshly-rendered DOM.
   liveTrackingCache = null;
+  // UFO node cache is also pointing at detached nodes — drop it so the
+  // next updateUfoTransformsForPager rebuilds against the new section.
+  _ufoCachedSection = null;
+  _ufoCachedNodes   = null;
   refreshSectionCache();
   wireHeroPager();
+  // Apply initial UFO transforms so the 2 offscreen UFOs for the
+  // current stage start out of frame on first paint, not at (0, 0).
+  requestAnimationFrame(() => {
+    const pager = document.getElementById("hero-pager");
+    if (pager) updateUfoTransformsForPager(pager);
+  });
   if (typeof syncHeroAutoplayToggleUI === "function") syncHeroAutoplayToggleUI();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
@@ -2537,6 +2633,12 @@ function startLiveTracking(pager) {
   const tick = () => {
     if (!liveTrackingPager) { liveTrackingRaf = null; return; }
     applyDotsForPager(liveTrackingPager);
+    // Sync UFO transforms to scroll position so the in/out slide of
+    // the 2 offscreen UFOs (and the small drift of the 3 onscreen
+    // ones) tracks the finger 1:1, not a delayed settle.
+    if (liveTrackingPager === document.getElementById("hero-pager")) {
+      updateUfoTransformsForPager(liveTrackingPager);
+    }
     liveTrackingRaf = requestAnimationFrame(tick);
   };
   liveTrackingRaf = requestAnimationFrame(tick);
@@ -2585,6 +2687,9 @@ reel.addEventListener("scroll", e => {
   pingLiveTracking();
   // Apply once immediately for the case where the loop is just spinning up.
   applyDotsForPager(pager);
+  if (pager === document.getElementById("hero-pager")) {
+    updateUfoTransformsForPager(pager);
+  }
 }, true);
 
 // Settle handler: if the pager landed on a clone, instant-jump to the
