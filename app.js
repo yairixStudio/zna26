@@ -3174,15 +3174,12 @@ function setupPanelPullToNavigate(panel) {
   // next artist. This stays set across the whole gesture.
   let innerScrollable = null;
   function findInnerScrollable(target) {
-    let el = target;
-    while (el && el !== panel && el.nodeType === 1) {
-      const style = window.getComputedStyle(el);
-      const oy = style.overflowY;
-      if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) {
-        return el;
-      }
-      el = el.parentElement;
-    }
+    // The only overflow-y:auto descendant a .panel actually contains is
+    // .bio-text. closest() is far cheaper than walking each parent through
+    // window.getComputedStyle.
+    const el = target?.closest?.(".bio-text");
+    if (!el || el === panel) return null;
+    if (el.scrollHeight > el.clientHeight + 1) return el;
     return null;
   }
 
@@ -3441,23 +3438,27 @@ let wheelAccumY = 0;
 let wheelQuietTimer = null;
 let wheelHardLockUntil = 0;
 
-// Walk up from `start` looking for an ancestor with overflow-y:auto/scroll
-// that can still consume scroll in the requested direction (deltaY > 0 →
-// downward; < 0 → upward). Used to keep the reel-level wheel router from
-// hijacking scroll that the bio-text (or any nested scrollable) is still
-// able to absorb.
+// Walk up from `start` looking for a scrollable ancestor that can still
+// consume scroll in the requested direction (deltaY > 0 → downward;
+// < 0 → upward). Used to keep the reel-level wheel router from hijacking
+// scroll that the bio-text (or any panel) is still able to absorb.
+//
+// Inside the reel, only `.bio-text` and `.panel` have overflow-y:auto
+// (verified against styles.css). closest() jumps straight to the nearest
+// match instead of walking each parent through window.getComputedStyle —
+// the old code paid for a style recalc on every ancestor on every wheel
+// tick, which on desktop trackpads is ~30-60 times per gesture.
+const SCROLLABLE_ANCESTOR_SELECTOR = ".bio-text, .panel";
 function findScrollableAncestor(start, deltaY) {
-  let el = start;
-  while (el && el !== reel && el.nodeType === 1) {
-    const style = window.getComputedStyle(el);
-    const oy = style.overflowY;
-    if ((oy === "auto" || oy === "scroll") && el.scrollHeight > el.clientHeight + 1) {
+  let el = start?.closest?.(SCROLLABLE_ANCESTOR_SELECTOR);
+  while (el && el !== reel) {
+    if (el.scrollHeight > el.clientHeight + 1) {
       const atTop = el.scrollTop <= 0;
       const atBottom = el.scrollTop >= el.scrollHeight - el.clientHeight - 1;
       if (deltaY > 0 && !atBottom) return el;
       if (deltaY < 0 && !atTop) return el;
     }
-    el = el.parentElement;
+    el = el.parentElement?.closest?.(SCROLLABLE_ANCESTOR_SELECTOR) || null;
   }
   return null;
 }
