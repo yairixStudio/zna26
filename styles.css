@@ -521,47 +521,98 @@ body.has-mini-player .hero-dots {
   opacity: 0.92;
   animation: zna-float-decor var(--float-duration, 6.8s) ease-in-out infinite;
   animation-delay: var(--float-delay, 0s);
+  /* When the section's data-stage attribute flips (RAF tracker in
+     applyDotsForPager — runs every frame while the hero-pager scrolls),
+     the per-stage rule blocks below switch the UFO to a new safe zone.
+     This transition makes that switch read as a smooth float, timed to
+     roughly match the browser's scroll-snap settle (~300-450 ms). */
+  transition: top 0.45s ease-out, left 0.45s ease-out, right 0.45s ease-out;
 }
 
+/* Each UFO keeps its identity (size + float cadence). The anchor values
+   live in the per-stage rule blocks further down so each entity drifts
+   to a new spot when the active hero panel changes. */
 .hero-section-ufo--ufo-top-left {
-  top: 9vh;
-  left: 4vw;
   width: clamp(28px, 5vw, 44px);
   --float-duration: 7.8s;
   --float-delay: -1.4s;
 }
 
 .hero-section-ufo--ufo-top-right {
-  top: 13vh;
-  right: 5vw;
   width: clamp(30px, 5.4vw, 48px);
   --float-duration: 8s;
   --float-delay: -1s;
 }
 
 .hero-section-ufo--ufo-bottom-left {
-  bottom: 20vh;
-  left: 5vw;
   width: clamp(32px, 5.8vw, 50px);
   --float-duration: 8.4s;
   --float-delay: -3s;
 }
 
 .hero-section-ufo--ufo-bottom-right {
-  bottom: 24vh;
-  right: 4vw;
   width: clamp(28px, 5vw, 44px);
   --float-duration: 7.6s;
   --float-delay: -2.7s;
 }
 
 .hero-section-ufo--orb-center {
-  top: 32vh;
-  right: 1vw;
   width: clamp(14px, 2.4vw, 22px);
   opacity: 0.85;
   --float-duration: 6.9s;
   --float-delay: -3.5s;
+}
+
+/* ===== Per-stage UFO parking spots =====
+   Each UFO keeps the same anchor properties (top + left  OR  top + right)
+   across every stage so the CSS transition can interpolate between
+   values smoothly — mixing `top`/`bottom` or `left`/`right` would force
+   one side to `auto` mid-transition and visibly teleport.
+
+   Safe-zone constraints respected:
+     · Main (`all`): tallest stack (logo scene + tagline + meta +
+       live-status + pill + disclaimer), so UFOs hug the top corners,
+       sit alongside the logo scene where the side corridor is widest,
+       and the orb tucks into the empty band between the disclaimer
+       end and the dots strip.
+     · Stage panels (retro/zambu/guardians/market): shorter central
+       stack but `.hero-stage-element` background artwork occupies the
+       bottom-right (~bottom 0 to top 60vh, right edge 0–35vw), so the
+       "bottom-right" UFO is LIFTED to the top-right corner and the
+       "bottom-left" sits well clear of both the artwork and the stack. */
+
+.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-top-left     { top: 5vh;  left: 5vw; }
+.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-top-right    { top: 8vh;  right: 5vw; }
+.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-bottom-left  { top: 28vh; left: 3vw; }
+.section--multi-hero[data-stage="all"] .hero-section-ufo--ufo-bottom-right { top: 38vh; right: 3vw; }
+.section--multi-hero[data-stage="all"] .hero-section-ufo--orb-center       { top: 78vh; left: 50vw; }
+
+.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-top-left     { top: 7vh;  left: 6vw; }
+.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-top-right    { top: 10vh; right: 7vw; }
+.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-bottom-left  { top: 62vh; left: 5vw; }
+.section--multi-hero[data-stage="retro"] .hero-section-ufo--ufo-bottom-right { top: 14vh; right: 4vw; }
+.section--multi-hero[data-stage="retro"] .hero-section-ufo--orb-center       { top: 22vh; left: 16vw; }
+
+.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-top-left     { top: 9vh;  left: 4vw; }
+.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-top-right    { top: 6vh;  right: 5vw; }
+.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-bottom-left  { top: 70vh; left: 7vw; }
+.section--multi-hero[data-stage="zambu"] .hero-section-ufo--ufo-bottom-right { top: 18vh; right: 5vw; }
+.section--multi-hero[data-stage="zambu"] .hero-section-ufo--orb-center       { top: 26vh; left: 22vw; }
+
+.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-top-left     { top: 6vh;  left: 8vw; }
+.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-top-right    { top: 11vh; right: 4vw; }
+.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-bottom-left  { top: 66vh; left: 4vw; }
+.section--multi-hero[data-stage="guardians"] .hero-section-ufo--ufo-bottom-right { top: 22vh; right: 6vw; }
+.section--multi-hero[data-stage="guardians"] .hero-section-ufo--orb-center       { top: 20vh; left: 28vw; }
+
+.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-top-left     { top: 10vh; left: 3vw; }
+.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-top-right    { top: 7vh;  right: 6vw; }
+.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-bottom-left  { top: 68vh; left: 6vw; }
+.section--multi-hero[data-stage="market"] .hero-section-ufo--ufo-bottom-right { top: 16vh; right: 4vw; }
+.section--multi-hero[data-stage="market"] .hero-section-ufo--orb-center       { top: 24vh; left: 18vw; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-section-ufo { transition: none; }
 }
 
 @keyframes zna-float-main {
@@ -2351,9 +2402,9 @@ body.has-mini-player .panel {
 /* ===== Top bar: search left · ZNA brand center · stage right ===== */
 .top-bar {
   position: fixed;
-  top: 14px;
-  left: 14px;
-  right: 14px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 25;
   display: flex;
   flex-wrap: nowrap;
@@ -2446,7 +2497,7 @@ body.has-mini-player .panel {
   justify-content: center;
   background: transparent;
   border: none;
-  padding: 8px;
+  padding: 8px 4px;
   color: var(--text);
   cursor: pointer;
   font-family: inherit;
@@ -2473,7 +2524,7 @@ body.has-mini-player .panel {
    The drop-shadow on .top-bar-btn keeps the text + glyph readable
    over bright hero gradients. */
 .stage-select-trigger.top-bar-btn {
-  padding: 6px 10px;
+  padding: 6px 4px;
   border: none;
   border-radius: 0;
   font-size: 13px;
@@ -2563,8 +2614,8 @@ body.is-on-main-hero .top-bar-center {
 }
 
 @media (max-width: 480px) {
-  .stage-select-trigger { padding: 10px 12px; font-size: 12px; max-width: 32vw; }
-  .top-bar { gap: 6px; top: 10px; left: 10px; right: 10px; }
+  .stage-select-trigger { padding: 10px 6px; font-size: 12px; max-width: 32vw; }
+  .top-bar { gap: 6px; top: 0; left: 0; right: 0; }
   .top-bar-side { gap: 6px; }
 }
 
@@ -2584,6 +2635,16 @@ body.is-on-main-hero .top-bar-center {
 
 .stage-select.is-open .stage-select-trigger svg {
   transform: rotate(180deg);
+}
+
+/* Hebrew typography pass: the Latin defaults (weight 700 + 0.3px tracking)
+   give Heebo a heavy, spread-out feel on short labels like "הכל". Match
+   the cleaner .hero-tagline body voice — weight 500, no tracking — so the
+   header label reads as a calm chip rather than a bold callout. */
+:lang(he) .stage-select-trigger,
+:lang(he) .stage-select-trigger > span {
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .stage-select-menu {
@@ -4190,8 +4251,8 @@ body.is-on-main-hero .top-bar-center {
   .mini-player-next { display: none; }
 
   /* Top bar tighter */
-  .top-bar { top: 8px; left: 8px; right: 8px; }
-  .stage-select-trigger { padding: 8px 12px; font-size: 12px; max-width: 28vw; }
+  .top-bar { top: 0; left: 0; right: 0; }
+  .stage-select-trigger { padding: 8px 6px; font-size: 12px; max-width: 28vw; }
 }
 
 /* Very short landscape (e.g. iPhone Pro Max landscape ~414px high stays
@@ -4315,6 +4376,16 @@ body.is-on-main-hero .top-bar-center {
    left and you get "אמנים +N" visually = "+N אמנים" read RTL, which feels
    inverted to a native reader. */
 :lang(he) .hero-artists-count { direction: rtl; }
+
+/* Hebrew typography pass for the artists pill: 700 + 0.2px tracking reads
+   as a heavy button label on Hebrew. Match the .hero-tagline body voice —
+   weight 500, no tracking — so "7+ אומנים" feels like the surrounding hero
+   copy rather than a separate bold chip. */
+:lang(he) .hero-artists-pill,
+:lang(he) .hero-artists-count {
+  font-weight: 500;
+  letter-spacing: 0;
+}
 
 /* ===== Artist-list overlay =====
    Same visual language as the favorites overlay (glass panel, big
