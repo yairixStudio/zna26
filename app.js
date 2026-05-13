@@ -2184,6 +2184,9 @@ function buildReel() {
   const list = getFilteredArtists();
   const artistsHtml = renderArtistSections(list);
   reel.innerHTML = heroHtml + artistsHtml;
+  // The live-tracker cache holds direct DOM refs that are now detached.
+  // Drop it so the next swipe rebuilds it against the freshly-rendered DOM.
+  liveTrackingCache = null;
   wireHeroPager();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
@@ -2260,16 +2263,50 @@ const supportsScrollend = "onscrollend" in window;
 let liveTrackingPager = null;
 let liveTrackingRaf = null;
 let liveTrackingStopTimer = null;
+// Per-pager cache for the RAF live-tracker. The hot path runs at 60-120fps
+// during every horizontal swipe, so re-running querySelectorAll for the dot
+// strip + reel.querySelector for the hero section every frame burned a real
+// amount of CPU on mid-tier Android. The cache is keyed by pager identity:
+// when buildReel re-renders, the new pager is a different object and the
+// stale cache is dropped automatically on the next call.
+let liveTrackingCache = null;
+
+function getPagerCache(pager) {
+  if (liveTrackingCache && liveTrackingCache.pager === pager && pager.isConnected) {
+    return liveTrackingCache;
+  }
+  if (pager.classList.contains("hero-pager")) {
+    const dotsEl = document.getElementById("hero-dots");
+    liveTrackingCache = {
+      pager,
+      kind: "hero",
+      dotEls: dotsEl ? Array.from(dotsEl.querySelectorAll(".hero-dot")) : [],
+      heroSec: reel.querySelector('[data-section="hero"]'),
+      lastStage: null,
+    };
+  } else {
+    const section = pager.closest('[data-section="artist"]');
+    liveTrackingCache = {
+      pager,
+      kind: "artist",
+      section,
+      dotEls: section ? Array.from(section.querySelectorAll(".dot")) : [],
+      lastRealIdx: -1,
+    };
+  }
+  return liveTrackingCache;
+}
 
 function applyDotsForPager(pager) {
   if (!pager || !pager.isConnected) return;
+  const cache = getPagerCache(pager);
 
   // Hero pager: same live-tracking treatment as the artist pagers — a RAF
   // loop polls scrollLeft and we update the active stage dot + bg tint
   // every frame, so the dot keeps up with the finger. The HEAVY work
   // (activeStageFilter mutation + rerendering artist sections) still
   // debounces in wireHeroPager so the rerender doesn't fire mid-flick.
-  if (pager.classList.contains("hero-pager")) {
+  if (cache.kind === "hero") {
     const wH = pager.clientWidth || 1;
     const slH = Math.abs(pager.scrollLeft);
     const idxH = Math.floor((slH + wH * 0.3) / wH);
@@ -2280,15 +2317,14 @@ function applyDotsForPager(pager) {
     const child = pager.children[idxH];
     const stage = child?.dataset.stage;
     if (!stage) return;
-    const dotsEl = document.getElementById("hero-dots");
-    if (dotsEl) {
-      dotsEl.querySelectorAll(".hero-dot").forEach(d => {
-        d.classList.toggle("active", d.dataset.stage === stage);
-      });
+    if (stage === cache.lastStage) return;
+    cache.lastStage = stage;
+    const dotEls = cache.dotEls;
+    for (let i = 0; i < dotEls.length; i++) {
+      dotEls[i].classList.toggle("active", dotEls[i].dataset.stage === stage);
     }
     if (stageColor[stage]) bgScene.style.background = stageColor[stage];
-    const sec = reel.querySelector('[data-section="hero"]');
-    if (sec) sec.dataset.stage = stage;
+    if (cache.heroSec) cache.heroSec.dataset.stage = stage;
     // Snap the top-bar stage-dropdown trigger label to the new stage
     // immediately (frame-by-frame, same cadence as the hero dots). The
     // heavy work — flipping activeStageFilter and re-rendering the
@@ -2300,7 +2336,7 @@ function applyDotsForPager(pager) {
     return;
   }
 
-  const section = pager.closest('[data-section="artist"]');
+  const section = cache.section;
   if (!section) return;
   const w = pager.clientWidth || 1;
   // Use a slightly biased index: switch to the next dot once the user has
@@ -2312,7 +2348,12 @@ function applyDotsForPager(pager) {
   const child = pager.children[idx];
   if (!child) return;
   const realIdx = +child.dataset.realIdx || 0;
-  section.querySelectorAll(".dot").forEach((d, i) => d.classList.toggle("active", i === realIdx));
+  if (realIdx === cache.lastRealIdx) return;
+  cache.lastRealIdx = realIdx;
+  const dotEls = cache.dotEls;
+  for (let i = 0; i < dotEls.length; i++) {
+    dotEls[i].classList.toggle("active", i === realIdx);
+  }
   if (section.classList.contains("is-active")) {
     verticalProgress?.classList.toggle("is-hidden", realIdx > 0);
     // Update URL panel param when the user lands on a different panel.
@@ -2338,6 +2379,7 @@ function pingLiveTracking() {
   clearTimeout(liveTrackingStopTimer);
   liveTrackingStopTimer = setTimeout(() => {
     liveTrackingPager = null;
+    liveTrackingCache = null;
     if (liveTrackingRaf) {
       cancelAnimationFrame(liveTrackingRaf);
       liveTrackingRaf = null;
