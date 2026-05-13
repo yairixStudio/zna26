@@ -1554,6 +1554,12 @@ function rerenderArtistsBelowHero() {
   const tpl = document.createElement("template");
   tpl.innerHTML = renderArtistSections(list);
   heroSec.parentElement.append(...tpl.content.children);
+  // Refresh the cached section list before any downstream consumer
+  // (buildVerticalProgress, observeSections, observeArtistInitialScroll)
+  // reads from it — the old refs were just detached above.
+  refreshSectionCache();
+  // Live-tracker cache may also hold detached artist refs.
+  liveTrackingCache = null;
   buildVerticalProgress();
   observeSections();
   observeArtistInitialScroll();
@@ -1561,7 +1567,10 @@ function rerenderArtistsBelowHero() {
   // Re-attach the desktop wheel clamp to the freshly-rendered pagers so
   // trackpad gestures still resolve to one panel per gesture after a
   // filter change.
-  reel.querySelectorAll('[data-section="artist"] .pager').forEach(p => installWheelClamp(p, "x"));
+  for (let i = 0; i < cachedArtistSections.length; i++) {
+    const p = cachedArtistSections[i].querySelector(".pager");
+    if (p) installWheelClamp(p, "x");
+  }
 }
 
 function multiHeroSection() {
@@ -2299,8 +2308,21 @@ setTimeout(() => hideBootLoader(), 6000);
 // wheel / keydown), each of which fires many times per second during any
 // gesture.
 let cachedSections = [];
+// Artist-only subset of cachedSections, kept in sync. Used by hot paths
+// that reset every other pager whenever the active section changes
+// (setActiveSection) and by observeArtistInitialScroll.
+let cachedArtistSections = [];
 function refreshSectionCache() {
-  cachedSections = reel ? Array.from(reel.querySelectorAll(".section")) : [];
+  if (!reel) { cachedSections = []; cachedArtistSections = []; return; }
+  cachedSections = Array.from(reel.querySelectorAll(".section"));
+  cachedArtistSections = cachedSections.filter(s => s.dataset.section === "artist");
+}
+// Vertical-progress dots are emitted by buildVerticalProgress (one per
+// section). setActiveSection used to re-querySelectorAll them on every
+// section change.
+let cachedVDots = [];
+function refreshVDotCache() {
+  cachedVDots = verticalProgress ? Array.from(verticalProgress.querySelectorAll(".v-dot")) : [];
 }
 
 const pagerSettleTimers = new WeakMap();
@@ -2746,6 +2768,7 @@ function buildVerticalProgress() {
     return `<button class="v-dot ${i === 0 ? "active" : ""}" data-vidx="${i}" aria-label="${escapeHtml(label)}"></button>`;
   });
   verticalProgress.innerHTML = items.join("");
+  refreshVDotCache();
 }
 
 // Vertical-progress click goes through the shared handleStripClick handler
@@ -2808,9 +2831,9 @@ function setActiveSection(section) {
   }
 
   // Vertical dots
-  verticalProgress.querySelectorAll(".v-dot").forEach((d, i) => {
-    d.classList.toggle("active", i === idx);
-  });
+  for (let i = 0; i < cachedVDots.length; i++) {
+    cachedVDots[i].classList.toggle("active", i === idx);
+  }
 
   // Hide vertical dots while we are on a hero section OR on any non-first
   // panel of an artist. With the carousel pattern, scroll-position index 1
@@ -2832,17 +2855,18 @@ function setActiveSection(section) {
   // discography clone). That way, vertical navigation always lands the user
   // on the next/previous artist's main hero card, never mid-panel and never
   // on a clone that looks like discography.
-  reel.querySelectorAll('[data-section="artist"]').forEach(s => {
-    if (s === section) return;
+  for (let i = 0; i < cachedArtistSections.length; i++) {
+    const s = cachedArtistSections[i];
+    if (s === section) continue;
     const p = s.querySelector(".pager");
-    if (!p) return;
+    if (!p) continue;
     const realFirst = p.children[1];
     if (realFirst && Math.abs(p.scrollLeft - realFirst.offsetLeft) > 4) {
       p.scrollTo({ left: realFirst.offsetLeft, behavior: "auto" });
     }
     // Make sure the init flag is set so the heroInitObserver doesn't override.
     s.dataset.scrollInit = "1";
-  });
+  }
   // Also: when the new active section is itself an artist, ensure it sits on
   // the real hero (not a clone) — covers the "scrolled into existing
   // mid-panel position" edge case.
@@ -3332,9 +3356,10 @@ const heroInitObserver = new IntersectionObserver(entries => {
 }, { root: reel, threshold: 0, rootMargin: "300px" });
 
 function observeArtistInitialScroll() {
-  reel.querySelectorAll('[data-section="artist"]').forEach(s => {
+  for (let i = 0; i < cachedArtistSections.length; i++) {
+    const s = cachedArtistSections[i];
     if (s.dataset.scrollInit !== "1") heroInitObserver.observe(s);
-  });
+  }
 }
 
 // YouTube thumbnail lazy-upgrade. With ~89 artists × multiple tracks each,
@@ -3369,12 +3394,13 @@ function observeYTThumbs() {
   if (!ytThumbObserver) {
     // Old browsers — just upgrade everything synchronously and trust the
     // browser's native loading="lazy" to throttle.
-    reel.querySelectorAll('[data-section="artist"]').forEach(upgradeYTThumbs);
+    for (let i = 0; i < cachedArtistSections.length; i++) upgradeYTThumbs(cachedArtistSections[i]);
     return;
   }
-  reel.querySelectorAll('[data-section="artist"]').forEach((s) => {
+  for (let i = 0; i < cachedArtistSections.length; i++) {
+    const s = cachedArtistSections[i];
     if (s.dataset.ytThumbsUpgraded !== "1") ytThumbObserver.observe(s);
-  });
+  }
 }
 
 // Flash a single arrow-key tile in the bottom-right hint cluster so the
