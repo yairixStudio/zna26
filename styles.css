@@ -1580,6 +1580,18 @@ body.has-mini-player .hero-dots {
   unicode-bidi: isolate;
   text-align: start;
 }
+/* The matching LTR rule is needed on iOS Safari — without it the
+   inherited `unicode-bidi: plaintext` from the global utility class
+   above causes the box direction to be inferred from the first strong
+   character in the bio text, which sometimes resolves to RTL and
+   moves the yellow scrollbar to the LEFT side even though the UI is
+   English. Setting `direction: ltr` + `unicode-bidi: isolate`
+   explicitly anchors the box (and therefore the scrollbar) to LTR. */
+.bio-text[dir="ltr"] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: start;
+}
 .bio-text::-webkit-scrollbar {
   width: 6px;
 }
