@@ -4371,14 +4371,11 @@ body.is-on-main-hero .top-bar-center {
 .hero-artists-flyout {
   /* Fixed to the viewport so vertical centering is unambiguous (no
      reliance on the hero panel's intrinsic padding/flex centering).
-     Note: `.hero-pager` has `will-change: transform`, so the spec
-     makes IT the containing block for this fixed-position element
-     (not the viewport). Hero-pager's padding box happens to equal
-     the section box which equals the viewport, so 50%/50% still
-     resolves to screen-center — but z-index of this flyout only
-     reaches within hero-pager's stacking context, which is why the
-     section-level UFOs / dots / hint need to be faded explicitly
-     while it's open (rule further below). */
+     openPillFlyout portals the flyout to <body> on open so this
+     `position: fixed` resolves against the actual viewport rather
+     than .hero-pager's transformed coordinate system — that's also
+     what lets `backdrop-filter` blur the page gradient cleanly here
+     (it would no-op inside a transformed ancestor). */
   position: fixed;
   left: 50%;
   top: 50%;
@@ -4391,16 +4388,12 @@ body.is-on-main-hero .top-bar-center {
   flex-direction: column;
   gap: 8px;
   padding: 10px 10px 12px;
-  /* Solid dark glass instead of 7% white over transparent — backdrop-
-     filter inside a transformed ancestor often degrades to a no-op,
-     leaving the original chrome effectively invisible against the
-     page gradient. The darker fill reads as a deliberate popover
-     even without the blur, and the box-shadow lifts it off the
-     background convincingly. */
-  background: rgba(10, 5, 36, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  /* Clean glass — quiet white wash, hairline border, gentle blur, no
+     heavy shadow. Reads as the same chrome as the pill itself,
+     just at a larger size. */
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 22px;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   opacity: 0;
