@@ -260,7 +260,12 @@ a { color: var(--sun-yellow); }
 
 .hero-dots {
   position: absolute;
-  bottom: 90px;
+  /* Anchor near the bottom of the section, just above the dive-hint
+     arrow (which sits at bottom: max(16px, env(safe-area-inset-bottom))
+     plus its ~50 px arrow + label = ~66 px of bottom real estate). 70 px
+     places the dot strip immediately above the hint without overlap and
+     reads as "near the bottom edge" the way the user expects. */
+  bottom: 70px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -398,7 +403,7 @@ a { color: var(--sun-yellow); }
 }
 
 body.has-mini-player .hero-dots {
-  bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 22px);
+  bottom: calc(70px + env(safe-area-inset-bottom, 0px) + 12px);
 }
 
 .hero-hint {
@@ -3489,11 +3494,11 @@ body.is-on-main-hero .top-bar-center {
 .countdown-timer--hero .countdown-sep   { font-size: 13px; }
 .countdown-timer--hero .countdown-label { font-size: 7.5px; letter-spacing: 0.8px; margin-top: 2px; }
 
-.countdown-timer--mini { gap: 5px; margin-top: 0; }
-.countdown-timer--mini .countdown-unit  { min-width: 44px; padding: 6px 9px 5px; border-radius: 7px; }
-.countdown-timer--mini .countdown-value { font-size: 20px; }
-.countdown-timer--mini .countdown-sep   { font-size: 18px; }
-.countdown-timer--mini .countdown-label { font-size: 9px; letter-spacing: 1.2px; margin-top: 3px; }
+.countdown-timer--mini { gap: 4px; margin-top: 0; }
+.countdown-timer--mini .countdown-unit  { min-width: 34px; padding: 4px 7px 3px; border-radius: 6px; }
+.countdown-timer--mini .countdown-value { font-size: 15px; letter-spacing: 0.4px; }
+.countdown-timer--mini .countdown-sep   { font-size: 13px; }
+.countdown-timer--mini .countdown-label { font-size: 7.5px; letter-spacing: 0.9px; margin-top: 2px; }
 
 .live-status-meta {
   font-size: 12px;
