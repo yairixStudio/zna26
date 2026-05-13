@@ -4427,7 +4427,14 @@ body.is-on-main-hero .top-bar-center {
   pointer-events: none;
   transition: opacity 0.22s ease;
 }
-.hero-stack.pill-expanded .hero-artists-flyout {
+/* Flyout visibility is keyed off the aria-hidden attribute that
+   openPillFlyout / closePillFlyouts toggle. We can't rely on
+   `.hero-stack.pill-expanded .hero-artists-flyout` because the JS
+   portals the flyout to <body> when opening (so position: fixed
+   resolves against the viewport rather than the hero-pager's
+   transformed coordinate system) — at that point the flyout no
+   longer has .hero-stack as an ancestor. */
+.hero-artists-flyout[aria-hidden="false"] {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, -50%) scale(1);

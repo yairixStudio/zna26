@@ -4349,15 +4349,31 @@ function renderFlyoutList(listEl, stageId) {
 function openPillFlyout(pillEl) {
   if (!pillEl) return;
   const stack = pillEl.closest(".hero-stack");
-  const flyout = stack?.querySelector(".hero-artists-flyout");
+  // Look for the flyout INSIDE the stack first (its starting position),
+  // and fall back to a body-portaled flyout matching this stack's pill
+  // pool (rare — closePillFlyouts normally restores ownership first).
+  const pool = pillEl.dataset.artistsPool;
+  const flyout = stack?.querySelector(".hero-artists-flyout")
+    || (pool ? document.querySelector(`body > .hero-artists-flyout[data-flyout-pool="${CSS.escape(pool)}"]`) : null);
   if (!stack || !flyout) return;
-  const stageId = pillEl.dataset.artistsPool || flyout.dataset.flyoutPool || "all";
+  const stageId = pool || flyout.dataset.flyoutPool || "all";
   const listEl = flyout.querySelector("[data-flyout-list]");
   renderFlyoutList(listEl, stageId);
-  // Close any other flyout that might be open across panels.
-  document.querySelectorAll(".hero-stack.pill-expanded").forEach(s => {
-    if (s !== stack) s.classList.remove("pill-expanded");
-  });
+  // Close any other flyout (restoring portal ownership) before opening.
+  // Skip the autoplay-resume side-effect since we're about to suspend
+  // it again for this open.
+  closePillFlyouts({ skipAutoplayResume: true, exceptStack: stack });
+  // Portal to <body>. The hero-pager has `will-change: transform`,
+  // which traps `position: fixed` inside the pager's transformed
+  // coordinate system — at scrollLeft > 0 the centered flyout
+  // renders 1+ viewports off-screen instead of viewport-center.
+  // Attaching directly to <body> guarantees fixed positioning
+  // resolves against the actual viewport. Original parent is
+  // remembered on the node so closePillFlyouts can restore it.
+  if (flyout.parentElement !== document.body) {
+    flyout._flyoutHome = stack;
+    document.body.appendChild(flyout);
+  }
   stack.classList.add("pill-expanded");
   flyout.setAttribute("aria-hidden", "false");
   pillEl.setAttribute("aria-expanded", "true");
@@ -4368,19 +4384,30 @@ function openPillFlyout(pillEl) {
   if (typeof pauseHeroAutoplay === "function") pauseHeroAutoplay();
 }
 
-function closePillFlyouts() {
+function closePillFlyouts(opts = {}) {
+  const { skipAutoplayResume = false, exceptStack = null } = opts;
   const wasOpen = document.querySelector(".hero-stack.pill-expanded");
   document.querySelectorAll(".hero-stack.pill-expanded").forEach(stack => {
+    if (exceptStack && stack === exceptStack) return;
     stack.classList.remove("pill-expanded");
-    const flyout = stack.querySelector(".hero-artists-flyout");
-    const pill   = stack.querySelector(".hero-artists-pill");
-    flyout?.setAttribute("aria-hidden", "true");
+    const pill = stack.querySelector(".hero-artists-pill");
     pill?.setAttribute("aria-expanded", "false");
+  });
+  // Restore any body-portaled flyouts back to the stack they came from,
+  // and mark them hidden. Skip the one matching exceptStack (the caller
+  // is in the middle of opening it).
+  document.querySelectorAll("body > .hero-artists-flyout").forEach(flyout => {
+    if (exceptStack && flyout._flyoutHome === exceptStack) return;
+    flyout.setAttribute("aria-hidden", "true");
+    const home = flyout._flyoutHome;
+    if (home && home.isConnected) home.appendChild(flyout);
+    flyout._flyoutHome = null;
   });
   // Resume the stage auto-advance after the flyout closes, unless the
   // user explicitly turned it off via the dots toggle or they're no
   // longer parked on the hero section.
-  if (wasOpen && typeof startHeroAutoplay === "function"
+  if (!skipAutoplayResume && wasOpen
+      && typeof startHeroAutoplay === "function"
       && !heroAutoplayUserSuspended
       && getCurrentSection()?.dataset.section === "hero") {
     heroAutoplayPaused = false;
