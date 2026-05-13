@@ -19,6 +19,19 @@ const searchOverlay = document.getElementById("search-overlay");
 const searchInput = document.getElementById("search-input");
 const searchResults = document.getElementById("search-results");
 
+// Snapshot the deep-link the moment the script loads — before any
+// setActiveSection / syncUrlFromActive can blank out location.search.
+// Declared up here (not next to the rest of the URL routing block) so
+// panelHero can read it on the very first buildReel — the buildReel call
+// from applyLang fires before module-bottom statements execute, so a
+// const declared down there sits in the temporal dead zone and throws
+// "Cannot access '_initialRoute' before initialization", which used to
+// nuke the entire first render.
+const _initialRoute = (() => {
+  const sp = new URLSearchParams(location.search);
+  return { s: sp.get("s"), a: sp.get("a"), p: sp.get("p") };
+})();
+
 // ===== i18n =====
 // Three supported languages. UI defaults to English; users can switch via
 // the flag-row at the bottom of the stage dropdown menu.
@@ -79,15 +92,11 @@ const STRINGS = {
   "nav.searchArtist":  { he: "חיפוש אומן", en: "Search artist", pt: "Procurar artista" },
   "nav.backHome":      { he: "חזרה לדף הראשי", en: "Back to home", pt: "Voltar ao início" },
   "nav.language":      { he: "שפה", en: "Language", pt: "Idioma" },
-  "nav.stage":         { he: "במה", en: "Stage", pt: "Palco" },
   "nav.navigate":      { he: "ניווט לאירוע", en: "Navigate to event", pt: "Navegar até ao evento" },
   "nav.festivalMap":   { he: "מפת הפסטיבל", en: "Festival map", pt: "Mapa do festival" },
   "nav.openInWaze":    { he: "פתיחה ב-Waze", en: "Open in Waze", pt: "Abrir no Waze" },
   "nav.openInGmaps":   { he: "פתיחה ב-Google Maps", en: "Open in Google Maps", pt: "Abrir no Google Maps" },
   "nav.cancel":        { he: "ביטול", en: "Cancel", pt: "Cancelar" },
-  "nav.ytPlaylist":    { he: "פלייליסט YouTube", en: "YouTube playlist", pt: "Playlist YouTube" },
-  "nav.officialSite":  { he: "לאתר הרשמי", en: "Official site", pt: "Site oficial" },
-  "hero.actions":      { he: "פעולות", en: "Quick actions", pt: "Ações rápidas" },
 
   // Artist panels
   "panel.about":       { he: "אודות", en: "About", pt: "Sobre" },
@@ -98,7 +107,6 @@ const STRINGS = {
   "panel.discographyTop": { he: "דיסקוגרפיה נבחרת", en: "Selected discography", pt: "Discografia selecionada" },
   "panel.streaming":   { he: "סטרימינג", en: "Streaming", pt: "Streaming" },
   "panel.moreLinks":   { he: "קישורים נוספים", en: "More links", pt: "Mais ligações" },
-  "panel.label":       { he: "🎧", en: "🎧", pt: "🎧" },
   "panel.tba":         { he: "המידע יתעדכן בקרוב", en: "Information will be updated soon", pt: "Informação será atualizada em breve" },
   "panel.ariaPanelN":  { he: "פאנל", en: "Panel", pt: "Painel" },
 
@@ -108,10 +116,9 @@ const STRINGS = {
   "tracks.play":       { he: "נגן", en: "Play", pt: "Reproduzir" },
 
   // Hero
-  "hero.subtitle":     { he: "RETRO · FUTURISTIC · GATHERING", en: "RETRO · FUTURISTIC · GATHERING", pt: "RETRO · FUTURISTIC · GATHERING" },
   "hero.artistsCount": { he: "אומנים", en: "artists", pt: "artistas" },
-  "hero.diveStage":    { he: "↓ צללו לתוך הבמה", en: "↓ Dive into the stage", pt: "↓ Mergulhe no palco" },
-  "hero.swipeRightHint":{ he: "החליקו ימינה לבמות הפסטיבל →", en: "Swipe right for the festival stages →", pt: "Deslize para a direita pelos palcos →" },
+  "hero.autoplayPause": { he: "עצור מעבר אוטומטי בין במות", en: "Stop automatic stage rotation", pt: "Parar rotação automática de palcos" },
+  "hero.autoplayResume": { he: "הפעל מעבר אוטומטי בין במות", en: "Resume automatic stage rotation", pt: "Retomar rotação automática de palcos" },
   // Single-line disclaimer with an inline link to the official site. The
   // <a> markup is intentionally inline; heroPanelMain renders this string
   // without escapeHtml so the link survives. The "Official site" anchor
@@ -192,11 +199,6 @@ const STRINGS = {
   // ZNA festival meta (kept consistent across languages where natural)
   "festival.dates":    { he: "15-22 ביולי 2026", en: "15-22 July 2026", pt: "15-22 julho 2026" },
   "festival.location": { he: "אגם מונטרגיל, פורטוגל", en: "Lake Montargil, Portugal", pt: "Lago de Montargil, Portugal" },
-  "festival.description": {
-    he: "המקדש העולמי של גואה טראנס בסגנון הישן. פסטיבל דו-שנתי עם כ-5,000 משתתפים בלבד שחוגג את רוח אנג'ונה של שנות ה-90.",
-    en: "The world headquarters of old-school Goa Trance. A biennial gathering of just 5,000 attendees celebrating the spirit of '90s Anjuna.",
-    pt: "A sede mundial do Goa Trance da velha-guarda. Encontro bienal de apenas 5.000 participantes que celebra o espírito de Anjuna nos anos 90."
-  },
   // Site-purpose blurb shown under the ZNA wordmark on the main hero —
   // this is what the SITE is for, separate from FESTIVAL.description (which
   // describes the festival itself and is reused elsewhere).
@@ -208,7 +210,6 @@ const STRINGS = {
   // Tiny desktop hint that the keyboard arrow keys can navigate the reel.
   "kbHint.label": { he: "ניווט עם החיצים", en: "Arrow keys to navigate", pt: "Setas para navegar" },
   // "Random artist" button (now lives inside #artists-overlay, not the hero).
-  "hero.random": { he: "🎲 קפיצה לאומן אקראי", en: "🎲 Random", pt: "🎲 Aleatório" },
   "hero.randomLabel": { he: "קפיצה לאומן אקראי", en: "Jump to a random artist", pt: "Saltar para um artista aleatório" },
   // Avatar-stack pill on each hero panel: tooltip + modal title.
   "hero.viewArtists": { he: "ראו את רשימת האומנים", en: "See the artist list", pt: "Ver a lista de artistas" },
@@ -393,7 +394,10 @@ function applyLang(lang) {
   const searchInput = document.getElementById("search-input");
   if (searchBtn) { searchBtn.title = t("nav.searchArtist"); searchBtn.setAttribute("aria-label", t("nav.searchArtist")); }
   if (logoBtn) { logoBtn.title = t("nav.backHome"); logoBtn.setAttribute("aria-label", t("nav.backHome")); }
-  if (searchInput) searchInput.placeholder = t("search.placeholder");
+  if (searchInput) {
+    searchInput.placeholder = t("search.placeholder");
+    searchInput.dir = lang === "he" ? "rtl" : "ltr";
+  }
   // Re-render the entire reel so every translated string refreshes —
   // but capture where the user currently is first, so we can put them
   // back on the same section + panel after the rebuild.
@@ -415,6 +419,12 @@ function applyLang(lang) {
   // Keyboard-arrows hint sits outside the reel; refresh its label too.
   const kbLabel = document.getElementById("kb-hint-label");
   if (kbLabel) kbLabel.textContent = t("kbHint.label");
+  const artistsRandomBtnLang = document.getElementById("artists-random");
+  if (artistsRandomBtnLang) {
+    const tip = t("hero.randomLabel");
+    artistsRandomBtnLang.setAttribute("aria-label", tip);
+    artistsRandomBtnLang.title = tip;
+  }
 }
 
 document.documentElement.lang = currentLang;
@@ -1344,14 +1354,14 @@ function heroLogoScene() {
 function heroPanelMain() {
   return `
     <div class="hero-panel hero-panel--main" data-stage="all">
-      ${heroLogoScene()}
-      <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
-      <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
-      <div class="hero-stats-group">
+      <div class="hero-stack">
+        ${heroLogoScene()}
+        <p class="hero-tagline">${escapeHtml(t("hero.sitePurpose"))}</p>
+        <div class="hero-meta" dir="${currentLang === "he" ? "rtl" : "ltr"}">${escapeHtml(t("festival.dates"))} · ${escapeHtml(t("festival.location"))}</div>
         ${liveStatusCard("all")}
         ${heroArtistsPill("all")}
+        <p class="hero-disclaimer">${t("hero.disclaimer")}</p>
       </div>
-      <p class="hero-disclaimer">${t("hero.disclaimer")}</p>
     </div>
   `;
 }
@@ -1371,28 +1381,22 @@ function heroPanelStage(stage) {
   return `
     <div class="hero-panel hero-panel--${escapeHtml(stage.id)}" data-stage="${escapeHtml(stage.id)}">
       ${elementMarkup}
-      <button class="hero-icon-action hero-icon-action--top hero-nav-diamond" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
-        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="nav-grad-${escapeHtml(stage.id)}" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%"  stop-color="var(--hero-text-1)"/>
-              <stop offset="55%" stop-color="var(--hero-text-2)"/>
-              <stop offset="100%" stop-color="var(--hero-text-3)"/>
-            </linearGradient>
-          </defs>
-          <!-- Double-right chevron (flaticon-style) drawn as two thick
-               > strokes, both painted with the per-stage gradient. -->
-          <path d="M6 5 L13 12 L6 19"
-                stroke="url(#nav-grad-${escapeHtml(stage.id)})"
-                stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M12 5 L19 12 L12 19"
-                stroke="url(#nav-grad-${escapeHtml(stage.id)})"
-                stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
-      <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
-      <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
-      <div class="hero-stats-group">
+      <div class="hero-stack">
+        <button class="hero-icon-action hero-icon-action--top hero-nav-maps" id="hero-map-btn-${escapeHtml(stage.id)}" type="button" data-hero-map title="${escapeHtml(t("nav.festivalMap"))}" aria-label="${escapeHtml(t("nav.festivalMap"))}">
+          <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true">
+            <defs>
+              <linearGradient id="nav-grad-${escapeHtml(stage.id)}" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%"  stop-color="var(--hero-text-1)"/>
+                <stop offset="55%" stop-color="var(--hero-text-2)"/>
+                <stop offset="100%" stop-color="var(--hero-text-3)"/>
+              </linearGradient>
+            </defs>
+            <!-- Same silhouette as Google Maps "directions" tile (diamond + arrow). -->
+            <path fill="url(#nav-grad-${escapeHtml(stage.id)})" d="m21.41 10.59-7.99-8c-.78-.78-2.05-.78-2.83 0l-8.01 8c-.78.78-.78 2.05 0 2.83l8.01 8c.78.78 2.05.78 2.83 0l7.99-8c.79-.79.79-2.05 0-2.83zM13.5 14.5V12H10v3H8v-4c0-.55.45-1 1-1h4.5V7.5L17 11l-3.5 3.5z"/>
+          </svg>
+        </button>
+        <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
+        <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
         ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
         ${heroArtistsPill(stage.id)}
       </div>
@@ -1487,12 +1491,8 @@ function wireHeroPager() {
         rerenderArtistsBelowHero();
         if (typeof syncUrlFromActive === "function") syncUrlFromActive();
       }
-      // Keep is-on-main-hero in sync with horizontal swipes too —
-      // setActiveSection only fires on vertical section changes, so
-      // without this the logo wouldn't switch sizes while the user
-      // swiped left/right between Main and the stage heroes.
-      document.body.classList.toggle("is-on-main-hero",
-        getCurrentSection()?.dataset.section === "hero" && activeStageFilter === "all");
+      // is-on-main-hero is driven by computeIsOnMainHero() from the hero
+      // pager RAF path + reel vertical scroll — no duplicate toggle here.
       // Restart the autoplay countdown on the new stage's dot so the
       // fill always rides on whichever pill the user is currently
       // looking at. Skip while the autoplay is paused (manual gesture).
@@ -1587,12 +1587,22 @@ function multiHeroSection() {
   const cloneEnd   = injectPanelAttrs(real[0],             `data-clone="end" data-real-idx="0"`);
   const panels = cloneStart + realTagged.join("") + cloneEnd;
   const dots = HERO_STAGES.map((s, i) => `<button class="hero-dot ${activeStageFilter === s.id ? "active" : ""}" data-stage="${escapeHtml(s.id)}" aria-label="${escapeHtml(s.name)}"></button>`).join("");
+  const autoplayToggle = `
+    <button type="button" class="hero-autoplay-toggle" tabindex="-1">
+      <svg class="hero-autoplay-ico hero-autoplay-ico--pause" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+        <rect x="2" y="2" width="3" height="8" rx="0.5" fill="currentColor"/>
+        <rect x="7" y="2" width="3" height="8" rx="0.5" fill="currentColor"/>
+      </svg>
+      <svg class="hero-autoplay-ico hero-autoplay-ico--play" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+        <path d="M3 2v8l7-4-7-4z" fill="currentColor"/>
+      </svg>
+    </button>`;
   // The active hero panel sets the section's stage data attribute (used for bg tint)
   const activeStage = activeStageFilter === "all" ? "retro" : activeStageFilter;
   return `
     <section class="section section--multi-hero" data-section="hero" data-stage="${escapeHtml(activeStage)}" data-real-count="${realCount}">
       <div class="hero-pager" id="hero-pager" data-real-count="${realCount}">${panels}</div>
-      <div class="hero-dots" id="hero-dots">${dots}</div>
+      <div class="hero-dots" id="hero-dots">${dots}${autoplayToggle}</div>
       <div class="hero-hint" id="hero-hint" aria-hidden="true"><span class="hero-hint-arrow">↓</span></div>
     </section>
   `;
@@ -1786,6 +1796,26 @@ function streamingLinks(a) {
   }));
 }
 
+// Hebrew letters in the Hebrew Unicode block — used for bidi on mixed
+// "notable" ledes (English album line + Hebrew clause).
+function textIncludesHebrew(s) {
+  return typeof s === "string" && /[\u0590-\u05FF]/.test(s);
+}
+
+/** One-line notable lede: RTL whenever the copy contains Hebrew; LTR-only
+ *  if it's all Latin. English-before-Hebrew gets an isolated LTR span so
+ *  the Hebrew tail reads correctly after the star. */
+function buildBioNotableLedeHtml(notableText) {
+  if (!textIncludesHebrew(notableText)) {
+    return `<p class="bio-notable-lede" dir="ltr">★ ${escapeHtml(notableText)}</p>`;
+  }
+  const idx = notableText.search(/[\u0590-\u05FF]/);
+  const inner = idx <= 0
+    ? escapeHtml(notableText)
+    : `<span dir="ltr" class="bio-notable-embed">${escapeHtml(notableText.slice(0, idx))}</span>${escapeHtml(notableText.slice(idx))}`;
+  return `<p class="bio-notable-lede" dir="rtl">★ ${inner}</p>`;
+}
+
 function panelInfo(a) {
   const links = a.links || [];
   const officialChannel = t("stream.officialChannel");
@@ -1846,7 +1876,7 @@ function panelInfo(a) {
     ? `
       <div class="info-section">
         <h3 class="info-section-title">${escapeHtml(t("panel.bio"))}</h3>
-        ${notableText ? `<p class="bio-notable-lede" dir="${currentLang === "he" ? "rtl" : "ltr"}">★ ${escapeHtml(notableText)}</p>` : ""}
+        ${notableText ? buildBioNotableLedeHtml(notableText) : ""}
         <p class="bio-text">${escapeHtml(bioText)}</p>
       </div>
     `
@@ -2250,6 +2280,7 @@ function buildReel() {
   liveTrackingCache = null;
   refreshSectionCache();
   wireHeroPager();
+  if (typeof syncHeroAutoplayToggleUI === "function") syncHeroAutoplayToggleUI();
   installSnapClamp(reel, "y");
   installSnapClamp(document.getElementById("hero-pager"), "x");
   // Desktop trackpad: clamp horizontal wheel/swipe on the hero pager too,
@@ -2420,6 +2451,9 @@ function applyDotsForPager(pager) {
     if (stageSelectLabel && stageSelectLabel.textContent !== stageLabel(stage)) {
       stageSelectLabel.textContent = stageLabel(stage);
     }
+    // Header logo duplicate: hide only on Main hero — same instant cadence
+    // as the dots (RAF), not the 160ms debounce below nor the section IO.
+    document.body.classList.toggle("is-on-main-hero", computeIsOnMainHero());
     return;
   }
 
@@ -2554,12 +2588,18 @@ function armDots(strip) {
   dotArmTimers.set(strip, setTimeout(() => {
     strip.classList.remove("is-armed");
     clearDotMagnify(strip);
+    if (strip.id === "hero-dots" && typeof syncHeroAutoplayToggleUI === "function") {
+      syncHeroAutoplayToggleUI();
+    }
     // The vertical strip auto-hides on idle. Once the arm TTL expires,
     // hand control back to the idle countdown so it can fade out again.
     if (strip.classList.contains("vertical-progress") && typeof showVDots === "function") {
       showVDots();
     }
   }, DOT_ARMED_TTL));
+  if (strip.id === "hero-dots" && typeof syncHeroAutoplayToggleUI === "function") {
+    syncHeroAutoplayToggleUI();
+  }
 }
 
 function disarmAllDots(except) {
@@ -2570,6 +2610,7 @@ function disarmAllDots(except) {
     const t = dotArmTimers.get(strip);
     if (t) { clearTimeout(t); dotArmTimers.delete(strip); }
   });
+  if (typeof syncHeroAutoplayToggleUI === "function") syncHeroAutoplayToggleUI();
 }
 
 // ===== Smart dock-style magnification for the dots strip =====
@@ -2645,6 +2686,10 @@ function navigateDotTap(strip, dotEl) {
 function handleStripClick(e) {
   const strip = e.target.closest(DOT_STRIP_SELECTOR);
   if (!strip) return;
+  if (e.target.closest(".hero-autoplay-toggle")) {
+    toggleHeroAutoplayUserControl();
+    return;
+  }
   const wasArmed = strip.classList.contains("is-armed");
   // First tap on a relaxed strip: arm it AND seed the magnification under
   // the tap so the user can immediately see which dot they're aiming at.
@@ -2692,6 +2737,9 @@ document.addEventListener("pointermove", e => {
   if (isHover) {
     if (!strip.classList.contains("is-hovered")) {
       strip.classList.add("is-hovered");
+      if (strip.id === "hero-dots" && typeof syncHeroAutoplayToggleUI === "function") {
+        syncHeroAutoplayToggleUI();
+      }
       // The vertical strip auto-hides on idle; force its showVDots path
       // so the hidden/idle classes drop while the cursor is near.
       if (strip.classList.contains("vertical-progress") && typeof showVDots === "function") {
@@ -2729,6 +2777,9 @@ document.addEventListener("pointerout", e => {
   clearDotMagnify(strip);
   if (e.pointerType === "mouse") {
     strip.classList.remove("is-hovered");
+    if (strip.id === "hero-dots" && typeof syncHeroAutoplayToggleUI === "function") {
+      syncHeroAutoplayToggleUI();
+    }
     // Vertical strip can fade itself back out via the normal idle timer
     // once the cursor leaves the approach zone.
     if (strip.classList.contains("vertical-progress") && typeof showVDots === "function") {
@@ -2861,10 +2912,10 @@ function setActiveSection(section) {
   // panelIdx=1 which would always be flagged "non-hero".
   const isHero = section.dataset.section === "hero";
   document.body.classList.toggle("is-on-hero", isHero);
-  // Distinguish "on the Main hero panel" from "on a stage hero panel"
-  // so the top-bar logo can stay extra-large only on Main and collapse
-  // to a smaller version on Retro / Zambu / Guardians / Market.
-  document.body.classList.toggle("is-on-main-hero", isHero && activeStageFilter === "all");
+  // Main-hero chrome (hide duplicate header logo) follows layout + hero
+  // pager scroll — updates immediately on horizontal swipe / vertical scroll,
+  // not only when IntersectionObserver crosses 0.6 or activeStageFilter debounce.
+  document.body.classList.toggle("is-on-main-hero", computeIsOnMainHero());
   const pager = section.querySelector(".pager");
   // Compute realIdx after any anchoring scrollTo below — defer to a single
   // pass at the end of setActiveSection.
@@ -2953,9 +3004,36 @@ let heroAutoplayStartedAt = 0;
 let heroAutoplayDot = null;
 let heroAutoplayResumeTimer = null;
 let heroAutoplayPaused = false;
+/** When true, the user explicitly turned off auto-advance via the hero-dots toggle — no timer resume. */
+let heroAutoplayUserSuspended = false;
+
+function syncHeroAutoplayToggleUI() {
+  const strip = document.getElementById("hero-dots");
+  const btn = strip?.querySelector(".hero-autoplay-toggle");
+  if (!strip || !btn) return;
+  strip.classList.toggle("autoplay-user-off", heroAutoplayUserSuspended);
+  const label = heroAutoplayUserSuspended ? t("hero.autoplayResume") : t("hero.autoplayPause");
+  btn.setAttribute("aria-label", label);
+  btn.title = label;
+  btn.tabIndex = strip.classList.contains("is-armed") || strip.classList.contains("is-hovered") ? 0 : -1;
+}
+
+function toggleHeroAutoplayUserControl() {
+  heroAutoplayUserSuspended = !heroAutoplayUserSuspended;
+  clearTimeout(heroAutoplayResumeTimer);
+  heroAutoplayResumeTimer = null;
+  heroAutoplayPaused = false;
+  if (heroAutoplayUserSuspended) {
+    stopHeroAutoplay();
+  } else if (getCurrentSection()?.dataset.section === "hero") {
+    startHeroAutoplay();
+  }
+  syncHeroAutoplayToggleUI();
+}
 
 function startHeroAutoplay() {
   stopHeroAutoplay();
+  if (heroAutoplayUserSuspended) return;
   if (heroAutoplayPaused) return; // resume timer will call us back
   const dots = document.getElementById("hero-dots");
   if (!dots) return;
@@ -3007,6 +3085,10 @@ function advanceHeroAutoplay() {
 }
 
 function pauseHeroAutoplay() {
+  if (heroAutoplayUserSuspended) {
+    stopHeroAutoplay();
+    return;
+  }
   stopHeroAutoplay();
   heroAutoplayPaused = true;
   clearTimeout(heroAutoplayResumeTimer);
@@ -3022,8 +3104,15 @@ function pauseHeroAutoplay() {
 // fill doesn't keep racing while the user is reading / interacting. One
 // shared handler covers all four event types (was four near-identical
 // listeners, each doing its own getCurrentSection() walk on every fire).
-function maybePauseHeroAutoplay() {
+// Touch/pointer on the .hero-autoplay-toggle is exempt — that button IS
+// the user controlling autoplay, so it shouldn't also pause it as a
+// side effect.
+function maybePauseHeroAutoplay(e) {
   if (getCurrentSection()?.dataset.section !== "hero") return;
+  const t = e?.type;
+  if ((t === "pointerdown" || t === "touchstart") && e.target?.closest?.(".hero-autoplay-toggle")) {
+    return;
+  }
   pauseHeroAutoplay();
 }
 document.addEventListener("pointerdown", maybePauseHeroAutoplay, { passive: true });
@@ -3067,6 +3156,21 @@ function getCurrentSection() {
     if (sections[i].offsetTop >= reelTop - 10) return sections[i];
   }
   return sections[sections.length - 1] || null;
+}
+
+/** True when the Main (all-stages) hero panel is the one in view — drives top-bar logo visibility. */
+function computeIsOnMainHero() {
+  if (!reel || !cachedSections.length) return false;
+  const vh = reel.clientHeight || 1;
+  let idx = Math.floor(reel.scrollTop / vh + 0.45);
+  idx = Math.max(0, Math.min(cachedSections.length - 1, idx));
+  if (cachedSections[idx].dataset.section !== "hero") return false;
+  const heroPager = document.getElementById("hero-pager");
+  if (!heroPager) return false;
+  const w = heroPager.clientWidth || 1;
+  const sl = Math.abs(heroPager.scrollLeft);
+  const idxH = Math.floor((sl + w * 0.3) / w);
+  return heroPager.children[idxH]?.dataset.stage === "all";
 }
 
 function navVertical(dir) {
@@ -3985,7 +4089,6 @@ const artistsListEl       = document.getElementById("artists-list");
 const artistsTitleEl      = document.getElementById("artists-title");
 const artistsCloseBtn     = document.getElementById("artists-close");
 const artistsRandomBtn    = document.getElementById("artists-random");
-const artistsRandomLabel  = document.getElementById("artists-random-label");
 let _artistsCurrentPool   = "all"; // last opened scope — used by the Random button.
 
 function getArtistPool(stageId) {
@@ -4025,8 +4128,11 @@ function openArtistsOverlay(stageId) {
       ? t("artists.titleAll")
       : `${tStage(stageId)} · ${t("artists.title")}`;
   }
-  if (artistsRandomLabel) artistsRandomLabel.textContent = t("hero.random");
-  if (artistsRandomBtn)  artistsRandomBtn.setAttribute("aria-label", t("hero.randomLabel"));
+  if (artistsRandomBtn) {
+    const tip = t("hero.randomLabel");
+    artistsRandomBtn.setAttribute("aria-label", tip);
+    artistsRandomBtn.title = tip;
+  }
   renderArtistsList(stageId);
   artistsOverlay.hidden = false;
 }
@@ -4179,8 +4285,6 @@ const MAP_IMAGE_SRC =
     </svg>
   `);
 
-const heroNavBtn      = () => document.getElementById("hero-nav-btn");
-const heroMapBtn      = () => document.getElementById("hero-map-btn");
 const navOverlay      = document.getElementById("nav-overlay");
 const navSheetTitle   = document.getElementById("nav-sheet-title");
 const navWazeLink     = document.getElementById("nav-waze");
@@ -4205,12 +4309,6 @@ function refreshNavSheetCopy() {
   if (navCancelBtn)  navCancelBtn.textContent  = t("nav.cancel");
   if (navWazeLink)   navWazeLink.setAttribute("href", NAV_LINKS.waze);
   if (navGmapsLink)  navGmapsLink.setAttribute("href", NAV_LINKS.gmaps);
-}
-
-function openNavSheet() {
-  if (!navOverlay) return;
-  refreshNavSheetCopy();
-  navOverlay.hidden = false;
 }
 
 function closeNavSheet() {
@@ -4480,14 +4578,8 @@ document.addEventListener("keydown", e => {
 //   /?a=yahel&p=tracks      → Yahel's tracks panel
 const PANEL_KEYS = ["hero", "info", "tracks", "discography"];
 
-function readUrlState() {
-  const sp = new URLSearchParams(location.search);
-  return { s: sp.get("s"), a: sp.get("a"), p: sp.get("p") };
-}
-
-// Snapshot the deep-link the moment the script loads — before any
-// setActiveSection/syncUrlFromActive can blank out location.search.
-const _initialRoute = readUrlState();
+// _initialRoute is defined at the very top of the file (see the comment
+// there for why it can't live next to its usage in applyInitialRoute).
 
 // Suppress URL writes during the brief window where we're applying an
 // initial deep-link, so a half-settled scroll doesn't overwrite the route
@@ -4614,11 +4706,22 @@ function hideVDotsImmediately() {
   verticalProgress.classList.add("is-idle");
 }
 // Vertical scroll on the reel itself = the user IS navigating the lineup.
+// The is-on-main-hero toggle calls computeIsOnMainHero, which reads layout
+// (clientHeight, scrollTop, heroPager.scrollLeft). Coalesce into a single
+// rAF so iOS momentum scroll (60-120Hz event bursts) does at most one
+// layout-touching toggle per frame, not one per scroll event.
+let _mainHeroRaf = 0;
 reel.addEventListener("scroll", () => {
   const top = reel.scrollTop;
   if (top !== lastReelScrollTop) {
     lastReelScrollTop = top;
     showVDots();
+  }
+  if (!_mainHeroRaf) {
+    _mainHeroRaf = requestAnimationFrame(() => {
+      _mainHeroRaf = 0;
+      document.body.classList.toggle("is-on-main-hero", computeIsOnMainHero());
+    });
   }
 }, { passive: true });
 // Horizontal scroll on any inner pager (hero or artist carousel) = the
@@ -4642,7 +4745,16 @@ observeSections();
   const kbLabel = document.getElementById("kb-hint-label");
   if (kbLabel) kbLabel.textContent = t("kbHint.label");
   const searchInput = document.getElementById("search-input");
-  if (searchInput) searchInput.placeholder = t("search.placeholder");
+  if (searchInput) {
+    searchInput.placeholder = t("search.placeholder");
+    searchInput.dir = currentLang === "he" ? "rtl" : "ltr";
+  }
+  const artistsRandomBoot = document.getElementById("artists-random");
+  if (artistsRandomBoot) {
+    const tip = t("hero.randomLabel");
+    artistsRandomBoot.setAttribute("aria-label", tip);
+    artistsRandomBoot.title = tip;
+  }
 }
 // Initial active state
 setTimeout(() => setActiveSection(reel.querySelector(".section")), 50);

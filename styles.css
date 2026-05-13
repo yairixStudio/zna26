@@ -56,11 +56,8 @@ button, a, [role="button"], summary, label[for] {
    text-bearing elements does this — punctuation and word order stay native
    while the surrounding boxes/buttons stay LTR. */
 .bio-text,
-.notable,
-.artist-real,
 .artist-name,
 .hero-tagline,
-.hero-stage-tag,
 .hero-stage-name,
 .hero-hint,
 .muted,
@@ -215,11 +212,16 @@ a { color: var(--sun-yellow); }
   --hero-text-1: var(--sun-yellow);
   --hero-text-2: var(--sun-pink);
   --hero-text-3: var(--neon-purple);
+  /* Let clicks / element-picker hits pass through empty flex space to
+     #hero-pager (horizontal scroll) instead of "sticking" to this full-
+     viewport slab. Interactive children opt back in below. */
+  pointer-events: none;
 }
 
-.hero-panel > :not(.hero-stage-element) {
+.hero-panel > :not(.hero-stage-element):not(.hero-logo-scene) {
   position: relative;
   z-index: 1;
+  pointer-events: auto;
 }
 
 .hero-stage-element {
@@ -276,6 +278,61 @@ a { color: var(--sun-yellow); }
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+}
+
+/* Pause / resume automatic hero stage rotation — only while the strip is
+   armed (mobile two-tap) or hovered (desktop). */
+.hero-autoplay-toggle {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  min-width: 0;
+  height: 22px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, width 0.2s ease, min-width 0.2s ease, margin-inline-start 0.2s ease, background 0.2s ease;
+}
+.hero-dots.is-armed .hero-autoplay-toggle,
+.hero-dots.is-hovered .hero-autoplay-toggle {
+  opacity: 1;
+  pointer-events: auto;
+  width: 24px;
+  min-width: 24px;
+  margin-inline-start: 8px;
+}
+.hero-autoplay-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+.hero-autoplay-toggle:focus-visible {
+  outline: 2px solid var(--sun-yellow);
+  outline-offset: 2px;
+}
+.hero-autoplay-ico {
+  width: 11px;
+  height: 11px;
+  display: block;
+}
+.hero-dots:not(.autoplay-user-off) .hero-autoplay-ico--play {
+  display: none;
+}
+.hero-dots.autoplay-user-off .hero-autoplay-ico--pause {
+  display: none;
+}
+.hero-dots.autoplay-user-off .hero-autoplay-toggle {
+  background: rgba(254, 180, 71, 0.2);
+  color: var(--sun-yellow);
 }
 
 .hero-dot {
@@ -374,29 +431,14 @@ body.has-mini-player .hero-dots {
   50% { opacity: 1; }
 }
 
-/* Legacy: keep .hero-section selector working for the old standalone hero
-   variant, but inherit color variables and centering from .hero-panel. */
-.hero-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 24px 18px;
-  position: relative;
-  --hero-glow-1: var(--sun-yellow);
-  --hero-glow-2: var(--sun-pink);
-  --hero-glow-shadow: rgba(255, 126, 31, 0.6);
-  --hero-text-1: var(--sun-yellow);
-  --hero-text-2: var(--sun-pink);
-  --hero-text-3: var(--neon-purple);
-}
-
 .hero-logo-scene {
   position: relative;
-  width: min(92vw, 680px);
+  /* Slightly smaller than before — logo + slogan + UFOs were dominating
+     short viewports; children use % sizing inside this box. */
+  width: min(86vw, 580px);
   aspect-ratio: 1536 / 980;
-  margin: 8px auto 4px;
+  /* Spacing handled by .hero-stack gap. */
+  margin: 0 auto;
   pointer-events: none;
   isolation: isolate;
 }
@@ -504,7 +546,6 @@ body.has-mini-player .hero-dots {
 }
 
 /* Per-stage hero color identity */
-.hero-section--retro,
 .hero-panel--retro {
   --hero-glow-1: #FEB447;
   --hero-glow-2: #ff5c8a;
@@ -516,7 +557,6 @@ body.has-mini-player .hero-dots {
     radial-gradient(ellipse at 50% 110%, rgba(255, 126, 31, 0.55), transparent 60%),
     linear-gradient(165deg, #2c0e23 0%, #44132e 50%, #1f0a1c 100%);
 }
-.hero-section--zambu,
 .hero-panel--zambu {
   --hero-glow-1: #ff006e;
   --hero-glow-2: #9b51e0;
@@ -528,7 +568,6 @@ body.has-mini-player .hero-dots {
     radial-gradient(ellipse at 50% 110%, rgba(155, 81, 224, 0.55), transparent 60%),
     linear-gradient(165deg, #1c0640 0%, #2a0a55 50%, #100322 100%);
 }
-.hero-section--guardians,
 .hero-panel--guardians {
   --hero-glow-1: #00d4ff;
   --hero-glow-2: #FEB447;
@@ -540,7 +579,6 @@ body.has-mini-player .hero-dots {
     radial-gradient(ellipse at 50% 110%, rgba(0, 212, 255, 0.45), transparent 60%),
     linear-gradient(165deg, #03182d 0%, #08294a 50%, #02101e 100%);
 }
-.hero-section--market,
 .hero-panel--market {
   --hero-glow-1: #ffd60a;
   --hero-glow-2: #ffbf69;
@@ -561,7 +599,6 @@ body.has-mini-player .hero-dots {
     linear-gradient(165deg, #0a0524 0%, #1a0a3e 50%, #050214 100%);
 }
 
-.hero-section .logo-mark,
 .hero-panel .logo-mark {
   background: linear-gradient(180deg, var(--hero-text-1) 0%, var(--hero-text-2) 60%, var(--hero-text-3) 100%);
   -webkit-background-clip: text;
@@ -576,21 +613,6 @@ body.has-mini-player .hero-dots {
   font-size: clamp(40px, 11vw, 90px);
 }
 
-.hero-stage-tag {
-  font-size: 11px;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: var(--hero-text-1);
-  opacity: 0.85;
-  margin-bottom: 10px;
-  font-weight: 700;
-}
-
-.hero-section--retro .hero-cta { background: linear-gradient(135deg, #ff5c8a, #ff7e1f); }
-.hero-section--zambu .hero-cta { background: linear-gradient(135deg, #ff006e, #9b51e0); color: white; }
-.hero-section--guardians .hero-cta { background: linear-gradient(135deg, #00d4ff, #ffd23f); }
-.hero-section--market .hero-cta { background: linear-gradient(135deg, #ffd60a, #ffbf69); }
-
 .logo-mark {
   font-family: "Orbitron", "Heebo", sans-serif;
   font-weight: 900;
@@ -602,16 +624,8 @@ body.has-mini-player .hero-dots {
   color: transparent;
   text-shadow: 0 0 40px rgba(254, 180, 71, 0.4);
   line-height: 0.85;
-  margin-bottom: 14px;
-}
-
-.hero-subtitle {
-  font-size: clamp(11px, 2.8vw, 18px);
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--sun-yellow);
-  margin-bottom: 14px;
-  text-shadow: 0 0 12px rgba(254, 180, 71, 0.6);
+  /* Spacing handled by .hero-stack gap inside hero panels. */
+  margin-bottom: 0;
 }
 
 .hero-tagline {
@@ -620,7 +634,8 @@ body.has-mini-player .hero-dots {
   font-weight: 400;
   max-width: 540px;
   line-height: 1.6;
-  margin-bottom: 18px;
+  /* Spacing handled by .hero-stack gap. */
+  margin-bottom: 0;
   padding: 0 12px;
 }
 
@@ -636,10 +651,9 @@ body.has-mini-player .hero-dots {
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   font-size: 13px;
   color: var(--sun-yellow);
-  margin-bottom: 22px;
+  /* Spacing handled by .hero-stack gap. */
+  margin-bottom: 0;
 }
-
-.hero-meta strong { color: var(--text); margin-inline-end: 4px; }
 
 .live-status {
   width: min(540px, calc(100% - 28px));
@@ -654,13 +668,6 @@ body.has-mini-player .hero-dots {
   -webkit-backdrop-filter: blur(10px);
   color: var(--text);
   box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
-}
-
-.live-status-kicker {
-  font-family: "Orbitron", "Heebo", sans-serif;
-  font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--neon-cyan);
 }
 
 .live-status strong {
@@ -680,31 +687,8 @@ body.has-mini-player .hero-dots {
   box-shadow: 0 0 28px rgba(57, 255, 20, 0.18), 0 12px 34px rgba(0, 0, 0, 0.35);
 }
 
-.live-status--live .live-status-kicker,
 .live-status--live strong {
   color: #39ff14;
-}
-
-.hero-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 26px;
-  background: linear-gradient(135deg, var(--sun-pink), var(--sun-orange));
-  color: var(--bg-deep);
-  border-radius: 999px;
-  font-weight: 800;
-  font-size: 15px;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 0 30px rgba(255, 92, 138, 0.5);
-  animation: bounce-arrow 2s ease-in-out infinite;
-}
-
-@keyframes bounce-arrow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
 }
 
 /* ===== Artist section: horizontal pager ===== */
@@ -808,6 +792,7 @@ body.has-mini-player .hero-dots {
 }
 .pull-indicator.pull-from-top    { top: 18px; }
 .pull-indicator.pull-from-bottom { bottom: 18px; }
+.pull-indicator.is-visible       { opacity: 1; }
 .pull-indicator.is-ready {
   background: var(--panel-accent, var(--sun-yellow));
   color: #0a0524;
@@ -927,6 +912,50 @@ body.has-mini-player .hero-dots {
   background:
     radial-gradient(ellipse at 50% 0%, rgba(74, 222, 128, 0.20) 0%, transparent 65%),
     linear-gradient(180deg, rgba(74, 222, 128, 0.09), transparent 60%);
+}
+
+/* About panel: bio card ≈ 90% of column below eyebrow; bottom 1fr = gap
+   above pager dots. Bio paragraph scrolls inside the tall card. */
+.panel.panel--info {
+  align-items: stretch;
+}
+.panel--info .panel-inner {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(0, 9fr) minmax(0, 1fr);
+  gap: 14px;
+}
+.panel--info .panel-eyebrow.has-artist {
+  grid-row: 1;
+  align-self: start;
+}
+.panel--info .bio-card {
+  grid-row: 2;
+  min-height: 0;
+  overflow: hidden;
+}
+.panel--info .panel-inner::after {
+  content: "";
+  grid-row: 3;
+  display: block;
+  min-height: 0;
+  pointer-events: none;
+}
+.panel--info .bio-card .info-section:has(.bio-text) {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.panel--info .bio-card .bio-text {
+  max-height: none;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .panel--info .bio-card,
@@ -1061,13 +1090,6 @@ body.has-mini-player .hero-dots {
   border-radius: 0;
 }
 
-.artist-tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-}
-
 /* Wrapper around the artist photo. Holds the photo figure plus the small
    "scattered" tags that are absolutely positioned around the photo's
    perimeter. The wrapper itself doesn't clip — the figure inside still
@@ -1134,81 +1156,9 @@ body.has-mini-player .hero-dots {
   }
 }
 
-/* Instagram-style transparent subscribe pill, sits below the set-time
-   timer. Label sits left, status icon (+ or ✓) to the right. Toggles to a
-   softly filled state once subscribed (state stored per-artist in
-   localStorage). */
-.artist-subscribe {
-  margin-top: 4px;
-  align-self: center;
-  /* hug-content sizing — was reading too tall vs the rest of the
-     hero stack, especially next to the slim countdown pill above. */
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  white-space: nowrap;
-  gap: 7px;
-  width: fit-content;
-  line-height: 1;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  color: rgba(255, 255, 255, 0.95);
-  font-family: "Heebo", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  padding: 6px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  direction: ltr;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
-}
-
-.artist-subscribe .sub-label {
-  display: inline-block;
-  white-space: nowrap;
-  line-height: 1;
-}
-
-.artist-subscribe .sub-icon {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  display: block;
-  transition: transform 0.2s ease;
-}
-
-.artist-subscribe.is-subscribed .sub-icon {
-  /* Subtle "click" feedback when the icon swaps to a checkmark. */
-  animation: sub-icon-pop 280ms cubic-bezier(.2, .85, .35, 1.2);
-}
-
-@keyframes sub-icon-pop {
-  0%   { transform: scale(0.4); }
-  60%  { transform: scale(1.18); }
-  100% { transform: scale(1); }
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .artist-subscribe:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.75);
-  }
-}
-
-.artist-subscribe:active {
-  transform: scale(0.97);
-}
-
-.artist-subscribe.is-subscribed {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-/* Heart-only "favorite" button on the artist hero. Replaces the old
-   per-artist Subscribe pill — outline heart by default, fills red and
-   pops once tapped. State stored in localStorage as a Set of artist ids. */
+/* Heart-only "favorite" button on the artist hero. Outline heart by
+   default, fills red and pops once tapped. State stored in localStorage
+   as a Set of artist ids. */
 .artist-favorite {
   margin-top: 4px;
   align-self: center;
@@ -1288,19 +1238,6 @@ body.has-mini-player .hero-dots {
 
 @media (prefers-reduced-motion: reduce) {
   .artist-favorite.is-popping .fav-icon { animation: none; }
-}
-
-/* More compact pill for the festival hero + per-stage heroes — same look,
-   just smaller so it doesn't compete with the big timer/title above it. */
-.artist-subscribe--hero {
-  margin-top: 4px;
-  font-size: 12px;
-  padding: 5px 12px;
-  gap: 6px;
-}
-.artist-subscribe--hero .sub-icon {
-  width: 12px;
-  height: 12px;
 }
 
 .artist-hero-art {
@@ -1394,20 +1331,6 @@ body.has-mini-player .hero-dots {
   color: transparent;
   margin: 0;
   line-height: 1.05;
-}
-
-.artist-real {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.artist-quick {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 8px;
 }
 
 .chip {
@@ -1507,6 +1430,13 @@ body.has-mini-player .hero-dots {
      pointer-stack figures out the user is reading the bio. */
   touch-action: pan-y;
 }
+
+/* Global `.bio-text { unicode-bidi: plaintext }` is for LTR shells; Hebrew
+   UI bios need explicit RTL + isolate so mixed Latin names read correctly. */
+.bio-text[dir="rtl"] {
+  unicode-bidi: isolate;
+  text-align: start;
+}
 .bio-text::-webkit-scrollbar {
   width: 6px;
 }
@@ -1525,20 +1455,8 @@ body.has-mini-player .hero-dots {
   border-radius: 999px;
 }
 
-/* Legacy `.notable` chip used to live inside the bio card. It's been
-   moved to the artist hero (see .hero-notable below). The selector is
-   kept neutral here in case any other surface still emits one. */
-.notable {
-  font-size: 12.5px;
-  color: var(--sun-yellow);
-  opacity: 0.85;
-}
-
 /* "Notable" sits as a small bold lede ABOVE the bio paragraph in the
-   info panel — no chip / pill chrome, just a tiny accent-coloured
-   one-liner so the reader sees the headline-fact about the artist
-   before the full bio. (Used to live as a pill on the artist hero
-   panel and as a big chip inside the bio card; both retired.) */
+   info panel. */
 .bio-notable-lede {
   margin: 0 0 6px;
   font-size: 12.5px;
@@ -1548,11 +1466,11 @@ body.has-mini-player .hero-dots {
   color: var(--accent, var(--sun-yellow));
   opacity: 0.95;
 }
-
-/* Backward-compat shim — strips the old hero-notable pill in case a
-   cached bundle still emits it. */
-.hero-notable {
-  display: none;
+.bio-notable-lede[dir="rtl"] {
+  text-align: start;
+}
+.bio-notable-embed {
+  unicode-bidi: isolate;
 }
 
 /* === Panel 3: Discography ===
@@ -1762,23 +1680,6 @@ a.collab-link:hover {
   color: var(--text-muted);
   opacity: 0.55;
   user-select: none;
-}
-
-/* Backward-compat shim: any leftover `.link-btn` (e.g. from an older
-   bundle in browser cache before this refactor lands) renders as the
-   same plain text link instead of a stray pill. */
-.link-btn {
-  display: inline;
-  background: none;
-  border: none;
-  padding: 0;
-  border-radius: 0;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--neon-cyan);
-  text-decoration: underline dotted;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
 }
 
 /* ===== Streaming icons row =====
@@ -2328,7 +2229,6 @@ body.has-mini-player .panel {
   flex-direction: row-reverse;
 }
 :lang(he) .top-bar { flex-direction: row; }
-}
 
 .top-bar > * { pointer-events: auto; }
 
@@ -2349,7 +2249,6 @@ body.has-mini-player .panel {
 }
 
 /* ===== Apple Liquid Glass primitives ===== */
-.glass-btn,
 .glass-card {
   background: rgba(255, 255, 255, 0.10);
   border: 1px solid rgba(255, 255, 255, 0.22);
@@ -2364,55 +2263,10 @@ body.has-mini-player .panel {
   overflow: hidden;
 }
 
-/* Specular highlight that gives the "liquid" feel */
-.glass-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.28) 0%,
-    rgba(255, 255, 255, 0.05) 35%,
-    rgba(255, 255, 255, 0) 60%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.glass-btn:active {
-  transform: scale(0.97);
-  transition: transform 0.12s;
-}
-
-.round-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-family: inherit;
-  font-weight: 800;
-  transition: transform 0.15s, box-shadow 0.2s;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .round-btn:hover {
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5),
-      0 0 24px rgba(254, 180, 71, 0.35);
-  }
-}
-
 /* Top-bar favorites pill — heart icon + counter badge. Hidden by default
    (the [hidden] attr is removed by JS once at least one artist is
-   favorited). Counter sits OUTSIDE the circle, top-right, so .glass-btn's
-   overflow: hidden would clip it — override to overflow: visible here.
-   The ::before specular highlight keeps its rounded shape via its own
-   border-radius: inherit. */
+   favorited). Counter sits OUTSIDE the circle, top-right; override to
+   overflow: visible here so the badge isn't clipped. */
 .favorites-btn {
   position: relative;
   color: #ff5c8a;
@@ -2441,22 +2295,10 @@ body.has-mini-player .panel {
   z-index: 2;
 }
 
-.logo-mini {
-  font-family: "Orbitron", sans-serif;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  background: linear-gradient(180deg, var(--sun-yellow), var(--sun-pink));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 /* ===== Clean top-bar buttons (no pill chrome) =====
-   Replaces the previous .round-btn + .glass-btn combo on search,
-   favorites and stage-select. The icons sit directly on the canvas
-   with just a soft drop-shadow so they remain readable on top of
-   bright hero gradients, and lean on color/opacity for hover state
-   instead of a circular background. */
+   The icons sit directly on the canvas with just a soft drop-shadow so
+   they remain readable on top of bright hero gradients, and lean on
+   color/opacity for hover state instead of a circular background. */
 .top-bar-btn {
   display: inline-flex;
   align-items: center;
@@ -2514,8 +2356,8 @@ body.has-mini-player .panel {
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: transform 0.32s cubic-bezier(0.4, 0.05, 0.2, 1.0),
-              filter 0.32s ease;
+  transition: transform 0.1s cubic-bezier(0.4, 0.05, 0.2, 1.0),
+              filter 0.1s ease;
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.55));
   -webkit-tap-highlight-color: transparent;
 }
@@ -2524,7 +2366,7 @@ body.has-mini-player .panel {
   height: 38px;
   width: auto;
   max-width: 40vw;
-  transition: height 0.32s cubic-bezier(0.4, 0.05, 0.2, 1.0);
+  transition: height 0.1s cubic-bezier(0.4, 0.05, 0.2, 1.0);
   user-select: none;
   -webkit-user-drag: none;
 }
@@ -2541,16 +2383,14 @@ body.is-on-hero .top-bar-logo {
 body.is-on-hero .top-bar-logo-img {
   height: 38px;
 }
-body.is-on-main-hero .top-bar-logo {
-  transform: none;
-}
-body.is-on-main-hero .top-bar-logo-img {
-  height: 38px;
+/* Main hero already shows the large ZNA mark — hide header duplicate. */
+body.is-on-main-hero .top-bar-center {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 @media (max-width: 480px) {
-  body.is-on-hero .top-bar-logo-img,
-  body.is-on-main-hero .top-bar-logo-img { height: 32px; }
+  body.is-on-hero .top-bar-logo-img { height: 32px; }
   .top-bar-logo-img { height: 32px; }
 }
 
@@ -2577,7 +2417,6 @@ body.is-on-main-hero .top-bar-logo-img {
 
 @media (max-width: 480px) {
   .stage-select-trigger { padding: 10px 12px; font-size: 12px; max-width: 32vw; }
-  .round-btn { width: 40px; height: 40px; }
   .top-bar { gap: 6px; top: 10px; left: 10px; right: 10px; }
   .top-bar-side { gap: 6px; }
 }
@@ -2630,54 +2469,6 @@ body.is-on-main-hero .top-bar-logo-img {
 :lang(he) .stage-select-menu {
   left: auto;
   right: 0;
-}
-
-/* ===== Language picker ===== */
-.lang-select { position: relative; }
-
-.lang-flag {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.lang-menu {
-  list-style: none;
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  border-radius: 16px;
-  padding: 6px;
-  min-width: 180px;
-  animation: glass-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-  z-index: 30;
-}
-.lang-menu[hidden] { display: none; }
-
-.lang-menu li { padding: 0; margin: 0; }
-
-.lang-menu button {
-  width: 100%;
-  text-align: start;
-  border: none;
-  background: transparent;
-  color: var(--text);
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 9px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: background 0.15s;
-}
-
-.lang-menu button:hover { background: rgba(255, 255, 255, 0.08); }
-
-.lang-menu button.active {
-  background: linear-gradient(135deg, rgba(255, 92, 138, 0.85), rgba(255, 126, 31, 0.85));
-  color: white;
 }
 
 @keyframes glass-pop {
@@ -2820,13 +2611,17 @@ body.is-on-main-hero .top-bar-logo-img {
   font-size: 16px;
   padding: 14px 18px;
   outline: none;
-  /* Lock the search input to LTR in every UI language. Most artist names
-     are Latin (Yahel, Tsuyoshi Suzuki, Mark Van Der Vlugt…) so an RTL
-     input flipped the caret + text alignment in a way the user reported
-     as "messy" when searching from the EN/PT UI. */
+  /* EN/PT: Latin-heavy queries — LTR + align start (left). */
   direction: ltr;
   text-align: left;
 }
+
+/* Hebrew UI: RTL typing + placeholder order; keep text visually left-aligned. */
+.search-input[dir="rtl"] {
+  direction: rtl;
+  text-align: left;
+}
+
 .search-input::placeholder {
   text-align: left;
 }
@@ -3252,102 +3047,6 @@ body.is-on-main-hero .top-bar-logo-img {
   color: var(--text);
 }
 
-/* ===== HUD ===== */
-.hud {
-  position: fixed;
-  top: 14px;
-  inset-inline-end: 14px;
-  z-index: 20;
-  text-align: end;
-  pointer-events: none;
-  font-size: 12px;
-}
-
-.hud-row {
-  background: rgba(10, 5, 36, 0.6);
-  padding: 5px 12px;
-  border-radius: 999px;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--card-border);
-  display: inline-flex;
-  gap: 10px;
-  margin-bottom: 5px;
-  color: var(--sun-yellow);
-}
-
-.hud-row span { color: var(--text); }
-.hud-row #hud-stage { color: var(--sun-yellow); font-weight: 700; }
-.hud-row #hud-pos { color: var(--text-muted); font-variant-numeric: tabular-nums; }
-
-.hud-hint { font-size: 10px; color: var(--text-muted); }
-.hud-hint span { color: var(--text-muted); }
-
-.kbd {
-  display: inline-block;
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  font-family: monospace;
-  font-size: 10px;
-  color: var(--sun-yellow);
-}
-
-/* ===== Swipe hints ===== */
-.swipe-hint-h {
-  position: absolute;
-  top: 50%;
-  inset-inline-start: 12px;
-  transform: translateY(-50%);
-  font-size: 18px;
-  color: var(--sun-yellow);
-  background: rgba(10, 5, 36, 0.6);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 5;
-  animation: nudge-h 1.8s ease-in-out infinite;
-  opacity: 0.8;
-  border: 1px solid var(--card-border);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-
-@keyframes nudge-h {
-  0%, 100% { transform: translateY(-50%) translateX(0); }
-  50% { transform: translateY(-50%) translateX(-8px); }
-}
-
-.swipe-hint-v {
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 22px;
-  color: var(--sun-yellow);
-  background: rgba(10, 5, 36, 0.6);
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 5;
-  animation: nudge-v 1.8s ease-in-out infinite;
-  opacity: 0.85;
-  border: 1px solid var(--card-border);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-
-@keyframes nudge-v {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(8px); }
-}
-
 /* Entry transitions: element starts hidden, becomes visible when its section
    becomes active. Using transitions instead of keyframes avoids the visible
    flash that happened when the image painted and then the keyframe restarted
@@ -3386,8 +3085,7 @@ body.is-on-main-hero .top-bar-logo-img {
 /* Respect users (and battery-conscious devices) who prefer fewer animations */
 @media (prefers-reduced-motion: reduce) {
   .stars,
-  .bg-grid,
-  .hero-cta {
+  .bg-grid {
     animation: none !important;
   }
   .panel-inner,
@@ -3413,7 +3111,6 @@ body.is-on-main-hero .top-bar-logo-img {
   .panel { padding: 70px 14px 70px; }
   .artist-hero-photo,
   .artist-hero-art { width: min(64vw, 200px); }
-  .hud-hint { display: none; }
   .vertical-progress { left: 4px; }
 }
 
@@ -3429,7 +3126,6 @@ body.is-on-main-hero .top-bar-logo-img {
   .album-name { font-size: 16px; }
   .albums-list { gap: 10px; }
   .tracks-stack { gap: 16px; }
-  .stage-pill button { font-size: 13px; padding: 9px 18px; }
 }
 
 @media (min-width: 1024px) {
@@ -3460,7 +3156,6 @@ body.is-on-main-hero .top-bar-logo-img {
   .panel-hero .artist-hero-text { grid-column: 2; text-align: left; align-items: flex-start; }
   .panel-hero .artist-hero-text > * { text-align: left; }
   .panel-hero .artist-meta-line { justify-content: flex-start; }
-  .panel-hero .artist-tags-row { justify-content: flex-start; }
   .panel-hero .artist-favorite { align-self: flex-start; }
   .panel-hero .artist-hero-photo {
     width: 100%;
@@ -3496,11 +3191,6 @@ body.is-on-main-hero .top-bar-logo-img {
     letter-spacing: -2px;
     margin: 0;
     padding-bottom: 0.12em;
-  }
-  .panel-hero .artist-real {
-    font-size: 20px;
-    color: var(--text-muted);
-    margin: 0;
   }
   .panel-hero .artist-meta-line { font-size: 15px; }
 
@@ -3547,7 +3237,8 @@ body.is-on-main-hero .top-bar-logo-img {
   max-width: 480px;
   font-size: clamp(13px, 3.6vw, 17px);
   line-height: 1.55;
-  margin-bottom: 14px;
+  /* Spacing handled by .hero-stack gap. */
+  margin-bottom: 0;
 }
 
 /* Artist hero name should center even when it wraps to two lines. The
@@ -3555,13 +3246,11 @@ body.is-on-main-hero .top-bar-logo-img {
    left-align as soon as the first line wraps. Force-center on mobile;
    the editorial desktop layout (>=1024px) explicitly re-overrides to
    left-align further down so the magazine treatment still works. */
-.panel-hero .artist-name,
-.panel-hero .artist-real {
+.panel-hero .artist-name {
   text-align: center !important;
 }
 @media (min-width: 1024px) {
-  .panel-hero .artist-name,
-  .panel-hero .artist-real {
+  .panel-hero .artist-name {
     text-align: left !important;
   }
 }
@@ -3572,7 +3261,8 @@ body.is-on-main-hero .top-bar-logo-img {
   font-size: 12px;
   letter-spacing: 0.4px;
   color: var(--text-muted);
-  margin-bottom: 12px;
+  /* Spacing handled by .hero-stack gap. */
+  margin-bottom: 0;
   opacity: 0.85;
   background: none;
   border: none;
@@ -3583,11 +3273,10 @@ body.is-on-main-hero .top-bar-logo-img {
   text-align: center !important;
 }
 
-.hero-panel .hero-meta strong { display: none; }
-
 /* Unofficial fan-site disclaimer on the Main hero only. */
 .hero-disclaimer {
-  margin-top: 14px;
+  /* Spacing handled by .hero-stack gap. */
+  margin-top: 0;
   font-size: 10.5px;
   color: var(--text-muted);
   opacity: 0.55;
@@ -3611,7 +3300,8 @@ body.is-on-main-hero .top-bar-logo-img {
   display: grid;
   gap: 8px;
   padding: 0;
-  margin: 6px auto 6px;
+  /* Spacing handled by .hero-stack gap (+ optional .hero-stack > .live-status margin-top). */
+  margin: 0 auto;
   background: transparent;
   border: none;
   border-radius: 0;
@@ -3938,65 +3628,6 @@ body.is-on-main-hero .top-bar-logo-img {
 .live-pn-prev .live-pn-name { color: var(--text-muted); }
 .live-pn-next .live-pn-name { color: var(--sun-yellow); }
 
-/* ===== Main hero quick actions (navigate + festival map) ===== */
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  align-items: center;
-  margin-top: 4px;
-}
-
-.hero-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-family: "Heebo", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
-  color: var(--text);
-  transition: transform 0.15s, box-shadow 0.2s;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .hero-action:hover {
-    box-shadow:
-      0 12px 30px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4),
-      0 0 18px rgba(254, 180, 71, 0.3);
-  }
-}
-
-.hero-action:active {
-  transform: scale(0.97);
-}
-
-.hero-action svg {
-  flex-shrink: 0;
-  color: var(--sun-yellow);
-}
-
-/* YouTube playlist button keeps its native red play-button SVG colours
-   (the inline <path fill> wins over the parent colour). */
-.hero-action--yt svg { color: inherit; }
-
-.hero-action-label {
-  white-space: nowrap;
-}
-
-.hero-actions { flex-wrap: wrap; }
-
-/* Clean icon-only variant used on the main hero — no pill chrome, no
-   text labels, just three small white outline glyphs. */
-.hero-actions--icons {
-  gap: 22px;
-  flex-wrap: nowrap;
-  margin-top: 8px;
-}
 .hero-icon-action {
   display: inline-flex;
   align-items: center;
@@ -4035,7 +3666,8 @@ body.is-on-main-hero .top-bar-logo-img {
    negative-leaning margin nudges it up close to the stage artwork
    without floating loose. */
 .hero-icon-action--top {
-  margin: 0 auto 6px;
+  /* Spacing handled by .hero-stack gap. */
+  margin: 0 auto;
   width: 44px;
   height: 44px;
 }
@@ -4053,12 +3685,6 @@ body.is-on-main-hero .top-bar-logo-img {
 }
 @media (hover: hover) and (pointer: fine) {
   .hero-official-link:hover { color: var(--sun-pink); }
-}
-
-@media (max-width: 380px) {
-  .hero-actions { gap: 8px; }
-  .hero-action { padding: 8px 12px; font-size: 11px; gap: 6px; }
-  .hero-action svg { width: 18px; height: 18px; }
 }
 
 /* ===== Navigation chooser sheet ===== */
@@ -4296,28 +3922,25 @@ body.is-on-main-hero .top-bar-logo-img {
 @media (orientation: landscape) and (max-height: 520px) {
   .hero-panel {
     padding: 16px 22px 70px;
-    gap: 6px;
   }
+  .hero-stack { gap: 6px; }
+  .hero-stack > .live-status { margin-top: 4px; }
+  .hero-stack > .hero-artists-pill { margin-top: 2px; }
   .hero-panel .logo-mark {
     font-size: clamp(34px, 11vh, 64px);
     line-height: 0.95;
-    margin-bottom: 6px;
   }
-  .hero-subtitle { font-size: 11px; letter-spacing: 3px; margin-bottom: 8px; }
   .hero-tagline {
     font-size: 12px;
     line-height: 1.45;
     max-width: 560px;
-    margin-bottom: 10px;
   }
   .hero-meta {
     font-size: 11px;
     padding: 6px 14px;
     gap: 4px 12px;
-    margin-bottom: 8px;
   }
   .hero-hint { font-size: 10px; margin-top: 6px; }
-  .hero-stage-tag { font-size: 10px; letter-spacing: 4px; margin-bottom: 6px; }
   .hero-dots { bottom: 64px; padding: 14px 18px; }
   .section--multi-hero > .hero-hint { bottom: max(10px, env(safe-area-inset-bottom, 0)); font-size: 11px; }
   .hero-dots.is-armed { padding: 8px 12px; }
@@ -4374,7 +3997,6 @@ body.is-on-main-hero .top-bar-logo-img {
     margin: 0;
     padding-bottom: 0.12em;
   }
-  .panel-hero .artist-real { font-size: 13px; margin: 0; }
   .panel-hero .artist-meta-line { font-size: 12px; gap: 4px 12px; }
   .panel-hero .artist-meta-line .meta-item + .meta-item::before { margin: 0 8px; }
 
@@ -4390,7 +4012,6 @@ body.is-on-main-hero .top-bar-logo-img {
   /* Top bar tighter */
   .top-bar { top: 8px; left: 8px; right: 8px; }
   .stage-select-trigger { padding: 8px 12px; font-size: 12px; max-width: 28vw; }
-  .round-btn { width: 38px; height: 38px; }
 }
 
 /* Very short landscape (e.g. iPhone Pro Max landscape ~414px high stays
@@ -4404,27 +4025,43 @@ body.is-on-main-hero .top-bar-logo-img {
   .panel-hero { padding: 40px 20px 60px; }
 }
 
-/* ===== Hero stats group =====
-   Wraps the avatar-count pill + the progress-line + the countdown
-   timer as a single visual block on every hero panel. Generous
-   top-margin separates the stats from the tagline / description
-   above; tight internal gap keeps the three items reading as one
-   unit. */
-.hero-stats-group {
+/* ===== Hero stack =====
+   One flex column inside every hero panel that holds the logo scene
+   (or stage title), tagline, meta line, live-status / now-playing
+   card with its countdown timer + progress bar, the avatar-stack
+   "+N artists" pill, and the disclaimer — all driven by a single
+   `gap` so per-element margin-top/margin-bottom rules above can stay
+   zeroed out. The stage-element background art and the section-level
+   .hero-dots / .hero-hint stay OUTSIDE this stack: the first is
+   absolutely-positioned decor, the latter two are shared across all
+   5 stage panels and live at section level. */
+.hero-stack {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin: 26px auto 4px;
+  justify-content: center;
+  gap: clamp(10px, 2.2vh, 14px);
   width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  /* Override the pointer-events: auto inherited from the .hero-panel >
+     :not(...) rule near the top of the file. Empty space inside the
+     stack (the flex gaps between items) needs to pass clicks/swipes
+     through to the .hero-pager so horizontal navigation isn't trapped
+     in the gaps. Each interactive child re-enables pointer-events
+     individually via the .hero-stack > :not(.hero-logo-scene) rule. */
+  pointer-events: none;
 }
-.hero-stats-group > .live-status      { margin: 0 auto; }
-/* Pill sits BELOW the live-status / countdown card, with a clear visual
-   gap so the two read as distinct units (timer first, then the
-   "see-the-artists" affordance as a separate call to action). */
-.hero-stats-group > .hero-artists-pill {
-  margin: 18px 0 0;
+.hero-stack > :not(.hero-logo-scene) {
+  pointer-events: auto;
 }
+/* Slightly bigger breathing room before the now-playing block and the
+   artists pill so they read as their own units within the stack
+   rhythm — recreates the deliberate 18-26px gaps from the old
+   .hero-stats-group wrapper without re-introducing the wrapper. */
+.hero-stack > .live-status { margin-top: clamp(4px, 1vh, 10px); }
+.hero-stack > .hero-artists-pill { margin-top: clamp(2px, 0.6vh, 6px); }
 
 /* ===== Avatar-stack "+N artists" pill (on each hero panel) =====
    Three overlapping circular avatars followed by a total/+N counter.
@@ -4434,7 +4071,8 @@ body.is-on-main-hero .top-bar-logo-img {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin: 4px auto 4px;
+  /* Spacing handled by .hero-stack gap (+ optional .hero-stack > .hero-artists-pill margin-top). */
+  margin: 0 auto;
   padding: 6px 14px 6px 8px;
   font-family: inherit;
   font-size: 13px;
@@ -4540,24 +4178,29 @@ body.is-on-main-hero .top-bar-logo-img {
   margin: 0;
 }
 .artists-random {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--bg-deep);
-  background: linear-gradient(135deg, var(--sun-yellow), var(--sun-pink));
-  border: none;
-  border-radius: 999px;
+  justify-content: center;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: var(--text);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.artists-random svg {
+  display: block;
+  pointer-events: none;
 }
 .artists-random:active { transform: scale(0.96); }
 @media (hover: hover) and (pointer: fine) {
   .artists-random:hover {
-    box-shadow: 0 8px 20px rgba(254, 180, 71, 0.45);
+    background: rgba(255, 92, 138, 0.12);
+    border-color: rgba(255, 92, 138, 0.35);
   }
 }
 .artists-close {
@@ -4664,84 +4307,6 @@ body.is-on-main-hero .top-bar-logo-img {
   to   { opacity: 1; }
 }
 
-/* ===== About / Info panel — minimal, no pills ===== */
-.bio-card--minimal {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  gap: 18px;
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.bio-card--minimal .bio-text {
-  font-size: clamp(14px, 3.6vw, 16.5px);
-  line-height: 1.7;
-  color: var(--text);
-  text-align: start;
-}
-
-.bio-card--minimal .bio-notable {
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--text-muted);
-  font-style: italic;
-  margin: -6px 0 0;
-  padding: 0;
-  background: none;
-  border: none;
-  border-radius: 0;
-  text-align: start;
-}
-
-.bio-card--minimal .info-stream {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.bio-card--minimal .info-links {
-  font-size: 13.5px;
-  line-height: 1.7;
-  color: var(--text-muted);
-  letter-spacing: 0.2px;
-  margin: -2px 0 0;
-}
-
-.bio-card--minimal .info-links a {
-  color: var(--sun-yellow);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(254, 180, 71, 0.35);
-  padding-bottom: 1px;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.bio-card--minimal .info-links a:hover {
-  border-bottom-color: var(--sun-yellow);
-  color: #fff;
-}
-
-.bio-card--minimal .info-sep {
-  display: inline-block;
-  margin: 0 8px;
-  color: var(--text-muted);
-  opacity: 0.55;
-  user-select: none;
-}
-
-.bio-card--minimal .info-footnote {
-  margin-top: 4px;
-  font-size: 11.5px;
-  color: var(--text-muted);
-  opacity: 0.6;
-  letter-spacing: 0.2px;
-  font-variant-numeric: tabular-nums;
-}
-
 /* Hint with arrow stacked BELOW the text (one column, centered). */
 .hero-hint {
   display: flex;
@@ -4761,211 +4326,26 @@ body.is-on-main-hero .top-bar-logo-img {
   50%      { transform: translateY(3px); }
 }
 
-/* =====================================================================
-   v2 polish: info panel + main hero desktop + dock-style v-dots
-   ===================================================================== */
-
-/* ---------- About panel: clean, compact, accordion-driven ---------- */
-.bio-card--minimal {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0;
-}
-
-/* Subtle accent line above the bio, picks up the artist's accent color. */
-.bio-card--minimal::before {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent, var(--sun-yellow)), transparent);
-  margin-bottom: 2px;
-}
-
-.bio-card--minimal .bio-text {
-  font-size: clamp(14.5px, 2.4vw, 16px);
-  line-height: 1.7;
-  color: var(--text);
-  letter-spacing: 0.1px;
-  margin: 0;
-}
-
-.bio-card--minimal .bio-notable {
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--text-muted);
-  font-style: italic;
-  padding-inline-start: 14px;
-  border-inline-start: 2px solid var(--accent, rgba(254, 180, 71, 0.55));
-  margin: 0;
-  background: none;
-  border-radius: 0;
-  opacity: 0.85;
-}
-
-.bio-card--minimal .info-stream {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 4px;
-}
-
-/* === Accordion (native <details>/<summary>) === */
-.info-acc {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0;
-}
-
-.info-acc:last-of-type {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.info-acc summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 14px 4px;
-  cursor: pointer;
-  list-style: none;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: 0.3px;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-.info-acc summary::-webkit-details-marker { display: none; }
-.info-acc summary::marker { content: ""; }
-
-.info-acc summary > span:first-child {
-  flex: 1;
-  text-align: start;
-}
-
-.info-acc-count {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 999px;
-  padding: 2px 8px;
-  letter-spacing: 0.2px;
-}
-
-.info-acc-chev {
-  flex-shrink: 0;
-  color: var(--text-muted);
-  transition: transform 0.22s ease, color 0.18s ease;
-}
-
-.info-acc[open] .info-acc-chev {
-  transform: rotate(180deg);
-  color: var(--accent, var(--sun-yellow));
-}
-
-.info-acc summary:hover .info-acc-chev,
-.info-acc summary:focus-visible .info-acc-chev {
-  color: var(--accent, var(--sun-yellow));
-}
-
-/* Body padding & content fade-in when opened */
-.info-acc-dl,
-.info-acc-links {
-  padding: 2px 4px 14px;
-  margin: 0;
-}
-
-.info-acc[open] .info-acc-dl,
-.info-acc[open] .info-acc-links {
-  animation: info-acc-in 0.24s ease-out;
-}
-
-@keyframes info-acc-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Details list (key/value rows) */
-.info-acc-dl {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 10px 16px;
-  font-size: 13.5px;
-  line-height: 1.45;
-}
-
-.info-acc-row {
-  display: contents;
-}
-
-.info-acc-dl dt {
-  color: var(--text-muted);
-  font-weight: 500;
-  letter-spacing: 0.3px;
-  opacity: 0.85;
-}
-
-.info-acc-dl dd {
-  color: var(--text);
-  margin: 0;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Other links list */
-.info-acc-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  font-size: 13.5px;
-}
-
-.info-acc-links a {
-  color: var(--sun-yellow);
-  text-decoration: none;
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(254, 180, 71, 0.3);
-  transition: color 0.18s, border-color 0.18s;
-}
-
-.info-acc-links a:hover {
-  color: var(--text);
-  border-bottom-color: var(--sun-yellow);
-}
-
-/* === Desktop: a touch more breathing room, but still accordion-based === */
 @media (min-width: 1024px) {
   .panel--info .panel-inner {
     max-width: 720px;
   }
-  .bio-card--minimal {
-    gap: 16px;
-    max-width: 720px;
-  }
-  .bio-card--minimal .bio-text {
-    font-size: 17px;
-    line-height: 1.85;
-  }
-  .info-acc summary { padding: 16px 6px; font-size: 14.5px; }
-  .info-acc-dl { font-size: 14px; gap: 12px 20px; }
-  .info-acc-links { font-size: 14px; gap: 10px 16px; }
 }
 
 /* ---------- Main hero: better composition on tablet/desktop ---------- */
 @media (min-width: 768px) {
+  /* Reserve more bottom padding on wider viewports so the vertically-
+     centered .hero-stack can't drift down into the .hero-dots strip
+     (absolute, bottom: 90px → its top edge is ~144px from the panel
+     bottom). 160px keeps the stack clear of the dots + the dive-hint
+     below them at every desktop height. */
+  .hero-panel { padding-bottom: 160px; }
   .hero-panel--main .hero-zna-mark {
     width: clamp(380px, 58vw, 640px);
-    margin-bottom: 12px;
   }
   .hero-panel--main .logo-mark {
     font-size: clamp(96px, 14vw, 180px);
     letter-spacing: -5px;
-    margin-bottom: 18px;
   }
   .hero-panel--main .hero-tagline {
     font-size: 17px !important;
@@ -4974,11 +4354,17 @@ body.is-on-main-hero .top-bar-logo-img {
   }
   .hero-panel--main .hero-meta { font-size: 13.5px; }
   .hero-panel--main .live-status { width: min(460px, calc(100% - 36px)); }
+  /* Roomier breathing on bigger viewports — the stack stays compact on
+     mobile (clamped 10-14px), and opens up here so the main panel reads
+     as a deliberate composition rather than a tight stack. */
+  .hero-stack { gap: clamp(14px, 1.8vh, 20px); }
+  .hero-stack > .live-status { margin-top: clamp(8px, 1.2vh, 14px); }
+  .hero-stack > .hero-artists-pill { margin-top: clamp(4px, 0.6vh, 8px); }
 }
 
 @media (min-width: 1024px) {
   .hero-panel--main {
-    padding: 32px 40px 100px;
+    padding: 32px 40px 160px;
   }
   /* Tightened desktop sizes — prior values were comically large
      and overflowed the live-status pill on smaller laptops. */
@@ -4989,10 +4375,9 @@ body.is-on-main-hero .top-bar-logo-img {
     font-size: clamp(80px, 9vw, 140px);
     line-height: 0.92;
   }
-  .hero-panel--main .hero-subtitle {
-    font-size: 16px;
-    letter-spacing: 6px;
-  }
+  /* Final tier of breathing room — the desktop main hero has lots of
+     vertical real-estate, so the stack opens up another notch. */
+  .hero-stack { gap: clamp(16px, 2vh, 22px); }
   /* Stage panels: bigger than mobile but capped well below the previous
      160px ceiling — the title was eating the live-status row. */
   .hero-panel--retro .logo-mark,

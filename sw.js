@@ -16,7 +16,7 @@
 // Action ("Stamp Service Worker cache version" step in pages.yml). On
 // every deploy, all caches roll over and offline copies are refreshed.
 
-const CACHE_VERSION = "v2026-05-07";
+const CACHE_VERSION = "v2026-05-13";
 const SHELL_CACHE   = `zna-shell-${CACHE_VERSION}`;
 const PHOTO_CACHE   = `zna-photos-${CACHE_VERSION}`;
 const FONT_CACHE    = `zna-fonts-${CACHE_VERSION}`;
