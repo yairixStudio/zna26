@@ -1852,27 +1852,60 @@ function panelInfo(a) {
 //   "X & Y"               → link both names if found
 // `selfId` is the artist whose discography we're rendering — we never
 // link a project string back to the same artist.
+// Lazily-built index of every artist's lowercase name + officialName + the
+// first word of each. linkifyCollaborators used to ARTISTS.find() inside
+// the regex-match loop, calling .toLowerCase() three times per artist on
+// every probe. With ~85 artists and ~150 collaboration project strings,
+// every buildReel walked tens of thousands of strings for nothing the
+// data couldn't precompute once. Map.get is O(1); first insertion wins,
+// which preserves the original "first ARTIST that matches" ordering.
+let _collabLookup = null;
+function getCollabLookup() {
+  if (_collabLookup) return _collabLookup;
+  const map = new Map();
+  if (typeof ARTISTS !== "undefined" && ARTISTS) {
+    for (const a of ARTISTS) {
+      if (!a) continue;
+      const add = (str) => {
+        if (!str) return;
+        const lc = str.toLowerCase();
+        if (!map.has(lc)) map.set(lc, a.id);
+        // The old code's `name.startsWith(candidate + " ")` test let the
+        // candidate be any whitespace-bounded prefix of the full name, not
+        // just the first word. Index every such prefix so a project string
+        // like "with Astrix Live" still resolves when the artist record is
+        // "Astrix Live Project".
+        let i = lc.indexOf(" ");
+        while (i > 0) {
+          const prefix = lc.slice(0, i);
+          if (!map.has(prefix)) map.set(prefix, a.id);
+          i = lc.indexOf(" ", i + 1);
+        }
+      };
+      add(a.name);
+      add(a.officialName);
+    }
+  }
+  _collabLookup = map;
+  return map;
+}
+
 function linkifyCollaborators(projectStr, selfId) {
   if (!projectStr) return "";
   // Normalise to a working copy we'll surgically wrap, then escape the
   // remainder. We do the matching on the raw text and do all HTML
   // escaping ourselves so the wrapped <a> isn't double-escaped.
   const NAME_RE = /(?:\(\s*with\s+|with\s+|vs\.?\s+|as\s+|feat\.?\s+|&\s+|\+\s+|b2b\s+)([A-Z][\p{L}\p{M}\d.\-' ]{2,40}?)(?=\s*[\),/&+]|\s+\(|\s*$)/giu;
+  const lookup = getCollabLookup();
   const matches = [];
   let m;
   while ((m = NAME_RE.exec(projectStr)) !== null) {
     const candidate = m[1].trim().replace(/\s+/g, " ");
     if (!candidate) continue;
-    const target = (typeof ARTISTS !== "undefined") ? ARTISTS.find(other => {
-      if (!other || other.id === selfId) return false;
-      const a1 = (other.name || "").toLowerCase();
-      const a2 = (other.officialName || "").toLowerCase();
-      const c  = candidate.toLowerCase();
-      return a1 === c || a2 === c || a1.startsWith(c + " ") || a2.startsWith(c + " ");
-    }) : null;
-    if (target) {
+    const id = lookup.get(candidate.toLowerCase());
+    if (id && id !== selfId) {
       const start = m.index + m[0].lastIndexOf(candidate);
-      matches.push({ start, length: candidate.length, name: candidate, id: target.id });
+      matches.push({ start, length: candidate.length, name: candidate, id });
     }
   }
   if (!matches.length) return escapeHtml(projectStr);
