@@ -1433,9 +1433,13 @@ function heroArtistsPill(stageId) {
       ? `<span class="hero-artists-avatar" style="--accent: ${escapeHtml(a.color || "#FEB447")}; --z: ${3 - idx};"><img loading="lazy" decoding="async" src="${escapeHtml(src)}" alt=""/></span>`
       : `<span class="hero-artists-avatar hero-artists-avatar--fallback" style="--accent: ${escapeHtml(a.color || "#FEB447")}; --z: ${3 - idx};">${escapeHtml(initials)}</span>`;
   }).join("");
+  // Hebrew reads "7+ אומנים" as "more than 7" — natural shape for a
+  // "see-more" pill. The prefix form "+7 אומנים" parses as "and 7 more"
+  // which is the wrong nuance. EN/PT keep the standard "+N" prefix.
+  const word = t("hero.artistsCount");
   const counterLabel = remaining > 0
-    ? `+${remaining} ${t("hero.artistsCount")}`
-    : `${total} ${t("hero.artistsCount")}`;
+    ? (currentLang === "he" ? `${remaining}+ ${word}` : `+${remaining} ${word}`)
+    : `${total} ${word}`;
   return `
     <button class="hero-artists-pill" type="button" data-artists-pool="${escapeHtml(stageId)}"
             aria-label="${escapeHtml(t("hero.viewArtists"))}" title="${escapeHtml(t("hero.viewArtists"))}">
@@ -1855,14 +1859,11 @@ function panelInfo(a) {
   // side on desktop (one anchored to each end of the row), stacked on
   // mobile. Old chip styling (`.info-meta` / `.info-rep` boxes) is gone —
   // these are now just lightweight one-liners that don't dominate the card.
-  // Wrap the leading emoji in its own span so CSS can add visual breathing
-  // room between the icon and its text (a regular space character renders
-  // tight against the glyph; .meta-emoji's margin-inline-end widens it).
-  const repText = a.representedBy
-    ? `<span class="meta-emoji" aria-hidden="true">🎧</span>${escapeHtml(a.representedBy)}`
-    : "";
+  // Emojis are inline with the text (single space separator) so the row
+  // renders identically whether it wraps to one or two lines.
+  const repText = a.representedBy ? `🎧 ${escapeHtml(a.representedBy)}` : "";
   const announcedText = a.announcedAt
-    ? `<span class="meta-emoji" aria-hidden="true">📣</span>${escapeHtml(t("announced.prefix").replace(/^\s*📣\s*/, ""))}${escapeHtml(formatAnnouncedDate(a.announcedAt))}`
+    ? `${escapeHtml(t("announced.prefix"))}${escapeHtml(formatAnnouncedDate(a.announcedAt))}`
     : "";
   const metaRowHtml = (announcedText || repText)
     ? `

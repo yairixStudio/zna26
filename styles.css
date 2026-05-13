@@ -82,9 +82,13 @@ button, a, [role="button"], summary, label[for] {
    names resolve correctly) but force center alignment so a wrapped
    two-line title (e.g. "Retro Universe" on narrower desktop widths)
    doesn't suddenly read as a left-aligned block while the rest of the
-   panel content is centered. */
-.hero-stage-name {
-  text-align: center;
+   panel content is centered. `!important` wins over any cached
+   `text-align: start` left over from older bundles still in browsers. */
+.hero-stage-name,
+.hero-panel .hero-stage-name,
+.logo-mark.hero-stage-name {
+  text-align: center !important;
+  text-align-last: center;
 }
 
 img, iframe { display: block; max-width: 100%; }
@@ -870,10 +874,9 @@ body.has-mini-player .hero-dots {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Wider gap between the two lines (was 2 — too cramped) so the
-     "Section" eyebrow on top and the artist name below it read as
-     two separate beats. */
-  gap: 10px;
+  /* Tight gap between the two lines so they read as one stacked label
+     (the eyebrow on top of the artist name), not two separate beats. */
+  gap: 2px;
   letter-spacing: normal;
   text-transform: none;
   opacity: 1;
@@ -952,7 +955,13 @@ body.has-mini-player .hero-dots {
   margin-inline: auto;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: auto minmax(0, 9fr) minmax(0, 1fr);
+  /* eyebrow (auto) → bio-card (takes the rest) → fixed 20px tail spacer.
+     The old `minmax(0, 1fr)` tail expanded to ~50px on tall viewports and
+     looked like dead air below the card. */
+  grid-template-rows: auto minmax(0, 1fr) 20px;
+  /* A measured gap between the SECTION/artist eyebrow and the bio-card —
+     enough breathing room that the card reads as its own surface, not so
+     much that the eyebrow drifts away from the content it labels. */
   gap: 14px;
 }
 .panel--info .panel-eyebrow.has-artist {
@@ -998,10 +1007,13 @@ body.has-mini-player .hero-dots {
 }
 .panel--info .info-meta-row,
 .panel--info .info-meta-text,
-.panel--info .info-rep-text { color: var(--panel-accent); }
+.panel--info .info-rep-text { color: var(--text-muted); }
+/* Inline external links stay muted/grey in the info panel — they're
+   secondary navigation, not a CTA, so they shouldn't shout in the
+   per-stage accent colour. */
 .panel--info .link-text {
-  color: var(--panel-accent);
-  text-decoration-color: color-mix(in oklab, var(--panel-accent) 55%, transparent);
+  color: var(--text-muted);
+  text-decoration-color: color-mix(in oklab, var(--text-muted) 50%, transparent);
 }
 
 .panel--tracks .track-card.is-zna {
@@ -1272,21 +1284,30 @@ body.has-mini-player .hero-dots {
   border-radius: 28px;
   position: relative;
   overflow: hidden;
-  /* A 2px solid border on a `border-radius` + `overflow: hidden` container
-     makes the content (the artist photo at `inset: 0`) clip at the inner
-     padding-box, which has a slightly smaller corner radius (28 - 2 = 26).
-     The visible result is a 2px mismatch between the gradient backdrop's
-     outer corner and the photo's apparent corner — exactly the asymmetry
-     the user noticed. Replace the border with an inset box-shadow so the
-     photo's clip and the outline share the same border-radius. */
+  /* Drop shadows only — no inset white ring. The previous 2px inset
+     box-shadow rendered at the figure's outer border-radius while the
+     photo (at inset: 0, clipped by overflow:hidden) appeared to follow
+     a slightly tighter curve, making the corners read as misaligned.
+     Without the inset shadow the photo's clip IS the visible edge. */
   box-shadow:
     0 16px 50px rgba(0, 0, 0, 0.5),
-    0 0 60px var(--accent),
-    inset 0 0 0 2px rgba(255, 255, 255, 0.15);
+    0 0 60px var(--accent);
   background: linear-gradient(135deg, var(--accent) 0%, rgba(20, 10, 50, 0.7) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Make the <picture> wrapper that holds the photo a transparent layout
+   shim that exactly matches the figure — otherwise the inline-block
+   default leaves a sub-pixel baseline gap on some browsers and the photo
+   appears to "float" a hair inside the rounded background. */
+.artist-hero-art > picture {
+  display: block;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
 }
 
 .artist-hero-art::after {
@@ -1300,13 +1321,17 @@ body.has-mini-player .hero-dots {
   pointer-events: none;
 }
 
-/* Real photo */
+/* Real photo. Fills its <picture> wrapper exactly (which itself fills the
+   figure at inset: 0), so the visible photo edge AND the figure's rounded
+   background share one set of corners with the same radius. */
 .artist-photo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
   z-index: 1;
 }
 
@@ -1405,12 +1430,22 @@ body.has-mini-player .hero-dots {
   gap: 4px 18px;
   font-size: 12.5px;
   letter-spacing: 0.2px;
-  color: var(--sun-yellow);
-  opacity: 0.85;
+  color: var(--text-muted);
   margin: -2px 0 6px;
+}
+/* Each side of the meta row gets a hanging indent so when the text wraps
+   to a second or third line, the prose continues to align with the first
+   character of line one — never crawling back under the emoji icon. The
+   indent matches the emoji width + its inline-end margin (~1.8em). */
+.info-meta-text,
+.info-rep-text {
+  display: inline-block;
+  padding-inline-start: 1.8em;
+  text-indent: -1.8em;
 }
 .info-meta-text { text-align: start; }
 .info-rep-text  { text-align: end; }
+
 @media (max-width: 520px) {
   /* Mobile: stack one above the other, each anchored to the start so
      they read as a small captions list. */
@@ -1423,6 +1458,10 @@ body.has-mini-player .hero-dots {
 }
 
 .info-section { display: flex; flex-direction: column; gap: 10px; }
+/* Bio section sits tighter against its title than the other info sections —
+   the dashed border-bottom on the title already reads as a separator, so a
+   wide gap on top of that felt loose. */
+.info-section:has(.bio-text) { gap: 4px; }
 
 .info-section-title {
   font-size: 12px;
@@ -1463,7 +1502,22 @@ body.has-mini-player .hero-dots {
   scrollbar-color: var(--sun-yellow) rgba(255, 255, 255, 0.08);
   scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
+  /* Vertical padding doubles as the runway for the top/bottom fade mask
+     below — the fade falls on the padding (empty space) when the bio is
+     short, and on the partially-visible top/bottom lines when the bio
+     scrolls, signalling "there's more content above/below" without
+     covering any actual text on a short bio. */
+  padding-block: 12px;
   padding-inline-end: 10px;
+  /* Pronounced top + bottom fade — the first ~36px and last ~36px of the
+     scroll viewport gradually go transparent, so the edges of the prose
+     visibly dim into the panel (not just the empty padding runway).
+     As the user scrolls, new lines arriving at the bottom fade in and
+     the top line fades as it exits. The fade reaches past the padding
+     into ~1.5 lines of real text at each end. */
+  --bio-fade-mask: linear-gradient(to bottom, transparent 0, #000 36px, #000 calc(100% - 36px), transparent 100%);
+  -webkit-mask-image: var(--bio-fade-mask);
+  mask-image: var(--bio-fade-mask);
   /* Pull-to-navigate uses touch-action on the panel; the bio-text gets
      its own pan-y allowance so iOS doesn't claim the gesture before our
      pointer-stack figures out the user is reading the bio. */
@@ -1471,8 +1525,11 @@ body.has-mini-player .hero-dots {
 }
 
 /* Global `.bio-text { unicode-bidi: plaintext }` is for LTR shells; Hebrew
-   UI bios need explicit RTL + isolate so mixed Latin names read correctly. */
+   UI bios need explicit RTL + isolate so mixed Latin names read correctly.
+   `direction: rtl` also flips the WebKit scrollbar to the LEFT side of
+   the paragraph — matching the reading direction in Hebrew mode. */
 .bio-text[dir="rtl"] {
+  direction: rtl;
   unicode-bidi: isolate;
   text-align: start;
 }
@@ -1494,16 +1551,29 @@ body.has-mini-player .hero-dots {
   border-radius: 999px;
 }
 
-/* "Notable" sits as a small bold lede ABOVE the bio paragraph in the
-   info panel. */
+/* "Notable" caption — small grey one-liner that sits between the
+   announced/represented meta row and the Biography heading. Reads as
+   a subtle subtitle, not as part of the biography paragraph itself. */
 .bio-notable-lede {
   margin: 0 0 6px;
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 400;
   letter-spacing: 0.2px;
-  line-height: 1.4;
-  color: var(--accent, var(--sun-yellow));
-  opacity: 0.95;
+  line-height: 1.45;
+  color: var(--text-muted);
+  opacity: 0.85;
+  /* Hanging indent — the leading "★ " glyph sits in the left gutter
+     and any wrapped second/third line starts under the first letter
+     of the prose, not under the star. */
+  padding-inline-start: 1.2em;
+  text-indent: -1.2em;
+}
+/* Pull the notable lede tight up under the info-meta-row above it. The
+   bio-card uses gap: 22px between every flex child by default, which
+   reads as too much air between the meta row (📣 Announced / 🎧 Rep)
+   and this directly-related caption beneath it. */
+.info-meta-row + .bio-notable-lede {
+  margin-top: -16px;
 }
 .bio-notable-lede[dir="rtl"] {
   text-align: start;
@@ -1694,18 +1764,18 @@ a.collab-link:hover {
 .links-inline {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 10px;
+  gap: 2px 6px;
   align-items: baseline;
-  font-size: 13.5px;
-  line-height: 1.6;
+  font-size: 11.5px;
+  line-height: 1.55;
 }
 .link-text {
-  color: var(--neon-cyan);
+  color: var(--text-muted);
   text-decoration: underline dotted;
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  text-decoration-color: color-mix(in oklab, var(--neon-cyan) 55%, transparent);
-  font-weight: 600;
+  text-decoration-color: color-mix(in oklab, var(--text-muted) 50%, transparent);
+  font-weight: 500;
   cursor: pointer;
   transition: color 0.15s ease, text-decoration-color 0.15s ease;
 }
@@ -1717,7 +1787,8 @@ a.collab-link:hover {
 }
 .links-sep {
   color: var(--text-muted);
-  opacity: 0.55;
+  opacity: 0.4;
+  font-size: 10px;
   user-select: none;
 }
 
@@ -1728,13 +1799,13 @@ a.collab-link:hover {
 .streaming-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .stream-icon {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1744,6 +1815,14 @@ a.collab-link:hover {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.10);
   transition: transform 0.15s, background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.stream-icon > svg {
+  width: 16px;
+  height: 16px;
+}
+.stream-icon--soundcloud > svg {
+  width: 18px;
+  height: 18px;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -2422,9 +2501,15 @@ body.is-on-hero .top-bar-logo {
 body.is-on-hero .top-bar-logo-img {
   height: 38px;
 }
-/* Main hero already shows the large ZNA mark — hide header duplicate. */
+/* Main hero already shows the large ZNA mark — fade out the header
+   duplicate so swiping between hero panels doesn't make the header logo
+   blink on/off as the user crosses the 30%-threshold back and forth. */
+.top-bar-center {
+  opacity: 1;
+  transition: opacity 0.32s ease;
+}
 body.is-on-main-hero .top-bar-center {
-  visibility: hidden;
+  opacity: 0;
   pointer-events: none;
 }
 
@@ -3607,6 +3692,27 @@ body.is-on-main-hero .top-bar-center {
   color: var(--text-muted);
 }
 
+/* Hebrew typography pass for the live-now demo card.
+   The Latin styling (Orbitron display face on the title, wide letter-spacing
+   + uppercase on the eyebrows) doesn't translate to Hebrew — Hebrew has no
+   uppercase, Orbitron has no Hebrew glyphs, and tracking out small Hebrew
+   text leaves the letters floating apart. Drop those flourishes so Hebrew
+   reads in the same calm Heebo body voice as .hero-tagline. */
+:lang(he) .live-status--demo .live-now-label,
+:lang(he) .live-status--demo .live-demo-badge,
+:lang(he) .live-status--demo .live-pn-label {
+  font-family: "Heebo", sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 600;
+  font-size: 10px;
+}
+:lang(he) .live-status--demo .live-status-title {
+  font-family: "Heebo", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
 .live-progress {
   display: flex;
   flex-direction: column;
@@ -4393,7 +4499,7 @@ body.is-on-main-hero .top-bar-center {
      top edge is ~144px from the panel bottom). 180px keeps the stack
      clear of the dots + the dive-hint at every desktop height. */
   .hero-panel { padding-bottom: 180px; }
-  .hero-logo-scene { width: min(56vw, 420px); }
+  .hero-logo-scene { width: min(44vw, 340px); }
   .hero-panel--main .logo-mark {
     font-size: clamp(96px, 14vw, 180px);
     letter-spacing: -5px;
@@ -4419,8 +4525,10 @@ body.is-on-main-hero .top-bar-center {
   }
   /* Desktop sizing: prior values had the logo+UFOs visually dominating
      the panel and pushing .hero-disclaimer into the .hero-dots strip.
-     This keeps the scene around ~35-40% of the panel height. */
-  .hero-logo-scene { width: min(34vw, 380px); }
+     This keeps the scene around ~28-32% of the panel width so the stack
+     below it (tagline, meta, live-status, artists pill, disclaimer) all
+     fit comfortably between the panel top and the .hero-dots row. */
+  .hero-logo-scene { width: min(26vw, 300px); }
   .hero-panel--main .logo-mark {
     font-size: clamp(80px, 9vw, 140px);
     line-height: 0.92;
@@ -4443,9 +4551,10 @@ body.is-on-main-hero .top-bar-center {
 }
 
 @media (min-width: 1400px) {
-  /* On very wide laptops / external monitors, keep the logo scene
-     measured rather than letting it scale up indefinitely. */
-  .hero-logo-scene { width: min(28vw, 400px); }
+  /* On very wide laptops / external monitors, cap the logo scene so it
+     doesn't grow with the viewport — large monitors get more whitespace,
+     not a bigger scene. */
+  .hero-logo-scene { width: min(22vw, 320px); }
 }
 
 /* Prevent the giant ZNA 2026 wordmark from spilling out at any width.
