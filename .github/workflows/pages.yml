@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - claude/zna-festival-guide-4Uu3t
   workflow_dispatch:
 
 permissions:
@@ -72,7 +71,7 @@ jobs:
         uses: treosh/lighthouse-ci-action@v12
         with:
           urls: |
-            ${{ needs.deploy.outputs.page_url || 'https://yairixstudio.github.io/Zna-onboarding-/' }}
+            ${{ needs.deploy.outputs.page_url || 'https://yairixstudio.github.io/zna26/' }}
           configPath: ./.lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: true
