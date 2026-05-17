@@ -2319,17 +2319,19 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
     "photo": "images/artists/skizologic-vs-filteria.jpg",
     "links": [
       {
-        "type": "Discogs",
-        "url": "https://www.discogs.com/artist/3949225-Proxeeus"
+        "type": "Discogs (Skizologic)",
+        "url": "https://www.discogs.com/artist/3140564-Skizologic"
       },
       {
-        "type": "SoundCloud",
-        "url": "https://soundcloud.com/proxeeus"
+        "type": "Bandcamp (Skizologic)",
+        "url": "https://skizologicmusic.bandcamp.com/"
+      },
+      {
+        "type": "Bandcamp (Filteria)",
+        "url": "https://filteria.bandcamp.com/album/sky-input"
       }
     ],
-    "channels": {
-      "soundcloud": "https://soundcloud.com/proxeeus"
-    },
+    "channels": {},
     "albums": [],
     "tracks": [],
     "curatedFrom": "filteria"
@@ -2358,17 +2360,15 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
     "photo": "images/artists/ultravibe.jpg",
     "links": [
       {
-        "type": "Discogs",
-        "url": "https://www.discogs.com/artist/5252321-Triquetra-3"
+        "type": "Bandcamp (Cosmosis)",
+        "url": "https://cosmosis.bandcamp.com/album/transmitter"
       },
       {
-        "type": "SoundCloud",
-        "url": "https://soundcloud.com/triquetra-2"
+        "type": "Bandcamp (Future Music)",
+        "url": "https://beatspace-futuremusic.bandcamp.com/album/transmitter"
       }
     ],
-    "channels": {
-      "soundcloud": "https://soundcloud.com/triquetra-2"
-    },
+    "channels": {},
     "albums": [],
     "tracks": []
   },
@@ -3191,7 +3191,7 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
     },
     "albums": [],
     "tracks": [],
-    "curatedFrom": "mathew-tecnica"
+    "curatedFrom": "tecnica"
   },
   {
     "id": "triple-distilled",
@@ -3314,6 +3314,15 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
     });
   }
 
+  function mergeUniqueTracks(primary = [], fallback = []) {
+    const seen = new Set();
+    return [...primary, ...fallback].filter(track => {
+      if (!track || !track.id || seen.has(track.id)) return false;
+      seen.add(track.id);
+      return true;
+    });
+  }
+
   function normalizeChannels(channels = {}) {
     return Object.fromEntries(
       Object.entries(channels)
@@ -3347,7 +3356,7 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
       links: mergeUniqueLinks(official.links, curated.links),
       channels: { ...normalizeChannels(curated.channels), ...normalizeChannels(official.channels) },
       albums: official.albums?.length ? official.albums : (curated.albums || []),
-      tracks: official.tracks?.length ? official.tracks : (curated.tracks || [])
+      tracks: mergeUniqueTracks(official.tracks, curated.tracks)
     };
   });
 })();

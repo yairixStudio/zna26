@@ -53,7 +53,9 @@ let ARTISTS = [
       { id: "NnDXKyVj148", title: "Producer set @ ZNA 2022 (Zambu Temple)", year: 2022, zna: true },
       { id: "KCbcjoHmSJc", title: "Voyage (with Eyal Barkan)", year: 2000 },
       { id: "dOfoHoVmPBQ", title: "For The People", year: 2001 },
-      { id: "cqj25UxWKlQ", title: "For The People (Full Album)", year: 2001 }
+      { id: "cqj25UxWKlQ", title: "For The People (Full Album)", year: 2001 },
+      { id: "-30OMFQ21yc", title: "Yahel - Avalanche", discogs: true },
+      { id: "8tHbvGNwfKA", title: "Yahel - Sugar One (Original Mix)", discogs: true }
     ]
   },
   {
@@ -86,7 +88,9 @@ let ARTISTS = [
       { id: "58dnkJqQQu8", title: "Get the party started @ ZNA 2022", year: 2022, zna: true },
       { id: "cKsA8Vsb02c", title: "Live @ ZNA 2022", year: 2022, zna: true },
       { id: "MFd7_zTci_g", title: "Prana - Geomantik", year: 1997 },
-      { id: "Oo9lag7Bz5o", title: "Prana - Geomantik (Full Album)", year: 1997 }
+      { id: "Oo9lag7Bz5o", title: "Prana - Geomantik (Full Album)", year: 1997 },
+      { id: "1aq9XavxcO0", title: "Tsuyoshi Suzuki - Tokio Drome @ Liquid Room Tokyo 2001", discogs: true },
+      { id: "1DHL0mur1GI", title: "Tsuyoshi - Matsuri 1, November 1994 (DAT)", discogs: true }
     ]
   },
   {
@@ -112,7 +116,9 @@ let ARTISTS = [
       { type: "LinkedIn", url: "https://www.linkedin.com/in/kylven/" }
     ],
     tracks: [
-      { id: "z6OI0HnDprs", title: "Syb Unity Nettwerk - Goa Years", year: 2021 }
+      { id: "z6OI0HnDprs", title: "Syb Unity Nettwerk - Goa Years", year: 2021 },
+      { id: "aqU-K3BQuDY", title: "Kris Kylven - The Ultimate Syb Element Experience", discogs: true },
+      { id: "FjPXihswlIg", title: "Kris Kylven - Space Time Continuum (Goa Trance Mix 2016)", discogs: true }
     ]
   },
   {
@@ -222,7 +228,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "bTkD1hZlMko", title: "Process - One Drop Or Two (Full Album)", year: 2000 },
-      { id: "jSqrnWIRvl4", title: "Satori - Entropy", year: 1997 }
+      { id: "jSqrnWIRvl4", title: "Satori - Entropy", year: 1997 },
+      { id: "c1VtCgE3nME", title: "Process - Superior Technology (Full Album)", discogs: true },
+      { id: "yAlWv-qGbZo", title: "Process - Internal Horizon", discogs: true }
     ]
   },
   {
@@ -279,7 +287,9 @@ let ARTISTS = [
     tracks: [
       { id: "_5Cg9bPCZ8Y", title: "Psychaos - New Sensations", year: 2007 },
       { id: "pIbqA1EWOBA", title: "Boom Festival 2010 RETRO Live Set", year: 2010 },
-      { id: "f27ftXgd6GM", title: "Live @ Ozora Festival Main Stage", year: 2013 }
+      { id: "f27ftXgd6GM", title: "Live @ Ozora Festival Main Stage", year: 2013 },
+      { id: "VJfwbIA4-Ac", title: "Psychaos - Science Fiction (1995)", discogs: true },
+      { id: "B8lGS0dw_iE", title: "Psychaos - Click Bait (Original Mix)", discogs: true }
     ]
   },
   {
@@ -485,7 +495,9 @@ let ARTISTS = [
     tracks: [
       { id: "tV_HLfvs4_4", title: "Land Of Utopia", year: 1997 },
       { id: "G_hdbVqSYA4", title: "Land Of Utopia (Expanded Remaster)", year: 2020 },
-      { id: "5amZX-9MZk0", title: "Sutra Sarma", year: null }
+      { id: "5amZX-9MZk0", title: "Sutra Sarma", year: null },
+      { id: "0n1wDoEP-Kc", title: "Dogma 3000 - Sundance (Land Of Utopia)", discogs: true },
+      { id: "at4kt4VG190", title: "Dogma - Svuda Gazi", discogs: true }
     ]
   },
   {
@@ -599,7 +611,9 @@ let ARTISTS = [
     links: [],
     tracks: [
       { id: "TdZ_SuOwrUQ", title: "Live @ Cycles of Life", year: 2023 },
-      { id: "jOriE5DfSLk", title: "Spontaneous Human Combustion (Burning Man)", year: null }
+      { id: "jOriE5DfSLk", title: "Spontaneous Human Combustion (Burning Man)", year: null },
+      { id: "3v1lsk6Ttpg", title: "Mittelstandskinder Ohne Strom - Komm Das", discogs: true },
+      { id: "s_2bL4LsE6o", title: "Semsis - Border Hash", discogs: true }
     ]
   },
   {
@@ -624,7 +638,9 @@ let ARTISTS = [
       { id: "ykBk7w50b1s", title: "DJ Set @ ZNA Gathering 2017", year: 2017, zna: true },
       { id: "1k-XbkfMl2k", title: "Retro Goa Explorations Ep.123", year: null },
       { id: "nGIkRxh3xiw", title: "Retro Goa Explorations Ep.64", year: null },
-      { id: "-a_-fnGYhi4", title: "Retro Goa Explorations Ep.117", year: null }
+      { id: "-a_-fnGYhi4", title: "Retro Goa Explorations Ep.117", year: null },
+      { id: "K79g7j4XA1Q", title: "Blue Lunar Monkey vs Solitare - Future Memory", discogs: true },
+      { id: "nviVguCLrzY", title: "Blue Lunar Monkey vs Solitare - Divine Connection", discogs: true }
     ]
   },
   {
@@ -752,7 +768,7 @@ let ARTISTS = [
     ]
   },
   {
-    id: "mathew-tecnica",
+    id: "tecnica",
     announcedAt: "2026-03-25",
     name: "Tecnica",
     realName: "Max Lanfranconi & Maurizio Begotti (Etnica / Pleiadians)",
@@ -823,10 +839,15 @@ let ARTISTS = [
     role: "B2B",
     tags: ["Back to Back", "Deep Goa"],
     color: "#90e0ef",
-    bio: "דואו B2B חזק - חוויית גואה עמוקה במקדש זמבו.",
-    notable: "Zambu Temple B2B",
+    bio: "Bill Robin & Maya Wada - דואו DJs ב-Market Stage של ZNA 2026. Maya Wada יפנית עם נוכחות ב-SoundCloud ו-Discogs. הופעה חיה במשפט הדאב/אקספרימנטל בסצנה היפנית.",
+    notable: "Market Stage duo - Japan",
     albums: [],
-    links: []
+    links: [
+      { type: "SoundCloud (Bill Robin)", url: "https://soundcloud.com/billrobin" },
+      { type: "Mixcloud (Bill Robin)", url: "https://www.mixcloud.com/billrobin" },
+      { type: "SoundCloud (Maya Wada)", url: "https://soundcloud.com/maya-wada-983351163" },
+      { type: "Discogs (Maya Wada)", url: "https://www.discogs.com/artist/2823275-Maya-Wada" }
+    ]
   },
   {
     id: "e-sko",
@@ -849,18 +870,32 @@ let ARTISTS = [
     id: "sancho-meiso",
     announcedAt: "2026-03-25",
     name: "Sancho Meisø Chaya",
-    realName: "Sancho Meisø Chaya",
+    realName: "Sancho Meiso Chaya - Shin Sasama",
     country: "🇯🇵 יפן",
     age: null,
     born: "פעיל בסצנה",
     stage: "market",
     role: "DJ Set",
-    tags: ["Chillout", "Market"],
+    tags: ["Chillout", "Market", "Japanese Dub"],
     color: "#fee440",
-    bio: "וייב צ'יל ועומק רוחני - חלק מאזור השוק והחימום של ZNA.",
-    notable: "Market vibes",
-    albums: [],
-    links: []
+    bio: "Shin Sasama מטוקיו - הקריירה התחילה בשנות ה-90 כסקסופוניסט בלהקת הדאב Cultivator ובהפקות רגאיי יפני. בתחילת שנות ה-2000 פתח את הפרויקט הסולו Sancho Meiso Chaya עם אמביינט וניסיון אלקטרוני. הסאונד שלו משלב אטמוספרות עמוקות עם קצבים מאולתרים. הופעות חיות ב-Ozora, Mo:Dem, ו-ZNA Gathering.",
+    notable: "פרויקט דאב/ניסיוני יפני - 3 אלבומים + EPs (b.p.f.records 2008-2009)",
+    albums: [
+      { name: "EP1", year: 2008, project: "Sancho Meiso Chaya / b.p.f.Records" },
+      { name: "EP2", year: 2008, project: "Sancho Meiso Chaya / b.p.f.Records" },
+      { name: "EP3", year: 2009, project: "Sancho Meiso Chaya / b.p.f.records" },
+      { name: "Misukumi EP", year: null, project: "Sancho Meiso Chaya / Bandcamp" },
+      { name: "April Dub (with Koyas)", year: null, project: "psymatics" }
+    ],
+    links: [
+      { type: "Linktree", url: "https://linktr.ee/sanchomeisochaya" },
+      { type: "SoundCloud", url: "https://soundcloud.com/sanchomeisochaya" },
+      { type: "Bandcamp", url: "https://sanchomeisochaya.bandcamp.com/" },
+      { type: "Resident Advisor", url: "https://ra.co/dj/sanchomeisochaya" }
+    ],
+    tracks: [
+      { id: "YiUYBzI1jg0", title: "Live Session / Sancho Meiso Chaya", year: null }
+    ]
   },
   // ===== 2026 announcement additions =====
   {
@@ -886,7 +921,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "yjWWicu-EHI", title: "DJ Set @ ZNA Gathering 2019", year: 2019, zna: true },
-      { id: "WbRgoRdBokk", title: "Mai Mai", year: 1998 }
+      { id: "WbRgoRdBokk", title: "Mai Mai", year: 1998 },
+      { id: "_EaFFTXTlOU", title: "Jaia - Hypnostatique (Jimmy Van M Remix)", discogs: true },
+      { id: "912f-DVGi0c", title: "Jaia - Mohamour", discogs: true }
     ]
   },
   {
@@ -997,7 +1034,9 @@ let ARTISTS = [
     tracks: [
       { id: "h4QP2_Nszh4", title: "Fusion - Full Album Mix (1997)", year: 1997 },
       { id: "6ARniuNgx3A", title: "Macrometasomakosmos - Full Album (2003)", year: 2003 },
-      { id: "ghib8Dx1rDA", title: "The Tale Of Taketori (Fusion)", year: 1997 }
+      { id: "ghib8Dx1rDA", title: "The Tale Of Taketori (Fusion)", year: 1997 },
+      { id: "w1SIVtp-lGE", title: "Baby Dragon / Ubar Tmar", discogs: true },
+      { id: "Tc0-ZGlojIM", title: "Ubar Tmar - Eternal Return (Quirk Remix)", discogs: true }
     ]
   },
   {
@@ -1023,14 +1062,16 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "s9T6noBLRGw", title: "B2B Ka-Sol live @ ZNA Gathering 2019 (4h producer set)", year: 2019, zna: true },
-      { id: "dX6a2ISyjy8", title: "Twin Sharkfins (Full Album)", year: 1998 }
+      { id: "dX6a2ISyjy8", title: "Twin Sharkfins (Full Album)", year: 1998 },
+      { id: "HE62pDuCv0s", title: "Battle of the Future Buddhas - Tigerhill", discogs: true },
+      { id: "64Kzw2UuycE", title: "Battle of the Future Buddhas - Am I Dead", discogs: true }
     ]
   },
   {
     id: "goaacen",
     announcedAt: "2026-03-04",
     name: "Goaacen",
-    realName: "Goaacen",
+    realName: "Goaacen (Tiago Lopes)",
     country: "🇵🇹 פורטוגל",
     age: null,
     born: "פעיל בסצנה",
@@ -1038,10 +1079,13 @@ let ARTISTS = [
     role: "DJ Set",
     tags: ["Suntrip", "Dark Goa", "Portuguese"],
     color: "#0077b6",
-    bio: "DJ פורטוגזי מוביל וחותמת Suntrip - חוקר את הטריטוריות האפלות והעמוקות יותר של גואה טראנס. חלק מהליין-אפ של Goa Guardians.",
-    notable: "DJ של חותמת Suntrip - הוצאה מובילה של גואה מודרני",
+    bio: "מהמובילים של DJs פורטוגזים בגואה טראנס. DJ של Suntrip Records וחלק מ-604 Productions. אוהב לחקור טריטוריות אפלות יותר של גואה. ב-ZNA הוא מראה איך מסע של שעתיים יכול לטוס במהירות.",
+    notable: "DJ של Suntrip Records + 604 Freaks Productions (Portugal)",
     albums: [],
-    links: []
+    links: [
+      { type: "SoundCloud", url: "https://soundcloud.com/tiago-lopes-646831806" },
+      { type: "Facebook", url: "https://www.facebook.com/Gooaacen/" }
+    ]
   },
   {
     id: "dark-el-kante",
@@ -1091,6 +1135,10 @@ let ARTISTS = [
       { type: "Discogs", url: "https://www.discogs.com/artist/737661-Merr0w" },
       { type: "Bandcamp", url: "https://merr0w.bandcamp.com/" },
       { type: "SoundCloud", url: "https://soundcloud.com/merr0w" }
+    ],
+    tracks: [
+      { id: "pu5Pbs-SwOE", title: "Merrow - Born Underwater (Full Album)", discogs: true },
+      { id: "75phWblsxQI", title: "Merrow - Naiades", discogs: true }
     ]
   },
   // ===== Additional verified ZNA 2026 artists =====
@@ -1116,7 +1164,9 @@ let ARTISTS = [
       { type: "Discogs", url: "https://www.discogs.com/artist/9013-Atmos" }
     ],
     tracks: [
-      { id: "Fat-5AwNPXk", title: "The Only Process (Original Mix)", year: 1999 }
+      { id: "Fat-5AwNPXk", title: "The Only Process (Original Mix)", year: 1999 },
+      { id: "6lYCkcZBvpg", title: "Atmos - Metro De Luxe", discogs: true },
+      { id: "7v5sQt7ok5E", title: "Atmos - Rebirth Of Cavanaough", discogs: true }
     ]
   },
   {
@@ -1141,7 +1191,9 @@ let ARTISTS = [
       { type: "Discogs", url: "https://www.discogs.com/artist/27998-Alphanaut" }
     ],
     tracks: [
-      { id: "_0-7f9AJ3lU", title: "Cosmonaut", year: 1998 }
+      { id: "_0-7f9AJ3lU", title: "Cosmonaut", year: 1998 },
+      { id: "Sxjn9O93-8s", title: "Alphanaut - Neurozap", discogs: true },
+      { id: "sBZb207oev0", title: "Alphanaut - India", discogs: true }
     ]
   },
   {
@@ -1167,7 +1219,9 @@ let ARTISTS = [
       { type: "Bandcamp", url: "https://blueplanetcorporation.bandcamp.com/" }
     ],
     tracks: [
-      { id: "NCNJHQHzo7w", title: "Overbloody Flood", year: 1993 }
+      { id: "NCNJHQHzo7w", title: "Overbloody Flood", year: 1993 },
+      { id: "7qjUQjYqO8g", title: "Unreleased Old Sounds Series 1 (Compilation by Blue Planet Corporation)", discogs: true },
+      { id: "8P3FuPRCBlU", title: "Blue Planet Corporation - Entropie", discogs: true }
     ]
   },
   {
@@ -1192,7 +1246,8 @@ let ARTISTS = [
       { type: "Discogs", url: "https://www.discogs.com/artist/4759-Eat-Static" }
     ],
     tracks: [
-      { id: "0mgFLx_0iDM", title: "Bony Incus", year: 1994 }
+      { id: "0mgFLx_0iDM", title: "Bony Incus", year: 1994 },
+      { id: "Ecn-k4F0f-M", title: "Eat Static - The Brain (1993)", discogs: true }
     ]
   },
   {
@@ -1298,7 +1353,9 @@ let ARTISTS = [
     tracks: [
       { id: "wugRMCnGGY8", title: "Let's Turn On (Full Album Mix, 1996)", year: 1996 },
       { id: "WN3SYRhVXow", title: "Let's Turn On (1996)", year: 1996 },
-      { id: "B4u2P3eNut0", title: "Let's Turn On (Tuned In Mix)", year: 1996 }
+      { id: "B4u2P3eNut0", title: "Let's Turn On (Tuned In Mix)", year: 1996 },
+      { id: "-ss5VNR1pdo", title: "Doof - Secret Sun (7th Sun Mix)", discogs: true },
+      { id: "kMtHyj_lXow", title: "Doof - Mars Needs Woomen (Remix)", discogs: true }
     ]
   },
   {
@@ -1317,7 +1374,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "mOHU4co1iYo", title: "Corridor Of Mirrors (Full Album)", year: 2007 },
-      { id: "NGZw1YUahaM", title: "O.K Computer", year: null }
+      { id: "NGZw1YUahaM", title: "O.K Computer", year: null },
+      { id: "4cXOs5WSBto", title: "Prometheus", discogs: true },
+      { id: "61hEO4CkZdU", title: "Prometheus - Time Bandit", discogs: true }
     ]
   },
   {
@@ -1337,7 +1396,9 @@ let ARTISTS = [
     tracks: [
       { id: "A8fogsOQ5jE", title: "Chaos Laboratory (Full Album, 1997)", year: 1997 },
       { id: "U9LV5cHdX8c", title: "Juno Reactor - Zombie (GMS Remix)", year: null },
-      { id: "WdcabEUNz7E", title: "Juno Reactor & Undercover - Dakota (GMS Remix)", year: null }
+      { id: "WdcabEUNz7E", title: "Juno Reactor & Undercover - Dakota (GMS Remix)", year: null },
+      { id: "iPXJEgtfu9s", title: "GMS - No Rules (Full Album)", discogs: true },
+      { id: "s3WF4Dz0A7U", title: "Systembusters - Ghostbuster", discogs: true }
     ]
   },
   {
@@ -1367,7 +1428,9 @@ let ARTISTS = [
       { id: "f-b68TVnc5U", title: "History of Goa Trance - 2001", year: null },
       { id: "jt94xMN-neM", title: "The History of Goa Trance - 2000", year: null },
       { id: "fkbgMy9C-ZQ", title: "The History of Goatrance - 1995", year: null },
-      { id: "Jj7cVp70u34", title: "The Resurgence of Goa Trance with Dj Anoebis (Suntrip)", year: null }
+      { id: "Jj7cVp70u34", title: "The Resurgence of Goa Trance with Dj Anoebis (Suntrip)", year: null },
+      { id: "IOZKBSFghSU", title: "DJ Anoebis @ BOOM Festival 2016", discogs: true },
+      { id: "KxuSWQ7YUnI", title: "DJ Anoebis - Sakura (Goa Trance Set)", discogs: true }
     ]
   },
   {
@@ -1387,7 +1450,9 @@ let ARTISTS = [
     tracks: [
       { id: "hmGE0sz4gcQ", title: "Aizen Myoo (Official Audio HD)", year: 1998 },
       { id: "Zg3bS5pg8js", title: "Tripulation (Official Audio HD)", year: 1998 },
-      { id: "Ps2s-RjNZIw", title: "The Beast Comes Out (Official Audio HD)", year: 1998 }
+      { id: "Ps2s-RjNZIw", title: "The Beast Comes Out (Official Audio HD)", year: 1998 },
+      { id: "i54XIyUjKxM", title: "Cyan - Dragon's Breath", discogs: true },
+      { id: "4Aa9wRrUWiY", title: "Cyan - Psycho Meditation (Captured In A Dream)", discogs: true }
     ]
   },
   {
@@ -1403,7 +1468,9 @@ let ARTISTS = [
       { type: "Spotify", url: "https://open.spotify.com/artist/4Ld7CBJuKaVcmpBKmX6nOR" }
     ],
     tracks: [
-      { id: "p-VYV57uHuU", title: "Planet B.E.N. & Spiralkinder - Parakusis", year: null }
+      { id: "p-VYV57uHuU", title: "Planet B.E.N. & Spiralkinder - Parakusis", year: null },
+      { id: "PgDcaihgy0E", title: "Planet BEN & Spiralkinda - Triple Helix", discogs: true },
+      { id: "QFADLs_8MPU", title: "Spiralkinda & X-Dream - Blah", discogs: true }
     ]
   },
   {
@@ -1422,7 +1489,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "dIgr4olBSbs", title: "Beyond The Wormhole (Full Album HD, 2020)", year: 2020 },
-      { id: "HWE_myksDho", title: "Wormhole", year: 2020 }
+      { id: "HWE_myksDho", title: "Wormhole", year: 2020 },
+      { id: "08_REjl0hmU", title: "Hypnoxock - Reflex", discogs: true },
+      { id: "YQz5nAKFzKQ", title: "Hypnoxock - The Fabric Of Reality", discogs: true }
     ]
   },
   {
@@ -1441,7 +1510,9 @@ let ARTISTS = [
     tracks: [
       { id: "g-3dV0086cs", title: "Back To Space (Full Album, 2011)", year: 2011 },
       { id: "ubyu2Z2UzzY", title: "They Will Communicate", year: 2011 },
-      { id: "HJfp2sDdiqM", title: "Beyond Lightspeed", year: null }
+      { id: "HJfp2sDdiqM", title: "Beyond Lightspeed", year: null },
+      { id: "1r_uFqyuhEQ", title: "Artifact303 - Magnetic Fields", discogs: true },
+      { id: "aDRb_yXbusQ", title: "Artifact303 - Apex (Original Mix)", discogs: true }
     ]
   },
   {
@@ -1459,7 +1530,9 @@ let ARTISTS = [
       { type: "Booking", url: "https://olibookings.com/artists/proxeeus/" }
     ],
     tracks: [
-      { id: "u1dhFojIdwU", title: "Celephaïs (Full Album, 2019)", year: 2019 }
+      { id: "u1dhFojIdwU", title: "Celephaïs (Full Album, 2019)", year: 2019 },
+      { id: "ZaOdOH5Agec", title: "Proxeeus - OM Ganesh", discogs: true },
+      { id: "X2K8eHE0iLg", title: "Proxeeus - In the Throes of a Nightmare", discogs: true }
     ]
   },
   {
@@ -1478,7 +1551,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "HYHZTWTdJN4", title: "A Pinch Of Psychedelic mix (Chaos Unlimited, 1995)", year: 1995 },
-      { id: "kq5IgRSYac0", title: "Brainforest Mix (Chaos Unlimited, 1995)", year: 1995 }
+      { id: "kq5IgRSYac0", title: "Brainforest Mix (Chaos Unlimited, 1995)", year: 1995 },
+      { id: "ZCglhV6kA3A", title: "Mark Allen - A Pinch Of Psychedelic (Chaos Unlimited, 1995)", discogs: true },
+      { id: "8G2vPQruA0s", title: "Mark Allen - Lone Star", discogs: true }
     ]
   },
   {
@@ -1492,7 +1567,10 @@ let ARTISTS = [
       { type: "Beatport", url: "https://www.beatport.com/artist/silicon-sound/12014" },
       { type: "Bandcamp", url: "https://jaia.bandcamp.com/track/mai-mai-silicon-sound-90s-remix" }
     ],
-    tracks: []
+    tracks: [
+      { id: "w6xyE_7N40U", title: "Silicon Sound - Shodan", discogs: true },
+      { id: "u68ckuewbA0", title: "Silicon Sound - Nexus6 Remix", discogs: true }
+    ]
   },
   {
     id: "sun-project",
@@ -1512,7 +1590,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "nIi_6PMUjDg", title: "Drosophila (Full Album, 1997)", year: 1997 },
-      { id: "zWWIiXrV1eE", title: "Drosophila (Full Album Mix)", year: 1997 }
+      { id: "zWWIiXrV1eE", title: "Drosophila (Full Album Mix)", year: 1997 },
+      { id: "_lFRaX-BFMA", title: "S.U.N. Project - The Suburbs", discogs: true },
+      { id: "-40M_H4zTkE", title: "S.U.N. Project - Computer Breath", discogs: true }
     ]
   },
   {
@@ -1530,7 +1610,8 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "1tuV4BwyUC0", title: "Soundframed", year: 2020 },
-      { id: "1Ebe4EiV0pw", title: "O.tonin", year: null }
+      { id: "1Ebe4EiV0pw", title: "O.tonin", year: null },
+      { id: "GjeEMYtpO4Q", title: "Reefer Decree - Breaking News (2006)", discogs: true }
     ]
   },
   {
@@ -1544,7 +1625,10 @@ let ARTISTS = [
     links: [
       { type: "Bandcamp", url: "https://timewarprecords.bandcamp.com/album/mini-spacer-the-spirit-of-trance-timewarp168-timewarp" }
     ],
-    tracks: []
+    tracks: [
+      { id: "u7baF9OABiY", title: "V.A. - Suntopia (Full Mix)", discogs: true },
+      { id: "3vpv1Fc8J1U", title: "Mini Spacer - Energy Is Everywhere", discogs: true }
+    ]
   },
   {
     id: "moon-beasts",
@@ -1555,7 +1639,10 @@ let ARTISTS = [
     links: [
       { type: "Goa Madness Records", url: "https://goamadnessrecordsofficial.bandcamp.com/" }
     ],
-    tracks: []
+    tracks: [
+      { id: "R_sSJxKSrHs", title: "Moon Beasts - On The Edge (Full Album)", discogs: true },
+      { id: "fupygC-jpv0", title: "V.A. - Hallucinations Of The Buddha (Full Compilation)", discogs: true }
+    ]
   },
   {
     id: "antidot-and-dica",
@@ -1586,7 +1673,10 @@ let ARTISTS = [
       { type: "Bandcamp", url: "https://psy-harmonics.bandcamp.com/" },
       { type: "Discogs", url: "https://www.discogs.com/label/5557-Psy-Harmonics" }
     ],
-    tracks: []
+    tracks: [
+      { id: "aCTG4QMTJFE", title: "Andrew Till - Fear and Loathing in Licola (Part 3a)", discogs: true },
+      { id: "6x_TWNsWVcA", title: "Andrew Till @ Musico 8", discogs: true }
+    ]
   },
   {
     id: "cosmosis-vs-laughing-buddha",
@@ -1605,7 +1695,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "p9yPtqdVQxI", title: "Laughing Buddha - Sacred Technology (Full Album, 2010)", year: 2010 },
-      { id: "EIrJVemIMBI", title: "Laughing Buddha - Illusions & Collusions (Full Album, 2014)", year: 2014 }
+      { id: "EIrJVemIMBI", title: "Laughing Buddha - Illusions & Collusions (Full Album, 2014)", year: 2014 },
+      { id: "Ld81304lSbU", title: "Cosmosis - Cannabanoid (TRANRLP604)", discogs: true },
+      { id: "IFFBJLTqxVs", title: "Laughing Buddha & Lucas - Revel With The Devil (Volcano On Mars Remix)", discogs: true }
     ]
   },
   {
@@ -1626,7 +1718,9 @@ let ARTISTS = [
     tracks: [
       { id: "TsugnBwlreY", title: "Domino - Goa Mix (2000)", year: 2000 },
       { id: "7U8D4brQo5c", title: "Domino - Moon Mix", year: null },
-      { id: "TPIUjK_4aXA", title: "Ree.K Live @ Unite - Psytrance Sessions", year: null }
+      { id: "TPIUjK_4aXA", title: "Ree.K Live @ Unite - Psytrance Sessions", year: null },
+      { id: "NS7JCIRE-i0", title: "Domino Mix 2000", discogs: true },
+      { id: "_I4xSQ1dcXY", title: "Ree.K - Hi Izuru Tokoro", discogs: true }
     ]
   },
   {
@@ -1662,7 +1756,9 @@ let ARTISTS = [
       { type: "Last.fm", url: "https://www.last.fm/music/Mittelstandskinder%20Ohne%20Strom" }
     ],
     tracks: [
-      { id: "tBKc9AnCY3M", title: "The Wave Inside (Nirhtak EP, 1997)", year: 1997 }
+      { id: "tBKc9AnCY3M", title: "The Wave Inside (Nirhtak EP, 1997)", year: 1997 },
+      { id: "_6zIxEENGzI", title: "Mittelstandskinder Ohne Strom - Single Collection", discogs: true },
+      { id: "PnRLHJsRP_Y", title: "M.O.S. - Bug (Full Album)", discogs: true }
     ]
   },
   {
@@ -1682,7 +1778,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "ifVeU6dDESU", title: "Encens - Spiritual Transgression (1996)", year: 1996 },
-      { id: "yvxuXoWSeQw", title: "Ominus - Ominus (Full Album, 1997)", year: 1997 }
+      { id: "yvxuXoWSeQw", title: "Ominus - Ominus (Full Album, 1997)", year: 1997 },
+      { id: "-XS8z1-Pc_8", title: "Encens - Dialogue (Exposure Mix, 1995)", discogs: true },
+      { id: "VgSKzkl1bvw", title: "Encens - Venus Zen", discogs: true }
     ]
   },
   {
@@ -1702,7 +1800,9 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "nMgczwijrRE", title: "Gangguru - Be Your Own Guru (Full Album)", year: 2018 },
-      { id: "aFagZLMTPZw", title: "Gangguru - X-3", year: 1999 }
+      { id: "aFagZLMTPZw", title: "Gangguru - X-3", year: 1999 },
+      { id: "Y4qr9K_iOLQ", title: "Gangguru - Access Denied", discogs: true },
+      { id: "ibdWyvCyopY", title: "Gangguru - U.T.", discogs: true }
     ]
   },
   {
@@ -1716,7 +1816,10 @@ let ARTISTS = [
     links: [
       { type: "Bandcamp", url: "https://classicgoatrax.bandcamp.com/album/single-collection-14" }
     ],
-    tracks: []
+    tracks: [
+      { id: "FTNOekz3A3o", title: "Drop & Dash - A Global Split", discogs: true },
+      { id: "ihH2WhxZec0", title: "Drop & Dash - Top Of Mind", discogs: true }
+    ]
   },
   {
     id: "psyko-disko-vs-spies",
@@ -1730,7 +1833,9 @@ let ARTISTS = [
       { type: "Bandcamp", url: "https://psy-harmonics.bandcamp.com/album/psycho-disco" }
     ],
     tracks: [
-      { id: "2QKgRfMOKt0", title: "Nobody (Ace Ventura & Skizologic Remix)", year: null }
+      { id: "2QKgRfMOKt0", title: "Nobody (Ace Ventura & Skizologic Remix)", year: null },
+      { id: "NJTLGFrrMsI", title: "Psyko Disko - Sikamoto", discogs: true },
+      { id: "1qrfLdJw4Ms", title: "Psyko Disko - Khao Pen Khon Laos", discogs: true }
     ]
   },
   {
@@ -1770,52 +1875,6 @@ let ARTISTS = [
     tracks: []
   },
   {
-    id: "sancho-meiso",
-    realName: "Sancho Meiso Chaya - Shin Sasama",
-    bio: "Shin Sasama מטוקיו - הקריירה התחילה בשנות ה-90 כסקסופוניסט בלהקת הדאב Cultivator ובהפקות רגאיי יפני. בתחילת שנות ה-2000 פתח את הפרויקט הסולו Sancho Meiso Chaya עם אמביינט וניסיון אלקטרוני. הסאונד שלו משלב אטמוספרות עמוקות עם קצבים מאולתרים. הופעות חיות ב-Ozora, Mo:Dem, ו-ZNA Gathering.",
-    notable: "פרויקט דאב/ניסיוני יפני - 3 אלבומים + EPs (b.p.f.records 2008-2009)",
-    albums: [
-      { name: "EP1", year: 2008, project: "Sancho Meiso Chaya / b.p.f.Records" },
-      { name: "EP2", year: 2008, project: "Sancho Meiso Chaya / b.p.f.Records" },
-      { name: "EP3", year: 2009, project: "Sancho Meiso Chaya / b.p.f.records" },
-      { name: "Misukumi EP", year: null, project: "Sancho Meiso Chaya / Bandcamp" },
-      { name: "April Dub (with Koyas)", year: null, project: "psymatics" }
-    ],
-    links: [
-      { type: "Linktree", url: "https://linktr.ee/sanchomeisochaya" },
-      { type: "SoundCloud", url: "https://soundcloud.com/sanchomeisochaya" },
-      { type: "Bandcamp", url: "https://sanchomeisochaya.bandcamp.com/" },
-      { type: "Resident Advisor", url: "https://ra.co/dj/sanchomeisochaya" }
-    ],
-    tracks: [
-      { id: "YiUYBzI1jg0", title: "Live Session / Sancho Meiso Chaya", year: null }
-    ]
-  },
-  {
-    id: "goaacen",
-    realName: "Goaacen (Tiago Lopes)",
-    bio: "מהמובילים של DJs פורטוגזים בגואה טראנס. DJ של Suntrip Records וחלק מ-604 Productions. אוהב לחקור טריטוריות אפלות יותר של גואה. ב-ZNA הוא מראה איך מסע של שעתיים יכול לטוס במהירות.",
-    notable: "DJ של Suntrip Records + 604 Freaks Productions (Portugal)",
-    albums: [],
-    links: [
-      { type: "SoundCloud", url: "https://soundcloud.com/tiago-lopes-646831806" },
-      { type: "Facebook", url: "https://www.facebook.com/Gooaacen/" }
-    ],
-    tracks: []
-  },
-  {
-    id: "bill-robin-maya",
-    realName: "Bill Robin & Maya Wada",
-    bio: "Bill Robin & Maya Wada - דואו DJs ב-Market Stage של ZNA 2026. Maya Wada יפנית עם נוכחות ב-SoundCloud ו-Discogs. הופעה חיה במשפט הדאב/אקספרימנטל בסצנה היפנית.",
-    notable: "Market Stage duo - Japan",
-    albums: [],
-    links: [
-      { type: "SoundCloud (Maya Wada)", url: "https://soundcloud.com/maya-wada-983351163" },
-      { type: "Discogs (Maya Wada)", url: "https://www.discogs.com/artist/2823275-Maya-Wada" }
-    ],
-    tracks: []
-  },
-  {
     id: "dara-lee",
     realName: "Dara Lee (Koyote Records founder)",
     bio: "מייסדת Koyote Records — חותמת גואה/פסיכדלי טראנס מ-Brighton (UK) שהושקה בנובמבר 1995. ה-DJ והמפיקה Dara-Lee ניהלה את Koyote/Peyote Records ואת ה-distribution. שותפה ב-Ominus (1997) יחד עם Encens (Marcello Bonifacii) ו-Miranda — גם זה collab שמופיע ב-ZNA 2026.",
@@ -1832,7 +1891,9 @@ let ARTISTS = [
     tracks: [
       { id: "8FjSRkW4SEk", title: "A Taste Of Koyote Records 1995-1998", year: null },
       { id: "aAIzM7J5BSQ", title: "Ominus - Psychic Race", year: 1997 },
-      { id: "oeYEk_jwvJs", title: "Ominus - Acid Tester (Mirrors Of Sense Mix)", year: 1997 }
+      { id: "oeYEk_jwvJs", title: "Ominus - Acid Tester (Mirrors Of Sense Mix)", year: 1997 },
+      { id: "8g53cRG6SGY", title: "O.J. Project - Locator (1996)", discogs: true },
+      { id: "hwnzIk2Stvw", title: "Encens - Space Funk", discogs: true }
     ]
   },
   {
@@ -1876,7 +1937,9 @@ let ARTISTS = [
     tracks: [
       { id: "KrAaFohbcvc", title: "Enter Eternity 2015 (Goa Trance Set)", year: 2015 },
       { id: "n0yasoYvfcA", title: "Beyond Spaces (Official)", year: null },
-      { id: "LqLCRclq1jY", title: "Crispy Biscuits (Official)", year: null }
+      { id: "LqLCRclq1jY", title: "Crispy Biscuits (Official)", year: null },
+      { id: "Oc--g5QQXOw", title: "Ephedra - Travel On Wednesday", discogs: true },
+      { id: "YRNUoSzqiao", title: "Ovnimoon & Ephedra & Esterim Patchuli - Back To This Land", discogs: true }
     ]
   },
   {
@@ -1920,7 +1983,9 @@ let ARTISTS = [
     tracks: [
       { id: "IEe22M6Prts", title: "Mystical Experiences (1995) - Full Album", year: 1995 },
       { id: "R9E8DPXHkuI", title: "Feeling Weird (1995) - Full Album", year: 1995 },
-      { id: "VjI_ERtkB2c", title: "Yellow Energy (Graham Wood)", year: null }
+      { id: "VjI_ERtkB2c", title: "Yellow Energy (Graham Wood)", year: null },
+      { id: "qeU8Tu9SBt4", title: "The Infinity Project - Stimuli", discogs: true },
+      { id: "Xko1YXMLpdk", title: "The Infinity Project - Uforica (TIP001)", discogs: true }
     ]
   },
   {
@@ -1934,7 +1999,9 @@ let ARTISTS = [
       { type: "Discogs (Sid Shanti)", url: "https://www.discogs.com/artist/180461-Sid-Shanti" }
     ],
     tracks: [
-      { id: "msWKsfC0RnQ", title: "Sid Shanti - Phantasm & Psychic Deli mix", year: 1999 }
+      { id: "msWKsfC0RnQ", title: "Sid Shanti - Phantasm & Psychic Deli mix", year: 1999 },
+      { id: "74lpjFyiGzI", title: "Deck Wizards 5: Jean Borelli - Planet Maya Mix (Goa Trance, 1997)", discogs: true },
+      { id: "yekp-sdcKq0", title: "Human Blue - Stonehenge", discogs: true }
     ]
   },
   {
@@ -1954,9 +2021,11 @@ let ARTISTS = [
     ],
     tracks: [
       { id: "7psOFbVonWM", title: "Dino Psaras - Lick It (Full Album, 2003)", year: 2003 },
-      { id: "yOKcpB5UNvs", title: "Dino Psaras - Lick It [Full Album HQ]", year: 2003 },
+      { id: "yOKcpB5UNvs", title: "Dino Psaras - Lick It [Full Album HQ, 2003]", year: 2003 },
       { id: "GF4Ve5hgRIk", title: "Deedrah - Singles & EP's 2014-2018", year: null },
-      { id: "XMZzXkNWc-M", title: "Dino Psaras - White Lights Psy", year: null }
+      { id: "XMZzXkNWc-M", title: "Dino Psaras - White Lights Psy", year: null },
+      { id: "TcpTTUfSaR4", title: "X-Dream - Out Here We're Stoned (Shpongle Remix)", discogs: true },
+      { id: "mk7CJ4dcc7g", title: "Dino Psaras - Firewall (Live at The Gathering 2006)", discogs: true }
     ]
   },
   {
@@ -1989,7 +2058,8 @@ let ARTISTS = [
       { id: "CNeEcQYUpmA", title: "Cosmic Trancer (Psy-Harmonics 1995)", year: 1995 },
       { id: "QL5sYHb28J0", title: "Time Traveler Of Trance", year: 1995 },
       { id: "JM-FZh_gojg", title: "Time Traveler", year: 1995 },
-      { id: "s_HIUmQjb7E", title: "Time Traveller (alternate mix)", year: 1995 }
+      { id: "s_HIUmQjb7E", title: "Time Traveller (alternate mix)", year: 1995 },
+      { id: "wD53CBkOFQk", title: "Masaray - Time Traveller (Psy-Harmonics, 1995)", discogs: true }
     ]
   },
   {
@@ -2048,7 +2118,9 @@ let ARTISTS = [
       { id: "wLAYeYhFxPg", title: "Triquetra - Full Hardware Live", year: 2019 },
       { id: "NKajxMh1v54", title: "Triquetra - Home Studio Live", year: 2019 },
       { id: "sxsxjbKQ00Q", title: "Triquetra - Talk Binary to Me", year: null },
-      { id: "vQbg0LQxmmo", title: "Dragon Twins - MPC Live (Studio Session)", year: 2020 }
+      { id: "vQbg0LQxmmo", title: "Dragon Twins - MPC Live (Studio Session)", year: 2020 },
+      { id: "x5gQ_58kbQE", title: "Triquetra - Rotary Reality", discogs: true },
+      { id: "nRleIj_Dqgo", title: "Dragon Twins - Entwined (Only For The Wicked)", discogs: true }
     ]
   }
 ];
@@ -2685,7 +2757,7 @@ const ARTIST_TRANSLATIONS = {
       "born": "ativo na cena"
     }
   },
-  "mathew-tecnica": {
+  "tecnica": {
     "en": {
       "bio": "A live Goa project — part of the Retro Universe lineup at ZNA 2026.",
       "notable": "Retro Universe",

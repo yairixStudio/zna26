@@ -4454,12 +4454,6 @@ artistsRandomBtn?.addEventListener("click", () => {
 // Opening the in-place flyout from the avatar pill — delegated through
 // the reel so the listener survives buildReel() rebuilds.
 reel.addEventListener("click", (e) => {
-  // Row inside an expanded flyout: jump to that artist.
-  const row = e.target.closest?.(".hero-artists-flyout .artists-row");
-  if (row?.dataset.artistId) {
-    jumpToArtist(row.dataset.artistId);
-    return;
-  }
   const pill = e.target.closest?.(".hero-artists-pill");
   if (pill) {
     openPillFlyout(pill);
@@ -4470,6 +4464,19 @@ reel.addEventListener("click", (e) => {
   // that misses the flyout panel itself.
   const insideFlyout = e.target.closest?.(".hero-artists-flyout");
   if (insideFlyout) return;
+});
+
+// Artist-row jump must be a document-level listener: openPillFlyout
+// portals the flyout to <body> so its `position: fixed` resolves against
+// the real viewport (the hero-pager's `will-change: transform` was
+// otherwise trapping it). With the flyout living outside .reel, clicks
+// on its rows never reached the reel listener above — so we attach a
+// dedicated capture-phase handler on document that matches the row
+// wherever the flyout currently lives.
+document.addEventListener("click", (e) => {
+  const row = e.target.closest?.(".hero-artists-flyout .artists-row");
+  if (!row?.dataset.artistId) return;
+  jumpToArtist(row.dataset.artistId);
 });
 
 // Outside-click anywhere in the document closes any open pill flyout.
