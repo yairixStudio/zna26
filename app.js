@@ -92,6 +92,7 @@ const STRINGS = {
   "nav.searchArtist":  { he: "חיפוש אומן", en: "Search artist", pt: "Procurar artista" },
   "nav.backHome":      { he: "חזרה לדף הראשי", en: "Back to home", pt: "Voltar ao início" },
   "nav.language":      { he: "שפה", en: "Language", pt: "Idioma" },
+  "nav.contactUs":     { he: "צרו קשר", en: "Contact us", pt: "Contacte-nos" },
   "nav.navigate":      { he: "ניווט לאירוע", en: "Navigate to event", pt: "Navegar até ao evento" },
   "nav.festivalMap":   { he: "מפת הפסטיבל", en: "Festival map", pt: "Mapa do festival" },
   "nav.openInWaze":    { he: "פתיחה ב-Waze", en: "Open in Waze", pt: "Abrir no Waze" },
@@ -3837,7 +3838,16 @@ function buildStageDropdown() {
       `).join("")}
     </li>
   `;
-  stageSelectMenu.innerHTML = stageItems + langRow;
+  // "Contact us" — small mailto row below the language picker.
+  const contactRow = `
+    <li class="contact-row">
+      <a class="contact-link" href="mailto:yairixstudio@gmail.com" aria-label="${escapeHtml(t("nav.contactUs"))}">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <span>${escapeHtml(t("nav.contactUs"))}</span>
+      </a>
+    </li>
+  `;
+  stageSelectMenu.innerHTML = stageItems + langRow + contactRow;
   if (stageSelectLabel) stageSelectLabel.textContent = stageLabel(activeStageFilter);
 }
 
