@@ -217,15 +217,40 @@ const STRINGS = {
   "artists.title": { he: "אומנים", en: "Artists", pt: "Artistas" },
   "artists.titleAll": { he: "כל האומנים", en: "All artists", pt: "Todos os artistas" },
 
-  // Stage names + descriptions
-  "stage.retro":           { he: "Retro Universe", en: "Retro Universe", pt: "Retro Universe" },
+  // Stage (venue) names + descriptions — the real 2026 structure:
+  // Zambu Temple (main), The Peninsula (chill-out), Market (Boshke Beats).
   "stage.zambu":           { he: "Zambu Temple", en: "Zambu Temple", pt: "Zambu Temple" },
-  "stage.guardians":       { he: "Goa Guardians", en: "Goa Guardians", pt: "Goa Guardians" },
+  "stage.peninsula":       { he: "The Peninsula", en: "The Peninsula", pt: "The Peninsula" },
   "stage.market":          { he: "Market", en: "Market", pt: "Market" },
-  "stage.retro.desc":      { he: "במה ראשית - גואה טראנס קלאסי", en: "Main stage — classic Goa Trance", pt: "Palco principal — Goa Trance clássico" },
-  "stage.zambu.desc":      { he: "מקדש הריקודים - 24 שעות פסיכדליה רצופות", en: "Dancefloor temple — 24 continuous hours of psychedelia", pt: "Templo da pista — 24 horas de psicadelismo contínuo" },
-  "stage.guardians.desc":  { he: "במת הוויניל - שומרי הסאונד הישן", en: "The vinyl stage — guardians of the old sound", pt: "Palco do vinil — guardiões do som antigo" },
-  "stage.market.desc":     { he: "במת חימום ושוק", en: "Warm-up & market stage", pt: "Palco de aquecimento e mercado" }
+  "stage.zambu.desc":      { he: "המקדש הראשי - גואה טראנס מסביב לשעון", en: "The main temple — Goa Trance around the clock", pt: "O templo principal — Goa Trance a toda a hora" },
+  "stage.peninsula.desc":  { he: "במת הצ'יל-אאוט על שפת האגם", en: "The lakeside chill-out stage", pt: "O palco chill-out à beira do lago" },
+  "stage.market.desc":     { he: "במת Boshke Beats בשוק", en: "The Boshke Beats stage at the market", pt: "O palco Boshke Beats no mercado" },
+  // Legacy ids kept for old deep-links (?s=retro / ?s=guardians).
+  "stage.retro":           { he: "Retro Universe", en: "Retro Universe", pt: "Retro Universe" },
+  "stage.guardians":       { he: "Goa Guardians", en: "Goa Guardians", pt: "Goa Guardians" },
+
+  // Zambu Temple programme blocks (sections) + Zenbuspace areas.
+  "section.guardians":     { he: "Goa Guardians", en: "Goa Guardians", pt: "Goa Guardians" },
+  "section.retro":         { he: "Retro Universe", en: "Retro Universe", pt: "Retro Universe" },
+  "section.futuristic":    { he: "Futuristic Reality", en: "Futuristic Reality", pt: "Futuristic Reality" },
+  "section.welcome":       { he: "מסיבת הפתיחה", en: "Welcome Party", pt: "Festa de boas-vindas" },
+
+  // Timetable screen
+  "schedule.open":         { he: "לוח הזמנים", en: "Timetable", pt: "Horários" },
+  "schedule.title":        { he: "לוח הזמנים", en: "Timetable", pt: "Horários" },
+  "schedule.close":        { he: "סגור", en: "Close", pt: "Fechar" },
+  "schedule.allVenues":    { he: "הכל", en: "All", pt: "Tudo" },
+  "schedule.zenbuClasses": { he: "Zenbuspace · שיעורים", en: "Zenbuspace · Classes", pt: "Zenbuspace · Aulas" },
+  "schedule.zenbuWorkshops": { he: "Zenbuspace · סדנאות", en: "Zenbuspace · Workshops", pt: "Zenbuspace · Oficinas" },
+  "schedule.liveNow":      { he: "עכשיו", en: "Now", pt: "Agora" },
+  "schedule.upNext":       { he: "הבא", en: "Next", pt: "A seguir" },
+  "schedule.today":        { he: "היום", en: "Today", pt: "Hoje" },
+  "schedule.welcomeNote":  { he: "מסיבת הפתיחה — לנוסעי ההסעות בלבד", en: "Welcome Party — shuttle/bus guests only", pt: "Festa de boas-vindas — apenas para hóspedes do shuttle" },
+  "schedule.emptyDay":     { he: "אין פעילויות ביום הזה במסנן הנוכחי", en: "No activities on this day for the current filter", pt: "Sem atividades neste dia para o filtro atual" },
+  "schedule.jumpToArtist": { he: "לעמוד האומן", en: "Open artist page", pt: "Abrir página do artista" },
+
+  // Set-time badge extras
+  "setTime.notListed":     { he: "לא מופיע בלוח הזמנים הסופי", en: "Not on the final timetable", pt: "Fora do horário final" }
 };
 
 // Hebrew month names — used by the announced-on date formatter when current
@@ -425,6 +450,16 @@ function applyLang(lang) {
     const tip = t("hero.randomLabel");
     artistsRandomBtnLang.setAttribute("aria-label", tip);
     artistsRandomBtnLang.title = tip;
+  }
+  // Timetable button + overlay copy follow the language switch.
+  const scheduleBtnLang = document.getElementById("schedule-btn");
+  if (scheduleBtnLang) {
+    scheduleBtnLang.title = t("schedule.open");
+    scheduleBtnLang.setAttribute("aria-label", t("schedule.open"));
+  }
+  const scheduleOverlayLang = document.getElementById("schedule-overlay");
+  if (scheduleOverlayLang && !scheduleOverlayLang.hidden && typeof renderScheduleOverlay === "function") {
+    renderScheduleOverlay();
   }
 }
 
@@ -988,10 +1023,19 @@ const SORTED_ARTISTS = ARTISTS.slice().sort((a, b) => {
   return bx.localeCompare(ax);
 });
 
+// An artist "plays at" a venue if it's their home stage OR they have a
+// scheduled set there — multi-venue artists (Psara plays Zambu, Peninsula
+// AND Market) show up under every venue they actually play.
+function artistPlaysAt(a, stageId) {
+  if (stageId === "all") return true;
+  if (a.stage === stageId) return true;
+  return (a.sets || []).some(s => s.venue === stageId);
+}
+
 function getFilteredArtists() {
   return activeStageFilter === "all"
     ? SORTED_ARTISTS
-    : SORTED_ARTISTS.filter(a => a.stage === activeStageFilter);
+    : SORTED_ARTISTS.filter(a => artistPlaysAt(a, activeStageFilter));
 }
 
 // Per-stage backgrounds. All stay deep/near-black, but each carries a
@@ -1002,9 +1046,8 @@ function getFilteredArtists() {
 // stage hero into its artists visually continuous.
 const stageColor = {
   all:       "linear-gradient(180deg, #08051c 0%, #14082e 50%, #1c0a40 100%)", // deep cosmic violet
-  retro:     "linear-gradient(180deg, #1a0810 0%, #2a0c1a 50%, #381020 100%)", // dark wine / burgundy
   zambu:     "linear-gradient(180deg, #14062e 0%, #1f0a45 50%, #2a0c54 100%)", // saturated dark royal purple
-  guardians: "linear-gradient(180deg, #07182c 0%, #0c2444 50%, #103354 100%)", // saturated dark navy / teal
+  peninsula: "linear-gradient(180deg, #07182c 0%, #0c2444 50%, #103354 100%)", // saturated dark navy / teal (lakeside)
   market:    "linear-gradient(180deg, #1c1408 0%, #2a1c0c 50%, #38240e 100%)"  // saturated dark amber / brown
 };
 
@@ -1089,26 +1132,41 @@ function pictureTagStatic(base, opts = {}) {
 </picture>`;
 }
 
-function artistSchedule(a) {
-  // typeof guard — `const ARTIST_SCHEDULE` lives in data.js's script scope
-  // and can throw a ReferenceError on certain load orderings before the
-  // binding is fully reachable from app.js.
-  const sched = (typeof ARTIST_SCHEDULE !== "undefined") ? ARTIST_SCHEDULE : null;
-  return a.schedule || sched?.[a.id] || null;
-}
-
 function parseScheduleTime(value) {
   if (!value) return null;
-  const date = new Date(value);
+  // Timetable strings are local Lisbon times WITHOUT an offset
+  // ("2026-07-14T18:00", from the official posters) — pin them to WEST
+  // (UTC+1) so every viewer, in any timezone, parses the same instant.
+  // Full ISO strings (FESTIVAL.startsAt etc.) pass through untouched.
+  const s = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value) ? `${value}:00+01:00` : value;
+  const date = new Date(s);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+// The artist's scheduled sets, attached by schedule.js from the official
+// timetable. Multi-venue artists (e.g. Psara) have several entries.
+function artistSets(a) {
+  return a.sets || [];
+}
+
+// Legacy single {start,end} view over the sets — used for sorting and the
+// favorites list. Picks the currently-running or next-upcoming set, and
+// falls back to the last one after the festival.
 function completeSchedule(a) {
-  const schedule = artistSchedule(a);
-  if (!schedule) return null;
-  const start = parseScheduleTime(schedule.start);
-  const end = parseScheduleTime(schedule.end);
-  return start && end ? { start, end } : null;
+  const sets = artistSets(a);
+  if (!sets.length) {
+    const legacy = a.schedule || ((typeof ARTIST_SCHEDULE !== "undefined") ? ARTIST_SCHEDULE?.[a.id] : null);
+    if (!legacy) return null;
+    const start = parseScheduleTime(legacy.start);
+    const end = parseScheduleTime(legacy.end);
+    return start && end ? { start, end } : null;
+  }
+  const now = Date.now();
+  const parsed = sets
+    .map(s => ({ start: parseScheduleTime(s.start), end: parseScheduleTime(s.end), act: s }))
+    .filter(x => x.start && x.end);
+  if (!parsed.length) return null;
+  return parsed.find(x => now < x.end.getTime()) || parsed[parsed.length - 1];
 }
 
 function formatScheduleRange(schedule) {
@@ -1125,22 +1183,41 @@ function formatScheduleRange(schedule) {
     : `${dayTime.format(schedule.start)}–${dayTime.format(schedule.end)}`;
 }
 
+// Music activities from the official timetable, optionally scoped to a
+// venue. Includes schedule-only billings (SURPRISE!!, LSD All Stars) that
+// have no artist card. The timetable is static, so the parsed + sorted
+// arrays are memoized per venue — this runs for every hero panel on every
+// rebuild and once a second from the live-slot ticker.
+const _musicActsCache = new Map();
+function scheduleMusicActs(stageId = "all") {
+  if (typeof SCHEDULE_2026 === "undefined") return [];
+  let cached = _musicActsCache.get(stageId);
+  if (cached) return cached;
+  const out = [];
+  for (const act of SCHEDULE_2026.activities) {
+    if (act.cat !== "music") continue;
+    if (stageId !== "all" && act.venue !== stageId) continue;
+    const start = parseScheduleTime(act.start);
+    const end = parseScheduleTime(act.end);
+    if (start && end) out.push({ act, start, end });
+  }
+  out.sort((x, y) => x.start - y.start);
+  _musicActsCache.set(stageId, out);
+  return out;
+}
+
 function getScheduleStatus(stageId = "all") {
-  const now = new Date();
+  const now = Date.now();
   const startsAt = parseScheduleTime(FESTIVAL.startsAt);
   const endsAt = parseScheduleTime(FESTIVAL.endsAt);
-  const artists = stageId === "all" ? SORTED_ARTISTS : SORTED_ARTISTS.filter(a => a.stage === stageId);
-  const scheduled = artists
-    .map(a => ({ artist: a, schedule: completeSchedule(a) }))
-    .filter(item => item.schedule)
-    .sort((x, y) => x.schedule.start - y.schedule.start);
-  const live = scheduled.find(item => now >= item.schedule.start && now < item.schedule.end);
-  const next = scheduled.find(item => item.schedule.start > now);
-  const hasAnySchedule = scheduled.length > 0;
+  const acts = scheduleMusicActs(stageId);
+  const live = acts.find(x => now >= x.start.getTime() && now < x.end.getTime());
+  const next = acts.find(x => x.start.getTime() > now);
+  const hasAnySchedule = acts.length > 0;
 
-  if (live) return { state: "live", title: t("live.now"), artist: live.artist, schedule: live.schedule, next };
-  if (startsAt && now < startsAt) return { state: "upcoming", title: t("live.notStarted"), next, hasAnySchedule };
-  if (endsAt && now > endsAt) return { state: "ended", title: t("live.ended"), hasAnySchedule };
+  if (live) return { state: "live", title: t("live.now"), act: live.act, start: live.start, end: live.end, next, hasAnySchedule };
+  if (startsAt && now < startsAt.getTime()) return { state: "upcoming", title: t("live.notStarted"), next, hasAnySchedule };
+  if (endsAt && now > endsAt.getTime()) return { state: "ended", title: t("live.ended"), hasAnySchedule };
   if (!hasAnySchedule) return { state: "tba", title: t("live.tba"), hasAnySchedule };
   return { state: "idle", title: t("live.idle"), next, hasAnySchedule };
 }
@@ -1200,73 +1277,84 @@ function computeCountdownParts(targetDate) {
   };
 }
 
+// Time-only formatter for schedule rows/cards, always in festival time.
+function formatFestTime(date) {
+  const localeMap = { he: "he-IL", en: "en-GB", pt: "pt-PT" };
+  return new Intl.DateTimeFormat(localeMap[currentLang] || "en-GB", {
+    timeZone: FESTIVAL.timezone || "Europe/Lisbon", hour: "2-digit", minute: "2-digit"
+  }).format(date);
+}
+
+// Hero live-status card, backed by the real timetable. Wrapped in a
+// .live-slot so the 1s ticker can re-render it in place the moment a set
+// ends / the next set starts, without rebuilding the whole hero.
 function liveStatusCard(stageId = "all") {
+  return `<div class="live-slot" data-live-slot="${escapeHtml(stageId)}">${liveStatusInner(stageId)}</div>`;
+}
+
+function liveStatusInner(stageId = "all") {
   const status = getScheduleStatus(stageId);
   const startsAt = parseScheduleTime(FESTIVAL.startsAt);
-
   const dirAttr = currentLang === "he" ? "rtl" : "ltr";
+
   if (status.state === "live") {
+    const { act, start, end, next } = status;
+    const now = Date.now();
+    const pct = Math.min(100, Math.max(0, ((now - start.getTime()) / (end.getTime() - start.getTime())) * 100));
+    const nextLine = next ? `
+      <div class="live-prev-next">
+        <div class="live-pn-line live-pn-next"><span class="live-pn-label">${escapeHtml(t("live.nextLabel"))}</span><span class="live-pn-name">${escapeHtml(next.act.name)}</span></div>
+      </div>` : "";
+    const venueLine = stageId === "all" ? `${escapeHtml(tStage(act.venue))} · ` : "";
     return `
-      <div class="live-status live-status--live" aria-live="polite" dir="${dirAttr}">
-        <strong class="live-status-title">${escapeHtml(status.artist.name)}</strong>
-        <span class="live-status-meta">${escapeHtml(stageLabel(status.artist.stage))} · ${escapeHtml(formatScheduleRange(status.schedule))}</span>
+      <div class="live-status live-status--live live-status--card" aria-live="polite" dir="${dirAttr}"
+           data-live-until="${end.getTime()}"
+           data-live-progress data-live-start="${start.getTime()}" data-live-end="${end.getTime()}">
+        <div class="live-status-topline">
+          <div class="live-now-track is-live"><span class="live-now-dot"></span><span class="live-now-label">${escapeHtml(t("live.now"))}</span></div>
+        </div>
+        <strong class="live-status-title">${escapeHtml(act.name)}</strong>
+        <span class="live-status-meta">${venueLine}${escapeHtml(formatFestTime(start))}–${escapeHtml(formatFestTime(end))}</span>
+        <div class="live-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(0)}">
+          <div class="live-progress-track">
+            <div class="live-progress-fill" data-progress-fill style="width:${pct.toFixed(1)}%"></div>
+          </div>
+          <div class="live-progress-times">
+            <span>${escapeHtml(formatFestTime(start))}</span>
+            <span>${escapeHtml(formatFestTime(end))}</span>
+          </div>
+        </div>
+        ${nextLine}
       </div>
     `;
   }
 
-  return `
-    <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite" dir="${dirAttr}">
-      ${buildCountdownTimer(startsAt, "hero")}
-    </div>
-  `;
-}
+  // Mid-festival break: show what's next on this stage.
+  if (status.state === "idle" && status.next) {
+    const { next } = status;
+    const venueLine = stageId === "all" ? `${escapeHtml(tStage(next.act.venue))} · ` : "";
+    return `
+      <div class="live-status live-status--idle live-status--card" aria-live="polite" dir="${dirAttr}" data-live-until="${next.start.getTime()}">
+        <span class="live-pn-label">${escapeHtml(t("live.nextLabel"))}</span>
+        <strong class="live-status-title">${escapeHtml(next.act.name)}</strong>
+        <span class="live-status-meta">${venueLine}${escapeHtml(formatFestTime(next.start))}–${escapeHtml(formatFestTime(next.end))}</span>
+      </div>
+    `;
+  }
 
-// Market hero demo: pretend an artist is mid-set right now and show the
-// full "live now" treatment with a progress bar + previous/next set
-// hand-offs. The 1-second interval below ticks the progress bar so it
-// visibly creeps forward while the user is on the page. This is purely
-// illustrative until the real schedule lands.
-function marketLiveDemoCard() {
-  const marketArtists = ARTISTS.filter(a => a.stage === "market");
-  if (marketArtists.length < 3) return liveStatusCard("market");
-  const pick = id => marketArtists.find(a => a.id === id);
-  const prev    = pick("alien-rain")   || marketArtists[0];
-  const current = pick("anais-lin")    || marketArtists[1];
-  const next    = pick("extra-cheers") || marketArtists[2];
-  const now = Date.now();
-  const start = now - 35 * 60 * 1000; // 35 min into the set
-  const end   = now + 25 * 60 * 1000; // 25 min remaining
-  const startISO = new Date(start).toISOString();
-  const endISO   = new Date(end).toISOString();
-  const localeMap = { he: "he-IL", en: "en-GB", pt: "pt-PT" };
-  const tz = FESTIVAL.timezone || "Europe/Lisbon";
-  const fmt = ms => new Intl.DateTimeFormat(localeMap[currentLang] || "en-GB", {
-    timeZone: tz, hour: "2-digit", minute: "2-digit"
-  }).format(new Date(ms));
-  const pct = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
+  if (status.state === "ended") {
+    return `
+      <div class="live-status live-status--ended" aria-live="polite" dir="${dirAttr}">
+        <strong class="live-status-title">${escapeHtml(status.title)}</strong>
+      </div>
+    `;
+  }
+
+  // Upcoming (pre-festival) — big countdown to the first set.
+  const untilAttr = startsAt ? ` data-live-until="${startsAt.getTime()}"` : "";
   return `
-    <div class="live-status live-status--live live-status--demo" aria-live="polite"
-         dir="${currentLang === "he" ? "rtl" : "ltr"}"
-         data-demo-progress data-demo-start="${escapeHtml(startISO)}" data-demo-end="${escapeHtml(endISO)}">
-      <div class="live-status-topline">
-        <div class="live-now-track is-live"><span class="live-now-dot"></span><span class="live-now-label">${escapeHtml(t("live.now"))}</span></div>
-        <span class="live-demo-badge">${escapeHtml(t("live.demoBadge"))}</span>
-      </div>
-      <strong class="live-status-title">${escapeHtml(current.name)}</strong>
-      <span class="live-status-meta">${escapeHtml(fmt(start))}–${escapeHtml(fmt(end))}</span>
-      <div class="live-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct.toFixed(0)}">
-        <div class="live-progress-track">
-          <div class="live-progress-fill" data-progress-fill style="width:${pct.toFixed(1)}%"></div>
-        </div>
-        <div class="live-progress-times">
-          <span>${escapeHtml(fmt(start))}</span>
-          <span>${escapeHtml(fmt(end))}</span>
-        </div>
-      </div>
-      <div class="live-prev-next">
-        <div class="live-pn-line live-pn-prev"><span class="live-pn-label">${escapeHtml(t("live.prevLabel"))}</span><span class="live-pn-name">${escapeHtml(prev.name)}</span></div>
-        <div class="live-pn-line live-pn-next"><span class="live-pn-label">${escapeHtml(t("live.nextLabel"))}</span><span class="live-pn-name">${escapeHtml(next.name)}</span></div>
-      </div>
+    <div class="live-status live-status--${escapeHtml(status.state)}" aria-live="polite" dir="${dirAttr}"${untilAttr}>
+      ${buildCountdownTimer(startsAt, "hero")}
     </div>
   `;
 }
@@ -1281,11 +1369,10 @@ setInterval(() => {
       if (next != null && span.textContent !== next) span.textContent = next;
     });
   });
-  // Tick any live-now progress bars (Market hero demo today, but the
-  // hook is generic so it will keep working when real schedules land).
-  document.querySelectorAll("[data-demo-progress]").forEach(el => {
-    const start = new Date(el.dataset.demoStart || "").getTime();
-    const end   = new Date(el.dataset.demoEnd   || "").getTime();
+  // Tick live-now progress bars from the real timetable.
+  document.querySelectorAll("[data-live-progress]").forEach(el => {
+    const start = Number(el.dataset.liveStart);
+    const end   = Number(el.dataset.liveEnd);
     if (!start || !end || end <= start) return;
     const now = Date.now();
     const pct = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
@@ -1293,12 +1380,31 @@ setInterval(() => {
     if (fill) fill.style.width = pct.toFixed(1) + "%";
     el.setAttribute("aria-valuenow", pct.toFixed(0));
   });
+  // Swap a live-status card in place the moment its state expires (set
+  // ended / next set started / festival began) — no full hero rebuild.
+  document.querySelectorAll(".live-slot").forEach(slot => {
+    const card = slot.firstElementChild;
+    const until = card ? Number(card.dataset.liveUntil) : 0;
+    if (until && Date.now() >= until) {
+      slot.innerHTML = liveStatusInner(slot.dataset.liveSlot || "all");
+    }
+  });
 }, 1000);
 
 function artistSetTimeBadge(a) {
-  const schedule = completeSchedule(a);
-  if (schedule) {
-    return `<div class="artist-set-time has-time">${escapeHtml(formatScheduleRange(schedule))}</div>`;
+  const sets = artistSets(a);
+  if (sets.length) {
+    const rows = sets.map(s => {
+      const start = parseScheduleTime(s.start);
+      const end = parseScheduleTime(s.end);
+      if (!start || !end) return "";
+      const range = formatScheduleRange({ start, end });
+      return `<div class="artist-set-time has-time"><span class="set-time-venue">${escapeHtml(tStage(s.venue))}</span><span class="set-time-range">${escapeHtml(range)}</span></div>`;
+    }).join("");
+    return `<div class="artist-set-times">${rows}</div>`;
+  }
+  if (a.notOnFinalTimetable) {
+    return `<div class="artist-set-time is-tba">${escapeHtml(t("setTime.notListed"))}</div>`;
   }
   const startsAt = parseScheduleTime(FESTIVAL.startsAt);
   if (startsAt && Date.now() < startsAt.getTime()) {
@@ -1318,9 +1424,8 @@ const HERO_STAGES = [
 // modern browsers grab the AVIF (~10× smaller than the PNG). PNG fallback
 // remains in the repo for the ~2% without WebP/AVIF support.
 const HERO_STAGE_ELEMENTS = {
-  retro:     "images/zna-3d/custom-goa-sound-totem-element",
   zambu:     "images/zna-3d/custom-festival-portal-element",
-  guardians: "images/zna-3d/custom-chillout-organism-element",
+  peninsula: "images/zna-3d/custom-chillout-organism-element",
   market:    "images/zna-3d/custom-market-shrine-element"
 };
 
@@ -1395,13 +1500,6 @@ const UFO_LAYOUT = {
     "ufo-bottom-right": { x:  80, y:  58 },
     "orb-center":       { x:  50, y: 110 }, // off-screen bottom
   },
-  retro: {
-    "ufo-top-left":     { x:   7, y:   9 },
-    "ufo-top-right":    { x: 115, y:   8 }, // off-screen right
-    "ufo-bottom-left":  { x:   5, y:  64 },
-    "ufo-bottom-right": { x: 115, y:  58 }, // off-screen right
-    "orb-center":       { x:  18, y:  22 },
-  },
   zambu: {
     "ufo-top-left":     { x: -25, y:   9 }, // off-screen left
     "ufo-top-right":    { x:  85, y:   6 },
@@ -1409,7 +1507,7 @@ const UFO_LAYOUT = {
     "ufo-bottom-right": { x:  86, y:  20 },
     "orb-center":       { x:  50, y: -25 }, // off-screen top
   },
-  guardians: {
+  peninsula: {
     "ufo-top-left":     { x:   8, y:   8 },
     "ufo-top-right":    { x:  88, y:  11 },
     "ufo-bottom-left":  { x: -25, y:  66 }, // off-screen left
@@ -1475,7 +1573,7 @@ function heroPanelMain() {
 }
 
 function heroPanelStage(stage) {
-  const count = ARTISTS.filter(a => a.stage === stage.id).length;
+  const count = ARTISTS.filter(a => artistPlaysAt(a, stage.id)).length;
   const elementBase = HERO_STAGE_ELEMENTS[stage.id];
   const elementMarkup = elementBase
     ? pictureTagStatic(elementBase, {
@@ -1505,7 +1603,7 @@ function heroPanelStage(stage) {
         </button>
         <div class="logo-mark hero-stage-name">${escapeHtml(tStage(stage.id))}</div>
         <p class="hero-tagline">${escapeHtml(tStage(stage.id, "desc"))}</p>
-        ${stage.id === "market" ? marketLiveDemoCard() : liveStatusCard(stage.id)}
+        ${liveStatusCard(stage.id)}
         ${heroArtistsPill(stage.id)}
       </div>
     </div>
@@ -1520,7 +1618,7 @@ function heroPanelStage(stage) {
 function heroArtistsPill(stageId) {
   const pool = stageId === "all"
     ? ARTISTS
-    : ARTISTS.filter(a => a.stage === stageId);
+    : ARTISTS.filter(a => artistPlaysAt(a, stageId));
   const total = pool.length;
   if (!total) return "";
   const withPhotos = pool.filter(a => a.photo).slice(0, 3);
@@ -1722,7 +1820,7 @@ function multiHeroSection() {
       </svg>
     </button>`;
   // The active hero panel sets the section's stage data attribute (used for bg tint)
-  const activeStage = activeStageFilter === "all" ? "retro" : activeStageFilter;
+  const activeStage = activeStageFilter;
   return `
     <section class="section section--multi-hero" data-section="hero" data-stage="${escapeHtml(activeStage)}" data-real-count="${realCount}">
       <div class="hero-pager" id="hero-pager" data-real-count="${realCount}">${panels}</div>
@@ -1764,6 +1862,7 @@ function panelHero(a) {
             <div class="artist-meta-line">
               ${a.age ? `<span class="meta-item">🎂 ${a.age}</span>` : ""}
               <span class="meta-item">${escapeHtml(a.role)}</span>
+              ${a.section ? `<span class="meta-item meta-item--section">${escapeHtml(t("section." + a.section))}</span>` : ""}
             </div>
           </div>
           ${artistSetTimeBadge(a)}
@@ -3821,7 +3920,7 @@ function buildStageDropdown() {
   if (!stageSelectMenu) return;
   const opts = [
     { id: "all", name: t("nav.all"), count: ARTISTS.length },
-    ...FESTIVAL.stages.map(s => ({ id: s.id, name: tStage(s.id), count: ARTISTS.filter(a => a.stage === s.id).length }))
+    ...FESTIVAL.stages.map(s => ({ id: s.id, name: tStage(s.id), count: ARTISTS.filter(a => artistPlaysAt(a, s.id)).length }))
   ];
   const stageItems = opts.map(o =>
     `<li><button data-stage="${escapeHtml(o.id)}" class="${activeStageFilter === o.id ? "active" : ""}" role="option">${escapeHtml(o.name)}<span class="count">${o.count}</span></button></li>`
@@ -4280,7 +4379,7 @@ const artistsRandomBtn    = document.getElementById("artists-random");
 let _artistsCurrentPool   = "all"; // last opened scope — used by the Random button.
 
 function getArtistPool(stageId) {
-  return stageId === "all" ? ARTISTS : ARTISTS.filter(a => a.stage === stageId);
+  return stageId === "all" ? ARTISTS : ARTISTS.filter(a => artistPlaysAt(a, stageId));
 }
 
 function renderArtistsList(stageId) {
@@ -4459,6 +4558,201 @@ artistsRandomBtn?.addEventListener("click", () => {
   if (!pool.length) return;
   const pick = pool[Math.floor(Math.random() * pool.length)];
   jumpToArtist(pick.id);
+});
+
+// ===== Timetable overlay =====
+// The full official schedule: a day-tab strip (14–21 Jul), venue filter
+// chips (3 music stages + the two Zenbuspace areas) and the day's
+// activities. Sets that cross midnight appear on their START day, matching
+// the printed posters. Rows with an artist card jump to it; other rows
+// (Zenbuspace, schedule-only billings) expand their details in place.
+const scheduleOverlay  = document.getElementById("schedule-overlay");
+const scheduleTitleEl  = document.getElementById("schedule-title");
+const scheduleCloseBtn = document.getElementById("schedule-close");
+const scheduleDaysEl   = document.getElementById("schedule-days");
+const scheduleVenuesEl = document.getElementById("schedule-venues");
+const scheduleListEl   = document.getElementById("schedule-list");
+const scheduleBtn      = document.getElementById("schedule-btn");
+
+const SCHEDULE_VENUE_ORDER = ["zambu", "peninsula", "market", "zenbu-classes", "zenbu-workshops"];
+let scheduleDay = null;     // "2026-07-14" … "2026-07-21"
+let scheduleVenue = "all";
+
+function scheduleDates() {
+  if (typeof SCHEDULE_2026 === "undefined") return [];
+  const days = [];
+  const d = new Date(`${SCHEDULE_2026.firstDay}T12:00:00Z`);
+  const last = new Date(`${SCHEDULE_2026.lastDay}T12:00:00Z`);
+  while (d <= last) {
+    days.push(d.toISOString().slice(0, 10));
+    d.setUTCDate(d.getUTCDate() + 1);
+  }
+  return days;
+}
+
+// Today's date in festival time — "now" for day-tab defaults + highlights.
+function festivalToday() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: FESTIVAL.timezone || "Europe/Lisbon" }).format(new Date());
+}
+
+function scheduleVenueLabel(venueId) {
+  if (venueId === "all") return t("schedule.allVenues");
+  if (venueId === "zenbu-classes") return t("schedule.zenbuClasses");
+  if (venueId === "zenbu-workshops") return t("schedule.zenbuWorkshops");
+  return tStage(venueId);
+}
+
+function renderScheduleDays() {
+  if (!scheduleDaysEl) return;
+  const localeMap = { he: "he-IL", en: "en-GB", pt: "pt-PT" };
+  const fmtWd = new Intl.DateTimeFormat(localeMap[currentLang] || "en-GB", { timeZone: "UTC", weekday: "short" });
+  const today = festivalToday();
+  scheduleDaysEl.innerHTML = scheduleDates().map(date => {
+    const d = new Date(`${date}T12:00:00Z`);
+    const dayNum = d.getUTCDate();
+    const isToday = date === today;
+    return `
+      <button type="button" role="tab" class="schedule-day ${scheduleDay === date ? "active" : ""} ${isToday ? "is-today" : ""}"
+              data-day="${date}" aria-selected="${scheduleDay === date}">
+        <span class="schedule-day-wd">${escapeHtml(fmtWd.format(d))}</span>
+        <span class="schedule-day-num">${dayNum}</span>
+        ${isToday ? `<span class="schedule-day-today">${escapeHtml(t("schedule.today"))}</span>` : ""}
+      </button>
+    `;
+  }).join("");
+}
+
+function renderScheduleVenues() {
+  if (!scheduleVenuesEl) return;
+  scheduleVenuesEl.innerHTML = ["all", ...SCHEDULE_VENUE_ORDER].map(v => `
+    <button type="button" class="schedule-venue-chip ${scheduleVenue === v ? "active" : ""}" data-venue="${v}">
+      ${escapeHtml(scheduleVenueLabel(v))}
+    </button>
+  `).join("");
+}
+
+function renderScheduleList() {
+  if (!scheduleListEl || typeof SCHEDULE_2026 === "undefined") return;
+  const now = Date.now();
+  const acts = SCHEDULE_2026.activities
+    .filter(a => a.start.slice(0, 10) === scheduleDay && (scheduleVenue === "all" || a.venue === scheduleVenue))
+    .map(a => ({ act: a, start: parseScheduleTime(a.start), end: parseScheduleTime(a.end) }))
+    .filter(x => x.start && x.end)
+    .sort((x, y) => (x.start - y.start) ||
+      (SCHEDULE_VENUE_ORDER.indexOf(x.act.venue) - SCHEDULE_VENUE_ORDER.indexOf(y.act.venue)));
+
+  if (!acts.length) {
+    scheduleListEl.innerHTML = `<div class="schedule-empty">${escapeHtml(t("schedule.emptyDay"))}</div>`;
+    return;
+  }
+
+  // First still-upcoming activity of the day gets the "next" pin (only
+  // meaningful while browsing today).
+  const isTodayView = scheduleDay === festivalToday();
+  const nextIdx = isTodayView ? acts.findIndex(x => x.start.getTime() > now) : -1;
+
+  scheduleListEl.innerHTML = acts.map((x, i) => {
+    const { act, start, end } = x;
+    const isLive = now >= start.getTime() && now < end.getTime();
+    const isPast = now >= end.getTime();
+    const isNext = i === nextIdx;
+    const artist = act.artistId ? ARTISTS.find(a => a.id === act.artistId) : null;
+    const canJump = !!artist;
+    const hasDesc = !!act.desc && !canJump;
+    const metaBits = [];
+    if (act.setType) metaBits.push(escapeHtml(act.setType));
+    if (act.presenter) metaBits.push(escapeHtml(act.presenter));
+    if (scheduleVenue === "all") metaBits.push(escapeHtml(scheduleVenueLabel(act.venue)));
+    if (act.section && act.section !== "welcome") metaBits.push(escapeHtml(t("section." + act.section)));
+    if (act.section === "welcome") metaBits.push(escapeHtml(t("schedule.welcomeNote")));
+    const statusBadge = isLive
+      ? `<span class="schedule-row-live"><span class="live-now-dot"></span>${escapeHtml(t("schedule.liveNow"))}</span>`
+      : (isNext ? `<span class="schedule-row-next">${escapeHtml(t("schedule.upNext"))}</span>` : "");
+    const accent = artist?.color || "";
+    return `
+      <${canJump || hasDesc ? "button type=\"button\"" : "div"}
+        class="schedule-row cat-${escapeHtml(act.cat)} ${isLive ? "is-live" : ""} ${isPast ? "is-past" : ""} ${isNext ? "is-next" : ""}"
+        ${canJump ? `data-jump-artist="${escapeHtml(act.artistId)}"` : ""}
+        ${hasDesc ? `data-toggle-desc aria-expanded="false"` : ""}
+        ${accent ? `style="--accent:${escapeHtml(accent)}"` : ""}>
+        <span class="schedule-row-time" dir="ltr">${escapeHtml(formatFestTime(start))}<br><span class="schedule-row-time-end">${escapeHtml(formatFestTime(end))}</span></span>
+        <span class="schedule-row-body">
+          <span class="schedule-row-name">${escapeHtml(act.name)}${statusBadge}</span>
+          ${metaBits.length ? `<span class="schedule-row-meta">${metaBits.join(" · ")}</span>` : ""}
+          ${hasDesc ? `<span class="schedule-row-desc">${escapeHtml(act.desc)}</span>` : ""}
+        </span>
+        ${canJump ? `<span class="schedule-row-go" aria-hidden="true">›</span>` : ""}
+      </${canJump || hasDesc ? "button" : "div"}>
+    `;
+  }).join("");
+
+  // Browsing today: bring the live (or next) row into view.
+  if (isTodayView) {
+    const target = scheduleListEl.querySelector(".schedule-row.is-live") || scheduleListEl.querySelector(".schedule-row.is-next");
+    if (target) requestAnimationFrame(() => target.scrollIntoView({ block: "center", behavior: "auto" }));
+  }
+}
+
+function renderScheduleOverlay() {
+  if (scheduleTitleEl) scheduleTitleEl.textContent = t("schedule.title");
+  renderScheduleDays();
+  renderScheduleVenues();
+  renderScheduleList();
+}
+
+function openScheduleOverlay() {
+  if (!scheduleOverlay) return;
+  const dates = scheduleDates();
+  if (!scheduleDay) {
+    // Default to the day of the currently-live set (so at 01:30 you land
+    // on the poster-day the running set belongs to, not an empty "today"),
+    // otherwise today when it's a festival day, otherwise day one.
+    const live = getScheduleStatus("all");
+    const liveDay = live.state === "live" ? live.act.start.slice(0, 10) : null;
+    const today = festivalToday();
+    scheduleDay = (liveDay && dates.includes(liveDay)) ? liveDay
+      : (dates.includes(today) ? today : dates[0]);
+  }
+  renderScheduleOverlay();
+  scheduleOverlay.hidden = false;
+}
+
+function closeScheduleOverlay() {
+  if (scheduleOverlay) scheduleOverlay.hidden = true;
+}
+
+scheduleBtn?.addEventListener("click", openScheduleOverlay);
+scheduleCloseBtn?.addEventListener("click", closeScheduleOverlay);
+scheduleOverlay?.addEventListener("click", e => {
+  if (e.target === scheduleOverlay) closeScheduleOverlay();
+});
+scheduleDaysEl?.addEventListener("click", e => {
+  const btn = e.target.closest("[data-day]");
+  if (!btn) return;
+  scheduleDay = btn.dataset.day;
+  renderScheduleDays();
+  renderScheduleList();
+});
+scheduleVenuesEl?.addEventListener("click", e => {
+  const btn = e.target.closest("[data-venue]");
+  if (!btn) return;
+  scheduleVenue = btn.dataset.venue;
+  renderScheduleVenues();
+  renderScheduleList();
+});
+scheduleListEl?.addEventListener("click", e => {
+  const jump = e.target.closest("[data-jump-artist]");
+  if (jump) {
+    closeScheduleOverlay();
+    jumpToArtist(jump.dataset.jumpArtist);
+    return;
+  }
+  const toggler = e.target.closest("[data-toggle-desc]");
+  if (toggler) {
+    const expanded = toggler.getAttribute("aria-expanded") === "true";
+    toggler.setAttribute("aria-expanded", String(!expanded));
+    toggler.classList.toggle("is-expanded", !expanded);
+  }
 });
 
 // Opening the in-place flyout from the avatar pill — delegated through
@@ -4954,7 +5248,7 @@ function applyInitialRoute() {
     const artist = ARTISTS.find(x => x.id === a);
     if (!artist) { _suppressUrlWrite = false; return; }
     // Make sure the artist is in the current rendered list.
-    if (activeStageFilter !== "all" && artist.stage !== activeStageFilter) {
+    if (activeStageFilter !== "all" && !artistPlaysAt(artist, activeStageFilter)) {
       activeStageFilter = "all";
       rerenderArtistsBelowHero();
       buildStageDropdown();
@@ -4990,12 +5284,18 @@ function applyInitialRoute() {
     return;
   }
 
-  if (s && s !== "all" && FESTIVAL.stages.some(st => st.id === s)) {
-    activeStageFilter = s;
-    rerenderArtistsBelowHero();
-    buildStageDropdown();
-    updateHeroDots();
-    requestAnimationFrame(() => scrollHeroToStage(s, true));
+  if (s && s !== "all") {
+    // Old deep-links used the pre-2026-timetable stage ids — Retro
+    // Universe and Goa Guardians are Zambu Temple programme blocks now.
+    const LEGACY_STAGE_LINKS = { retro: "zambu", guardians: "zambu" };
+    const target = LEGACY_STAGE_LINKS[s] || s;
+    if (FESTIVAL.stages.some(st => st.id === target)) {
+      activeStageFilter = target;
+      rerenderArtistsBelowHero();
+      buildStageDropdown();
+      updateHeroDots();
+      requestAnimationFrame(() => scrollHeroToStage(target, true));
+    }
   }
 }
 
@@ -5073,6 +5373,11 @@ observeSections();
     const tip = t("hero.randomLabel");
     artistsRandomBoot.setAttribute("aria-label", tip);
     artistsRandomBoot.title = tip;
+  }
+  const scheduleBoot = document.getElementById("schedule-btn");
+  if (scheduleBoot) {
+    scheduleBoot.title = t("schedule.open");
+    scheduleBoot.setAttribute("aria-label", t("schedule.open"));
   }
 }
 // Initial active state

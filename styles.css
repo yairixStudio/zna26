@@ -606,18 +606,8 @@ body.has-mini-player .hero-dots {
   50%      { transform: translateY(-3px) rotate(calc(var(--float-rotate, 0deg) * -1)); }
 }
 
-/* Per-stage hero color identity */
-.hero-panel--retro {
-  --hero-glow-1: #FEB447;
-  --hero-glow-2: #ff5c8a;
-  --hero-glow-shadow: rgba(255, 126, 31, 0.65);
-  --hero-text-1: #FEB447;
-  --hero-text-2: #ff7e1f;
-  --hero-text-3: #ff5c8a;
-  background:
-    radial-gradient(ellipse at 50% 110%, rgba(255, 126, 31, 0.55), transparent 60%),
-    linear-gradient(165deg, #2c0e23 0%, #44132e 50%, #1f0a1c 100%);
-}
+/* Per-stage hero color identity — Zambu Temple (main temple), The
+   Peninsula (lakeside chill-out) and Market (Boshke Beats). */
 .hero-panel--zambu {
   --hero-glow-1: #ff006e;
   --hero-glow-2: #9b51e0;
@@ -629,12 +619,12 @@ body.has-mini-player .hero-dots {
     radial-gradient(ellipse at 50% 110%, rgba(155, 81, 224, 0.55), transparent 60%),
     linear-gradient(165deg, #1c0640 0%, #2a0a55 50%, #100322 100%);
 }
-.hero-panel--guardians {
+.hero-panel--peninsula {
   --hero-glow-1: #00d4ff;
-  --hero-glow-2: #FEB447;
+  --hero-glow-2: #4dd0a6;
   --hero-glow-shadow: rgba(0, 212, 255, 0.55);
   --hero-text-1: #00d4ff;
-  --hero-text-2: #ffd23f;
+  --hero-text-2: #4dd0a6;
   --hero-text-3: #118ab2;
   background:
     radial-gradient(ellipse at 50% 110%, rgba(0, 212, 255, 0.45), transparent 60%),
@@ -667,9 +657,8 @@ body.has-mini-player .hero-dots {
   color: transparent;
 }
 
-.hero-panel--retro .logo-mark,
 .hero-panel--zambu .logo-mark,
-.hero-panel--guardians .logo-mark,
+.hero-panel--peninsula .logo-mark,
 .hero-panel--market .logo-mark {
   font-size: clamp(40px, 11vw, 90px);
 }
@@ -3704,12 +3693,13 @@ body.is-on-main-hero .top-bar-center {
 /* ===== "Live now" demo card on the Market hero =====
    Adds a top-line with a LIVE / Demo strip, a thin progress bar that
    ticks every second, and a previous/next set hand-off line so the
-   user can see at a glance who just played and who's coming up.
-   The double-class selector (.hero-panel .live-status.live-status--demo)
+   user can see at a glance who is coming up next. (Originally built for
+   the pre-schedule demo; now driven by the real timetable.)
+   The double-class selector (.hero-panel .live-status.live-status--card)
    wins specificity over the generic .hero-panel .live-status block above
    so the wider/taller demo layout is respected. */
-.hero-panel .live-status.live-status--demo,
-.live-status--demo {
+.hero-panel .live-status.live-status--card,
+.live-status--card {
   /* Narrower + lower opacity so the now-playing card reads as a quiet
      status pill rather than a competing hero element. The faintly-glowing
      green border was reading as a "callout" — replace with a near-
@@ -3730,14 +3720,14 @@ body.is-on-main-hero .top-bar-center {
   -webkit-backdrop-filter: blur(8px);
 }
 
-.live-status--demo .live-status-topline {
+.live-status--card .live-status-topline {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
 
-.live-status--demo .live-now-track {
+.live-status--card .live-now-track {
   width: auto;
   background: transparent;
   height: auto;
@@ -3750,7 +3740,7 @@ body.is-on-main-hero .top-bar-center {
 
 /* Demo card uses an inline-flex layout instead of the legacy absolute
    positioning, so the dot needs to flow normally next to the label. */
-.live-status--demo .live-now-track .live-now-dot {
+.live-status--card .live-now-track .live-now-dot {
   position: static;
   transform: none;
   flex-shrink: 0;
@@ -3758,7 +3748,7 @@ body.is-on-main-hero .top-bar-center {
   height: 7px;
 }
 
-.live-status--demo .live-now-label {
+.live-status--card .live-now-label {
   font-family: "Heebo", sans-serif;
   font-size: 9px;
   letter-spacing: 2px;
@@ -3781,7 +3771,7 @@ body.is-on-main-hero .top-bar-center {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-.live-status--demo .live-status-title {
+.live-status--card .live-status-title {
   font-family: "Orbitron", "Heebo", sans-serif;
   font-size: clamp(16px, 3.8vw, 22px);
   font-weight: 900;
@@ -3789,7 +3779,7 @@ body.is-on-main-hero .top-bar-center {
   margin: 2px 0 0;
 }
 
-.live-status--demo .live-status-meta {
+.live-status--card .live-status-meta {
   font-size: 11px;
   color: var(--text-muted);
 }
@@ -3800,16 +3790,16 @@ body.is-on-main-hero .top-bar-center {
    uppercase, Orbitron has no Hebrew glyphs, and tracking out small Hebrew
    text leaves the letters floating apart. Drop those flourishes so Hebrew
    reads in the same calm Heebo body voice as .hero-tagline. */
-:lang(he) .live-status--demo .live-now-label,
-:lang(he) .live-status--demo .live-demo-badge,
-:lang(he) .live-status--demo .live-pn-label {
+:lang(he) .live-status--card .live-now-label,
+:lang(he) .live-status--card .live-demo-badge,
+:lang(he) .live-status--card .live-pn-label {
   font-family: "Heebo", sans-serif;
   letter-spacing: 0;
   text-transform: none;
   font-weight: 600;
   font-size: 10px;
 }
-:lang(he) .live-status--demo .live-status-title {
+:lang(he) .live-status--card .live-status-title {
   font-family: "Heebo", sans-serif;
   font-weight: 700;
   letter-spacing: 0;
@@ -4814,9 +4804,8 @@ body.is-on-main-hero .top-bar-center {
   .hero-stack { gap: clamp(16px, 2vh, 22px); }
   /* Stage panels: bigger than mobile but capped well below the previous
      160px ceiling — the title was eating the live-status row. */
-  .hero-panel--retro .logo-mark,
   .hero-panel--zambu .logo-mark,
-  .hero-panel--guardians .logo-mark,
+  .hero-panel--peninsula .logo-mark,
   .hero-panel--market .logo-mark {
     font-size: clamp(56px, 6.5vw, 110px);
   }
@@ -4952,4 +4941,279 @@ body.has-mini-player .kb-hint {
 .v-dot-tooltip.is-visible { opacity: 1; }
 @media (hover: none), (pointer: coarse) {
   .v-dot-tooltip { display: none !important; }
+}
+
+/* ===== Timetable overlay =====
+   Full official schedule: day tabs on top, venue filter chips, then the
+   day's activities. Follows the artists-overlay visual language. */
+.schedule-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(5, 2, 18, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 14px;
+  animation: fade-in 0.18s ease-out both;
+}
+.schedule-overlay[hidden] { display: none; }
+
+.schedule-panel {
+  width: min(640px, 100%);
+  max-height: min(88vh, 820px);
+  border-radius: 22px;
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schedule-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.schedule-title {
+  flex: 1 1 auto;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  color: var(--text);
+  margin: 0;
+}
+.schedule-close {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* Day tabs — one row, horizontally scrollable on narrow screens. */
+.schedule-days {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+  flex-shrink: 0;
+}
+.schedule-days::-webkit-scrollbar { display: none; }
+.schedule-day {
+  flex: 1 0 auto;
+  min-width: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 7px 8px 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: "Heebo", sans-serif;
+}
+.schedule-day-wd { font-size: 10px; letter-spacing: 0.4px; }
+.schedule-day-num { font-size: 16px; font-weight: 800; line-height: 1.1; color: var(--text); }
+.schedule-day-today {
+  font-size: 8px;
+  font-weight: 700;
+  color: #39ff14;
+}
+.schedule-day.active {
+  background: rgba(254, 180, 71, 0.14);
+  border-color: rgba(254, 180, 71, 0.55);
+  color: var(--text);
+}
+
+/* Venue chips */
+.schedule-venues {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.schedule-venues::-webkit-scrollbar { display: none; }
+.schedule-venue-chip {
+  flex: 0 0 auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.schedule-venue-chip.active {
+  background: rgba(254, 180, 71, 0.14);
+  border-color: rgba(254, 180, 71, 0.55);
+  color: var(--text);
+}
+
+/* Activity rows */
+.schedule-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 2px;
+}
+.schedule-empty {
+  padding: 32px 12px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.schedule-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  text-align: start;
+  padding: 9px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-family: "Heebo", sans-serif;
+  cursor: default;
+}
+button.schedule-row { cursor: pointer; }
+button.schedule-row:active { background: rgba(255, 255, 255, 0.07); }
+.schedule-row.is-past { opacity: 0.45; }
+.schedule-row.is-live {
+  border-color: rgba(57, 255, 20, 0.45);
+  background: rgba(57, 255, 20, 0.06);
+}
+.schedule-row.is-next {
+  border-color: rgba(254, 180, 71, 0.4);
+}
+.schedule-row.cat-class,
+.schedule-row.cat-workshop {
+  border-style: dashed;
+}
+.schedule-row-time {
+  flex: 0 0 auto;
+  min-width: 44px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--accent, var(--sun-yellow));
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.schedule-row-time-end {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.schedule-row-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.schedule-row-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.schedule-row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+.schedule-row-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  display: none;
+  margin-top: 4px;
+}
+.schedule-row.is-expanded .schedule-row-desc { display: block; }
+.schedule-row-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #39ff14;
+}
+.schedule-row-live .live-now-dot {
+  position: static;
+  transform: none;
+  width: 6px;
+  height: 6px;
+}
+.schedule-row-next {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--sun-yellow);
+}
+.schedule-row-go {
+  flex: 0 0 auto;
+  align-self: center;
+  font-size: 20px;
+  color: var(--text-muted);
+}
+[dir="rtl"] .schedule-row-go { transform: scaleX(-1); }
+
+/* Artist card: one row per scheduled set (multi-venue artists get 2-3). */
+.artist-set-times {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+.artist-set-times .artist-set-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.set-time-venue {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  white-space: nowrap;
+}
+
+/* Zambu programme-block chip on the artist meta line. */
+.meta-item--section {
+  border-color: rgba(254, 180, 71, 0.35);
+  color: var(--sun-yellow);
+}
+
+/* Desktop: give the timetable a little more room. */
+@media (min-width: 900px) {
+  .schedule-panel { width: min(720px, 100%); }
+  .schedule-row-name { font-size: 15px; }
 }
