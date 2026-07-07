@@ -3359,4 +3359,14 @@ const OFFICIAL_ZNA_2026_ARTISTS = [
       tracks: mergeUniqueTracks(official.tracks, curated.tracks)
     };
   });
+
+  // Curated-only artists that ARE on the final June 2026 timetable posters
+  // but never got their own official program-page entry (Damir Ludvig plays
+  // Market; Cosmosis has a solo Peninsula set besides the vs-set card). The
+  // map() above would silently drop them, so re-append the curated records.
+  const officialIds = new Set(ARTISTS.map(a => a.id));
+  ["damir-ludvig", "cosmosis"].forEach(id => {
+    const curated = existingById.get(id);
+    if (curated && !officialIds.has(id)) ARTISTS.push(curated);
+  });
 })();

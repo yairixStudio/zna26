@@ -195,6 +195,9 @@
         <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         <span class="favorites-count" id="favorites-count">0</span>
       </button>
+      <button class="top-bar-btn" id="schedule-btn" title="Timetable" aria-label="Timetable">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+      </button>
     </div>
 
     <div class="top-bar-side top-bar-center">
@@ -243,6 +246,23 @@
         </button>
       </div>
       <div class="artists-list" id="artists-list"></div>
+    </div>
+  </div>
+
+  <!-- Timetable overlay: full official schedule — day tabs on top, venue
+       filter chips below, then the day's activities. JS renders the inner
+       content (schedule-days / schedule-venues / schedule-list). -->
+  <div class="schedule-overlay" id="schedule-overlay" hidden>
+    <div class="schedule-panel glass-card" role="dialog" aria-modal="true" aria-label="Timetable">
+      <div class="schedule-header">
+        <h2 class="schedule-title" id="schedule-title">Timetable</h2>
+        <button class="schedule-close" id="schedule-close" type="button" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M6.4 5L5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z"/></svg>
+        </button>
+      </div>
+      <div class="schedule-days" id="schedule-days" role="tablist"></div>
+      <div class="schedule-venues" id="schedule-venues"></div>
+      <div class="schedule-list" id="schedule-list"></div>
     </div>
   </div>
 
@@ -389,10 +409,15 @@
   <div class="v-dot-tooltip" id="v-dot-tooltip" role="tooltip" aria-hidden="true"></div>
 
   <!-- defer = parsed in document order, executed after HTML parsing finishes,
-       so they don't block the first paint. data.js MUST load before
-       official-artists.js (which mutates ARTISTS) and both before app.js. -->
+       so they don't block the first paint. Load order matters:
+       data.js → official-artists.js (replaces ARTISTS) →
+       lineup-additions.js (appends the 2026-timetable-only artists) →
+       schedule.js (official timetable; attaches sets + re-derives stages)
+       → app.js. -->
   <script defer src="data.js"></script>
   <script defer src="official-artists.js"></script>
+  <script defer src="lineup-additions.js"></script>
+  <script defer src="schedule.js"></script>
   <script defer src="app.js"></script>
 </body>
 </html>

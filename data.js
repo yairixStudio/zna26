@@ -5,18 +5,31 @@ const FESTIVAL = {
   name: "ZNA Gathering 2026",
   tagline: "The Retro-Futuristic Celebration",
   dates: "15-22 ביולי 2026",
-  startsAt: "2026-07-15T00:00:00+01:00",
-  endsAt: "2026-07-22T23:59:59+01:00",
+  // Music actually starts with the Welcome Party (shuttle/bus guests) on
+  // 14 Jul 18:00; the last set ends 22 Jul 00:00 — both from the final
+  // June 2026 timetable posters.
+  startsAt: "2026-07-14T18:00:00+01:00",
+  endsAt: "2026-07-22T00:00:00+01:00",
   timezone: "Europe/Lisbon",
   location: "אגם מונטרגיל, פורטוגל",
   description: "המקדש העולמי של גואה טראנס בסגנון הישן. פסטיבל דו-שנתי עם כ-5,000 משתתפים בלבד שחוגג את רוח אנג'ונה של שנות ה-90.",
+  // The real venue structure: Goa Guardians / Retro Universe / Futuristic
+  // Reality are consecutive time-blocks (sections) of Zambu Temple, not
+  // separate stages. Section labels live in STRINGS ("section.*").
   stages: [
-    { id: "retro", name: "Retro Universe", desc: "במה ראשית - גואה טראנס קלאסי" },
-    { id: "zambu", name: "Zambu Temple", desc: "מקדש הריקודים - 24 שעות פסיכדליה רצופות" },
-    { id: "guardians", name: "Goa Guardians", desc: "במת הוויניל - שומרי הסאונד הישן" },
-    { id: "market", name: "Market", desc: "במת חימום ושוק" }
+    { id: "zambu", name: "Zambu Temple", desc: "המקדש הראשי - גואה טראנס מסביב לשעון" },
+    { id: "peninsula", name: "The Peninsula", desc: "במת הצ'יל-אאוט על שפת האגם" },
+    { id: "market", name: "Market", desc: "במת Boshke Beats בשוק" }
   ]
 };
+
+// Zambu Temple's three consecutive programme blocks (from the official
+// posters). Used for section badges on artist cards + the timetable screen.
+const ZAMBU_SECTIONS = [
+  { id: "guardians", name: "Goa Guardians" },
+  { id: "retro", name: "Retro Universe" },
+  { id: "futuristic", name: "Futuristic Reality" }
+];
 
 const ARTIST_SCHEDULE = {
   // Fill when official set times are known:

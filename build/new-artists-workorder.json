@@ -1,0 +1,890 @@
+[
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-21T02:00",
+    "end": "2026-07-21T05:00",
+    "weekday": "Tuesday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "andrew-sigil",
+  "name": "Andrew Sigil",
+  "notes": [
+   "Name confirmed as printed on the poster; not listed on the official Peninsula web page (the site lists Qses, who does not appear on the final poster)."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-16T02:00",
+    "end": "2026-07-16T05:00",
+    "weekday": "Thursday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "angular-momentum",
+  "name": "Angular Momentum",
+  "descriptions": [
+   "Textured grooves, polyrhythms and hypnotic, techno-tinged ambient soundscapes in a curated late-night DJ set."
+  ],
+  "notes": [
+   "Poster subtitle: Producer Set; the official site lists a DJ set."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-16T22:00",
+    "end": "2026-07-17T01:00",
+    "weekday": "Thursday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "balance",
+  "name": "Balancé",
+  "descriptions": [
+   "Pedro Monteiro (Portugal), crafting psychedelic chillout since 2007; emotional soundscapes exploring rhythm, movement and balance."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-18T01:00",
+    "end": "2026-07-18T05:00",
+    "weekday": "Saturday",
+    "setType": "DJ Set"
+   },
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-21T10:00",
+    "end": "2026-07-21T12:00",
+    "weekday": "Tuesday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "daniel-sol",
+  "name": "Daniel Sol",
+  "descriptions": [
+   "Madrid music lover and co-founder of Ensancha el Alma Records (psychill/downtempo); emotional journeys through jazz, soul, world and electronica textures.",
+   "Madrid music lover and co-founder of Ensancha el Alma Records (psychill/downtempo); emotional journeys through jazz, soul, world and electronica textures."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-15T14:00",
+    "end": "2026-07-15T15:30",
+    "weekday": "Wednesday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "david-maurette-irina-mikhailova",
+  "name": "David Maurette ft. Irina Mikhailova",
+  "descriptions": [
+   "Live collaboration blending ancient-inspired vocals, live percussion and high-energy electronics — Kaya Project vocalist Irina Mikhailova with DJ/percussionist David Maurette (Glastonbury, Boom)."
+  ],
+  "notes": [
+   "Poster subtitle: Producer Set; the official site describes this as a live set."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-16T10:00",
+    "end": "2026-07-16T12:00",
+    "weekday": "Thursday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "dezoncondor",
+  "name": "Dezoncondor",
+  "descriptions": [
+   "Deep psychedelic ambience, immersive drones and slow-moving sonic environments — cinematic psyambient storytelling designed for presence and mental expansion."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-15T15:30",
+    "end": "2026-07-15T17:30",
+    "weekday": "Wednesday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "etnica-in-dub",
+  "name": "Etnica in Dub",
+  "descriptions": [
+   "The Goa-defining Italian project reveals its dub dimension: spacious basslines, hypnotic echoes and downtempo grooves where classic psychedelia slows into warm fluidity."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-21T16:00",
+    "end": "2026-07-21T18:00",
+    "weekday": "Tuesday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "federico-baltimore",
+  "name": "Federico Baltimore",
+  "descriptions": [
+   "Dado's (Transwave/Deedrah/Synthetic) chillout alter ego since 'Beleza!' (2007); emotional, cinematic downtempo blending ambient, lounge and classical influences."
+  ],
+  "notes": [
+   "Poster subtitle: Producer Set; the official site lists a DJ set."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-19T10:00",
+    "end": "2026-07-19T13:00",
+    "weekday": "Sunday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "fishimself",
+  "name": "Fishimself",
+  "descriptions": [
+   "Haris P. (Athens), IT venue founder, Freeze Magazine alumnus and Ultimae/Matsuri compiler; long-form journeys through hypnotic techno, ambience and experimental electronics."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-18T10:00",
+    "end": "2026-07-18T13:00",
+    "weekday": "Saturday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "floating-machine",
+  "name": "Floating Machine",
+  "descriptions": [
+   "António Lourenço (Portugal), from jazz/funk/reggae roots to techno and ambient experimentation; adventurous, unpredictable aural journeys (Boom, Modem, ZNA)."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-17T01:00",
+    "end": "2026-07-17T05:00",
+    "weekday": "Friday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "gagarin",
+  "name": "Gagarin",
+  "descriptions": [
+   "Founder of psybient.org; long, mind-expanding sets moving from midtempo ethnic textures to trippy, high-energy dance, inspired by conscious living."
+  ],
+  "notes": [
+   "Poster name: Gagarin; full official name: Gagarin Project."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "market",
+    "section": "welcome",
+    "start": "2026-07-15T00:30",
+    "end": "2026-07-15T02:00",
+    "weekday": "Wednesday",
+    "setType": null
+   }
+  ],
+  "id": "goastral",
+  "name": "GoAstral",
+  "descriptions": [
+   "Brazilian project (Ovnimoon Rec) of deep psychedelic storytelling and hypnotic layers, moving between cosmic intensity and spiritual elevation."
+  ],
+  "notes": [
+   "Welcome Party — exclusive for shuttle/bus service guests."
+  ],
+  "infoSource": "https://znagathering.com/program/marketstage/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-21T18:00",
+    "end": "2026-07-21T20:00",
+    "weekday": "Tuesday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "gumi",
+  "name": "GUMI",
+  "descriptions": [
+   "Maor Hasbani (Tel Aviv, also Skizologic); elastic downtempo fusing bold basslines, tribal rhythms and ethnic melodies with analog warmth (Boom, Rainbow Serpent)."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-15T20:00",
+    "end": "2026-07-15T22:00",
+    "weekday": "Wednesday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "henriq",
+  "name": "Henriq",
+  "descriptions": [
+   "Half of Zen Baboon and a Boom Festival music curator; cosmic border-free journeys from a producer with releases across many labels."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-17T14:00",
+    "end": "2026-07-17T16:00",
+    "weekday": "Friday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "holeg-spies",
+  "name": "Holeg Spies",
+  "descriptions": [
+   "French composer and sonic explorer (film scoring, musique concrète); a deep journey through his album 'Brave New World' — ambient passages and cinematic psychedelia."
+  ],
+  "notes": [
+   "Poster subtitle: Producer Set; the official site lists a DJ set."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-20T23:00",
+    "end": "2026-07-21T02:00",
+    "weekday": "Monday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "indra",
+  "name": "Indra",
+  "descriptions": [
+   "Croatian DJane and Ecstatic Dance Croatia founder; floating mystical atmospheres, deep dub bass and ethnic organic elements in story-driven sets (Boom, MoDem, Psy-Fi)."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-16T18:00",
+    "end": "2026-07-16T20:00",
+    "weekday": "Thursday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "irina-mikhailova",
+  "name": "Irina Mikhailova",
+  "descriptions": [
+   "Internationally touring vocalist (Kaya Project) whose voice appears across many artists' records and soundtracks — an entrancing solo live set of song and electronics."
+  ],
+  "notes": [
+   "Poster subtitle: Producer Set; the official site describes this as a live set."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-19T02:00",
+    "end": "2026-07-19T04:30",
+    "weekday": "Sunday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "jonas",
+  "name": "Jonas",
+  "descriptions": [
+   "Trashlords co-founder (Stoneage, Sweden) with 30+ years behind the decks; ambassador of the weird 'forest' corner of 90s psychedelia, unleashing its very essence."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-18T13:00",
+    "end": "2026-07-18T15:00",
+    "weekday": "Saturday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "kala-hari",
+  "name": "Kala Hari",
+  "descriptions": [
+   "Hélder José Martins' downtempo/dubby psychill project, moving toward organic downtempo and soft conscious dance journeys."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-21T20:00",
+    "end": "2026-07-21T22:00",
+    "weekday": "Tuesday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "kukan-dub-lagan",
+  "name": "Kukan dub Lagan",
+  "descriptions": [
+   "Itay's groovy fusion of dub, world music, downtempo and funk — warm, bass-heavy, soulful music made to put smiles on faces."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-20T15:00",
+    "end": "2026-07-20T16:30",
+    "weekday": "Monday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "ludvig-stelar",
+  "name": "Ludvig & Stelar",
+  "descriptions": [
+   "Downtempo duo inspired by Beethoven, Bach and Mozart (releases on Café del Mar); classical emotion meets cinematic downtempo psychedelia."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-20T17:00",
+    "end": "2026-07-20T19:00",
+    "weekday": "Monday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "man-with-no-name",
+  "name": "Man With No Name",
+  "descriptions": [
+   "Martin Freeland (Perfecto), master of pure euphoria; timeless classics and rare private-archive gems in a set crafted especially for the Retro-Futuristic Celebration."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "market",
+    "section": "welcome",
+    "start": "2026-07-14T22:00",
+    "end": "2026-07-15T00:30",
+    "weekday": "Tuesday",
+    "setType": null
+   }
+  ],
+  "id": "max-lanfranconi",
+  "name": "Max Lanfranconi",
+  "descriptions": [
+   "The Etnica/Pleiadians/Crop Circles legend in a rare intimate setting — epic ZambuTemple energy scaled to the Welcome Party."
+  ],
+  "notes": [
+   "Welcome Party — exclusive for shuttle/bus service guests."
+  ],
+  "infoSource": "https://znagathering.com/program/marketstage/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-20T18:00",
+    "end": "2026-07-20T21:00",
+    "weekday": "Monday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "mike-stellar",
+  "name": "Mike Stellar",
+  "descriptions": [
+   "Angolan-born refined selector rescuing rare gems into progressive folktronic downtempo — European electronics meeting African and Brazilian beats."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-18T23:30",
+    "end": "2026-07-19T03:00",
+    "weekday": "Saturday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "mixmaster-morris",
+  "name": "Mixmaster Morris",
+  "descriptions": [
+   "Chillout pioneer shaping ambient/downtempo since the 1980s as The Irresistible Force; legendarily eclectic, cosmic, genre-transcending sets."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-17T22:00",
+    "end": "2026-07-18T00:00",
+    "weekday": "Friday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "mos",
+  "name": "M.O.S.",
+  "descriptions": [
+   "Mittelstandskinder Ohne Strom (Germany) — studio-engineering masters delivering a retrospective through M.O.S., Nerve and N.D.M.A., from signature grooves to euphoric 90s Goa in their 'Lunar Church' night session."
+  ],
+  "notes": [
+   "M.O.S. = Mittelstandskinder Ohne Strom."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-19T03:00",
+    "end": "2026-07-19T05:00",
+    "weekday": "Sunday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "nervasystem",
+  "name": "Nervasystem",
+  "descriptions": [
+   "Drezz's cult mid-90s project (Matsuri, Suntrip, Zion 604); layered, hypnotic, experimental Goa built for inner journeys — and still evolving today."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-17T10:00",
+    "end": "2026-07-17T12:00",
+    "weekday": "Friday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "oliver-jones",
+  "name": "Oliver Jones",
+  "descriptions": [
+   "One half of Reefer Decree; a warm, hypnotic downtempo session of flowing grooves, rich ambient layers and time-dissolving psychedelic storytelling."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-16T20:00",
+    "end": "2026-07-16T22:00",
+    "weekday": "Thursday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "ololiuqui",
+  "name": "Ololiuqui",
+  "descriptions": [
+   "Volker König's legendary Spirit Zone project in his Retro-Futuristic premiere; a ride designed to carry the floor from progressive grooves into raw Aussie-style psychedelia."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-17T14:00",
+    "end": "2026-07-17T16:00",
+    "weekday": "Friday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "one-man-game-vs-mystica",
+  "name": "One Man Game vs Mystica",
+  "descriptions": [
+   "Avi Pe'er and Yossef Master reunite on stage after 30 years, spanning One Man Game and its evolution Mystica; rolling basslines and uplifting afternoon melodies."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-21T12:00",
+    "end": "2026-07-21T16:00",
+    "weekday": "Tuesday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "organica",
+  "name": "Organica",
+  "descriptions": [
+   "Obsessive record digger exploring the underground since 1997; hypnotic basslines, tribal rhythms and elevated melodic atmospheres honouring old-school Goa roots."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-21T22:00",
+    "end": "2026-07-22T00:00",
+    "weekday": "Tuesday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "ott",
+  "name": "OTT",
+  "descriptions": [
+   "Legendary dub-electronics producer/engineer (worked with Brian Eno, The Orb, Youth); creator of 'Hallucinogen in Dub', 'Blumenkraft' and 'Skylon' — closing the Peninsula."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-19T23:00",
+    "end": "2026-07-20T01:00",
+    "weekday": "Sunday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "process",
+  "name": "Process",
+  "descriptions": [
+   "Sean Williams (Flying Rhino), pioneer behind Process and Satori; a night journey through 'One Drop or Two', 'Superior Technology' and classics made with Posford, Monro, Tristan and Tsuyoshi."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-20T16:30",
+    "end": "2026-07-20T18:00",
+    "weekday": "Monday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "process-vs-aether",
+  "name": "Process vs Aether",
+  "descriptions": [
+   "Sean Williams (Process) back-to-back with Aether — official description still to be announced."
+  ],
+  "notes": [
+   "Poster subtitle: Producer Set; the official site lists this as a DJ set."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-20T05:30",
+    "end": "2026-07-20T07:30",
+    "weekday": "Monday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "psychaos",
+  "name": "Psychaos",
+  "descriptions": [
+   "Joti Sidhu's harder alias, rooted in the Blue Room / Atomic Records era; an intense deep-hours producer set of industrial pressure, intricate layers and unexpected melody."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-17T21:00",
+    "end": "2026-07-17T23:00",
+    "weekday": "Friday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "saafi-brothers",
+  "name": "Saafi Brothers",
+  "descriptions": [
+   "30 years of psydub since 'Mystic Cigarettes' on Blue Room; a special set honouring their late brother-in-sound Michael Kohlbecker, from their debut to 'A Relaxed Blur'."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-16T20:00",
+    "end": "2026-07-16T22:00",
+    "weekday": "Thursday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "sergio-walgood",
+  "name": "Sérgio Walgood",
+  "descriptions": [
+   "Composer, live artist and host/curator of The Peninsula stage; immersive sonic storytelling bridging psychedelic downtempo, ritual ambience and deep hypnotic groove."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-20T10:00",
+    "end": "2026-07-20T15:00",
+    "weekday": "Monday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "shahar",
+  "name": "Shahar",
+  "descriptions": [
+   "Aleph Zero co-founder and Shamanic Tales label head, famous for marathon 6–12-hour sets; three decades of curation woven into a slow, hypnotic psychedelic immersion."
+  ],
+  "notes": [
+   "Extended (~5-hour) marathon set."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "market",
+    "section": "welcome",
+    "start": "2026-07-15T02:00",
+    "end": "2026-07-15T04:00",
+    "weekday": "Wednesday",
+    "setType": null
+   }
+  ],
+  "id": "sharon",
+  "name": "Sharon",
+  "descriptions": [
+   "Sharon Haiat (StoneAge Records, Israel), Goa-classics curator since 2017; fluid story-driven sets with seamless mixing — fresh from Goa Guardians 2022."
+  ],
+  "notes": [
+   "Welcome Party — exclusive for shuttle/bus service guests."
+  ],
+  "infoSource": "https://znagathering.com/program/marketstage/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-17T16:00",
+    "end": "2026-07-17T18:00",
+    "weekday": "Friday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "synergy-dub",
+  "name": "Synergy Dub",
+  "descriptions": [
+   "Gabriel Le Mar and DJ Robin Triskele's DJ/live dub project (Liquid Sound Design), joined for ZNA 2026 by Groovetitan; future dub grooves with live overdubs."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "zambu",
+    "section": "retro",
+    "start": "2026-07-18T04:30",
+    "end": "2026-07-18T06:30",
+    "weekday": "Saturday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "ubar-tmar",
+  "name": "Ubar Tmar",
+  "descriptions": [
+   "Takeshi Isogai (Japan, Matsuri), the self-proclaimed 'freakiest Japanese on Earth'; experimental psychedelic labyrinths in which the dancer can never predict the next turn."
+  ],
+  "infoSource": "https://znagathering.com/program/dancefloor/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "market",
+    "section": "welcome",
+    "start": "2026-07-14T20:00",
+    "end": "2026-07-14T22:00",
+    "weekday": "Tuesday",
+    "setType": null
+   }
+  ],
+  "id": "virtuart",
+  "name": "Virtuart",
+  "descriptions": [
+   "French artist of the Suntrip family; immersive journeys and finely crafted melodies drawing on a rich 90s body of work."
+  ],
+  "notes": [
+   "Welcome Party — exclusive for shuttle/bus service guests."
+  ],
+  "infoSource": "https://znagathering.com/program/marketstage/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-19T21:00",
+    "end": "2026-07-20T00:00",
+    "weekday": "Sunday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "wacamolo",
+  "name": "Wacamolo",
+  "descriptions": [
+   "Eric, spinning since mid-90s San Francisco; a worldwide patchwork of downtempo, dub, trip-hop and ethnic flavours from Goa to Bali."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "market",
+    "section": "welcome",
+    "start": "2026-07-14T18:00",
+    "end": "2026-07-14T20:00",
+    "weekday": "Tuesday",
+    "setType": null
+   },
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-16T12:00",
+    "end": "2026-07-16T15:00",
+    "weekday": "Thursday",
+    "setType": "DJ Set"
+   }
+  ],
+  "id": "x-tigma",
+  "name": "X_T.i.g.m.a.",
+  "descriptions": [
+   "Pedro Dias (Quest4Goa co-founder, long-time ZNA collaborator) opens the Welcome Party with an idiosyncratic, consciously curated genre-fluid session.",
+   "Pedro Dias, Quest4Goa co-founder (1999) and long-time ZNA collaborator; genre-fluid selections with a subtle experimental edge."
+  ],
+  "notes": [
+   "Welcome Party — exclusive for shuttle/bus service guests."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-17T19:00",
+    "end": "2026-07-17T21:00",
+    "weekday": "Friday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "youth-in-dub",
+  "name": "Youth in Dub",
+  "descriptions": [
+   "Martin Glover — Killing Joke bassist, Grammy-winning producer and founder of the Dragonfly and Liquid Sound Design labels — in deep dub mode."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ },
+ {
+  "sets": [
+   {
+    "venue": "peninsula",
+    "section": null,
+    "start": "2026-07-16T15:00",
+    "end": "2026-07-16T18:00",
+    "weekday": "Thursday",
+    "setType": "Producer Set"
+   }
+  ],
+  "id": "zen-baboon",
+  "name": "Zen Baboon",
+  "descriptions": [
+   "Daniel Rosado and Henrique Palhavã (live since Boom 2006); Portuguese downtempo royalty with releases on major underground labels."
+  ],
+  "infoSource": "https://znagathering.com/program/thepeninsula/"
+ }
+]
