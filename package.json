@@ -1,22 +1,28 @@
 {
-  "name": "zna-onboarding-",
+  "name": "zna26",
   "version": "1.0.0",
   "description": "Unofficial fan guide to ZNA Gathering 2026 — retro-futuristic Goa-trance festival in Portugal, July 2026.",
   "private": true,
   "type": "module",
   "scripts": {
-    "fetch:photos":   "node build/fetch-photos.mjs",
+    "fetch:photos": "node build/fetch-photos.mjs",
     "optimize:images": "node build/optimize-images.mjs",
-    "make:icons":     "node build/make-icons.mjs",
-    "build":          "npm run fetch:photos && npm run optimize:images && npm run make:icons",
-    "serve":          "python3 -m http.server 8000",
-    "lighthouse":     "npx lighthouse http://localhost:8000 --view"
+    "make:icons": "node build/make-icons.mjs",
+    "build": "npm run fetch:photos && npm run optimize:images && npm run make:icons",
+    "serve": "python3 -m http.server 8000",
+    "lighthouse": "npx lighthouse http://localhost:8000 --view"
   },
   "repository": {
     "type": "git",
-    "url": "http://local_proxy@127.0.0.1:39255/git/yairixStudio/Zna-onboarding-"
+    "url": "https://github.com/yairixStudio/zna26.git"
   },
-  "keywords": ["festival", "goa-trance", "psytrance", "zna", "pwa"],
+  "keywords": [
+    "festival",
+    "goa-trance",
+    "psytrance",
+    "zna",
+    "pwa"
+  ],
   "license": "ISC",
   "devDependencies": {
     "sharp": "^0.34.5"
